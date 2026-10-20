@@ -1,0 +1,14 @@
+{
+ "description": "Adjudications d'OAT long terme : ligne de référence à 10 ans. Taux de couverture = montant demandé / montant adjugé. Saisie manuelle depuis les dépêches Reuters reprises par Boursorama (les communiqués de l'AFT ne sont pas accessibles aux robots).",
+ "a_completer": ["2025-12 (couverture)", "2026-01", "2026-03", "2026-05", "2026-06"],
+ "lignes": [
+  {"date": "2025-11-06", "ligne": "OAT 3,50 % 25/11/2035", "adjuge_mds": 7.200, "demande_mds": 15.467, "taux": 3.43, "source": "https://www.boursorama.com/bourse/actualites/details-de-l-adjudication-d-oat-c355c402bbca070c0a1c95f8b25bf4fd"},
+  {"date": "2025-12-04", "ligne": "OAT 10 ans", "adjuge_mds": null, "demande_mds": null, "taux": 3.38, "source": "https://www.aft.gouv.fr/fr/publications/communiques-presse/20251204-emission-oat"},
+  {"date": "2026-02-05", "ligne": "OAT 3,50 % 25/11/2035", "adjuge_mds": 6.290, "demande_mds": 15.275, "taux": 3.45, "source": "https://www.boursorama.com/bourse/actualites/details-de-l-adjudication-d-oat-55221b8f2227dc81feab6d150ad6e2b0"},
+  {"date": "2026-04-02", "ligne": "OAT 3,50 % 25/11/2035", "adjuge_mds": 6.185, "demande_mds": 11.644, "taux": 3.73, "source": "https://www.boursorama.com/bourse/actualites/details-de-l-adjudication-d-oat-acf71fd09c48fa39e862e53cf1068df5"},
+  {"date": "2026-07-02", "ligne": "OAT 25/11/2036", "adjuge_mds": 7.025, "demande_mds": 16.686, "taux": 3.73, "source": "https://www.boursorama.com/bourse/actualites/details-de-l-adjudication-d-oat-3d39c69e4a1953050abbdbc098de5830"},
+  {"date": "2026-08-06", "ligne": "OAT 3,70 % 25/11/2036", "adjuge_mds": 6.340, "demande_mds": 14.791, "taux": 3.90, "source": "https://www.boursorama.com/bourse/actualites/details-de-l-adjudication-d-oat-e4e18605ddd8bd95b300d72247235c68"},
+  {"date": "2026-09-03", "ligne": "OAT 3,70 % 25/11/2036", "adjuge_mds": 6.862, "demande_mds": 15.666, "taux": 4.23, "source": "https://www.boursorama.com/bourse/actualites/details-de-l-adjudication-d-oat-7b895d0db8e2b95d91a4d308209aa2b0"},
+  {"date": "2026-10-01", "ligne": "OAT 3,70 % 25/11/2036", "adjuge_mds": 6.271, "demande_mds": 12.564, "taux": 4.93, "source": "https://www.boursorama.com/bourse/actualites/details-de-l-adjudication-d-oat-5ca591a04af26b9ddba86acd70d04637"}
+ ]
+}

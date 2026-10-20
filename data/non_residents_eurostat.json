@@ -1,0 +1,38 @@
+[
+ {
+  "annee": 2020,
+  "part_nonres": 49.1,
+  "part_bdf": 18.3,
+  "dette_pib": 114.9
+ },
+ {
+  "annee": 2021,
+  "part_nonres": 47.2,
+  "part_bdf": 22.0,
+  "dette_pib": 112.8
+ },
+ {
+  "annee": 2022,
+  "part_nonres": 48.6,
+  "part_bdf": 22.6,
+  "dette_pib": 111.4
+ },
+ {
+  "annee": 2023,
+  "part_nonres": 51.2,
+  "part_bdf": 21.3,
+  "dette_pib": 109.5
+ },
+ {
+  "annee": 2024,
+  "part_nonres": 52.6,
+  "part_bdf": 19.3,
+  "dette_pib": 112.6
+ },
+ {
+  "annee": 2025,
+  "part_nonres": 54.3,
+  "part_bdf": 16.5,
+  "dette_pib": 115.6
+ }
+]

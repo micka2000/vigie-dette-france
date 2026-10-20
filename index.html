@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vigie Dette France</title>
+<meta name="description" content="Les cinq signaux de santé de la dette publique française, mis à jour chaque jour, avec leurs seuils de risque historiques.">
+<link rel="stylesheet" href="styles.css">
+<script>
+  try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="masthead-top">
+      <h1>Vigie Dette France</h1>
+      <button class="btn-ghost" id="theme-toggle" type="button">Thème</button>
+    </div>
+    <p class="verdict" id="verdict">Chargement des signaux…</p>
+    <p class="stamp">
+      <span class="live" id="live" data-on="false">Données enregistrées</span>
+      <span id="updated"></span>
+    </p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="summary" id="summary" aria-label="Synthèse des signaux"></section>
+
+  <div class="toolbar">
+    <span class="toolbar-label" id="range-label">Période</span>
+    <div class="seg" role="group" aria-labelledby="range-label" id="range">
+      <button type="button" data-years="2">2 ans</button>
+      <button type="button" data-years="5">5 ans</button>
+      <button type="button" data-years="15" aria-pressed="true">15 ans</button>
+      <button type="button" data-years="0">Tout</button>
+    </div>
+  </div>
+
+  <div class="signals">
+
+    <article class="signal" id="spread">
+      <div class="signal-head">
+        <div>
+          <h2>Spread France-Allemagne</h2>
+          <p class="signal-why">La prime de risque que les investisseurs exigent pour détenir de la dette française à 10 ans plutôt que le Bund allemand, référence sans risque de la zone euro.</p>
+        </div>
+        <div class="signal-now"><span class="big" data-now="spread">—</span><span class="pill" data-pill="spread"></span></div>
+      </div>
+      <p class="signal-now"><span class="delta" data-delta="spread"></span></p>
+      <div class="chart" id="chart-spread"></div>
+      <ul class="thresholds" data-thresholds="spread"></ul>
+      <p class="threshold-note">Seuils tirés de l'historique mensuel depuis 1999 : 50 pb correspond au 75<sup>e</sup> centile, 80 pb au 90<sup>e</sup>. Le pic de la crise des dettes souveraines a atteint 154 pb en novembre 2011.</p>
+      <p class="source">Source : BCE, taux à long terme harmonisés (moyenne mensuelle, séries IRS FR et DE). Le spread intrajournalier peut s'écarter de la moyenne du mois.</p>
+    </article>
+
+    <article class="signal" id="adjudications">
+      <div class="signal-head">
+        <div>
+          <h2>Adjudications de l'Agence France Trésor</h2>
+          <p class="signal-why">Le coût réel auquel l'État se finance sur sa ligne à 10 ans, et la demande des investisseurs au moment de l'émission (taux de couverture : montant demandé rapporté au montant servi).</p>
+        </div>
+        <div class="signal-now"><span class="big" data-now="adjudications">—</span><span class="pill" data-pill="adjudications"></span></div>
+      </div>
+      <p class="signal-now"><span class="delta" data-delta="adjudications"></span></p>
+      <div class="chart-pair">
+        <div><p class="chart-title">Taux moyen pondéré à 10 ans</p><div class="chart" id="chart-auction-rate"></div></div>
+        <div><p class="chart-title">Taux de couverture</p><div class="chart" id="chart-auction-cover"></div></div>
+      </div>
+      <ul class="thresholds" data-thresholds="adjudications"></ul>
+      <p class="threshold-note">Le niveau de risque suit le taux de couverture : sous 2, la demande devient juste pour une ligne de référence ; sous 1,5, l'appétit des investisseurs faiblit nettement.</p>
+      <p class="source" id="auction-source">Source : résultats publiés par l'AFT, repris par Reuters et Boursorama. Saisie manuelle.</p>
+    </article>
+
+    <article class="signal" id="non-residents">
+      <div class="signal-head">
+        <div>
+          <h2>Part des non-résidents</h2>
+          <p class="signal-why">Plus elle est élevée, plus la dette dépend de capitaux étrangers, volatils, qui peuvent se retirer vite en cas de stress.</p>
+        </div>
+        <div class="signal-now"><span class="big" data-now="non-residents">—</span><span class="pill" data-pill="non-residents"></span></div>
+      </div>
+      <p class="signal-now"><span class="delta" data-delta="non-residents"></span></p>
+      <div class="chart" id="chart-nonres"></div>
+      <ul class="legend" id="legend-nonres"></ul>
+      <ul class="thresholds" data-thresholds="non-residents"></ul>
+      <p class="threshold-note">Point bas récent : 47,2 % en 2021, quand la Banque de France rachetait massivement des titres. Au-delà de 60 %, la France retrouverait les niveaux de la fin des années 2000.</p>
+      <p class="source">Sources : AFT d'après la Banque de France (dette négociable de l'État, trimestriel) ; Eurostat gov_10dd_ggd (dette publique au sens de Maastricht, annuel).</p>
+    </article>
+
+    <article class="signal" id="notations">
+      <div class="signal-head">
+        <div>
+          <h2>Notes des agences</h2>
+          <p class="signal-why">Une dégradation peut forcer des ventes chez les investisseurs soumis à des seuils de notation et renchérit mécaniquement le coût de la dette.</p>
+        </div>
+        <div class="signal-now"><span class="big" data-now="notations">—</span><span class="pill" data-pill="notations"></span></div>
+      </div>
+      <p class="signal-now"><span class="delta" data-delta="notations"></span></p>
+      <div class="chart" id="chart-ratings"></div>
+      <ul class="legend" id="legend-ratings"></ul>
+      <div class="table-scroll">
+        <table class="ratings-table" id="ratings-table">
+          <thead><tr><th>Agence</th><th>Note</th><th>Perspective</th><th>Dernière décision</th><th>Prochaine revue</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="alert" id="ratings-alert" hidden></p>
+      <ul class="thresholds" data-thresholds="notations"></ul>
+      <p class="threshold-note">Le niveau porte sur la note la plus basse des trois agences. AA- est le plancher de nombreux mandats de gestion de réserves ; sous A-, la France approcherait la catégorie BBB, où les ventes forcées s'accélèrent.</p>
+      <p class="source">Source : Agence France Trésor, page « Notation de la France ». Saisie manuelle.</p>
+    </article>
+
+    <article class="signal" id="target">
+      <div class="signal-head">
+        <div>
+          <h2>Solde TARGET2 de la Banque de France</h2>
+          <p class="signal-why">Un solde de plus en plus négatif traduit des sorties de capitaux vers d'autres pays de la zone euro, signe de défiance des acteurs privés.</p>
+        </div>
+        <div class="signal-now"><span class="big" data-now="target">—</span><span class="pill" data-pill="target"></span></div>
+      </div>
+      <p class="signal-now"><span class="delta" data-delta="target"></span></p>
+      <div class="chart" id="chart-target"></div>
+      <ul class="thresholds" data-thresholds="target"></ul>
+      <p class="threshold-note">Seuils tirés de l'historique depuis 2008 : -118 Md€ au plus fort de la crise financière (décembre 2008), record à -240 Md€ en octobre 2025.</p>
+      <p class="source">Source : BCE, soldes TARGET en fin de mois (série TGB.M.FR).</p>
+    </article>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Les séries BCE sont lues en direct à chaque visite ; les séries Eurostat sont mises à jour chaque jour par une GitHub Action. Les adjudications et les notes sont saisies à la main à partir des publications officielles.</p>
+    <p>Les seuils de risque sont des repères tirés de l'historique de chaque série, pas des prévisions.</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
