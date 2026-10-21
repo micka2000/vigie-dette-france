@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vigie Dette France</title>
 <meta name="description" content="Les cinq signaux de santé de la dette publique française, mis à jour chaque jour, avec leurs seuils de risque historiques.">
-<link rel="stylesheet" href="styles.css?v=bf305cd1">
+<link rel="stylesheet" href="styles.css?v=10968822">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
@@ -27,7 +27,10 @@
       </div>
     </div>
     <div id="indice-desc"></div>
-    <p class="repere" id="repere" hidden><span id="repere-texte"></span> <button type="button" class="info" id="repere-info" data-tip="" aria-label="Détail du repère">i</button></p>
+    <div class="reperes">
+      <p class="indice-sans" id="indice-sans" hidden></p>
+      <p class="repere" id="repere" hidden><span id="repere-texte"></span> <button type="button" class="info" id="repere-info" data-tip="" aria-label="Détail du repère">i</button></p>
+    </div>
     <p class="stamp">
       <span class="live" id="live" data-on="false" data-tip="" tabindex="0">Données enregistrées</span>
       <span id="donnees"></span>
@@ -36,7 +39,6 @@
 </header>
 
 <main class="wrap">
-  <section class="summary gauges" id="gauges" aria-label="Sous-indices de l'Indice Vigie et stress financier de la BCE"></section>
 
   <section class="summary signals-summary" id="summary" aria-label="Synthèse des cinq signaux"></section>
 
@@ -62,13 +64,15 @@
       <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-indice">Période</span><div class="seg" role="group" aria-labelledby="periode-indice" data-periode="indice"></div></div></div>
       <div class="chart" id="chart-indice"></div>
       <div class="legend-row"><ul class="legend" id="legend-indice"></ul><button type="button" class="info" id="courbe-sans" data-tip="" aria-label="Périodes calculées avec moins de signaux" hidden>i</button></div>
-      <button type="button" class="btn-table" id="courbe-table-btn" aria-expanded="false" aria-controls="courbe-table-wrap">Voir les valeurs mois par mois</button>
-      <div class="table-scroll" id="courbe-table-wrap" hidden>
-        <table class="ratings-table" id="courbe-table">
+      <details class="desc detail-table">
+        <summary><span class="desc-ouvrir">Afficher les valeurs mois par mois</span><span class="desc-fermer">Masquer les valeurs mois par mois</span></summary>
+        <div class="table-scroll" id="courbe-table-wrap">
+  <table class="ratings-table" id="courbe-table">
           <thead><tr><th>Mois</th><th>Indice Vigie</th><th>Tension sur la dette</th><th>CISS</th><th>Calculé sans</th></tr></thead>
           <tbody></tbody>
         </table>
-      </div>
+        </div>
+      </details>
     </article>
 
     <article class="signal" id="spread">
@@ -163,12 +167,15 @@
       <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-notes">Période</span><div class="seg" role="group" aria-labelledby="periode-notes" data-periode="notes"></div></div></div>
       <div class="chart" id="chart-ratings"></div>
       <ul class="legend" id="legend-ratings"></ul>
-      <div class="table-scroll">
-        <table class="ratings-table" id="ratings-table">
-          <thead><tr><th>Agence</th><th>Note</th><th>Perspective</th><th>Dernière décision</th><th>Prochaine revue</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
+      <details class="desc detail-table">
+        <summary><span class="desc-ouvrir">Afficher le détail des agences</span><span class="desc-fermer">Masquer le détail des agences</span></summary>
+        <div class="table-scroll">
+          <table class="ratings-table" id="ratings-table">
+            <thead><tr><th>Agence</th><th>Note</th><th>Perspective</th><th>Dernière décision</th><th>Prochaine revue</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </details>
       <p class="alert" id="ratings-alert" hidden></p>
       <p class="seuils-titre">Seuils de risque</p>
       <ul class="thresholds" data-thresholds="notations"></ul>
@@ -215,6 +222,6 @@
     if (v) v.textContent = 'La page n’a pas pu se charger. Recharge-la dans un instant.';
   }, 10000);
 </script>
-<script type="module" src="app.js?v=b0db4aaa"></script>
+<script type="module" src="app.js?v=d06d969a"></script>
 </body>
 </html>

@@ -631,12 +631,10 @@ function renderRatingsTable(r) {
 
 // ---------- En-tête : Indice Vigie, sous-indices, CISS et repère historique ----------
 
-const f3 = fr.format(',.3f');
 const NOMS_LONGS = {
   spread: 'le spread', couverture: 'la couverture des adjudications', nonResidents: 'la part des non-résidents', notes: 'les notes', target: 'TARGET2',
 };
 const liste = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} et ${xs.at(-1)}`);
-const dateDonnee = (d) => (d.length > 7 ? fmtDay(parseDay(d)) : `fin ${fmtMonth(parseMonth(d))}`);
 
 function el(tag, cls, txt) {
   const e = document.createElement(tag);
@@ -644,8 +642,6 @@ function el(tag, cls, txt) {
   if (txt != null) e.textContent = txt;
   return e;
 }
-
-function pillOf(level) { const p = el('span', 'pill', LEVEL_LABEL[level]); p.dataset.level = level; return p; }
 
 // Description repliable sous un indicateur : ce qu'il mesure, calcul, sources (liens).
 function description({ mesure, calcul, sources }) {
@@ -675,30 +671,14 @@ const SRC = {
   bdfNr: ['Banque de France, titres de l’État détenus par des non-résidents', 'https://webstat.banque-france.fr/fr/catalogue/det2/DET2.Q.N.FR.W1.S13111.S1.N.L.LE.F3.T._Z.PT._T.M.V.N._T'],
   notes: ['notes S&P, Moody’s et Fitch (Agence France Trésor)', 'https://www.aft.gouv.fr/fr/notation-de-la-france'],
   target: ['BCE, solde TARGET de la Banque de France', 'https://data.ecb.europa.eu/data/datasets/TGB/TGB.M.FR.N.A094T.U2.EUR.E'],
-  ciss: ['BCE, CISS pour la France', 'https://data.ecb.europa.eu/data/datasets/CISS/CISS.D.FR.Z0Z.4F.EC.SS_CIN.IDX'],
   code: ['score.mjs', 'score.mjs'],
 };
 
 const DESCRIPTIONS = {
   indice: () => ({
     mesure: 'Une note de 0 à 100 qui résume la santé de la dette française à partir de cinq signaux publics.',
-    calcul: `Chaque signal est converti en score de 0 à 100 par interpolation entre des seuils fixes (25 = vigilance, 50 = tension, 75 = crise). L’indice est la moyenne de deux sous-indices : la tension sur la dette et la vulnérabilité de fond. Sous 25 : calme ; de 25 à 50 : vigilance ; de 50 à 75 : tension ; 75 et plus : crise. Une donnée trop ancienne sort du calcul et la page le signale. Méthode ${METHODE_VERSION}.`,
+    calcul: `Chaque signal est converti en score de 0 à 100 par interpolation entre ses seuils de risque (25 = vigilance, 50 = tension, 75 = crise), détaillés dans chaque carte. L’indice est la moyenne de deux sous-indices : la tension sur la dette (spread et couverture des adjudications) et la vulnérabilité de fond (non-résidents, note la plus basse, TARGET2). Sous 25 : calme ; de 25 à 50 : vigilance ; de 50 à 75 : tension ; 75 et plus : crise. Une donnée trop ancienne sort du calcul et la page le signale. Méthode ${METHODE_VERSION}.`,
     sources: [SRC.bdfTec, SRC.bund, SRC.aft, SRC.bdfNr, SRC.notes, SRC.target, SRC.code],
-  }),
-  tension: () => ({
-    mesure: 'Ce que les investisseurs exigent aujourd’hui pour prêter à la France.',
-    calcul: `Moyenne de deux scores. Spread OAT-Bund : ${ancres('spread', (v) => `${v} pb`)} ; écarté au-delà de 7 jours. Couverture des adjudications : ${ancres('couverture', (v) => v)} ; écartée au-delà de 3 mois.`,
-    sources: [SRC.bdfTec, SRC.bund, SRC.aft],
-  }),
-  fond: () => ({
-    mesure: 'Les fragilités lentes qui rendent la dette sensible à un choc.',
-    calcul: `Moyenne de trois scores. Part des non-résidents : ${ancres('nonResidents', (v) => `${v} %`)} ; écartée au-delà de 15 mois. Note la plus basse des trois agences : ${NOTES_ANCRES}. Solde TARGET2 : ${ancres('target', (v) => `${v} Md€`)} ; écarté au-delà de 3 mois.`,
-    sources: [SRC.bdfNr, SRC.notes, SRC.target],
-  }),
-  ciss: () => ({
-    mesure: 'Le stress du reste des marchés financiers en France (monétaire, obligataire, actions, change, banques), mesuré par la BCE. Il n’entre pas dans l’Indice Vigie : il sert à voir si la tension vient de la dette elle-même.',
-    calcul: `Valeur du jour convertie sur 100 : ${ancres('ciss', (v) => v)} (0,8 est le maximum de 2008). Indisponible si la donnée a plus de 10 jours.`,
-    sources: [SRC.ciss],
   }),
 };
 
@@ -706,46 +686,6 @@ function infoBtn(tip, label = 'En savoir plus') {
   const b = el('button', 'info', 'i');
   b.type = 'button'; b.dataset.tip = tip; b.setAttribute('aria-label', label);
   return b;
-}
-
-function gauge({ name, desc, dates, score, level, lines }) {
-  const card = el('div', 'tile gauge');
-  if (level) card.dataset.level = level;
-  card.append(el('span', 'tile-name', name));
-  if (score == null) card.append(el('span', 'tile-value tile-na', 'Indisponible'));
-  else {
-    const v = el('span', 'tile-value', f0(score)); v.append(el('span', 'tile-unit', '/100'));
-    const ligne = el('span', 'tile-score');
-    ligne.append(pillOf(level));
-    if (dates) ligne.append(infoBtn(`Données : ${dates}.`, `Dates des données : ${name}`));
-    card.append(v, ligne);
-  }
-  for (const l of lines) if (l) card.append(el('span', 'tile-sub', l));
-  card.append(description(desc));
-  return card;
-}
-
-const sansTexte = (sans) => (sans.length ? `Calculé sans ${liste(sans.map((n) => NOMS_LONGS[n]))}.` : null);
-
-function renderGauges(etat) {
-  const s = etat.signaux;
-  const valable = (n) => s[n] && !s[n].perime;
-  const tension = [valable('spread') && `spread du ${dateDonnee(s.spread.date)}`, valable('couverture') && `couverture du ${dateDonnee(s.couverture.date)}`];
-  const fond = [valable('nonResidents') && `non-résidents ${dateDonnee(s.nonResidents.date)}`, valable('target') && `TARGET2 ${dateDonnee(s.target.date)}`, valable('notes') && 'notes à jour'];
-  const c = etat.ciss;
-  const ouvertes = [...document.querySelectorAll('#gauges details')].map((d) => d.open); // gardées ouvertes au rafraîchissement
-  document.getElementById('gauges').replaceChildren(
-    gauge({ name: 'Tension sur la dette', score: etat.tension.score, level: etat.tension.niveau,
-      desc: DESCRIPTIONS.tension(),
-      dates: tension.filter(Boolean).join(', '), lines: [sansTexte(etat.tension.sans)] }),
-    gauge({ name: 'Vulnérabilité de fond', score: etat.fond.score, level: etat.fond.niveau,
-      desc: DESCRIPTIONS.fond(),
-      dates: fond.filter(Boolean).join(', '), lines: [sansTexte(etat.fond.sans)] }),
-    gauge({ name: 'Reste des marchés (CISS)', score: c?.score ?? null, level: c?.niveau,
-      desc: DESCRIPTIONS.ciss(),
-      dates: c ? `valeur ${f3(c.valeur)} le ${fmtDay(parseDay(c.jour))}` : '', lines: [c ? null : 'Donnée de plus de 10 jours ou absente'] }),
-  );
-  document.querySelectorAll('#gauges details').forEach((d, k) => { d.open = ouvertes[k] ?? false; });
 }
 
 // « Plus haut depuis… » : comparé à chaque séance passée (la pire séance d'un mois compte, pas seulement la dernière).
@@ -793,7 +733,11 @@ function renderHeader(data, etat) {
   document.getElementById('repere').hidden = !r;
   if (r) { text('#repere-texte', r.texte); document.getElementById('repere-info').dataset.tip = r.detail; }
   text('#donnees', `Données du ${fmtDay(parseDay(etat.cartes.spread.jour))}`);
-  renderGauges(etat);
+  // Signal trop ancien ou absent : dit sous l'indice, puisque le chiffre est calculé sans lui
+  const sans = [...etat.tension.sans, ...etat.fond.sans];
+  const is = document.getElementById('indice-sans');
+  is.hidden = !sans.length;
+  is.textContent = sans.length ? `Calculé sans ${liste(sans.map((n) => NOMS_LONGS[n]))} (donnée trop ancienne ou absente).` : '';
 }
 
 function renderSources(data) {
@@ -856,14 +800,6 @@ document.addEventListener('click', (e) => { if (cibleDe(e)) montrerBulle(cibleDe
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cacherBulle(); });
 addEventListener('scroll', cacherBulle, { passive: true });
 
-// Panneau de description des jauges : un seul ouvert, fermé par un clic ailleurs ou Échap.
-const panneauxJauges = () => document.querySelectorAll('#gauges details[open]');
-document.addEventListener('toggle', (e) => {
-  if (e.target.matches?.('#gauges details') && e.target.open) panneauxJauges().forEach((d) => { if (d !== e.target) d.open = false; });
-}, true);
-document.addEventListener('click', (e) => { if (!e.target.closest('#gauges details')) panneauxJauges().forEach((d) => { d.open = false; }); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') panneauxJauges().forEach((d) => { d.open = false; }); });
-
 // ---------- Démarrage ----------
 
 document.addEventListener('click', (e) => {
@@ -887,13 +823,6 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
   render();
 });
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
-
-document.getElementById('courbe-table-btn').addEventListener('click', (e) => {
-  const wrap = document.getElementById('courbe-table-wrap');
-  wrap.hidden = !wrap.hidden;
-  e.currentTarget.setAttribute('aria-expanded', String(!wrap.hidden));
-  e.currentTarget.textContent = wrap.hidden ? 'Voir les valeurs mois par mois' : 'Masquer les valeurs';
-});
 
 let resizeTimer;
 window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(render, 150); });
