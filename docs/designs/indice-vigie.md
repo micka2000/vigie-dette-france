@@ -439,7 +439,7 @@ Schéma : voir la conversation de revue, reporté ici en résumé. La BCE alimen
 
 Décision CEO-R1 (D23 « A) Isoler et signaler ») :
 - `update_data.py` collecte chaque série dans son propre `try`, avec les exceptions nommées `urllib.error.URLError`, `HTTPError`, `KeyError` et `ValueError`. En cas d'échec, l'ancien fichier est conservé, et `data/meta.json` reçoit `{serie, date, erreur}` dans `echecs`.
-- Contrôle de forme après chaque collecte : nombre de lignes au moins égal à celui de la veille moins 1, et dernière date plus récente que la limite de sa série (D3) : spread 70 jours, TARGET2 100 jours (80 jours le 20/10/2026), CISS 10 jours, Eurostat trimestriel (`dette_pib.json`) 200 jours, Eurostat annuel (`non_residents_eurostat.json`) 550 jours. Sinon, la série est traitée comme un échec. Un test lance ce contrôle sur les vrais fichiers de `data/` à la date du 20/10/2026 et attend zéro échec.
+- Contrôle de forme après chaque collecte : nombre de lignes au moins égal à celui de la veille moins 1, et dernière donnée plus récente que la limite de sa série, comptée depuis la fin de sa période (D3) : spread 70 jours, TARGET2 100 jours (50 jours le 20/10/2026), CISS 10 jours, Eurostat trimestriel (`dette_pib.json`) 230 jours, Eurostat annuel (`non_residents_eurostat.json`) 550 jours. Le trimestriel passe de 200 à 230 jours à l'implémentation : le 2026-Q1 a 203 jours le 20/10/2026, et le trimestre suivant paraît vers le 22 octobre. Sinon, la série est traitée comme un échec. Un test lance ce contrôle sur les vrais fichiers de `data/` à la date du 20/10/2026 et attend zéro échec.
 - Fichier nouveau (premier passage, par exemple `data/ciss.json`) : pas de contrôle du nombre de lignes, seulement la limite de date et au moins 12 lignes (D6).
 - Couverture saisie à la main : si la dernière adjudication 10 ans a plus de 2 mois, l'Action ajoute « couverture à saisir » dans `echecs`, un mois avant que le signal sorte du calcul (D10).
 - `build_outputs.mjs` : un `indice.json` illisible ou une erreur de `score.mjs` conservent les sorties de la veille et sont notés dans `echecs`. Un échec de `rsvg-convert` conserve l'ancien `og.png`.
@@ -701,23 +701,23 @@ Fichiers touchés : aucun diagramme ASCII dans `app.js`, `index.html`, `update_d
 Tâches tirées des constats de la revue. À exécuter avec Claude Code ; cocher au fil de la livraison. Hypothèse d'effort : fonctionnalités environ ×30, tests environ ×50.
 
 **Version 1** (réécrite après la revue d'ingénierie, D3 à D10 ; cette liste fait foi)
-- [ ] **T0 (P1, humain : ~1h, avant T1 pour la capture, avant T5a pour le test)** : base de comparaison. Prendre la capture « avant » de la page actuelle (390 px et bureau, deux thèmes), puis montrer cette page à 3 proches non économistes et noter leurs réponses mot pour mot (The Assignment).
+- [ ] **T0 (P1, humain : ~1h, avant T1 pour la capture, avant T5a pour le test)** : base de comparaison. Prendre la capture « avant » de la page actuelle (390 px et bureau, deux thèmes), puis montrer cette page à 3 proches non économistes et noter leurs réponses mot pour mot (The Assignment). _(captures prises le 2026-10-21 : `docs/designs/assets/avant-v1-*.png` ; test auprès de 3 proches à faire)_
   - Constat : avis extérieur n°11 et n°12 (D6, D8).
   - Fichiers : `docs/designs/assets/avant-v1-*.png`, ce document.
   - Vérification : 4 captures et 3 réponses consignées.
-- [ ] **T1 (P1, humain : ~2h / CC : ~10min)** : données des notes. Vérifier sur source l'historique de `data/notations.json` et sourcer chaque point non-résidents.
+- [x] **T1 (P1, humain : ~2h / CC : ~10min)** : données des notes. Vérifier sur source l'historique de `data/notations.json` et sourcer chaque point non-résidents. _(fait le 2026-10-21 : 12 changements de note et les 3 dernières décisions sourcés ; Moody's corrigé (dernière revue le 10/04/2026) ; 4 points non-résidents (mars 2022 à mars 2025) restent `a_verifier`)_
   - Constat : 0B, P6 et P7.
   - Fichiers : `data/notations.json`, `data/non_residents_aft.json`.
   - Vérification : chaque date a une URL de source.
-- [ ] **T2 (P1, humain : ~1j / CC : ~30min)** : `score.mjs`. Module ES pur avec `etatDuJour()`, ancrages, `niveauBrut()`, `phraseVerdict()` (formulations D30), péremption en mois UTC (spread 2, TARGET2 3, couverture 3), spread et TARGET2 calculés depuis les valeurs brutes avec une seule règle d'arrondi, écart sur un an cherché par date (même mois un an plus tôt) et non par position, et `METHODE_VERSION`.
+- [x] **T2 (P1, humain : ~1j / CC : ~30min)** : `score.mjs`. Module ES pur avec `etatDuJour()`, ancrages, `niveauBrut()`, `phraseVerdict()` (formulations D30), péremption en mois UTC (spread 2, TARGET2 3, couverture 3), spread et TARGET2 calculés depuis les valeurs brutes avec une seule règle d'arrondi, écart sur un an cherché par date (même mois un an plus tôt) et non par position, et `METHODE_VERSION`. _(fait le 2026-10-21)_
   - Constat : méthode, section 5, O8, D27, D30, avis extérieur n°9, n°10 et n°15 (D6).
   - Fichier : `score.mjs` (pas de `package.json`, D1).
   - Vérification : `node --test`.
-- [ ] **T3 (P1, humain : ~1j / CC : ~20min)** : tests. Écrire `score.test.mjs` (bornes, triplets (I, T, V), `fusionnerSeries`, copie figée ENG-R1, écart sur un an avec un mois manquant, même niveau pour le fichier et la lecture en direct) et `test/workflow.test.mjs` (SHA de 40 caractères). Les tests des 5 lignes de 48 caractères et de `METHODE_VERSION` arrivent en V2 (T10, T12).
+- [x] **T3 (P1, humain : ~1j / CC : ~20min)** : tests. Écrire `score.test.mjs` (bornes, triplets (I, T, V), `fusionnerSeries`, copie figée ENG-R1, écart sur un an avec un mois manquant, même niveau pour le fichier et la lecture en direct) et `test/workflow.test.mjs` (SHA de 40 caractères). Les tests des 5 lignes de 48 caractères et de `METHODE_VERSION` arrivent en V2 (T10, T12). _(fait le 2026-10-21 : 19 tests `node --test` verts)_
   - Constat : section 6, O10, ENG-R1, avis extérieur n°5 et n°16 (D5, D6).
   - Fichiers : `score.test.mjs`, `test/workflow.test.mjs`, `test/fixtures/2026-10-20/`.
   - Vérification : `node --test` vert.
-- [ ] **T4 (P1, humain : ~1j / CC : ~20min)** : collecte. Ajouter le CISS (60 jours en quotidien, et maximum mensuel), isoler chaque série, alimenter `echecs`, contrôle de forme avec une limite d'âge par série (D3), règle du premier passage pour un fichier neuf (D6), alerte « couverture à saisir » à 2 mois (D10).
+- [x] **T4 (P1, humain : ~1j / CC : ~20min)** : collecte. Ajouter le CISS (60 jours en quotidien, et maximum mensuel), isoler chaque série, alimenter `echecs`, contrôle de forme avec une limite d'âge par série (D3), règle du premier passage pour un fichier neuf (D6), alerte « couverture à saisir » à 2 mois (D10). _(fait le 2026-10-21 : 15 tests `unittest` verts, collecte réelle sans échec, `data/ciss.json` créé (1999-01 à 2026-10))_
   - Constat : CEO-R1, CEO-L1, O13, avis extérieur n°1, n°14 et n°17.
   - Fichiers : `scripts/update_data.py`, `scripts/test_update_data.py`, `data/ciss.json`.
   - Vérification : `python3 -m unittest`, dont un test sur les vrais fichiers de `data/` au 20/10/2026 qui attend zéro échec.
@@ -733,7 +733,7 @@ Tâches tirées des constats de la revue. À exécuter avec Claude Code ; cocher
   - Constat : section 11, D9.
   - Fichiers : `index.html`, `app.js`.
   - Vérification : chaque score du jour se recalcule à la main depuis cette section.
-- [ ] **T6 (P1, humain : ~2h / CC : ~10min)** : verrouillage et tests en continu. Ajouter le SRI sur d3, désigner les actions par SHA, ajouter `concurrency`, `git pull --rebase` avant le push, commiter `meta.json` dès que `echecs` diffère de la version commitée, et créer `.github/workflows/tests.yml` (`push` et `pull_request`, `actions/setup-node` en `node-version: 22`, `node --test`, `python3 -m unittest`), séparé de la collecte.
+- [ ] **T6 (P1, humain : ~2h / CC : ~10min)** : verrouillage et tests en continu. Ajouter le SRI sur d3, désigner les actions par SHA, ajouter `concurrency`, `git pull --rebase` avant le push, commiter `meta.json` dès que `echecs` diffère de la version commitée, et créer `.github/workflows/tests.yml` (`push` et `pull_request`, `actions/setup-node` en `node-version: 22`, `node --test`, `python3 -m unittest`), séparé de la collecte. _(en cours : SRI, SHA, `concurrency`, `tests.yml` et commit de `meta.json` faits le 2026-10-21 ; reste la vérification sur GitHub)_
   - Constat : CEO-S1, CEO-R1, O5, O11, avis extérieur n°2, n°3 et n°7 (D4, D6).
   - Fichiers : `index.html`, `.github/workflows/update-data.yml`, `.github/workflows/tests.yml`.
   - Vérification : test des SHA, un push qui déclenche `tests.yml` en vert, puis lancement manuel de `update-data.yml` en vert ; `curl -sI …/score.mjs` donne un type JavaScript.

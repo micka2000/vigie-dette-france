@@ -8,23 +8,37 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: "3.12"
-      - run: python scripts/update_data.py
-      - name: Commit si les séries ont changé
+      # Les tests tournent dans tests.yml, à chaque push : un test cassé ne bloque jamais la collecte.
+      - name: Collecte (chaque série à part)
+        run: python scripts/update_data.py || echo "ECHECS=1" >> "$GITHUB_ENV"
+      - name: Commit si les séries ou les échecs ont changé
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git show HEAD:data/meta.json > "$RUNNER_TEMP/meta.json" 2>/dev/null || : > "$RUNNER_TEMP/meta.json"
           git add data
-          if git diff --cached --quiet -- data/spread.json data/target.json data/non_residents_eurostat.json data/dette_pib.json; then
+          if ! python scripts/update_data.py --echecs-changes "$RUNNER_TEMP/meta.json" \
+             && git diff --cached --quiet -- data ':(exclude)data/meta.json'; then
             echo "Aucune nouvelle donnée."
           else
             git commit -m "Données du $(date -u +%F)"
+            git pull --rebase
             git push
           fi
+      - name: Signaler les séries en échec
+        if: env.ECHECS == '1'
+        run: |
+          python -c "import json; [print('::error::' + e['serie'] + ' : ' + e['erreur']) for e in json.load(open('data/meta.json'))['echecs']]"
+          exit 1

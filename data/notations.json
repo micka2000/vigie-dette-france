@@ -2,12 +2,111 @@
  "description": "Notes de long terme de la République française. Échelle chiffrée : AAA = 20, AA+ = 19, AA = 18, AA- = 17, A+ = 16, A = 15, A- = 14, BBB+ = 13 … BBB- = 11 (dernier cran de la catégorie investissement).",
  "source": "https://www.aft.gouv.fr/fr/notation-de-la-france",
  "agences": [
-  {"agence": "S&P", "note": "A+", "perspective": "stable", "derniere": "2026-05-29", "prochaine": "2026-11-27",
-   "historique": [{"date": "2000-01-01", "note": "AAA"}, {"date": "2012-01-13", "note": "AA+"}, {"date": "2013-11-08", "note": "AA"}, {"date": "2024-05-31", "note": "AA-"}, {"date": "2025-10-17", "note": "A+"}]},
-  {"agence": "Moody's", "note": "Aa3", "perspective": "négative", "derniere": "2025-10-24", "prochaine": "2026-10-23",
-   "historique": [{"date": "2000-01-01", "note": "Aaa"}, {"date": "2012-11-19", "note": "Aa1"}, {"date": "2015-09-18", "note": "Aa2"}, {"date": "2024-12-14", "note": "Aa3"}]},
-  {"agence": "Fitch", "note": "A+", "perspective": "stable", "derniere": "2026-08-28", "prochaine": null,
+  {
+   "agence": "S&P",
+   "note": "A+",
+   "perspective": "stable",
+   "derniere": "2026-05-29",
+   "prochaine": "2026-11-27",
+   "historique": [
+    {
+     "date": "2000-01-01",
+     "note": "AAA",
+     "source": null,
+     "amorce": "AAA avant le début du graphique ; date d'attribution non sourcée"
+    },
+    {
+     "date": "2012-01-13",
+     "note": "AA+",
+     "source": "https://www.webmanagercenter.com/2013/01/11/129772/retour-sur-un-an-apres-la-perte-du-triple-a-la-france-gatee-par-les-marches/"
+    },
+    {
+     "date": "2013-11-08",
+     "note": "AA",
+     "source": "https://www.lafinancepourtous.com/2013/11/08/sp-degrade-la-note-de-la-france/"
+    },
+    {
+     "date": "2024-05-31",
+     "note": "AA-",
+     "source": "https://www.universalis.fr/evenement/31-mai-2024-baisse-de-la-note-financiere-de-la-par-standard-poor-s/"
+    },
+    {
+     "date": "2025-10-17",
+     "note": "A+",
+     "source": "https://www.lafinancepourtous.com/2025/10/20/agences-de-notation-sp-degrade-la-note-de-la-france-et-rejoint-fitch/"
+    }
+   ],
+   "source_derniere": "https://echosplus.com/2026/05/30/dette-francaise-sp-maintient-la-note-de-la-france-a-a-avec-perspective-stable/"
+  },
+  {
+   "agence": "Moody's",
+   "note": "Aa3",
+   "perspective": "négative",
+   "derniere": "2026-04-10",
+   "prochaine": "2026-10-23",
+   "historique": [
+    {
+     "date": "2000-01-01",
+     "note": "Aaa",
+     "source": null,
+     "amorce": "AAA avant le début du graphique ; date d'attribution non sourcée"
+    },
+    {
+     "date": "2012-11-19",
+     "note": "Aa1",
+     "source": "https://www.webmanagercenter.com/2013/01/11/129772/retour-sur-un-an-apres-la-perte-du-triple-a-la-france-gatee-par-les-marches/"
+    },
+    {
+     "date": "2015-09-18",
+     "note": "Aa2",
+     "source": "https://www.leconomistemaghrebin.com/2015/09/19/moodys-la-note-de-la-france-abaissee-dun-cran/"
+    },
+    {
+     "date": "2024-12-14",
+     "note": "Aa3",
+     "source": "https://www.leconomistemaghrebin.com/2024/12/14/moodys-abaisse-la-note-de-la-france-a-aa3-un-signal-alarmant-pour-les-finances-publiques/"
+    }
+   ],
+   "source_derniere": "https://www.franceinfo.fr/economie/budget/l-agence-moody-s-maintient-la-note-souveraine-de-la-france-a-aa3-avec-une-perspective-negative_7929542.html"
+  },
+  {
+   "agence": "Fitch",
+   "note": "A+",
+   "perspective": "stable",
+   "derniere": "2026-08-28",
+   "prochaine": null,
    "alerte": "Avertissement publié le 12 octobre 2026 : dégradation possible si la dette continue de croître.",
-   "historique": [{"date": "2000-01-01", "note": "AAA"}, {"date": "2013-07-12", "note": "AA+"}, {"date": "2014-12-12", "note": "AA"}, {"date": "2023-04-28", "note": "AA-"}, {"date": "2025-09-12", "note": "A+"}]}
- ]
+   "historique": [
+    {
+     "date": "2000-01-01",
+     "note": "AAA",
+     "source": null,
+     "amorce": "AAA avant le début du graphique ; date d'attribution non sourcée"
+    },
+    {
+     "date": "2013-07-12",
+     "note": "AA+",
+     "source": "https://www.financialafrik.com/2013/07/13/la-france-perd-son-triple-a-aupres-de-fitch"
+    },
+    {
+     "date": "2014-12-12",
+     "note": "AA",
+     "source": "https://fortune.com/2014/12/12/fitch-downgrades-france/"
+    },
+    {
+     "date": "2023-04-28",
+     "note": "AA-",
+     "source": "https://www.lalibre.be/economie/conjoncture/2023/04/29/avertissement-fitch-abaisse-la-note-de-la-france-a-aa--PLZPR4OTJZA63DXHVZ6HJVUP2M/"
+    },
+    {
+     "date": "2025-09-12",
+     "note": "A+",
+     "source": "https://www.lafinancepourtous.com/2025/09/17/agences-de-notation-la-degradation-de-la-note-de-la-france-par-fitch-a-t-elle-un-impact/"
+    }
+   ],
+   "source_derniere": "https://www.boursorama.com/actualite-economique/actualites/fitch-maintient-la-note-de-la-france-a-a-perspective-stable-4a15ac85bff35c77292c8f6d592e348d",
+   "source_alerte": "https://lenergeek.com/2026/10/13/dette-france-fitch-energie-transition/"
+  }
+ ],
+ "verification": "Dates et notes vérifiées sur des articles de presse le 20/10/2026 (le site de l'AFT bloque les robots)."
 }

@@ -1,9 +1,50 @@
 {
  "description": "Part de la dette négociable de l'État détenue par des non-résidents (AFT, d'après la Banque de France). Points repris des bulletins mensuels de l'AFT via des articles de presse : la série officielle complète est dans les bulletins (aft.gouv.fr).",
  "points": [
-  {"date": "2022-03", "part": 48.5}, {"date": "2022-12", "part": 49.8},
-  {"date": "2023-03", "part": 51.4}, {"date": "2023-12", "part": 53.6},
-  {"date": "2024-03", "part": 54.0}, {"date": "2025-03", "part": 54.7},
-  {"date": "2025-12", "part": 56.1}, {"date": "2026-03", "part": 57.5}
- ]
+  {
+   "date": "2022-03",
+   "part": 48.5,
+   "source": null,
+   "a_verifier": true
+  },
+  {
+   "date": "2022-12",
+   "part": 49.8,
+   "source": "https://lanote.net/articles/detention-dette-francaise"
+  },
+  {
+   "date": "2023-03",
+   "part": 51.4,
+   "source": null,
+   "a_verifier": true
+  },
+  {
+   "date": "2023-12",
+   "part": 53.6,
+   "source": "https://lanote.net/articles/detention-dette-francaise"
+  },
+  {
+   "date": "2024-03",
+   "part": 54.0,
+   "source": null,
+   "a_verifier": true
+  },
+  {
+   "date": "2025-03",
+   "part": 54.7,
+   "source": null,
+   "a_verifier": true
+  },
+  {
+   "date": "2025-12",
+   "part": 56.1,
+   "source": "https://lanote.net/articles/detention-dette-francaise"
+  },
+  {
+   "date": "2026-03",
+   "part": 57.5,
+   "source": "https://lanote.net/articles/detention-dette-francaise"
+  }
+ ],
+ "verification": "Fin mars 2026 : AFT, Bulletin mensuel n° 434 (juillet 2026), cité par La Note. Fins 2022, 2023 et 2025 : La Note, sans source primaire nommée. Les quatre points de mars 2022 à 2025 restent à vérifier dans les bulletins AFT."
 }

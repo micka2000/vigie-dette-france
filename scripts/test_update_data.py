@@ -1,0 +1,130 @@
+"""Tests de la collecte : python3 -m unittest scripts/test_update_data.py"""
+
+import json
+import shutil
+import sys
+import tempfile
+import unittest
+import urllib.error
+from datetime import date, datetime, timezone
+from pathlib import Path
+from unittest import mock
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import update_data as u  # noqa: E402
+
+DATA = Path(__file__).resolve().parent.parent / "data"
+LE_20_OCTOBRE = date(2026, 10, 20)
+
+
+def mensuel(debut_annee, fin_mois, champ="solde_mds"):
+    a, m = map(int, fin_mois.split("-"))
+    mois = [f"{y}-{k:02d}" for y in range(debut_annee, a + 1) for k in range(1, 13) if (y, k) <= (a, m)]
+    return [{"mois": x, champ: -100.0} for x in mois]
+
+
+class ControleForme(unittest.TestCase):
+    def test_vrais_fichiers_du_20_octobre_sans_echec(self):
+        for nom in ["spread.json", "target.json", "dette_pib.json", "non_residents_eurostat.json"]:
+            payload = json.loads((DATA / nom).read_text(encoding="utf-8"))
+            self.assertIsNone(u.controle_forme(nom, payload, payload, LE_20_OCTOBRE), nom)
+
+    def test_target_80_jours_accepte_mais_pas_au_dela_de_100(self):
+        serie = mensuel(2008, "2026-08")
+        self.assertIsNone(u.controle_forme("target.json", serie, serie, LE_20_OCTOBRE))
+        self.assertIn("vieille", u.controle_forme("target.json", serie, serie, date(2026, 12, 15)))
+
+    def test_serie_vide(self):
+        self.assertEqual(u.controle_forme("spread.json", [], mensuel(1999, "2026-09"), LE_20_OCTOBRE), "série vide")
+        self.assertEqual(u.controle_forme("ciss.json", {"mensuel": [], "quotidien": []}, None, LE_20_OCTOBRE), "série vide")
+
+    def test_serie_raccourcie(self):
+        hier = mensuel(2008, "2026-08")
+        self.assertIn("lignes contre", u.controle_forme("target.json", hier[:-5], hier, LE_20_OCTOBRE))
+        self.assertIsNone(u.controle_forme("target.json", hier[1:], hier, LE_20_OCTOBRE))  # une ligne de moins : toléré
+
+    def test_premier_passage_d_un_fichier_neuf(self):
+        ciss = {"mensuel": [{"mois": f"2026-{k:02d}", "max": 0.1} for k in range(1, 11)],
+                "quotidien": [{"jour": "2026-10-19", "valeur": 0.04}]}
+        self.assertIn("premier passage", u.controle_forme("ciss.json", ciss, None, LE_20_OCTOBRE))
+        ciss["mensuel"] = [{"mois": f"{y}-{k:02d}", "max": 0.1} for y in (2025, 2026) for k in range(1, 11)]
+        self.assertIsNone(u.controle_forme("ciss.json", ciss, None, LE_20_OCTOBRE))
+
+    def test_ciss_trop_ancien(self):
+        ciss = {"mensuel": [{"mois": "2026-09", "max": 0.1}] * 20, "quotidien": [{"jour": "2026-10-05", "valeur": 0.04}]}
+        self.assertIn("15 jours", u.controle_forme("ciss.json", ciss, ciss, LE_20_OCTOBRE))
+
+    def test_fin_de_periode(self):
+        self.assertEqual(u.fin_de_periode([{"trimestre": "2026-Q1"}]), date(2026, 3, 31))
+        self.assertEqual(u.fin_de_periode([{"annee": 2025}]), date(2025, 12, 31))
+        self.assertEqual(u.fin_de_periode([{"mois": "2026-02"}]), date(2026, 2, 28))
+
+
+class Couverture(unittest.TestCase):
+    def adj(self, jour):
+        return {"lignes": [{"date": jour, "adjuge_mds": 6.0, "demande_mds": 12.0}, {"date": "2026-10-15", "taux": 3.5}]}
+
+    def test_couverture_recente(self):
+        self.assertIsNone(u.alerte_couverture(self.adj("2026-08-06"), LE_20_OCTOBRE))
+
+    def test_couverture_a_saisir_a_plus_de_2_mois(self):
+        self.assertIn("couverture à saisir", u.alerte_couverture(self.adj("2026-07-02"), LE_20_OCTOBRE))
+
+
+class Collecte(unittest.TestCase):
+    def setUp(self):
+        self.dossier = Path(tempfile.mkdtemp())
+        for f in DATA.glob("*.json"):
+            shutil.copy(f, self.dossier)
+        self.addCleanup(shutil.rmtree, self.dossier)
+
+    def series(self, **remplace):
+        ok = {nom: (lambda nom=nom: json.loads((DATA / nom).read_text(encoding="utf-8"))) for nom in u.SERIES if (DATA / nom).exists()}
+        ok["ciss.json"] = lambda: {"mensuel": [{"mois": "2026-09", "max": 0.1}] * 20, "quotidien": [{"jour": "2026-10-19", "valeur": 0.044}]}
+        ok.update(remplace)
+        return ok
+
+    def test_une_serie_en_panne_les_autres_sont_ecrites(self):
+        def panne():
+            raise urllib.error.URLError("BCE injoignable")
+        (self.dossier / "ciss.json").unlink(missing_ok=True)
+        with mock.patch.dict(u.SERIES, self.series(**{"spread.json": panne}), clear=True):
+            echecs = u.main(self.dossier, datetime(2026, 10, 20, 6, 30, tzinfo=timezone.utc))
+        self.assertEqual([e["serie"] for e in echecs], ["spread.json"])
+        self.assertIn("URLError", echecs[0]["erreur"])
+        self.assertTrue((self.dossier / "ciss.json").exists())
+        meta = json.loads((self.dossier / "meta.json").read_text(encoding="utf-8"))
+        self.assertEqual(meta["echecs"], echecs)
+
+    def test_cle_manquante_dans_la_reponse(self):
+        def forme_changee():
+            raise KeyError("OBS_VALUE")
+        with mock.patch.dict(u.SERIES, self.series(**{"target.json": forme_changee}), clear=True):
+            echecs = u.main(self.dossier, datetime(2026, 10, 20, 6, 30, tzinfo=timezone.utc))
+        self.assertEqual([e["serie"] for e in echecs], ["target.json"])
+        self.assertEqual(json.loads((self.dossier / "target.json").read_text(encoding="utf-8")),
+                         json.loads((DATA / "target.json").read_text(encoding="utf-8")))
+
+    def test_aucun_echec_avec_les_series_du_jour(self):
+        with mock.patch.dict(u.SERIES, self.series(), clear=True):
+            self.assertEqual(u.main(self.dossier, datetime(2026, 10, 20, 6, 30, tzinfo=timezone.utc)), [])
+
+
+class CommitDeMeta(unittest.TestCase):
+    def test_panne_resolue_fait_commiter_meta(self):
+        avant = {"mis_a_jour": "x", "echecs": [{"serie": "ciss.json", "date": "2026-10-19", "erreur": "série vide"}]}
+        apres = {"mis_a_jour": "y", "echecs": []}
+        self.assertTrue(u.echecs_changes(avant, apres))
+
+    def test_meme_panne_le_lendemain_ne_commite_pas_pour_la_date(self):
+        a = {"echecs": [{"serie": "ciss.json", "date": "2026-10-19", "erreur": "série vide"}]}
+        b = {"echecs": [{"serie": "ciss.json", "date": "2026-10-20", "erreur": "série vide"}]}
+        self.assertFalse(u.echecs_changes(a, b))
+
+    def test_ancien_meta_sans_echecs(self):
+        self.assertFalse(u.echecs_changes({"mis_a_jour": "x"}, {"echecs": []}))
+        self.assertFalse(u.echecs_changes(None, {"echecs": []}))
+
+
+if __name__ == "__main__":
+    unittest.main()
