@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vigie Dette France</title>
 <meta name="description" content="Les cinq signaux de santé de la dette publique française, mis à jour chaque jour, avec leurs seuils de risque historiques.">
-<link rel="stylesheet" href="styles.css?v=a862d17b">
+<link rel="stylesheet" href="styles.css?v=4f20392b">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
@@ -40,14 +40,6 @@
 
   <section class="summary signals-summary" id="summary" aria-label="Synthèse des cinq signaux"></section>
 
-  <div class="toolbar">
-    <span class="toolbar-label" id="range-label">Période</span>
-    <div class="seg" role="group" aria-labelledby="range-label" id="range">
-      <button type="button" data-years="2">2 ans</button>
-      <button type="button" data-years="5">5 ans</button>
-      <button type="button" data-years="15" aria-pressed="true">15 ans</button>
-      <button type="button" data-years="0">Tout</button>
-    </div>
   </div>
 
   <div class="signals">
@@ -67,6 +59,7 @@
         </div>
       </details>
       <p class="sr-only" id="courbe-resume"></p>
+      <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-indice">Période</span><div class="seg" role="group" aria-labelledby="periode-indice" data-periode="indice"></div></div></div>
       <div class="chart" id="chart-indice"></div>
       <div class="legend-row"><ul class="legend" id="legend-indice"></ul><button type="button" class="info" id="courbe-sans" data-tip="" aria-label="Périodes calculées avec moins de signaux" hidden>i</button></div>
       <button type="button" class="btn-table" id="courbe-table-btn" aria-expanded="false" aria-controls="courbe-table-wrap">Voir les valeurs mois par mois</button>
@@ -100,6 +93,7 @@
           <button type="button" data-step="semaine">Semaine</button>
           <button type="button" data-step="mois">Mois</button>
         </div>
+        <div class="periode" hidden><span class="toolbar-label" id="periode-spread">Période</span><div class="seg" role="group" aria-labelledby="periode-spread" data-periode="spread"></div></div>
       </div>
       <div class="chart" id="chart-spread"></div>
       <p class="seuils-titre">Seuils de risque</p>
@@ -144,6 +138,7 @@
           <p><b>Sources.</b> <a href="https://webstat.banque-france.fr/fr/catalogue/det2/DET2.Q.N.FR.W1.S13111.S1.N.L.LE.F3.T._Z.PT._T.M.V.N._T" target="_blank" rel="noopener">Banque de France, titres de l'État détenus par des non-résidents</a> (fin de trimestre, depuis 2008) ; <a href="https://ec.europa.eu/eurostat/databrowser/view/gov_10dd_ggd/default/table" target="_blank" rel="noopener">Eurostat, gov_10dd_ggd</a> (dette publique au sens de Maastricht, annuel).</p>
         </div>
       </details>
+      <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-nonres">Période</span><div class="seg" role="group" aria-labelledby="periode-nonres" data-periode="nonres"></div></div></div>
       <div class="chart" id="chart-nonres"></div>
       <div class="legend-row"><ul class="legend" id="legend-nonres"></ul></div>
       <p class="seuils-titre">Seuils de risque</p>
@@ -165,6 +160,7 @@
           <p><b>Sources.</b> Notes et calendrier publiés par l’<a href="https://www.aft.gouv.fr/fr/notation-de-la-france" target="_blank" rel="noopener">Agence France Trésor</a> ; changements lus chaque matin sur <a href="https://en.wikipedia.org/wiki/List_of_countries_by_credit_rating" target="_blank" rel="noopener">Wikipédia</a> et <a href="https://countryeconomy.com/ratings/france" target="_blank" rel="noopener">countryeconomy.com</a>, recoupés.</p>
         </div>
       </details>
+      <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-notes">Période</span><div class="seg" role="group" aria-labelledby="periode-notes" data-periode="notes"></div></div></div>
       <div class="chart" id="chart-ratings"></div>
       <ul class="legend" id="legend-ratings"></ul>
       <div class="table-scroll">
@@ -193,6 +189,7 @@
           <p><b>Sources.</b> <a href="https://data.ecb.europa.eu/data/datasets/TGB/TGB.M.FR.N.A094T.U2.EUR.E" target="_blank" rel="noopener">BCE, soldes TARGET de la Banque de France</a> (fin de mois, série TGB.M.FR).</p>
         </div>
       </details>
+      <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-target">Période</span><div class="seg" role="group" aria-labelledby="periode-target" data-periode="target"></div></div></div>
       <div class="chart" id="chart-target"></div>
       <p class="seuils-titre">Seuils de risque</p>
       <ul class="thresholds" data-thresholds="target"></ul>
@@ -218,6 +215,6 @@
     if (v) v.textContent = 'La page n’a pas pu se charger. Recharge-la dans un instant.';
   }, 10000);
 </script>
-<script type="module" src="app.js?v=745a6f57"></script>
+<script type="module" src="app.js?v=7c58b869"></script>
 </body>
 </html>

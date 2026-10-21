@@ -207,7 +207,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 .seg button[aria-pressed="true"] { background: var(--bg-surface); color: var(--fg-1); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); }
 
 /* Cartes des signaux */
-.signals { display: grid; gap: var(--space-6); padding-bottom: var(--space-16); }
+.signals { display: grid; gap: var(--space-6); padding-block: var(--space-6) var(--space-16); }
 .signal {
   background: var(--bg-surface); border-radius: var(--radius-md); box-shadow: var(--shadow-md);
   padding: var(--space-6); display: grid; gap: var(--space-4); min-width: 0;
@@ -344,3 +344,5 @@ footer p { margin: 0; max-width: 80ch; }
 .gauge .desc { margin-top: var(--space-1); font-size: var(--text-xs); }
 .gauge .desc summary { font-size: var(--text-xs); }
 .tile-score { display: flex; align-items: center; }
+.periode { display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.periode[hidden] { display: none; }

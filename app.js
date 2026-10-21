@@ -50,7 +50,7 @@ const parseQuarter = (s) => new Date(Date.UTC(+s.slice(0, 4), (+s.slice(-1) - 1)
 const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 const levelOf = (key, v) => niveauBrut(CLE_SCORE[key], v);
 
-const state = { years: 15, spreadStep: 'jour', data: null, masquees: {} };
+const state = { periodes: { indice: 15, spread: 15, nonres: 15, notes: 15, target: 15 }, spreadStep: 'jour', data: null, masquees: {} };
 
 // ---------- Données ----------
 
@@ -327,9 +327,26 @@ function legend(id, series, chart = null) {
 
 function text(sel, value) { const el = document.querySelector(sel); if (el) el.textContent = value; }
 
-function since() {
-  if (!state.years) return null;
-  const d = new Date(); d.setUTCFullYear(d.getUTCFullYear() - state.years); return d;
+// Période propre à chaque graphique. Un choix n'est proposé que si l'historique est plus long ; « Tout » toujours.
+const PERIODES = [[2, '2 ans'], [5, '5 ans'], [15, '15 ans'], [0, 'Tout']];
+
+function periodes(chart, debut) {
+  const box = document.querySelector(`[data-periode="${chart}"]`);
+  const ans = (Date.now() - debut) / (365.25 * 86400000);
+  const offertes = PERIODES.filter(([y]) => y === 0 || y < ans);
+  if (!offertes.some(([y]) => y === state.periodes[chart])) state.periodes[chart] = 0;
+  box.parentElement.hidden = offertes.length < 2;
+  box.replaceChildren(...offertes.map(([y, libelle]) => {
+    const b = el('button', null, libelle);
+    b.type = 'button'; b.dataset.years = y; b.setAttribute('aria-pressed', String(y === state.periodes[chart]));
+    return b;
+  }));
+}
+
+function since(chart) {
+  const y = state.periodes[chart];
+  if (!y) return null;
+  const d = new Date(); d.setUTCFullYear(d.getUTCFullYear() - y); return d;
 }
 
 // Dernière séance de chaque semaine (lundi à dimanche) ou de chaque mois : une vraie clôture, jamais une moyenne.
@@ -426,25 +443,31 @@ function renderSummary(signals) {
 }
 
 function renderCharts(data) {
-  const from = since();
-  const clip = (pts) => (from ? pts.filter((p) => p.d >= from) : pts);
-  const xDom = (pts) => [from && pts[0] && from > pts[0].d ? from : pts[0]?.d, new Date()];
+  periodes('spread', parseDay(data.spread[0].jour));
+  periodes('target', parseMonth(data.target[0].mois));
+  periodes('nonres', d3.min([parseMonth(data.nrAft.points[0].date), new Date(Date.UTC(data.nrEs[0].annee, 11, 31))]));
+  periodes('notes', d3.min(data.ratings.agences, (a) => parseDay(a.historique[0].date)));
+  const clipDe = (chart) => { const from = since(chart); return (pts) => (from ? pts.filter((p) => p.d >= from) : pts); };
+  const xDom = (chart, pts) => { const from = since(chart); return [from && pts[0] && from > pts[0].d ? from : pts[0]?.d, new Date()]; };
 
+  let clip = clipDe('spread');
   const spread = clip(lastOfPeriod(data.spread, state.spreadStep).map((r) => ({ d: parseDay(r.jour), v: r.spread_pb, r })));
   const spMax = Math.max(130, d3.max(spread, (p) => p.v) + 10);
   lineChart(document.getElementById('chart-spread'), [{ name: 'Spread', color: css('--series-1'), points: spread }], {
     bands: THRESHOLDS.spread.bands, yDomain: [Math.min(0, d3.min(spread, (p) => p.v)), spMax],
     yFormat: (v) => `${f0(v)}`, tipFormat: (v, p) => `${f0(v)} pb (OAT ${f2(p.r.fr10)} %, Bund ${f2(p.r.de10)} %)`,
-    dateFormat: fmtWeekday, xDomain: xDom(spread), label: 'Spread OAT-Bund à 10 ans en points de base, à la clôture',
+    dateFormat: fmtWeekday, xDomain: xDom('spread', spread), label: 'Spread OAT-Bund à 10 ans en points de base, à la clôture',
   });
 
+  clip = clipDe('target');
   const target = clip(data.target.map((r) => ({ d: parseMonth(r.mois), v: r.solde_mds })));
   lineChart(document.getElementById('chart-target'), [{ name: 'Solde', color: css('--series-1'), points: target }], {
     bands: THRESHOLDS.target.bands, yDomain: [Math.min(-260, d3.min(target, (p) => p.v) - 10), Math.max(20, d3.max(target, (p) => p.v) + 10)],
-    yFormat: (v) => `${f0(v)}`, tipFormat: (v) => `${f1(v)} Md€`, xDomain: xDom(target),
+    yFormat: (v) => `${f0(v)}`, tipFormat: (v) => `${f1(v)} Md€`, xDomain: xDom('target', target),
     label: 'Solde TARGET2 de la Banque de France en milliards d’euros',
   });
 
+  clip = clipDe('nonres');
   const aft = data.nrAft.points.map((p) => ({ d: parseMonth(p.date), v: p.part }));
   const es = data.nrEs.map((r) => ({ d: new Date(Date.UTC(r.annee, 11, 31)), v: r.part_nonres }));
   const nrSeries = [
@@ -459,7 +482,7 @@ function renderCharts(data) {
   });
   legend('legend-nonres', nrSeries, 'nonres');
 
-  const start = from ?? new Date(Date.UTC(2000, 0, 1));
+  const start = since('notes') ?? d3.min(data.ratings.agences, (a) => parseDay(a.historique[0].date));
   const ratingSeries = data.ratings.agences.map((a, i) => {
     const pts = a.historique.map((h) => ({ d: parseDay(h.date), v: notch(h.note), note: h.note }));
     const before = pts.filter((p) => p.d <= start).at(-1);
@@ -530,7 +553,8 @@ function troncons(points) {
 }
 
 function renderCourbe(c) {
-  const from = since();
+  periodes('indice', parseMonth(c.tension[0].mois));
+  const from = since('indice');
   const moisDebut = from ? from.toISOString().slice(0, 7) : '';
   const garde = (pts) => pts.filter((p) => p.mois >= moisDebut);
   const indice = garde(c.indice), tension = garde(c.tension), ciss = garde(c.ciss);
@@ -831,10 +855,9 @@ addEventListener('scroll', cacherBulle, { passive: true });
 
 // ---------- Démarrage ----------
 
-document.getElementById('range').addEventListener('click', (e) => {
-  const btn = e.target.closest('button[data-years]'); if (!btn) return;
-  state.years = +btn.dataset.years;
-  for (const b of e.currentTarget.querySelectorAll('button')) b.setAttribute('aria-pressed', String(b === btn));
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-periode] button[data-years]'); if (!btn) return;
+  state.periodes[btn.parentElement.dataset.periode] = +btn.dataset.years;
   render();
 });
 
