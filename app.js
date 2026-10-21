@@ -3,7 +3,7 @@
 import {
   SEUILS, ANCRAGES, METHODE_VERSION, niveauBrut, niveauScore, interpoler, notch, notchLabel, fusionnerSeries, etatDuJour,
   serieQuotidienne, plusHautDepuis, picDuMois, picsMensuels,
-} from './score.mjs?v=513ad217';
+} from './score.mjs?v=7a4ff747';
 
 window.vigieDemarre = true; // lu par le script de secours d'index.html
 
@@ -386,13 +386,14 @@ function renderSummary(signals) {
     const name = document.createElement('span'); name.className = 'tile-name'; name.textContent = s.name;
     const value = document.createElement('span'); value.className = 'tile-value'; value.textContent = s.value;
     const pill = document.createElement('span'); pill.className = 'pill'; pill.dataset.level = s.level; pill.textContent = LEVEL_LABEL[s.level];
-    const sub = document.createElement('span'); sub.className = 'tile-sub'; sub.textContent = s.sub;
-    a.append(name, value, pill, sub); return a;
+    a.dataset.tip = s.sub; // le détail (date, variation) en infobulle : le chiffre se lit sans lui
+    a.append(name, value, pill); return a;
   }));
   for (const key of order) {
     setLevel(key, signals[key].level);
     text(`[data-now="${key}"]`, signals[key].nowText ?? signals[key].value);
-    text(`[data-delta="${key}"]`, signals[key].delta);
+    const d = document.querySelector(`[data-delta="${key}"]`);
+    if (d) d.dataset.tip = signals[key].delta;
   }
 }
 
@@ -534,7 +535,9 @@ function renderCourbe(c) {
     text('#courbe-resume', `Sur la période affichée : ce mois-ci ${f0(indice.at(-1).valeur)}, plus haut ${f0(haut.valeur)} (${fmtMonthLong(parseMonth(haut.mois))}), plus bas ${f0(bas.valeur)} (${fmtMonthLong(parseMonth(bas.mois))}).`);
   }
   const t = troncons(indice);
-  text('#courbe-sans', t.length ? `Indice Vigie calculé avec moins de signaux : ${t.map((x) => `${x.debut === x.fin ? `en ${fmtMonthLong(parseMonth(x.debut))}` : `${de(fmtMonthLong(parseMonth(x.debut)))} à ${fmtMonthLong(parseMonth(x.fin))}`}, sans ${liste(x.sans.map((n) => NOMS_LONGS[n]))}`).join(' ; ')}.` : '');
+  const sans = document.getElementById('courbe-sans');
+  sans.hidden = !t.length;
+  sans.dataset.tip = t.length ? `Indice Vigie calculé avec moins de signaux : ${t.map((x) => `${x.debut === x.fin ? `en ${fmtMonthLong(parseMonth(x.debut))}` : `${de(fmtMonthLong(parseMonth(x.debut)))} à ${fmtMonthLong(parseMonth(x.fin))}`}, sans ${liste(x.sans.map((n) => NOMS_LONGS[n]))}`).join(' ; ')}.` : '';
 
   // Tableau accessible, du plus récent au plus ancien
   const parMois = new Map();
@@ -589,10 +592,18 @@ function el(tag, cls, txt) {
 
 function pillOf(level) { const p = el('span', 'pill', LEVEL_LABEL[level]); p.dataset.level = level; return p; }
 
-function gauge({ name, score, level, lines }) {
+function infoBtn(tip, label = 'En savoir plus') {
+  const b = el('button', 'info', 'i');
+  b.type = 'button'; b.dataset.tip = tip; b.setAttribute('aria-label', label);
+  return b;
+}
+
+function gauge({ name, tip, dates, score, level, lines }) {
   const card = el('div', 'tile gauge');
   if (level) card.dataset.level = level;
-  card.append(el('span', 'tile-name', name));
+  const nom = el('span', 'tile-name', name);
+  nom.append(infoBtn(dates ? `${tip} Données : ${dates}.` : tip, `À propos : ${name}`));
+  card.append(nom);
   if (score == null) card.append(el('span', 'tile-value tile-na', 'Indisponible'));
   else {
     const v = el('span', 'tile-value', f0(score)); v.append(el('span', 'tile-unit', '/100'));
@@ -607,26 +618,24 @@ const sansTexte = (sans) => (sans.length ? `Calculé sans ${liste(sans.map((n) =
 function renderGauges(etat) {
   const s = etat.signaux;
   const valable = (n) => s[n] && !s[n].perime;
-  const tension = [valable('spread') && `Spread du ${dateDonnee(s.spread.date)}`, valable('couverture') && `couverture du ${dateDonnee(s.couverture.date)}`];
-  const fond = [valable('nonResidents') && `Non-résidents ${dateDonnee(s.nonResidents.date)}`, valable('target') && `TARGET2 ${dateDonnee(s.target.date)}`, valable('notes') && 'notes à jour'];
-  const c = etat.ciss;
+  const tension = [valable('spread') && `spread du ${dateDonnee(s.spread.date)}`, valable('couverture') && `couverture du ${dateDonnee(s.couverture.date)}`];
+  const fond = [valable('nonResidents') && `non-résidents ${dateDonnee(s.nonResidents.date)}`, valable('target') && `TARGET2 ${dateDonnee(s.target.date)}`, valable('notes') && 'notes à jour'];
+  const c = etat.ciss, I = etat.indice.niveau;
+  const ETAT = { calme: 'calme', vigilance: 'en vigilance', tension: 'sous tension', crise: 'en crise' };
+  const ecart = c && I && c.niveau !== I
+    ? ` Aujourd’hui, la dette est ${ETAT[I]} et le reste des marchés ${ETAT[c.niveau]} : ${NIVEAUX_SCORE.findIndex((n) => n.level === c.niveau) < NIVEAUX_SCORE.findIndex((n) => n.level === I) ? 'la tension vient de la dette elle-même.' : 'la tension ne vient pas que de la dette.'}`
+    : '';
   document.getElementById('gauges').replaceChildren(
     gauge({ name: 'Tension sur la dette', score: etat.tension.score, level: etat.tension.niveau,
-      lines: [tension.filter(Boolean).join(', '), sansTexte(etat.tension.sans)] }),
+      tip: 'Ce que les investisseurs exigent de la France : moyenne du spread (prime de risque face à l’Allemagne) et de la couverture des adjudications (demande lors des émissions).',
+      dates: tension.filter(Boolean).join(', '), lines: [sansTexte(etat.tension.sans)] }),
     gauge({ name: 'Vulnérabilité de fond', score: etat.fond.score, level: etat.fond.niveau,
-      lines: [fond.filter(Boolean).join(', '), sansTexte(etat.fond.sans)] }),
-    gauge({ name: 'Stress financier global (CISS de la BCE)', score: c?.score ?? null, level: c?.niveau,
-      lines: [c ? `Valeur ${f3(c.valeur)} le ${fmtDay(parseDay(c.jour))}` : 'Donnée de plus de 10 jours ou absente', 'Hors Indice Vigie'] }),
+      tip: 'Les fragilités lentes : moyenne de la part de dette détenue par des non-résidents, de la note la plus basse des agences et du solde TARGET2 de la Banque de France.',
+      dates: fond.filter(Boolean).join(', '), lines: [sansTexte(etat.fond.sans)] }),
+    gauge({ name: 'Reste des marchés (CISS)', score: c?.score ?? null, level: c?.niveau,
+      tip: `Indicateur de stress systémique de la BCE pour la France : il mesure les tensions sur l’ensemble des marchés (actions, obligations, change, banques). Il n’entre pas dans l’Indice Vigie.${ecart}`,
+      dates: c ? `valeur ${f3(c.valeur)} le ${fmtDay(parseDay(c.jour))}` : '', lines: [c ? null : 'Donnée de plus de 10 jours ou absente'] }),
   );
-
-  // Encadré d'écart : la même comparaison que la phrase de verdict, quand l'Indice Vigie et le CISS divergent.
-  const ecart = document.getElementById('ecart');
-  ecart.hidden = !(c && etat.indice.niveau && c.niveau !== etat.indice.niveau);
-  if (!ecart.hidden) {
-    ecart.replaceChildren(el('b', null, 'Deux mesures différentes. '), document.createTextNode(
-      'Le CISS de la BCE mesure un stress aigu sur l’ensemble des marchés financiers. La tension sur la dette mesure ce que les investisseurs exigent de la France. '
-      + `Les deux peuvent diverger : aujourd’hui, l’Indice Vigie est au niveau « ${LEVEL_LABEL[etat.indice.niveau].toLowerCase()} », le CISS au niveau « ${LEVEL_LABEL[c.niveau].toLowerCase()} ».`));
-  }
 }
 
 // « Plus haut depuis… » : comparé à chaque séance passée (la pire séance d'un mois compte, pas seulement la dernière).
@@ -645,16 +654,17 @@ function repere(data, etat) {
   if (!depuis) {
     const debut = serie.find((p) => p.indice != null);
     const manquants = [...new Set(serie.filter((p) => p.indice != null).flatMap(sansAlors))];
-    return `Plus haut niveau depuis le début de l’indice, en ${fmtMonthLong(parseDay(debut.jour))}.`
-      + (manquants.length ? ` Une partie de l’historique est calculée sans ${liste(manquants.map((n) => NOMS_LONGS[n]))}.` : '');
+    return { texte: `Plus haut niveau depuis le début de l’indice (${fmtMonthLong(parseDay(debut.jour))}).`,
+      detail: manquants.length ? `Une partie de l’historique est calculée sans ${liste(manquants.map((n) => NOMS_LONGS[n]))}.` : 'Comparé à chaque séance depuis le début de l’indice.' };
   }
   const pic = picDuMois(serie, '2011-11');
+  const texte = `Plus haut depuis ${fmtMonthLong(parseDay(depuis.jour))}.`;
   if (pic && pic.jour === depuis.jour) {
-    return `Plus haut depuis le ${fmtDayLong(parseDay(pic.jour))}, au plus fort de la crise de l’euro (${f0(pic.indice)}).${note(pic)}`;
+    return { texte, detail: `Le ${fmtDayLong(parseDay(pic.jour))}, au plus fort de la crise de l’euro, l’indice atteignait ${f0(pic.indice)}.${note(pic)}` };
   }
-  let texte = `Plus haut depuis ${fmtMonthLong(parseDay(depuis.jour))} (${f0(depuis.indice)} le ${fmtDayLong(parseDay(depuis.jour))}).${note(depuis)}`;
-  if (pic && pic.jour < depuis.jour) texte += ` Au plus fort de la crise de l’euro, le ${fmtDayLong(parseDay(pic.jour))} : ${f0(pic.indice)}.${note(pic)}`;
-  return texte;
+  let detail = `${f0(depuis.indice)} le ${fmtDayLong(parseDay(depuis.jour))}.${note(depuis)}`;
+  if (pic && pic.jour < depuis.jour) detail += ` Au plus fort de la crise de l’euro, le ${fmtDayLong(parseDay(pic.jour))} : ${f0(pic.indice)}.${note(pic)}`;
+  return { texte, detail };
 }
 
 function renderHeader(data, etat) {
@@ -667,10 +677,12 @@ function renderHeader(data, etat) {
     const p = document.getElementById('indice-niveau');
     p.dataset.level = niveau; p.textContent = LEVEL_LABEL[niveau];
   }
+  document.getElementById('indice-info').dataset.tip = 'Note de 0 à 100 : moyenne de la tension sur la dette et de la vulnérabilité de fond. '
+    + `Sous 25 : calme ; 25 à 50 : vigilance ; 50 à 75 : tension ; 75 et plus : crise. Méthode ${METHODE_VERSION}.`;
   const r = repere(data, etat);
-  const rp = document.getElementById('repere');
-  rp.hidden = !r; rp.textContent = r ?? '';
-  text('#donnees', `Données du ${fmtDay(parseDay(etat.cartes.spread.jour))} · méthode ${METHODE_VERSION}`);
+  document.getElementById('repere').hidden = !r;
+  if (r) { text('#repere-texte', r.texte); document.getElementById('repere-info').dataset.tip = r.detail; }
+  text('#donnees', `Données du ${fmtDay(parseDay(etat.cartes.spread.jour))}`);
   renderGauges(etat);
 }
 
@@ -678,12 +690,14 @@ function renderSources(data) {
   const live = document.getElementById('live');
   live.dataset.on = String(data.live.length > 0);
   live.textContent = data.live.length ? 'BCE en direct' : 'Données enregistrées';
-  text('#updated', `Fichiers mis à jour le ${new Date(data.meta.mis_a_jour).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' })}`);
-  const retard = (data.meta.echecs ?? []).map((e) => e.serie ?? String(e));
-  text('#sources-detail', [
+  const retard = [...new Set((data.meta.echecs ?? []).map((e) => e.serie ?? String(e)))];
+  live.dataset.tip = [
     data.live.length ? `Lu en direct à la BCE : ${liste(data.live)}.` : 'Lecture en direct de la BCE indisponible ou pas plus récente : fichiers enregistrés.',
-    retard.length ? `Séries en retard : ${liste([...new Set(retard)])}.` : '',
-  ].filter(Boolean).join(' '));
+    `Fichiers mis à jour le ${new Date(data.meta.mis_a_jour).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' })}.`,
+  ].join(' ');
+  const r = document.getElementById('retard');
+  r.hidden = !retard.length;
+  r.textContent = retard.length ? `Séries en retard : ${liste(retard)}.` : '';
 }
 
 function render() {
@@ -691,6 +705,46 @@ function render() {
   if (state.courbe) renderCourbe(state.courbe);
   renderCharts(state.data);
 }
+
+// ---------- Infobulles (design system : fond sombre, coins de 6 px, flèche de 5 px) ----------
+// Une seule bulle pour toute la page : survol à la souris, focus au clavier, toucher sur mobile.
+
+const bulle = el('div', 'bulle');
+bulle.id = 'bulle'; bulle.setAttribute('role', 'tooltip'); bulle.hidden = true;
+document.body.append(bulle);
+let cibleBulle = null;
+
+function montrerBulle(cible) {
+  if (!cible.dataset.tip) return;
+  cibleBulle?.removeAttribute('aria-describedby');
+  cibleBulle = cible;
+  cible.setAttribute('aria-describedby', 'bulle');
+  bulle.textContent = cible.dataset.tip;
+  bulle.hidden = false;
+  const r = cible.getBoundingClientRect(), b = bulle.getBoundingClientRect();
+  const left = Math.max(8, Math.min(r.left + r.width / 2 - b.width / 2, innerWidth - b.width - 8));
+  const dessous = r.top - b.height - 10 < 8;
+  bulle.dataset.pos = dessous ? 'bottom' : 'top';
+  bulle.style.left = `${left}px`;
+  bulle.style.top = `${dessous ? r.bottom + 10 : r.top - b.height - 10}px`;
+  bulle.style.setProperty('--fleche', `${r.left + r.width / 2 - left}px`);
+}
+
+function cacherBulle() {
+  cibleBulle?.removeAttribute('aria-describedby');
+  cibleBulle = null; bulle.hidden = true;
+}
+
+const cibleDe = (e) => e.target.closest?.('[data-tip]');
+document.addEventListener('pointerover', (e) => { if (e.pointerType === 'mouse' && cibleDe(e)) montrerBulle(cibleDe(e)); });
+document.addEventListener('pointerout', (e) => {
+  if (e.pointerType === 'mouse' && cibleDe(e) && !cibleDe(e).contains(e.relatedTarget)) cacherBulle();
+});
+document.addEventListener('focusin', (e) => { if (cibleDe(e)) montrerBulle(cibleDe(e)); });
+document.addEventListener('focusout', cacherBulle);
+document.addEventListener('click', (e) => { if (cibleDe(e)) montrerBulle(cibleDe(e)); else cacherBulle(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cacherBulle(); });
+addEventListener('scroll', cacherBulle, { passive: true });
 
 // ---------- Démarrage ----------
 

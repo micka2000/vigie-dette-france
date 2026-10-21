@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import {
   ANCRAGES, NIVEAUX, interpoler, niveauBrut, niveauScore, crans, notch, moisEcart, moisMoins,
   variationUnAn, variationUnAnJour, fusionnerSeries, spreadPb, etatDuJour, phraseVerdict, partieDette, partieBCE,
-  phraseIncomplete, cissDuJour, courbe, serieQuotidienne, plusHautDepuis, picDuMois, picsMensuels,
+  phraseIncomplete, cissDuJour, courbe, PHRASE_BCE_INDISPONIBLE, serieQuotidienne, plusHautDepuis, picDuMois, picsMensuels,
 } from './score.mjs';
 
 const lire = (dossier) => (f) => JSON.parse(readFileSync(new URL(`${dossier}/${f}`, import.meta.url)));
@@ -159,9 +159,9 @@ test('CISS : gardé jusqu\'à 10 jours, indisponible au-delà', () => {
   assert.equal(cissDuJour(undefined, LE_20_OCTOBRE), null);
 });
 
-test('phrase du jour (formulation D30)', () => {
+test('phrase du jour (formulation courte, 21/10/2026)', () => {
   const e = etatDuJour({ ...FIGE, ciss: { quotidien: [{ jour: '2026-10-19', valeur: 0.044 }] } }, LE_20_OCTOBRE);
-  assert.equal(e.phrase, 'La dette française est sous tension. Le stress financier global mesuré par la BCE reste calme : la tension reste concentrée sur la dette.');
+  assert.equal(e.phrase, 'La dette française est sous tension. Le reste des marchés financiers reste calme.');
 });
 
 test('phrase : chaque triplet (I, T, V) atteignable × 5 cas de C', () => {
@@ -176,9 +176,10 @@ test('phrase : chaque triplet (I, T, V) atteignable × 5 cas de C', () => {
       const p = phraseVerdict({ indice: { niveau: I }, tension: { niveau: T }, fond: { niveau: V }, ciss: C ? { niveau: C } : null });
       assert.ok(!/undefined|null/.test(p), p);
       assert.ok(p.startsWith(partieDette(I, T, V)), p);
-      if (!C) assert.ok(p.endsWith('Indice de la BCE indisponible pour le moment.'), p);
+      if (!C) assert.ok(p.endsWith(PHRASE_BCE_INDISPONIBLE), p);
       else assert.ok(p.includes(C), p);
-      if (C && NIVEAUX.indexOf(C) < NIVEAUX.indexOf(I)) assert.ok(p.includes('reste concentrée sur la dette'), p);
+      if (C && NIVEAUX.indexOf(C) < NIVEAUX.indexOf(I)) assert.ok(p.includes(' reste '), p);
+      if (C && NIVEAUX.indexOf(C) > NIVEAUX.indexOf(I)) assert.ok(p.includes('plus que la dette'), p);
       if (T === V) assert.ok(!p.includes('surtout'), p);
     }
   }

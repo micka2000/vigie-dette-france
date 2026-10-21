@@ -128,6 +128,8 @@ Ces valeurs sont cohérentes avec la page actuelle : 4 signaux sur 5 en tension,
 
 ### Phrase de verdict (règles)
 
+> **Mise à jour du 2026-10-21 (demande de l'utilisateur : épurer).** La partie BCE est raccourcie : « Le reste des marchés financiers reste [calme / en vigilance / sous tension / en crise]. » (C plus bas que I), « … est aussi [état]. » (même niveau), « … est [état], plus que la dette. » (C plus haut), « Stress des autres marchés indisponible pour le moment. » (C absent). Le complément « surtout sur le fond » perd sa parenthèse. L'explication du CISS et de l'écart passe dans l'infobulle de sa jauge ; l'encadré d'écart est retiré. Règle d'affichage : tout détail dont le chiffre n'a pas besoin pour être compris va en infobulle (design system, variante sombre). Les sources restent visibles.
+
 La phrase s'appuie sur le niveau de l'Indice Vigie (I), le même que celui affiché en grand dans l'en-tête, pour que le chiffre et la phrase disent toujours la même chose. Elle utilise aussi les niveaux des deux sous-indices, Tension sur la dette (T) et Vulnérabilité de fond (V), et celui du CISS (C). Elle a deux parties, toujours dans cet ordre.
 
 1. **Partie dette**, d'après le niveau de I :

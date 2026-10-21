@@ -228,17 +228,20 @@ export function partieDette(I, T, V) {
     crise: 'La dette française est en zone de crise',
   }[I];
   if (rang(T) > rang(V)) return `${tete}, surtout sur les marchés.`;
-  if (rang(V) > rang(T)) return `${tete}, surtout sur le fond (détenteurs, notes, TARGET2).`;
+  if (rang(V) > rang(T)) return `${tete}, surtout sur le fond.`;
   return `${tete}.`;
 }
 
+// Le CISS de la BCE, dit simplement : « le reste des marchés financiers ».
+const ETAT = { calme: 'calme', vigilance: 'en vigilance', tension: 'sous tension', crise: 'en crise' };
+export const PHRASE_BCE_INDISPONIBLE = 'Stress des autres marchés indisponible pour le moment.';
+
 export function partieBCE(I, C) {
-  if (!C) return 'Indice de la BCE indisponible pour le moment.';
-  const debut = 'Le stress financier global mesuré par la BCE';
-  if (rang(C) < rang(I)) return `${debut} reste ${C} : la tension reste concentrée sur la dette.`;
-  if (rang(C) === rang(I)) return `${debut} est au même niveau (${C}).`;
-  if (I !== 'calme') return `${debut} est plus élevé (${C}) : la tension ne vient pas que de la dette.`;
-  return `${debut} est plus élevé (${C}) : il vient d'ailleurs que de la dette.`;
+  if (!C) return PHRASE_BCE_INDISPONIBLE;
+  const debut = 'Le reste des marchés financiers';
+  if (rang(C) < rang(I)) return `${debut} reste ${ETAT[C]}.`;
+  if (rang(C) === rang(I)) return `${debut} est aussi ${ETAT[C]}.`;
+  return `${debut} est ${ETAT[C]}, plus que la dette.`;
 }
 
 const liste = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} et ${xs.at(-1)}`);

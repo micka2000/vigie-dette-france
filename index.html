@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vigie Dette France</title>
 <meta name="description" content="Les cinq signaux de santé de la dette publique française, mis à jour chaque jour, avec leurs seuils de risque historiques.">
-<link rel="stylesheet" href="styles.css?v=aee3a9bc">
+<link rel="stylesheet" href="styles.css?v=4a5bed4d">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
@@ -22,13 +22,13 @@
     <div class="indice" id="indice" hidden>
       <p class="indice-score"><span id="indice-num"></span><span class="indice-sur">/100</span></p>
       <div class="indice-side">
-        <span class="indice-nom">Indice Vigie</span>
+        <span class="indice-nom">Indice Vigie <button type="button" class="info" id="indice-info" data-tip="" aria-label="Comment se calcule l’Indice Vigie">i</button></span>
         <span class="pill" id="indice-niveau"></span>
       </div>
     </div>
-    <p class="repere" id="repere" hidden></p>
+    <p class="repere" id="repere" hidden><span id="repere-texte"></span> <button type="button" class="info" id="repere-info" data-tip="" aria-label="Détail du repère">i</button></p>
     <p class="stamp">
-      <span class="live" id="live" data-on="false">Données enregistrées</span>
+      <span class="live" id="live" data-on="false" data-tip="" tabindex="0">Données enregistrées</span>
       <span id="donnees"></span>
     </p>
   </div>
@@ -36,7 +36,6 @@
 
 <main class="wrap">
   <section class="summary gauges" id="gauges" aria-label="Sous-indices de l'Indice Vigie et stress financier de la BCE"></section>
-  <p class="ecart" id="ecart" hidden></p>
 
   <section class="summary signals-summary" id="summary" aria-label="Synthèse des cinq signaux"></section>
 
@@ -55,14 +54,12 @@
     <article class="signal" id="courbe">
       <div class="signal-head">
         <div>
-          <h2>L’Indice Vigie dans le temps</h2>
-          <p class="signal-why">Chaque point est la séance la plus tendue du mois, calculée avec les seules données disponibles à cette date. Le CISS de la BCE, en pointillé, mesure le stress de l’ensemble des marchés financiers.</p>
+          <h2>L’Indice Vigie dans le temps <button type="button" class="info" data-tip="Chaque point est la séance la plus tendue du mois, calculée avec les seules données disponibles à cette date. Le CISS de la BCE, en pointillé, mesure le stress de l’ensemble des marchés financiers." aria-label="À quoi sert cet indicateur">i</button></h2>
         </div>
       </div>
-      <p class="signal-now"><span class="delta" id="courbe-resume"></span></p>
+      <p class="sr-only" id="courbe-resume"></p>
       <div class="chart" id="chart-indice"></div>
-      <ul class="legend" id="legend-indice"></ul>
-      <p class="threshold-note" id="courbe-sans"></p>
+      <div class="legend-row"><ul class="legend" id="legend-indice"></ul><button type="button" class="info" id="courbe-sans" data-tip="" aria-label="Périodes calculées avec moins de signaux" hidden>i</button></div>
       <button type="button" class="btn-table" id="courbe-table-btn" aria-expanded="false" aria-controls="courbe-table-wrap">Voir les valeurs mois par mois</button>
       <div class="table-scroll" id="courbe-table-wrap" hidden>
         <table class="ratings-table" id="courbe-table">
@@ -76,14 +73,12 @@
     <article class="signal" id="spread">
       <div class="signal-head">
         <div>
-          <h2>Spread France-Allemagne</h2>
-          <p class="signal-why">La prime de risque que les investisseurs exigent pour détenir de la dette française à 10 ans plutôt que le Bund allemand, référence sans risque de la zone euro.</p>
+          <h2>Spread France-Allemagne <button type="button" class="info" data-tip="La prime de risque que les investisseurs exigent pour détenir de la dette française à 10 ans plutôt que le Bund allemand, référence sans risque de la zone euro." aria-label="À quoi sert cet indicateur">i</button></h2>
         </div>
-        <div class="signal-now"><span class="big" data-now="spread">—</span><span class="pill" data-pill="spread"></span></div>
+        <div class="signal-now"><span class="big" data-now="spread">—</span><span class="pill" data-pill="spread"></span><button type="button" class="info" data-delta="spread" data-tip="" aria-label="Détail du chiffre">i</button></div>
       </div>
-      <p class="signal-now"><span class="delta" data-delta="spread"></span></p>
       <div class="chart-tools">
-        <span class="toolbar-label" id="step-label">Un point par</span>
+        <span class="toolbar-label" id="step-label">Un point par</span><button type="button" class="info" data-tip="Clôture de chaque séance, jamais de moyenne : en vue Semaine ou Mois, chaque point est la dernière séance de la période." aria-label="Comment sont choisis les points">i</button>
         <div class="seg" role="group" aria-labelledby="step-label" id="spread-step">
           <button type="button" data-step="jour" aria-pressed="true">Jour</button>
           <button type="button" data-step="semaine">Semaine</button>
@@ -91,55 +86,48 @@
         </div>
       </div>
       <div class="chart" id="chart-spread"></div>
-      <p class="source">Sources : <a href="https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.FR.EUR.FR2.BB.FRMOYTEC10.HSTA" target="_blank" rel="noopener">Banque de France, taux de l'échéance constante à 10 ans (TEC 10)</a> et <a href="https://www.bundesbank.de/dynamic/action/de/statistiken/zeitreihen-datenbanken/zeitreihen-datenbank/759778/759778?tsId=BBSIS.D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A" target="_blank" rel="noopener">Bundesbank, rendement à 10 ans des titres fédéraux</a>. Clôture de chaque séance, sans moyenne : en vue Semaine ou Mois, chaque point est la dernière séance de la période.</p>
+      <p class="source">Sources : <a href="https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.FR.EUR.FR2.BB.FRMOYTEC10.HSTA" target="_blank" rel="noopener">Banque de France, taux de l'échéance constante à 10 ans (TEC 10)</a> et <a href="https://www.bundesbank.de/dynamic/action/de/statistiken/zeitreihen-datenbanken/zeitreihen-datenbank/759778/759778?tsId=BBSIS.D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A" target="_blank" rel="noopener">Bundesbank, rendement à 10 ans des titres fédéraux</a>.</p>
+      <p class="seuils-titre">Seuils de risque <button type="button" class="info" data-tip="Seuils tirés des séances depuis novembre 2004 : le spread est resté sous 50 pb 69 % du temps et sous 80 pb 95 % du temps. Le record date de la crise des dettes souveraines : 214 pb le 17 novembre 2011." aria-label="D’où viennent ces seuils">i</button></p>
       <ul class="thresholds" data-thresholds="spread"></ul>
-      <p class="threshold-note">Seuils tirés des séances depuis novembre 2004 : le spread est resté sous 50 pb 69 % du temps et sous 80 pb 95 % du temps. Le record date de la crise des dettes souveraines : 214 pb le 17 novembre 2011.</p>
     </article>
 
     <article class="signal" id="adjudications">
       <div class="signal-head">
         <div>
-          <h2>Adjudications de l'Agence France Trésor</h2>
-          <p class="signal-why">Le coût réel auquel l'État se finance sur sa ligne à 10 ans, et la demande des investisseurs au moment de l'émission (taux de couverture : montant demandé rapporté au montant servi).</p>
+          <h2>Adjudications de l'Agence France Trésor <button type="button" class="info" data-tip="Le coût réel auquel l'État se finance sur sa ligne à 10 ans, et la demande des investisseurs au moment de l'émission (taux de couverture : montant demandé rapporté au montant servi)." aria-label="À quoi sert cet indicateur">i</button></h2>
         </div>
-        <div class="signal-now"><span class="big" data-now="adjudications">—</span><span class="pill" data-pill="adjudications"></span></div>
+        <div class="signal-now"><span class="big" data-now="adjudications">—</span><span class="pill" data-pill="adjudications"></span><button type="button" class="info" data-delta="adjudications" data-tip="" aria-label="Détail du chiffre">i</button></div>
       </div>
-      <p class="signal-now"><span class="delta" data-delta="adjudications"></span></p>
       <div class="chart-pair">
-        <div><p class="chart-title">Taux moyen pondéré à 10 ans</p><div class="chart" id="chart-auction-rate"></div></div>
-        <div><p class="chart-title">Taux de couverture</p><div class="chart" id="chart-auction-cover"></div></div>
+        <div><p class="chart-title">Taux moyen pondéré à 10 ans <button type="button" class="info" data-tip="Le taux auquel l’État a réellement emprunté ce jour-là, en moyenne pondérée par les montants servis. À ne pas confondre avec le coupon de la ligne, fixé à sa création." aria-label="Définition">i</button></p><div class="chart" id="chart-auction-rate"></div></div>
+        <div><p class="chart-title">Taux de couverture <button type="button" class="info" data-tip="Montant demandé par les investisseurs divisé par le montant servi. À 2, ils voulaient deux fois plus de titres que l’État n’en a vendu." aria-label="Définition">i</button></p><div class="chart" id="chart-auction-cover"></div></div>
       </div>
       <p class="source" id="auction-source">Sources : résultats publiés par l'<a href="https://www.aft.gouv.fr/fr" target="_blank" rel="noopener">Agence France Trésor</a>, repris par Reuters et Boursorama (<a id="auction-source-last" href="#" target="_blank" rel="noopener">dernière adjudication</a>). Collecte automatique chaque matin.</p>
+      <p class="seuils-titre">Seuils de risque <button type="button" class="info" data-tip="Le niveau de risque suit le taux de couverture : sous 2, la demande devient juste pour une ligne de référence ; sous 1,5, l'appétit des investisseurs faiblit nettement." aria-label="D’où viennent ces seuils">i</button></p>
       <ul class="thresholds" data-thresholds="adjudications"></ul>
-      <p class="threshold-note">Le niveau de risque suit le taux de couverture : sous 2, la demande devient juste pour une ligne de référence ; sous 1,5, l'appétit des investisseurs faiblit nettement.</p>
     </article>
 
     <article class="signal" id="non-residents">
       <div class="signal-head">
         <div>
-          <h2>Part des non-résidents</h2>
-          <p class="signal-why">Plus elle est élevée, plus la dette dépend de capitaux étrangers, volatils, qui peuvent se retirer vite en cas de stress.</p>
+          <h2>Part des non-résidents <button type="button" class="info" data-tip="Plus elle est élevée, plus la dette dépend de capitaux étrangers, volatils, qui peuvent se retirer vite en cas de stress." aria-label="À quoi sert cet indicateur">i</button></h2>
         </div>
-        <div class="signal-now"><span class="big" data-now="non-residents">—</span><span class="pill" data-pill="non-residents"></span></div>
+        <div class="signal-now"><span class="big" data-now="non-residents">—</span><span class="pill" data-pill="non-residents"></span><button type="button" class="info" data-delta="non-residents" data-tip="" aria-label="Détail du chiffre">i</button></div>
       </div>
-      <p class="signal-now"><span class="delta" data-delta="non-residents"></span></p>
       <div class="chart" id="chart-nonres"></div>
-      <ul class="legend" id="legend-nonres"></ul>
-      <p class="threshold-note">Les deux courbes mesurent la part détenue par des investisseurs étrangers, sur deux périmètres. La bleue ne compte que les titres émis par l’État : c’est elle qui entre dans l’Indice Vigie. La verte couvre toute la dette publique, dont une partie (prêts bancaires, dette des collectivités) est surtout détenue en France : elle est donc plus basse.</p>
+      <div class="legend-row"><ul class="legend" id="legend-nonres"></ul><button type="button" class="info" data-tip="Les deux courbes mesurent la part détenue par des investisseurs étrangers, sur deux périmètres. La bleue ne compte que les titres émis par l’État : c’est elle qui entre dans l’Indice Vigie. La verte couvre toute la dette publique, dont une partie (prêts bancaires, dette des collectivités) est surtout détenue en France : elle est donc plus basse." aria-label="Pourquoi deux courbes">i</button></div>
       <p class="source">Sources : <a href="https://webstat.banque-france.fr/fr/catalogue/det2/DET2.Q.N.FR.W1.S13111.S1.N.L.LE.F3.T._Z.PT._T.M.V.N._T" target="_blank" rel="noopener">Banque de France, titres de l'État détenus par des non-résidents</a> (fin de trimestre, depuis 2008) ; <a href="https://ec.europa.eu/eurostat/databrowser/view/gov_10dd_ggd/default/table" target="_blank" rel="noopener">Eurostat, gov_10dd_ggd</a> (dette publique au sens de Maastricht, annuel).</p>
+      <p class="seuils-titre">Seuils de risque <button type="button" class="info" data-tip="Point bas : 47,5 % fin 2021, quand la Banque de France rachetait massivement des titres. Au-delà de 60 %, la France retrouverait les niveaux de 2008 à 2016 ; le record est de 70,6 % mi-2010." aria-label="D’où viennent ces seuils">i</button></p>
       <ul class="thresholds" data-thresholds="non-residents"></ul>
-      <p class="threshold-note">Point bas : 47,5 % fin 2021, quand la Banque de France rachetait massivement des titres. Au-delà de 60 %, la France retrouverait les niveaux de 2008 à 2016 ; le record est de 70,6 % mi-2010.</p>
     </article>
 
     <article class="signal" id="notations">
       <div class="signal-head">
         <div>
-          <h2>Notes des agences</h2>
-          <p class="signal-why">Une dégradation peut forcer des ventes chez les investisseurs soumis à des seuils de notation et renchérit mécaniquement le coût de la dette.</p>
+          <h2>Notes des agences <button type="button" class="info" data-tip="Une dégradation peut forcer des ventes chez les investisseurs soumis à des seuils de notation et renchérit mécaniquement le coût de la dette." aria-label="À quoi sert cet indicateur">i</button></h2>
         </div>
-        <div class="signal-now"><span class="big" data-now="notations">—</span><span class="pill" data-pill="notations"></span></div>
+        <div class="signal-now"><span class="big" data-now="notations">—</span><span class="pill" data-pill="notations"></span><button type="button" class="info" data-delta="notations" data-tip="" aria-label="Détail du chiffre">i</button></div>
       </div>
-      <p class="signal-now"><span class="delta" data-delta="notations"></span></p>
       <div class="chart" id="chart-ratings"></div>
       <ul class="legend" id="legend-ratings"></ul>
       <p class="source">Source : <a href="https://www.aft.gouv.fr/fr/notation-de-la-france" target="_blank" rel="noopener">Agence France Trésor, « Notation de la France »</a>. Chaque matin, un changement de note n’est enregistré que si deux sources indépendantes le confirment ; sinon, il est vérifié à la main.</p>
@@ -150,23 +138,21 @@
         </table>
       </div>
       <p class="alert" id="ratings-alert" hidden></p>
+      <p class="seuils-titre">Seuils de risque <button type="button" class="info" data-tip="Le niveau porte sur la note la plus basse des trois agences. AA- est le plancher de nombreux mandats de gestion de réserves ; sous A-, la France approcherait la catégorie BBB, où les ventes forcées s'accélèrent." aria-label="D’où viennent ces seuils">i</button></p>
       <ul class="thresholds" data-thresholds="notations"></ul>
-      <p class="threshold-note">Le niveau porte sur la note la plus basse des trois agences. AA- est le plancher de nombreux mandats de gestion de réserves ; sous A-, la France approcherait la catégorie BBB, où les ventes forcées s'accélèrent.</p>
     </article>
 
     <article class="signal" id="target">
       <div class="signal-head">
         <div>
-          <h2>Solde TARGET2 de la Banque de France</h2>
-          <p class="signal-why">Un solde de plus en plus négatif traduit des sorties de capitaux vers d'autres pays de la zone euro, signe de défiance des acteurs privés.</p>
+          <h2>Solde TARGET2 de la Banque de France <button type="button" class="info" data-tip="Un solde de plus en plus négatif traduit des sorties de capitaux vers d'autres pays de la zone euro, signe de défiance des acteurs privés." aria-label="À quoi sert cet indicateur">i</button></h2>
         </div>
-        <div class="signal-now"><span class="big" data-now="target">—</span><span class="pill" data-pill="target"></span></div>
+        <div class="signal-now"><span class="big" data-now="target">—</span><span class="pill" data-pill="target"></span><button type="button" class="info" data-delta="target" data-tip="" aria-label="Détail du chiffre">i</button></div>
       </div>
-      <p class="signal-now"><span class="delta" data-delta="target"></span></p>
       <div class="chart" id="chart-target"></div>
       <p class="source">Source : <a href="https://data.ecb.europa.eu/data/datasets/TGB/TGB.M.FR.N.A094T.U2.EUR.E" target="_blank" rel="noopener">BCE, soldes TARGET de la Banque de France</a> (fin de mois, série TGB.M.FR).</p>
+      <p class="seuils-titre">Seuils de risque <button type="button" class="info" data-tip="Seuils tirés de l'historique depuis 2008 : -118 Md€ au plus fort de la crise financière (décembre 2008), record à -240 Md€ en octobre 2025." aria-label="D’où viennent ces seuils">i</button></p>
       <ul class="thresholds" data-thresholds="target"></ul>
-      <p class="threshold-note">Seuils tirés de l'historique depuis 2008 : -118 Md€ au plus fort de la crise financière (décembre 2008), record à -240 Md€ en octobre 2025.</p>
     </article>
 
   </div>
@@ -174,8 +160,8 @@
 
 <footer>
   <div class="wrap">
-    <p>Le spread, les non-résidents et les séries Eurostat sont collectés chaque matin par une GitHub Action ; le solde TARGET2 et le CISS sont aussi lus en direct à la BCE à chaque visite. Les adjudications sont lues chaque matin dans les dépêches Reuters ; un changement de note n’est enregistré que si deux sources indépendantes le confirment.</p>
-    <p><span id="sources-detail"></span> <span id="updated"></span></p>
+    <p>Collecte chaque matin (BCE, Banque de France, Bundesbank, Eurostat, dépêches Reuters) ; TARGET2 et le CISS sont aussi lus en direct. Les seuils sont des repères tirés de l’historique, pas des prévisions.</p>
+    <p class="retard" id="retard" hidden></p>
     <p>Les seuils de risque sont des repères tirés de l'historique de chaque série, pas des prévisions.</p>
   </div>
 </footer>
@@ -189,6 +175,6 @@
     if (v) v.textContent = 'La page n’a pas pu se charger. Recharge-la dans un instant.';
   }, 10000);
 </script>
-<script type="module" src="app.js?v=7879a1cd"></script>
+<script type="module" src="app.js?v=09452c02"></script>
 </body>
 </html>
