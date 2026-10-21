@@ -329,14 +329,10 @@ footer p { margin: 0; max-width: 80ch; }
 .desc[open] .desc-fermer { display: inline; }
 /* Empilées sur mobile et dans les jauges ; sur tablette, le calcul à droite ; sur grand écran, trois colonnes */
 .desc-corps { margin-top: var(--space-2); display: grid; gap: var(--space-2) var(--space-6); align-items: start; }
+/* Quatre parties : une colonne sur mobile ; au-delà, deux colonnes de journal (le texte coule de l'une à l'autre, sans trou) */
 @media (min-width: 700px) {
-  :is(.signal, .masthead) .desc-corps { grid-template-columns: 1fr 1.3fr; grid-template-areas: "mesure calcul" "sources calcul"; }
-  :is(.signal, .masthead) .desc-corps > p:nth-child(1) { grid-area: mesure; }
-  :is(.signal, .masthead) .desc-corps > p:nth-child(2) { grid-area: calcul; }
-  :is(.signal, .masthead) .desc-corps > p:nth-child(3) { grid-area: sources; }
-}
-@media (min-width: 1100px) {
-  :is(.signal, .masthead) .desc-corps { grid-template-columns: 1fr 1.4fr 1fr; grid-template-areas: "mesure calcul sources"; }
+  :is(.signal, .masthead) .desc-corps { display: block; columns: 2; column-gap: var(--space-8); }
+  :is(.signal, .masthead) .desc-corps > p { break-inside: avoid; margin-bottom: var(--space-2); }
 }
 .desc-corps p { margin: 0; line-height: 1.55; }
 .desc-corps b { font-family: var(--font-display); font-weight: 600; color: var(--fg-1); }

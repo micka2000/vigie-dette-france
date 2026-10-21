@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vigie Dette France</title>
 <meta name="description" content="Les cinq signaux de santé de la dette publique française, mis à jour chaque jour, avec leurs seuils de risque historiques.">
-<link rel="stylesheet" href="styles.css?v=e8fc5144">
+<link rel="stylesheet" href="styles.css?v=c799270e">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
@@ -54,9 +54,10 @@
       <details class="desc">
         <summary><span class="desc-ouvrir">Afficher la description</span><span class="desc-fermer">Masquer la description</span></summary>
         <div class="desc-corps">
-          <p><b>Ce qu’il mesure.</b> Chaque point est la séance la plus tendue du mois, calculée avec les seules données disponibles à cette date. Le CISS de la BCE, en pointillé, mesure le stress de l’ensemble des marchés financiers.</p>
-          <p><b>Calcul.</b> Chaque point est la séance la plus tendue du mois, recalculée avec les seules données disponibles à cette date et les mêmes seuils qu’aujourd’hui : une date passée ne dépend jamais de données publiées après. Le CISS est son maximum du mois, converti sur 100 comme les autres scores. Les traits verticaux marquent quatre crises : Lehman (septembre 2008), crise de l’euro (novembre 2011), Covid (mars 2020) et dissolution de l’Assemblée (juin 2024).</p>
-          <p><b>Sources.</b> Calcul : <a href="score.mjs">score.mjs</a> à partir des fichiers de <a href="https://github.com/micka2000/vigie-dette-france/tree/main/data" target="_blank" rel="noopener">data/</a> ; CISS : <a href="https://data.ecb.europa.eu/data/datasets/CISS/CISS.D.FR.Z0Z.4F.EC.SS_CIN.IDX" target="_blank" rel="noopener">BCE, indicateur composite de stress systémique pour la France</a> (maximum du mois).</p>
+          <p><b>En bref.</b> L’évolution de l’Indice Vigie depuis 2008, pour situer la situation d’aujourd’hui par rapport aux crises passées.</p>
+          <p><b>Comment lire le graphique.</b> En bleu, l’Indice Vigie. En vert, sa partie « marchés » : ce que les investisseurs exigent pour prêter à la France, suivi depuis 2004. En pointillés gris, le stress de l’ensemble des marchés financiers en France, mesuré par la Banque centrale européenne : il n’entre pas dans l’indice, il sert de point de comparaison. Quand le bleu monte et pas le gris, c’est la dette française elle-même qui inquiète. Les fonds colorés indiquent le niveau (calme, vigilance, tension, crise), les traits verticaux les grandes crises. L’œil de la légende masque ou affiche une courbe.</p>
+          <p><b>Comment c’est calculé.</b> Pour chaque mois, on garde la journée la plus tendue, calculée uniquement avec les informations connues ce jour-là.</p>
+          <p><b>D’où viennent les chiffres.</b> calcul ouvert et vérifiable (<a href="https://github.com/micka2000/vigie-dette-france/blob/main/score.mjs" target="_blank" rel="noopener">formule</a>, <a href="https://github.com/micka2000/vigie-dette-france/tree/main/data" target="_blank" rel="noopener">données</a>) ; stress des marchés : <a href="https://data.ecb.europa.eu/data/datasets/CISS/CISS.D.FR.Z0Z.4F.EC.SS_CIN.IDX" target="_blank" rel="noopener">Banque centrale européenne</a>.</p>
         </div>
       </details>
       <p class="sr-only" id="courbe-resume"></p>
@@ -67,7 +68,7 @@
         <summary><span class="desc-ouvrir">Afficher les valeurs mois par mois</span><span class="desc-fermer">Masquer les valeurs mois par mois</span></summary>
         <div class="table-scroll" id="courbe-table-wrap">
   <table class="ratings-table" id="courbe-table">
-          <thead><tr><th>Mois</th><th>Indice Vigie</th><th>Tension sur la dette</th><th>CISS</th><th>Calculé sans</th></tr></thead>
+          <thead><tr><th>Mois</th><th>Indice Vigie</th><th>Partie marchés</th><th>Stress des marchés (BCE)</th><th>Calculé sans</th></tr></thead>
           <tbody></tbody>
         </table>
         </div>
@@ -84,9 +85,10 @@
       <details class="desc">
         <summary><span class="desc-ouvrir">Afficher la description</span><span class="desc-fermer">Masquer la description</span></summary>
         <div class="desc-corps">
-          <p><b>Ce qu’il mesure.</b> La prime de risque que les investisseurs exigent pour détenir de la dette française à 10 ans plutôt que le Bund allemand, référence sans risque de la zone euro.</p>
-          <p><b>Calcul.</b> Taux de l’OAT à 10 ans moins le rendement du Bund allemand à 10 ans, à la clôture de chaque séance, en points de base (100 pb = 1 point de pourcentage). Aucune moyenne : en vue Semaine ou Mois, chaque point est la dernière séance de la période. Les seuils viennent des séances depuis novembre 2004 : le spread est resté sous 50 pb 69 % du temps et sous 80 pb 95 % du temps ; record de 214 pb le 17 novembre 2011.</p>
-          <p><b>Sources.</b> <a href="https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.FR.EUR.FR2.BB.FRMOYTEC10.HSTA" target="_blank" rel="noopener">Banque de France, taux de l'échéance constante à 10 ans (TEC 10)</a> et <a href="https://www.bundesbank.de/dynamic/action/de/statistiken/zeitreihen-datenbanken/zeitreihen-datenbank/759778/759778?tsId=BBSIS.D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A" target="_blank" rel="noopener">Bundesbank, rendement à 10 ans des titres fédéraux</a>.</p>
+          <p><b>En bref.</b> L’écart entre le taux auquel la France emprunte sur 10 ans et celui de l’Allemagne, le pays jugé le plus sûr de la zone euro. Plus l’écart est grand, plus les investisseurs voient de risque à prêter à la France.</p>
+          <p><b>Comment lire le graphique.</b> La courbe donne l’écart en points de base : 100 points de base valent 1 %. Un écart de 150 signifie que la France paie chaque année 1,5 % de plus que l’Allemagne pour emprunter. Les fonds colorés montrent les seuils de risque.</p>
+          <p><b>Comment c’est calculé.</b> Taux à 10 ans de la France moins taux à 10 ans de l’Allemagne, chaque jour à la fermeture des marchés. Depuis 2004, l’écart est resté sous 50 sept jours sur dix ; son record, 214, date de novembre 2011.</p>
+          <p><b>D’où viennent les chiffres.</b> <a href="https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.FR.EUR.FR2.BB.FRMOYTEC10.HSTA" target="_blank" rel="noopener">Banque de France</a> pour le taux français, <a href="https://www.bundesbank.de/dynamic/action/de/statistiken/zeitreihen-datenbanken/zeitreihen-datenbank/759778/759778?tsId=BBSIS.D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A" target="_blank" rel="noopener">Bundesbank</a> pour le taux allemand, mis à jour chaque matin.</p>
         </div>
       </details>
       <div class="chart-tools">
@@ -113,9 +115,10 @@
       <details class="desc">
         <summary><span class="desc-ouvrir">Afficher la description</span><span class="desc-fermer">Masquer la description</span></summary>
         <div class="desc-corps">
-          <p><b>Ce qu’il mesure.</b> Le coût réel auquel l'État se finance sur sa ligne à 10 ans, et la demande des investisseurs au moment de l'émission (taux de couverture : montant demandé rapporté au montant servi).</p>
-          <p><b>Calcul.</b> Chaque mois, l’AFT vend aux enchères sa ligne de référence à 10 ans (le plus gros volume parmi les échéances de 8,5 à 11,5 ans). Le taux moyen pondéré est le taux réellement payé ce jour-là, à ne pas confondre avec le coupon de la ligne, fixé à sa création. Le taux de couverture divise le montant demandé par le montant servi : à 2, les investisseurs voulaient deux fois plus de titres que l’État n’en a vendu. Le niveau de risque suit la couverture : sous 2, la demande devient juste ; sous 1,5, l’appétit des investisseurs faiblit nettement. Les séances d’août et de décembre sont écartées : l’AFT y tient des adjudications mixtes où les lignes à 10 ans sont d’anciennes lignes à petit volume, à la couverture plus haute (décembre 2011 : 3,05 contre 2,02 pour les séances voisines). Historique depuis 2004 reconstitué à partir du fichier officiel de l’AFT ; quelques séances de 2025-2026 manquent encore, sans jamais laisser plus de trois mois sans valeur.</p>
-          <p><b>Sources.</b> <a href="https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx" target="_blank" rel="noopener">historique officiel des adjudications de l’Agence France Trésor</a> (2004 à juillet 2025, copie archivée, aussi dans <a href="https://github.com/micka2000/vigie-dette-france/tree/main/data/sources" target="_blank" rel="noopener">data/sources</a>) ; ensuite, résultats publiés par l’AFT et repris par Reuters et Boursorama (<a id="auction-source-last" href="#" target="_blank" rel="noopener">dernière adjudication</a>), collectés chaque matin.</p>
+          <p><b>En bref.</b> Chaque mois, l’État emprunte en vendant aux enchères des obligations à 10 ans. On regarde à quel taux il emprunte et si les acheteurs sont nombreux.</p>
+          <p><b>Comment lire le graphique.</b> À gauche, le taux payé par l’État lors de chaque vente. À droite, la demande : à 2, les investisseurs voulaient acheter deux fois plus que ce que l’État a vendu. Sous 2, la demande devient juste ; sous 1,5, elle faiblit nettement.</p>
+          <p><b>Comment c’est calculé.</b> On suit à chaque fois l’obligation à 10 ans de référence. Les ventes d’août et de décembre sont mises de côté : ce sont des ventes particulières, qui fausseraient la comparaison.</p>
+          <p><b>D’où viennent les chiffres.</b> <a href="https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx" target="_blank" rel="noopener">Agence France Trésor</a>, qui gère la dette de l’État (historique depuis 2004), puis ses résultats repris chaque mois par Reuters (<a id="auction-source-last" href="#" target="_blank" rel="noopener">dernière vente</a>), relevés chaque matin.</p>
         </div>
       </details>
       <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-adj">Période</span><div class="seg" role="group" aria-labelledby="periode-adj" data-periode="adj"></div></div></div>
@@ -137,9 +140,10 @@
       <details class="desc">
         <summary><span class="desc-ouvrir">Afficher la description</span><span class="desc-fermer">Masquer la description</span></summary>
         <div class="desc-corps">
-          <p><b>Ce qu’il mesure.</b> Plus elle est élevée, plus la dette dépend de capitaux étrangers, volatils, qui peuvent se retirer vite en cas de stress.</p>
-          <p><b>Calcul.</b> Part des titres de l’État (OAT et BTF) détenue par des investisseurs étrangers, en fin de trimestre : c’est cette courbe qui entre dans l’Indice Vigie. La seconde, annuelle, couvre toute la dette publique (État, collectivités, Sécurité sociale) ; une partie, comme les prêts bancaires, est surtout détenue en France, elle est donc plus basse. Point bas : 47,5 % fin 2021, quand la Banque de France rachetait massivement des titres ; record de 70,6 % mi-2010.</p>
-          <p><b>Sources.</b> <a href="https://webstat.banque-france.fr/fr/catalogue/det2/DET2.Q.N.FR.W1.S13111.S1.N.L.LE.F3.T._Z.PT._T.M.V.N._T" target="_blank" rel="noopener">Banque de France, titres de l'État détenus par des non-résidents</a> (fin de trimestre, depuis 2008) ; <a href="https://ec.europa.eu/eurostat/databrowser/view/gov_10dd_ggd/default/table" target="_blank" rel="noopener">Eurostat, gov_10dd_ggd</a> (dette publique au sens de Maastricht, annuel).</p>
+          <p><b>En bref.</b> La part de la dette de l’État détenue par des investisseurs étrangers. Plus elle est élevée, plus la France dépend de capitaux qui peuvent partir vite en cas de crise.</p>
+          <p><b>Comment lire le graphique.</b> En bleu, la dette émise par l’État, chaque trimestre : c’est elle qui compte dans l’indice. En vert, toute la dette publique (État, collectivités, Sécurité sociale), une fois par an ; elle est plus basse, car une partie est prêtée par des banques françaises.</p>
+          <p><b>Comment c’est calculé.</b> Pourcentage des titres de l’État détenus hors de France, en fin de trimestre. Au-delà de 60 %, la France retrouverait la dépendance de 2008 à 2016.</p>
+          <p><b>D’où viennent les chiffres.</b> <a href="https://webstat.banque-france.fr/fr/catalogue/det2/DET2.Q.N.FR.W1.S13111.S1.N.L.LE.F3.T._Z.PT._T.M.V.N._T" target="_blank" rel="noopener">Banque de France</a> pour la dette de l’État, <a href="https://ec.europa.eu/eurostat/databrowser/view/gov_10dd_ggd/default/table" target="_blank" rel="noopener">Eurostat</a> pour l’ensemble de la dette publique.</p>
         </div>
       </details>
       <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-nonres">Période</span><div class="seg" role="group" aria-labelledby="periode-nonres" data-periode="nonres"></div></div></div>
@@ -159,9 +163,10 @@
       <details class="desc">
         <summary><span class="desc-ouvrir">Afficher la description</span><span class="desc-fermer">Masquer la description</span></summary>
         <div class="desc-corps">
-          <p><b>Ce qu’il mesure.</b> Une dégradation peut forcer des ventes chez les investisseurs soumis à des seuils de notation et renchérit mécaniquement le coût de la dette.</p>
-          <p><b>Calcul.</b> On retient la note la plus basse des trois agences (S&amp;P, Moody’s, Fitch), Moody’s converti cran pour cran (Aa3 = AA-). Les perspectives sont affichées mais ne changent pas le niveau. AA- est le plancher de nombreux mandats de gestion de réserves ; sous A-, la France approcherait la catégorie BBB, où les ventes forcées s’accélèrent. Chaque matin, un changement de note n’est enregistré que si deux sources indépendantes le confirment ; sinon, il est vérifié à la main.</p>
-          <p><b>Sources.</b> Notes et calendrier publiés par l’<a href="https://www.aft.gouv.fr/fr/notation-de-la-france" target="_blank" rel="noopener">Agence France Trésor</a> ; changements lus chaque matin sur <a href="https://en.wikipedia.org/wiki/List_of_countries_by_credit_rating" target="_blank" rel="noopener">Wikipédia</a> et <a href="https://countryeconomy.com/ratings/france" target="_blank" rel="noopener">countryeconomy.com</a>, recoupés.</p>
+          <p><b>En bref.</b> Les notes que trois agences (S&amp;P, Moody’s et Fitch) donnent à la France sur sa capacité à rembourser. Une baisse de note rend les emprunts plus chers et peut obliger certains investisseurs à vendre.</p>
+          <p><b>Comment lire le graphique.</b> Une ligne par agence : plus elle est haute, meilleure est la note. AAA est la meilleure note possible. Moody’s écrit ses notes autrement (Aa3 équivaut à AA-).</p>
+          <p><b>Comment c’est calculé.</b> On retient la note la plus basse des trois. Sous AA-, beaucoup de grands investisseurs réduisent leurs achats ; vers A-, la France approcherait la catégorie où les ventes forcées s’accélèrent.</p>
+          <p><b>D’où viennent les chiffres.</b> notes publiées par les agences et recensées par l’<a href="https://www.aft.gouv.fr/fr/notation-de-la-france" target="_blank" rel="noopener">Agence France Trésor</a>. Chaque matin, un changement n’est enregistré que si deux sources indépendantes le confirment (<a href="https://en.wikipedia.org/wiki/List_of_countries_by_credit_rating" target="_blank" rel="noopener">Wikipédia</a>, <a href="https://countryeconomy.com/ratings/france" target="_blank" rel="noopener">countryeconomy.com</a>).</p>
         </div>
       </details>
       <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-notes">Période</span><div class="seg" role="group" aria-labelledby="periode-notes" data-periode="notes"></div></div></div>
@@ -191,9 +196,10 @@
       <details class="desc">
         <summary><span class="desc-ouvrir">Afficher la description</span><span class="desc-fermer">Masquer la description</span></summary>
         <div class="desc-corps">
-          <p><b>Ce qu’il mesure.</b> Un solde de plus en plus négatif traduit des sorties de capitaux vers d'autres pays de la zone euro, signe de défiance des acteurs privés.</p>
-          <p><b>Calcul.</b> Créance ou dette de la Banque de France envers le reste de l’Eurosystème, en fin de mois, en milliards d’euros. Le solde dépend aussi des achats de titres de la BCE : il est donc classé dans la vulnérabilité de fond plutôt que dans la tension de marché. Seuils tirés de l’historique depuis 2008 : -118 Md€ au plus fort de la crise financière (décembre 2008), record à -240 Md€ en octobre 2025.</p>
-          <p><b>Sources.</b> <a href="https://data.ecb.europa.eu/data/datasets/TGB/TGB.M.FR.N.A094T.U2.EUR.E" target="_blank" rel="noopener">BCE, soldes TARGET de la Banque de France</a> (fin de mois, série TGB.M.FR).</p>
+          <p><b>En bref.</b> Le solde entre la Banque de France et les autres banques centrales de la zone euro. Quand l’argent quitte la France pour d’autres pays de la zone, ce solde baisse.</p>
+          <p><b>Comment lire le graphique.</b> La courbe donne le solde en milliards d’euros, à la fin de chaque mois. Plus elle descend, plus les capitaux sortent de France. C’est un signal lent, qui dépend aussi des achats de la Banque centrale européenne.</p>
+          <p><b>Comment c’est calculé.</b> Solde publié chaque mois par la Banque centrale européenne. Repères : -118 milliards au plus fort de la crise de 2008, record de -240 milliards en octobre 2025.</p>
+          <p><b>D’où viennent les chiffres.</b> <a href="https://data.ecb.europa.eu/data/datasets/TGB/TGB.M.FR.N.A094T.U2.EUR.E" target="_blank" rel="noopener">Banque centrale européenne</a>, chaque mois.</p>
         </div>
       </details>
       <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-target">Période</span><div class="seg" role="group" aria-labelledby="periode-target" data-periode="target"></div></div></div>
@@ -222,6 +228,6 @@
     if (v) v.textContent = 'La page n’a pas pu se charger. Recharge-la dans un instant.';
   }, 10000);
 </script>
-<script type="module" src="app.js?v=f1e4194a"></script>
+<script type="module" src="app.js?v=c4acb4a8"></script>
 </body>
 </html>

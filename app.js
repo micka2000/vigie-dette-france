@@ -569,8 +569,8 @@ function renderCourbe(c) {
   const vers = (pts) => pts.map((p) => ({ d: parseMonth(p.mois), v: p.valeur, p }));
   const series = [
     { name: 'Indice Vigie', endText: 'Indice', color: css('--series-1'), points: vers(indice) },
-    { name: 'Tension sur la dette', endText: 'Tension', color: css('--series-2'), points: vers(tension) },
-    { name: 'CISS de la BCE', endText: 'CISS', color: css('--fg-3'), dash: '4 4', points: vers(ciss) },
+    { name: 'Partie marchés de l’indice', endText: 'Marchés', color: css('--series-2'), points: vers(tension) },
+    { name: 'Stress de l’ensemble des marchés (BCE)', endText: 'BCE', color: css('--fg-3'), dash: '4 4', points: vers(ciss) },
   ].filter((s) => s.points.length);
   const debut = d3.min(series, (s) => s.points[0].d);
   lineChart(document.getElementById('chart-indice'), visibles('indice', series), {
@@ -617,7 +617,7 @@ function renderAuctionSource(adj) {
   const last = adj.lignes.filter((a) => a.source).at(-1);
   const a = document.getElementById('auction-source-last');
   if (!a) return; // index.html plus ancien que ce script (cache de GitHub Pages pendant un déploiement)
-  if (last) { a.href = last.source; a.textContent = `dernière adjudication, ${fmtDay(parseDay(last.date))}`; } else a.remove();
+  if (last) { a.href = last.source; a.textContent = `dernière vente, ${fmtDay(parseDay(last.date))}`; } else a.remove();
 }
 
 function renderRatingsTable(r) {
@@ -648,41 +648,29 @@ function el(tag, cls, txt) {
 }
 
 // Description repliable sous un indicateur : ce qu'il mesure, calcul, sources (liens).
-function description({ mesure, calcul, sources }) {
+function description({ bref, lire, calcul, sources }) {
   const d = el('details', 'desc');
   const s = el('summary');
   s.append(el('span', 'desc-ouvrir', 'Afficher la description'), el('span', 'desc-fermer', 'Masquer la description'));
   const corps = el('div', 'desc-corps');
   const para = (titre, ...contenu) => { const p = el('p'); p.append(el('b', null, `${titre} `), ...contenu); return p; };
   const liens = sources.flatMap(([texte, url], i) => {
-    const a = el('a', null, texte); a.href = url; a.target = '_blank'; a.rel = 'noopener';
+    const a = el('a', null, texte); a.href = url;
+    if (url.startsWith('http')) { a.target = '_blank'; a.rel = 'noopener'; }
     return i ? [document.createTextNode(' ; '), a] : [a];
   });
-  corps.append(para('Ce qu’il mesure.', mesure), para('Calcul.', calcul), para('Sources.', ...liens, '.'));
+  corps.append(para('En bref.', bref), para('Comment le lire.', lire), para('Comment c’est calculé.', calcul),
+    para('D’où viennent les chiffres.', ...liens, '.'));
   d.append(s, corps);
   return d;
 }
 
-// « 0 pb → 0, 50 pb → 25, … » tiré des ancrages de score.mjs, pour que le texte ne s'écarte jamais du calcul.
-const fmtAncre = (v) => String(v).replace('.', ',');
-const ancres = (signal, unite) => ANCRAGES[signal].map((v, i) => `${unite(fmtAncre(v))} → ${i * 25}`).join(', ');
-const NOTES_ANCRES = ['AAA → 0', 'AA- → 25', 'A+ → 50', 'BBB+ → 75', 'BBB- → 100'].join(', ');
-
-const SRC = {
-  bdfTec: ['Banque de France, TEC 10', 'https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.FR.EUR.FR2.BB.FRMOYTEC10.HSTA'],
-  bund: ['Bundesbank, rendement du Bund à 10 ans', 'https://www.bundesbank.de/dynamic/action/de/statistiken/zeitreihen-datenbanken/zeitreihen-datenbank/759778/759778?tsId=BBSIS.D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A'],
-  aft: ['adjudications de l’Agence France Trésor (dépêches Reuters sur Boursorama)', 'https://www.aft.gouv.fr/fr'],
-  bdfNr: ['Banque de France, titres de l’État détenus par des non-résidents', 'https://webstat.banque-france.fr/fr/catalogue/det2/DET2.Q.N.FR.W1.S13111.S1.N.L.LE.F3.T._Z.PT._T.M.V.N._T'],
-  notes: ['notes S&P, Moody’s et Fitch (Agence France Trésor)', 'https://www.aft.gouv.fr/fr/notation-de-la-france'],
-  target: ['BCE, solde TARGET de la Banque de France', 'https://data.ecb.europa.eu/data/datasets/TGB/TGB.M.FR.N.A094T.U2.EUR.E'],
-  code: ['score.mjs', 'score.mjs'],
-};
-
 const DESCRIPTIONS = {
   indice: () => ({
-    mesure: 'Une note de 0 à 100 qui résume la santé de la dette française à partir de cinq signaux publics.',
-    calcul: `Chaque signal est converti en score de 0 à 100 par interpolation entre ses seuils de risque (25 = vigilance, 50 = tension, 75 = crise), détaillés dans chaque carte. L’indice est la moyenne de deux sous-indices : la tension sur la dette (spread et couverture des adjudications) et la vulnérabilité de fond (non-résidents, note la plus basse, TARGET2). Sous 25 : calme ; de 25 à 50 : vigilance ; de 50 à 75 : tension ; 75 et plus : crise. La composition ne change jamais : si un signal manque ou est trop ancien, l’indice n’est pas calculé plutôt que d’être calculé sans lui. Toute la courbe depuis mai 2008 utilise les cinq signaux. Méthode ${METHODE_VERSION}.`,
-    sources: [SRC.bdfTec, SRC.bund, SRC.aft, SRC.bdfNr, SRC.notes, SRC.target, SRC.code],
+    bref: 'Une note de 0 à 100 qui résume en un chiffre l’état de la dette française. Plus elle est haute, plus la situation est tendue.',
+    lire: 'De 0 à 25 : calme. De 25 à 50 : vigilance. De 50 à 75 : tension. Au-delà de 75 : crise. « Plus haut depuis » compare le chiffre du jour à tous les jours depuis 2008.',
+    calcul: 'Chacun des cinq signaux ci-dessous reçoit une note sur 100. On fait ensuite deux moyennes : ce que les marchés exigent pour prêter à la France (écart de taux avec l’Allemagne, demande lors des emprunts) et ses fragilités de fond (part détenue par l’étranger, notes des agences, solde TARGET2). L’indice est la moyenne des deux. Les cinq signaux sont toujours tous utilisés : s’il en manque un, l’indice n’est pas affiché.',
+    sources: [['les cinq signaux ci-dessous', '#spread'], ['formule ouverte', 'https://github.com/micka2000/vigie-dette-france/blob/main/score.mjs']],
   }),
 };
 
