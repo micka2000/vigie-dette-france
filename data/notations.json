@@ -76,6 +76,7 @@
    "derniere": "2026-08-28",
    "prochaine": null,
    "alerte": "Avertissement publié le 12 octobre 2026 : dégradation possible si la dette continue de croître.",
+   "alerte_en": "Warning issued on 12 October 2026: possible downgrade if debt keeps rising.",
    "historique": [
     {
      "date": "2000-01-01",

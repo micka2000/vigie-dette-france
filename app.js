@@ -2,47 +2,90 @@
 // Le calcul (scores, niveaux, phrase de verdict) vient tout entier de score.mjs.
 import {
   SEUILS, ANCRAGES, METHODE_VERSION, couvertures, niveauBrut, niveauScore, interpoler, notch, notchLabel, fusionnerSeries, etatDuJour,
-  serieQuotidienne, plusHautDepuis, picDuMois, picsMensuels,
-} from './score.mjs?v=bef6a61c';
+  serieQuotidienne, plusHautDepuis, picDuMois, picsMensuels, phraseVerdict,
+} from './score.mjs?v=eb51fbb0';
+import { EN } from './anglais.mjs?v=6032f9be';
 
 window.vigieDemarre = true; // lu par le script de secours d'index.html
 
-const LEVEL_LABEL = { calme: 'Calme', vigilance: 'Vigilance', tension: 'Tension', crise: 'Crise' };
+// Langue de la page : « fr » ou « en » (bouton FR / EN, choix gardé dans le navigateur). index.html la fixe avant l'affichage.
+const state = {
+  periodes: { indice: 15, spread: 15, adj: 15, nonres: 15, notes: 15, target: 15 }, spreadStep: 'jour', data: null, masquees: {},
+  lang: document.documentElement.lang === 'en' ? 'en' : 'fr',
+};
+const L = (fr, en) => (state.lang === 'en' ? en : fr);
+
+const LEVEL_LABEL = {
+  fr: { calme: 'Calme', vigilance: 'Vigilance', tension: 'Tension', crise: 'Crise' },
+  en: { calme: 'Calm', vigilance: 'Watch', tension: 'Stress', crise: 'Crisis' },
+};
+const niveauTexte = (level) => LEVEL_LABEL[state.lang][level];
 
 // Seuils par signal, tirés de score.mjs : bornes [min, max) de chaque niveau, dans l'unité affichée.
 const CLE_SCORE = { spread: 'spread', adjudications: 'couverture', 'non-residents': 'nonResidents', notations: 'notes', target: 'target' };
 const TEXTES_SEUILS = {
-  spread: { calme: 'moins de 50 pb', vigilance: '50 à 80 pb', tension: '80 à 120 pb', crise: '120 pb et plus' },
-  adjudications: { calme: 'couverture de 2,5 et plus', vigilance: 'de 2 à 2,5', tension: 'de 1,5 à 2', crise: 'moins de 1,5' },
-  'non-residents': { calme: 'moins de 50 %', vigilance: '50 à 55 %', tension: '55 à 60 %', crise: '60 % et plus' },
-  notations: { calme: 'AA ou mieux', vigilance: 'AA-', tension: 'A+ à A-', crise: 'BBB+ ou moins' },
-  target: { calme: 'au-dessus de -50 Md€', vigilance: '-120 à -50 Md€', tension: '-200 à -120 Md€', crise: '-200 Md€ et moins' },
+  fr: {
+    spread: { calme: 'moins de 50 pb', vigilance: '50 à 80 pb', tension: '80 à 120 pb', crise: '120 pb et plus' },
+    adjudications: { calme: 'couverture de 2,5 et plus', vigilance: 'de 2 à 2,5', tension: 'de 1,5 à 2', crise: 'moins de 1,5' },
+    'non-residents': { calme: 'moins de 50 %', vigilance: '50 à 55 %', tension: '55 à 60 %', crise: '60 % et plus' },
+    notations: { calme: 'AA ou mieux', vigilance: 'AA-', tension: 'A+ à A-', crise: 'BBB+ ou moins' },
+    target: { calme: 'au-dessus de -50 Md€', vigilance: '-120 à -50 Md€', tension: '-200 à -120 Md€', crise: '-200 Md€ et moins' },
+  },
+  en: {
+    spread: { calme: 'below 50 bp', vigilance: '50 to 80 bp', tension: '80 to 120 bp', crise: '120 bp and above' },
+    adjudications: { calme: 'cover of 2.5 and above', vigilance: '2 to 2.5', tension: '1.5 to 2', crise: 'below 1.5' },
+    'non-residents': { calme: 'below 50%', vigilance: '50 to 55%', tension: '55 to 60%', crise: '60% and above' },
+    notations: { calme: 'AA or better', vigilance: 'AA-', tension: 'A+ to A-', crise: 'BBB+ or lower' },
+    target: { calme: 'above -€50bn', vigilance: '-€120bn to -€50bn', tension: '-€200bn to -€120bn', crise: '-€200bn and below' },
+  },
 };
 const THRESHOLDS = Object.fromEntries(Object.entries(CLE_SCORE).map(([key, s]) => [key, {
-  bands: SEUILS[s].map(([level, from, to]) => ({ level, from, to, text: TEXTES_SEUILS[key][level] })),
+  bands: SEUILS[s].map(([level, from, to]) => ({ level, from, to })),
 }]));
 
-const fr = d3.formatLocale({ decimal: ',', thousands: ' ', grouping: [3], currency: ['', ' €'], minus: '-' });
-const f1 = fr.format(',.1f');
-const f2 = fr.format(',.2f');
-const f0 = fr.format(',.0f');
-const fSigned1 = fr.format('+,.1f');
-const MONTHS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
-d3.timeFormatDefaultLocale({
-  dateTime: '%A %e %B %Y à %X', date: '%d/%m/%Y', time: '%H:%M:%S', periods: ['AM', 'PM'],
-  days: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
-  shortDays: ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'],
-  months: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
-  shortMonths: ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
-});
-const MONTHS_LONG = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
-const fmtMonth = (d) => `${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
-const fmtMonthLong = (d) => `${MONTHS_LONG[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
-const jourDuMois = (d) => (d.getUTCDate() === 1 ? '1er' : d.getUTCDate());
+// Nombres et dates dans la langue de la page : « 1 234,5 » et « 1er oct. 2026 », ou « 1,234.5 » et « 1 Oct 2026 ».
+const LOCALES = {
+  fr: d3.formatLocale({ decimal: ',', thousands: ' ', grouping: [3], currency: ['', ' €'], minus: '-' }),
+  en: d3.formatLocale({ decimal: '.', thousands: ',', grouping: [3], currency: ['€', ''], minus: '-' }),
+};
+const nombre = (spec) => { const f = { fr: LOCALES.fr.format(spec), en: LOCALES.en.format(spec) }; return (v) => f[state.lang](v); };
+const f1 = nombre(',.1f');
+const f2 = nombre(',.2f');
+const f0 = nombre(',.0f');
+const fSigned1 = nombre('+,.1f');
+const pc = (txt) => L(`${txt} %`, `${txt}%`);
+const pb = (txt) => L(`${txt} pb`, `${txt} bp`);
+// Milliards d'euros : « -240 Md€ » ou « -€240bn »
+const mds = (v, f = f0) => L(`${f(v)} Md€`, `${v < 0 ? '-' : ''}€${f(Math.abs(v))}bn`);
+const mdsSigne = (v) => L(`${fSigned1(v)} Md€`, `${v < 0 ? '-' : '+'}€${f1(Math.abs(v))}bn`);
+const DATES = {
+  fr: {
+    mois: ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
+    moisLongs: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
+    jours: ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'],
+    joursLongs: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
+    d3: { dateTime: '%A %e %B %Y à %X', date: '%d/%m/%Y', time: '%H:%M:%S' },
+  },
+  en: {
+    mois: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    moisLongs: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    jours: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    joursLongs: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    d3: { dateTime: '%A %e %B %Y at %X', date: '%d/%m/%Y', time: '%H:%M:%S' },
+  },
+};
+// Axes des graphiques : d3 lit la langue au moment où chaque échelle est créée.
+function langueD3() {
+  const t = DATES[state.lang];
+  d3.timeFormatDefaultLocale({ ...t.d3, periods: ['AM', 'PM'], days: t.joursLongs, shortDays: t.jours, months: t.moisLongs, shortMonths: t.mois });
+}
+langueD3();
+const fmtMonth = (d) => `${DATES[state.lang].mois[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+const fmtMonthLong = (d) => `${DATES[state.lang].moisLongs[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+const jourDuMois = (d) => (d.getUTCDate() === 1 && state.lang === 'fr' ? '1er' : d.getUTCDate());
 const fmtDayLong = (d) => `${jourDuMois(d)} ${fmtMonthLong(d)}`;
-const fmtDay = (d) => `${jourDuMois(d)} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
-const DAYS = ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'];
-const fmtWeekday = (d) => `${DAYS[d.getUTCDay()]} ${fmtDay(d)}`;
+const fmtDay = (d) => `${jourDuMois(d)} ${DATES[state.lang].mois[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+const fmtWeekday = (d) => `${DATES[state.lang].jours[d.getUTCDay()]} ${fmtDay(d)}`;
 const parseMonth = (s) => new Date(`${s.slice(0, 7)}-01T00:00:00Z`);
 const parseDay = (s) => new Date(`${s}T00:00:00Z`);
 const parseQuarter = (s) => new Date(Date.UTC(+s.slice(0, 4), (+s.slice(-1) - 1) * 3 + 2, 28));
@@ -50,7 +93,6 @@ const parseQuarter = (s) => new Date(Date.UTC(+s.slice(0, 4), (+s.slice(-1) - 1)
 const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 const levelOf = (key, v) => niveauBrut(CLE_SCORE[key], v);
 
-const state = { periodes: { indice: 15, spread: 15, adj: 15, nonres: 15, notes: 15, target: 15 }, spreadStep: 'jour', data: null, masquees: {} };
 
 // ---------- Données ----------
 
@@ -151,7 +193,7 @@ function lineChart(el, series, opts) {
   const m = { top: 12, right: opts.endLabels ? 70 : 16, bottom: 28, left: 48 };
   const iw = width - m.left - m.right, ih = height - m.top - m.bottom;
   const all = series.flatMap((s) => s.points);
-  if (!all.length) { el.textContent = 'Aucune donnée sur cette période.'; return; }
+  if (!all.length) { el.textContent = L('Aucune donnée sur cette période.', 'No data for this period.'); return; }
 
   const x = d3.scaleUtc(opts.xDomain ?? d3.extent(all, (p) => p.d), [0, iw]);
   const y = d3.scaleLinear(opts.yDomain ?? d3.extent(all, (p) => p.v), [ih, 0]);
@@ -267,7 +309,7 @@ function barChart(el, rows, opts) {
     })
     .on('pointerleave', function () { d3.select(this).attr('stroke', null); tip.hidden = true; });
   for (const r of rows.filter((r) => r.v == null)) {
-    g.append('text').attr('x', x(r.key) + x.bandwidth() / 2).attr('y', ih - 6).attr('text-anchor', 'middle').text('n.c.');
+    g.append('text').attr('x', x(r.key) + x.bandwidth() / 2).attr('y', ih - 6).attr('text-anchor', 'middle').text(nc());
   }
 }
 
@@ -275,7 +317,7 @@ function barChart(el, rows, opts) {
 
 function setLevel(key, level) {
   for (const el of document.querySelectorAll(`[data-pill="${key}"]`)) {
-    el.dataset.level = level; el.textContent = LEVEL_LABEL[level];
+    el.dataset.level = level; el.textContent = niveauTexte(level);
   }
 }
 
@@ -285,8 +327,8 @@ function fillThresholds() {
     if (!ul) continue;
     ul.replaceChildren(...t.bands.map((b) => {
       const li = document.createElement('li');
-      const pill = document.createElement('span'); pill.className = 'pill'; pill.dataset.level = b.level; pill.textContent = LEVEL_LABEL[b.level];
-      const range = document.createElement('span'); range.className = 'range'; range.textContent = b.text;
+      const pill = document.createElement('span'); pill.className = 'pill'; pill.dataset.level = b.level; pill.textContent = niveauTexte(b.level);
+      const range = document.createElement('span'); range.className = 'range'; range.textContent = TEXTES_SEUILS[state.lang][key][b.level];
       li.append(pill, range); return li;
     }));
   }
@@ -305,7 +347,8 @@ function icone(d) {
 }
 
 // Courbes masquées, par graphique : elles le restent quand la page se redessine (période, thème, données en direct).
-const visibles = (chart, series) => series.filter((s) => !state.masquees[chart]?.has(s.name));
+const cleSerie = (s) => s.id ?? s.name;
+const visibles = (chart, series) => series.filter((s) => !state.masquees[chart]?.has(cleSerie(s)));
 
 // Légende ; avec `chart`, chaque entrée est un bouton œil qui masque ou réaffiche sa courbe (jamais la dernière visible).
 function legend(id, series, chart = null) {
@@ -314,14 +357,14 @@ function legend(id, series, chart = null) {
     const sw = document.createElement('span'); sw.className = s.dash ? 'sw sw-dash' : 'sw'; sw.style.color = s.color; sw.style.background = s.dash ? '' : s.color;
     if (!chart) { li.append(sw, document.createTextNode(s.name)); return li; }
     const masquees = state.masquees[chart] ??= new Set();
-    const cachee = masquees.has(s.name);
+    const cachee = masquees.has(cleSerie(s));
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'legend-btn'; b.setAttribute('aria-pressed', String(!cachee));
-    b.setAttribute('aria-label', `${cachee ? 'Afficher' : 'Masquer'} la courbe ${s.name}`);
+    b.setAttribute('aria-label', cachee ? L(`Afficher la courbe ${s.name}`, `Show the ${s.name} line`) : L(`Masquer la courbe ${s.name}`, `Hide the ${s.name} line`));
     b.append(icone(cachee ? OEIL_BARRE : OEIL), sw, document.createTextNode(s.name));
     b.addEventListener('click', () => {
       if (!cachee && series.length - masquees.size <= 1) return;
-      if (cachee) masquees.delete(s.name); else masquees.add(s.name);
+      if (cachee) masquees.delete(cleSerie(s)); else masquees.add(cleSerie(s));
       render();
     });
     li.append(b); return li;
@@ -331,7 +374,7 @@ function legend(id, series, chart = null) {
 function text(sel, value) { const el = document.querySelector(sel); if (el) el.textContent = value; }
 
 // Période propre à chaque graphique. Un choix n'est proposé que si l'historique est plus long ; « Tout » toujours.
-const PERIODES = [[2, '2 ans'], [5, '5 ans'], [15, '15 ans'], [0, 'Tout']];
+const PERIODES = [[2, '2 ans', '2 yrs'], [5, '5 ans', '5 yrs'], [15, '15 ans', '15 yrs'], [0, 'Tout', 'All']];
 
 function periodes(chart, debut) {
   const box = document.querySelector(`[data-periode="${chart}"]`);
@@ -339,8 +382,8 @@ function periodes(chart, debut) {
   const offertes = PERIODES.filter(([y]) => y === 0 || y < ans);
   if (!offertes.some(([y]) => y === state.periodes[chart])) state.periodes[chart] = 0;
   box.parentElement.hidden = offertes.length < 2;
-  box.replaceChildren(...offertes.map(([y, libelle]) => {
-    const b = el('button', null, libelle);
+  box.replaceChildren(...offertes.map(([y, libelle, label]) => {
+    const b = el('button', null, L(libelle, label));
     b.type = 'button'; b.dataset.years = y; b.setAttribute('aria-pressed', String(y === state.periodes[chart]));
     return b;
   }));
@@ -366,7 +409,8 @@ function lastOfPeriod(rows, step) {
 function nomLigne(ligne) {
   const m = ligne.match(/^OAT (?:([\d,]+ %) )?(\d{2}\/\d{2}\/\d{4})$/);
   if (!m) return ligne;
-  return `OAT échéance ${m[2]}${m[1] ? ` (coupon ${m[1]})` : ''}`;
+  const coupon = m[1] && L(m[1], m[1].replace(',', '.').replace(' %', '%'));
+  return L(`OAT échéance ${m[2]}`, `OAT maturing ${m[2]}`) + (coupon ? ` (coupon ${coupon})` : '');
 }
 
 // Textes des cartes ; les niveaux viennent de l'état calculé par score.mjs.
@@ -377,49 +421,58 @@ function compute(data, etat) {
   const sp = data.spread.at(-1);
   const oneYear = `${+sp.jour.slice(0, 4) - 1}${sp.jour.slice(4)}`;
   const sp12 = data.spread.filter((r) => r.jour <= oneYear).at(-1);
-  const yearText = sp12 ? ` · ${fSigned1(sp.spread_pb - sp12.spread_pb)} pb sur un an` : '';
+  const yearText = sp12 ? ` · ${pb(fSigned1(sp.spread_pb - sp12.spread_pb))} ${L('sur un an', 'over a year')}` : '';
   out.spread = {
-    level: niv.spread.niveau, name: 'Spread OAT-Bund 10 ans',
-    value: `${f0(sp.spread_pb)} pb`,
-    sub: `Clôture du ${fmtDay(parseDay(sp.jour))}${yearText}`,
-    delta: `OAT ${f2(sp.fr10)} % contre Bund ${f2(sp.de10)} % à la clôture du ${fmtWeekday(parseDay(sp.jour))}${yearText}`,
+    level: niv.spread.niveau, name: L('Spread OAT-Bund 10 ans', '10-year OAT-Bund spread'),
+    value: pb(f0(sp.spread_pb)),
+    sub: `${L('Clôture du', 'Close on')} ${fmtDay(parseDay(sp.jour))}${yearText}`,
+    delta: L(`OAT ${pc(f2(sp.fr10))} contre Bund ${pc(f2(sp.de10))} à la clôture du ${fmtWeekday(parseDay(sp.jour))}${yearText}`,
+      `OAT ${pc(f2(sp.fr10))} against Bund ${pc(f2(sp.de10))} at the close of ${fmtWeekday(parseDay(sp.jour))}${yearText}`),
   };
 
   // Séances du calcul (score.mjs) : août et décembre écartés, comme pour le niveau
   const auctions = couvertures(data.adj).map((a) => ({ ...a, cover: a.couverture }));
   const lastCover = auctions.at(-1), prevCover = auctions.at(-2);
+  const jourVente = fmtDay(parseDay(lastCover.date));
   out.adjudications = {
-    level: niv.couverture.niveau, name: 'Couverture des adjudications',
+    level: niv.couverture.niveau, name: L('Couverture des adjudications', 'Auction cover'),
     value: f2(lastCover.cover),
-    sub: `Vente du ${fmtDay(parseDay(lastCover.date))} · taux ${f2(lastCover.taux)} %`,
-    delta: `Adjudication du ${fmtDay(parseDay(lastCover.date))}, ${nomLigne(lastCover.ligne)} : taux payé ${f2(lastCover.taux)} %, ${f1(lastCover.demande_mds)} Md€ demandés pour ${f1(lastCover.adjuge_mds)} Md€ servis, couverture ${f2(lastCover.cover)} (contre ${f2(prevCover.cover)} à la séance précédente)`,
+    sub: L(`Vente du ${jourVente} · taux ${pc(f2(lastCover.taux))}`, `Auction of ${jourVente} · rate ${pc(f2(lastCover.taux))}`),
+    delta: L(`Adjudication du ${jourVente}, ${nomLigne(lastCover.ligne)} : taux payé ${pc(f2(lastCover.taux))}, ${mds(lastCover.demande_mds, f1)} demandés pour ${mds(lastCover.adjuge_mds, f1)} servis, couverture ${f2(lastCover.cover)} (contre ${f2(prevCover.cover)} à la séance précédente)`,
+      `Auction of ${jourVente}, ${nomLigne(lastCover.ligne)}: rate paid ${pc(f2(lastCover.taux))}, ${mds(lastCover.demande_mds, f1)} bid for ${mds(lastCover.adjuge_mds, f1)} sold, cover ${f2(lastCover.cover)} (against ${f2(prevCover.cover)} at the previous auction)`),
   };
 
   const nr = data.nrAft.points.at(-1), nr1 = data.nrAft.points.at(-2);
+  const finNr = fmtMonth(parseMonth(nr.date));
+  const ecartNr = `${fSigned1(nr.part - nr1.part)} ${Math.abs(nr.part - nr1.part) >= 2 ? 'points' : 'point'}`;
   out['non-residents'] = {
-    level: niv.nonResidents.niveau, name: 'Part des non-résidents',
-    value: `${f1(nr.part)} %`,
-    sub: `Titres de l'État · fin ${fmtMonth(parseMonth(nr.date))}`,
-    delta: `Part des titres de l'État détenue par des non-résidents, fin ${fmtMonth(parseMonth(nr.date))} · ${fSigned1(nr.part - nr1.part)} point depuis ${fmtMonth(parseMonth(nr1.date))}`,
+    level: niv.nonResidents.niveau, name: L('Part des non-résidents', 'Non-resident share'),
+    value: pc(f1(nr.part)),
+    sub: L(`Titres de l'État · fin ${finNr}`, `State securities · end ${finNr}`),
+    delta: L(`Part des titres de l'État détenue par des non-résidents, fin ${finNr} · ${ecartNr} depuis ${fmtMonth(parseMonth(nr1.date))}`,
+      `Share of State securities held by non-residents, end ${finNr} · ${ecartNr} since ${fmtMonth(parseMonth(nr1.date))}`),
   };
 
   const worst = d3.min(data.ratings.agences, (a) => notch(a.note));
   const worstAgency = data.ratings.agences.filter((a) => notch(a.note) === worst).map((a) => a.agence).join(', ');
   const nextReview = data.ratings.agences.filter((a) => a.prochaine && parseDay(a.prochaine) >= new Date(new Date().toDateString()))
     .sort((a, b) => a.prochaine.localeCompare(b.prochaine))[0];
+  const revue = nextReview && fmtDay(parseDay(nextReview.prochaine));
   out.notations = {
-    level: niv.notes.niveau, name: 'Note la plus basse',
+    level: niv.notes.niveau, name: L('Note la plus basse', 'Lowest rating'),
     value: notchLabel(worst),
-    sub: `${worstAgency}${nextReview ? ` · prochaine revue ${nextReview.agence} le ${fmtDay(parseDay(nextReview.prochaine))}` : ''}`,
-    delta: `Note la plus basse : ${notchLabel(worst)} (${worstAgency}).${nextReview ? ` Prochaine revue : ${nextReview.agence}, le ${fmtDay(parseDay(nextReview.prochaine))}.` : ''}`,
+    sub: `${worstAgency}${nextReview ? L(` · prochaine revue ${nextReview.agence} le ${revue}`, ` · next review ${nextReview.agence} on ${revue}`) : ''}`,
+    delta: L(`Note la plus basse : ${notchLabel(worst)} (${worstAgency}).${nextReview ? ` Prochaine revue : ${nextReview.agence}, le ${revue}.` : ''}`,
+      `Lowest rating: ${notchLabel(worst)} (${worstAgency}).${nextReview ? ` Next review: ${nextReview.agence}, on ${revue}.` : ''}`),
   };
 
   const tg = data.target.at(-1), tg12 = data.target.at(-13);
+  const moisTg = fmtMonth(parseMonth(tg.mois)), surUnAn = `${mdsSigne(tg.solde_mds - tg12.solde_mds)} ${L('sur un an', 'over a year')}`;
   out.target = {
-    level: niv.target.niveau, name: 'Solde TARGET2',
-    value: `${f0(tg.solde_mds)} Md€`,
-    sub: `${fmtMonth(parseMonth(tg.mois))} · ${fSigned1(tg.solde_mds - tg12.solde_mds)} Md€ sur un an`,
-    delta: `Fin ${fmtMonth(parseMonth(tg.mois))} · ${fSigned1(tg.solde_mds - tg12.solde_mds)} Md€ sur un an · record : ${f0(d3.min(data.target, (r) => r.solde_mds))} Md€`,
+    level: niv.target.niveau, name: L('Solde TARGET2', 'TARGET2 balance'),
+    value: mds(tg.solde_mds),
+    sub: `${moisTg} · ${surUnAn}`,
+    delta: `${L('Fin', 'End')} ${moisTg} · ${surUnAn} · ${L('record', 'record')}${L(' : ', ': ')}${mds(d3.min(data.target, (r) => r.solde_mds))}`,
   };
   return out;
 }
@@ -431,7 +484,7 @@ function renderSummary(signals) {
     const a = document.createElement('a'); a.className = 'tile'; a.href = `#${key}`; a.dataset.level = s.level;
     const name = document.createElement('span'); name.className = 'tile-name'; name.textContent = s.name;
     const value = document.createElement('span'); value.className = 'tile-value'; value.textContent = s.value;
-    const pill = document.createElement('span'); pill.className = 'pill'; pill.dataset.level = s.level; pill.textContent = LEVEL_LABEL[s.level];
+    const pill = document.createElement('span'); pill.className = 'pill'; pill.dataset.level = s.level; pill.textContent = niveauTexte(s.level);
     a.dataset.tip = s.sub; // le détail (date, variation) en infobulle : le chiffre se lit sans lui
     a.append(name, value, pill); return a;
   }));
@@ -456,30 +509,31 @@ function renderCharts(data) {
   const spMax = Math.max(130, d3.max(spread, (p) => p.v) + 10);
   lineChart(document.getElementById('chart-spread'), [{ name: 'Spread', color: css('--series-1'), points: spread }], {
     bands: THRESHOLDS.spread.bands, yDomain: [Math.min(0, d3.min(spread, (p) => p.v)), spMax],
-    yFormat: (v) => `${f0(v)}`, tipFormat: (v, p) => `${f0(v)} pb (OAT ${f2(p.r.fr10)} %, Bund ${f2(p.r.de10)} %)`,
-    dateFormat: fmtWeekday, xDomain: xDom('spread', spread), label: 'Spread OAT-Bund à 10 ans en points de base, à la clôture',
+    yFormat: (v) => `${f0(v)}`, tipFormat: (v, p) => `${pb(f0(v))} (OAT ${pc(f2(p.r.fr10))}, Bund ${pc(f2(p.r.de10))})`,
+    dateFormat: fmtWeekday, xDomain: xDom('spread', spread),
+    label: L('Spread OAT-Bund à 10 ans en points de base, à la clôture', '10-year OAT-Bund spread in basis points, at the close'),
   });
 
   clip = clipDe('target');
   const target = clip(data.target.map((r) => ({ d: parseMonth(r.mois), v: r.solde_mds })));
-  lineChart(document.getElementById('chart-target'), [{ name: 'Solde', color: css('--series-1'), points: target }], {
+  lineChart(document.getElementById('chart-target'), [{ name: L('Solde', 'Balance'), color: css('--series-1'), points: target }], {
     bands: THRESHOLDS.target.bands, yDomain: [Math.min(-260, d3.min(target, (p) => p.v) - 10), Math.max(20, d3.max(target, (p) => p.v) + 10)],
-    yFormat: (v) => `${f0(v)}`, tipFormat: (v) => `${f1(v)} Md€`, xDomain: xDom('target', target),
-    label: 'Solde TARGET2 de la Banque de France en milliards d’euros',
+    yFormat: (v) => `${f0(v)}`, tipFormat: (v) => mds(v, f1), xDomain: xDom('target', target),
+    label: L('Solde TARGET2 de la Banque de France en milliards d’euros', 'Banque de France TARGET2 balance in billions of euros'),
   });
 
   clip = clipDe('nonres');
   const aft = data.nrAft.points.map((p) => ({ d: parseMonth(p.date), v: p.part }));
   const es = data.nrEs.map((r) => ({ d: new Date(Date.UTC(r.annee, 11, 31)), v: r.part_nonres }));
   const nrSeries = [
-    { name: 'Titres de l’État, OAT et BTF (Banque de France, chaque trimestre) : utilisé dans l’indice', endText: 'État', color: css('--series-1'), points: clip(aft) },
-    { name: 'Toute la dette publique : État, collectivités, Sécurité sociale (Eurostat, chaque année)', endText: 'Ensemble', color: css('--series-2'), points: clip(es) },
+    { id: 'etat', name: L('Titres de l’État, OAT et BTF (Banque de France, chaque trimestre) : utilisé dans l’indice', 'State securities, OATs and BTFs (Banque de France, quarterly): used in the index'), endText: L('État', 'State'), color: css('--series-1'), points: clip(aft) },
+    { id: 'ensemble', name: L('Toute la dette publique : État, collectivités, Sécurité sociale (Eurostat, chaque année)', 'All public debt: State, local authorities, social security (Eurostat, yearly)'), endText: L('Ensemble', 'All'), color: css('--series-2'), points: clip(es) },
   ].filter((s) => s.points.length);
   const nrAll = nrSeries.flatMap((s) => s.points);
   lineChart(document.getElementById('chart-nonres'), visibles('nonres', nrSeries), {
-    bands: THRESHOLDS['non-residents'].bands, yDomain: [Math.min(44, d3.min(nrAll, (p) => p.v) - 2), Math.max(64, d3.max(nrAll, (p) => p.v) + 2)], yFormat: (v) => `${f0(v)} %`, tipFormat: (v) => `${f1(v)} %`,
+    bands: THRESHOLDS['non-residents'].bands, yDomain: [Math.min(44, d3.min(nrAll, (p) => p.v) - 2), Math.max(64, d3.max(nrAll, (p) => p.v) + 2)], yFormat: (v) => pc(f0(v)), tipFormat: (v) => pc(f1(v)),
     xDomain: [d3.min(nrAll, (p) => p.d), new Date()], dots: true, endLabels: true,
-    label: 'Part de la dette française détenue par des non-résidents',
+    label: L('Part de la dette française détenue par des non-résidents', 'Share of French debt held by non-residents'),
   });
   legend('legend-nonres', nrSeries, 'nonres');
 
@@ -495,7 +549,7 @@ function renderCharts(data) {
   lineChart(document.getElementById('chart-ratings'), visibles('notes', ratingSeries), {
     bands: THRESHOLDS.notations.bands, yDomain: [12.5, 20.5], yTicks: [13, 14, 15, 16, 17, 18, 19, 20],
     yFormat: notchLabel, tipFormat: (v, p) => p.note, xDomain: [start, new Date()], dateFormat: fmtDay, endLabels: true, offset: 3,
-    label: 'Notes de la France par agence',
+    label: L('Notes de la France par agence', 'France’s ratings by agency'),
   });
   legend('legend-ratings', ratingSeries, 'notes');
 
@@ -504,21 +558,22 @@ function renderCharts(data) {
   periodes('adj', toutes[0].d);
   const auctions = clipDe('adj')(toutes);
   const points = auctions.length <= 40;
-  lineChart(document.getElementById('chart-auction-cover'), [{ name: 'Couverture', color: css('--series-1'), points: auctions.map((a) => ({ d: a.d, v: a.cover, a })) }], {
+  lineChart(document.getElementById('chart-auction-cover'), [{ name: L('Couverture', 'Cover'), color: css('--series-1'), points: auctions.map((a) => ({ d: a.d, v: a.cover, a })) }], {
     bands: THRESHOLDS.adjudications.bands, yDomain: [0, Math.max(3.5, d3.max(auctions, (a) => a.cover) + 0.2)],
     yFormat: (v) => f1(v), dateFormat: fmtDay, dots: points,
-    tipFormat: (v, p) => `${f2(v)} : ${f1(p.a.demande_mds)} Md€ demandés pour ${f1(p.a.adjuge_mds)} Md€ vendus, au taux de ${f2(p.a.taux)} %`,
-    xDomain: xDom('adj', auctions), label: 'Taux de couverture des adjudications à 10 ans',
+    tipFormat: (v, p) => L(`${f2(v)} : ${mds(p.a.demande_mds, f1)} demandés pour ${mds(p.a.adjuge_mds, f1)} vendus, au taux de ${pc(f2(p.a.taux))}`,
+      `${f2(v)}: ${mds(p.a.demande_mds, f1)} bid for ${mds(p.a.adjuge_mds, f1)} sold, at a rate of ${pc(f2(p.a.taux))}`),
+    xDomain: xDom('adj', auctions), label: L('Taux de couverture des adjudications à 10 ans', 'Cover ratio of 10-year auctions'),
   });
 }
 
 // ---------- Courbe de l'Indice Vigie ----------
 
 const EVENEMENTS = [
-  { d: parseDay('2008-09-15'), label: 'Lehman' },
-  { d: parseDay('2011-11-17'), label: 'Crise de l’euro' },
-  { d: parseDay('2020-03-12'), label: 'Covid' },
-  { d: parseDay('2024-06-09'), label: 'Dissolution' },
+  { d: parseDay('2008-09-15'), fr: 'Lehman', en: 'Lehman' },
+  { d: parseDay('2011-11-17'), fr: 'Crise de l’euro', en: 'Euro crisis' },
+  { d: parseDay('2020-03-12'), fr: 'Covid', en: 'Covid' },
+  { d: parseDay('2024-06-09'), fr: 'Dissolution', en: 'Snap election' },
 ];
 const NIVEAUX_SCORE = ['calme', 'vigilance', 'tension', 'crise'].map((level, i) => ({ level, from: i * 25, to: i === 3 ? Infinity : (i + 1) * 25 }));
 
@@ -562,21 +617,24 @@ function renderCourbe(c) {
   const moisCourant = new Date().toISOString().slice(0, 7);
   const vers = (pts) => pts.map((p) => ({ d: parseMonth(p.mois), v: p.valeur, p }));
   const series = [
-    { name: 'Indice Vigie', endText: 'Indice', color: css('--series-1'), points: vers(indice) },
-    { name: 'Partie marchés de l’indice', endText: 'Marchés', color: css('--series-2'), points: vers(tension) },
-    { name: 'Stress de l’ensemble des marchés (BCE)', endText: 'BCE', color: css('--fg-3'), dash: '4 4', points: vers(ciss) },
+    { id: 'indice', name: L('Indice Vigie', 'Vigie Index'), endText: L('Indice', 'Index'), color: css('--series-1'), points: vers(indice) },
+    { id: 'tension', name: L('Partie marchés de l’indice', 'Markets part of the index'), endText: L('Marchés', 'Markets'), color: css('--series-2'), points: vers(tension) },
+    { id: 'ciss', name: L('Stress de l’ensemble des marchés (BCE)', 'Stress across all markets (ECB)'), endText: L('BCE', 'ECB'), color: css('--fg-3'), dash: '4 4', points: vers(ciss) },
   ].filter((s) => s.points.length);
   const debut = d3.min(series, (s) => s.points[0].d);
   lineChart(document.getElementById('chart-indice'), visibles('indice', series), {
-    bands: NIVEAUX_SCORE, yDomain: [0, 100], yTicks: [0, 25, 50, 75, 100], yFormat: f0, endLabels: true, marks: EVENEMENTS,
-    xDomain: [debut, new Date()], label: 'Indice Vigie, tension sur la dette et CISS de la BCE, séance la plus haute de chaque mois, sur 100',
+    bands: NIVEAUX_SCORE, yDomain: [0, 100], yTicks: [0, 25, 50, 75, 100], yFormat: f0, endLabels: true,
+    marks: EVENEMENTS.map((e) => ({ d: e.d, label: e[state.lang] })), xDomain: [debut, new Date()],
+    label: L('Indice Vigie, tension sur la dette et CISS de la BCE, séance la plus haute de chaque mois, sur 100',
+      'Vigie Index, debt market stress and ECB CISS, highest session of each month, out of 100'),
     tipFormat: (v, pt) => {
       const p = pt.p;
       if (p.max != null) {
         const enCours = p.mois === moisCourant && c.cissDuJour;
-        return `${f0(v)}${enCours ? ` (maximum du mois à ce jour ; ${f0(interpoler(c.cissDuJour.valeur, ANCRAGES.ciss))} le ${fmtDay(parseDay(c.cissDuJour.jour))})` : ''}`;
+        const jourCiss = enCours && `${f0(interpoler(c.cissDuJour.valeur, ANCRAGES.ciss))} ${L('le', 'on')} ${fmtDay(parseDay(c.cissDuJour.jour))}`;
+        return `${f0(v)}${enCours ? L(` (maximum du mois à ce jour ; ${jourCiss})`, ` (month’s high so far; ${jourCiss})`) : ''}`;
       }
-      return `${f0(v)} le ${fmtDay(parseDay(p.jour))}${p.sans.length ? `, sans ${liste(p.sans.map((n) => NOMS_LONGS[n].replace(/^(le|la|les) /, '')))}` : ''}`;
+      return `${f0(v)} ${L('le', 'on')} ${fmtDay(parseDay(p.jour))}${p.sans.length ? `, ${L('sans', 'without')} ${liste(p.sans.map((n) => nomLong(n).replace(/^(le|la|les|the) /, '')))}` : ''}`;
     },
   });
   legend('legend-indice', series, 'indice');
@@ -585,12 +643,15 @@ function renderCourbe(c) {
   if (indice.length) {
     const haut = indice.reduce((a, b) => (b.valeur > a.valeur ? b : a));
     const bas = indice.reduce((a, b) => (b.valeur < a.valeur ? b : a));
-    text('#courbe-resume', `Sur la période affichée : ce mois-ci ${f0(indice.at(-1).valeur)}, plus haut ${f0(haut.valeur)} (${fmtMonthLong(parseMonth(haut.mois))}), plus bas ${f0(bas.valeur)} (${fmtMonthLong(parseMonth(bas.mois))}).`);
+    text('#courbe-resume', L(`Sur la période affichée : ce mois-ci ${f0(indice.at(-1).valeur)}, plus haut ${f0(haut.valeur)} (${fmtMonthLong(parseMonth(haut.mois))}), plus bas ${f0(bas.valeur)} (${fmtMonthLong(parseMonth(bas.mois))}).`,
+      `Over the period shown: this month ${f0(indice.at(-1).valeur)}, high ${f0(haut.valeur)} (${fmtMonthLong(parseMonth(haut.mois))}), low ${f0(bas.valeur)} (${fmtMonthLong(parseMonth(bas.mois))}).`));
   }
   const t = troncons(indice);
   const sans = document.getElementById('courbe-sans');
   sans.hidden = !t.length;
-  sans.dataset.tip = t.length ? `Indice Vigie calculé avec moins de signaux : ${t.map((x) => `${x.debut === x.fin ? `en ${fmtMonthLong(parseMonth(x.debut))}` : `${de(fmtMonthLong(parseMonth(x.debut)))} à ${fmtMonthLong(parseMonth(x.fin))}`}, sans ${liste(x.sans.map((n) => NOMS_LONGS[n]))}`).join(' ; ')}.` : '';
+  const periode = (x) => (x.debut === x.fin ? `${L('en', 'in')} ${fmtMonthLong(parseMonth(x.debut))}`
+    : L(`${de(fmtMonthLong(parseMonth(x.debut)))} à ${fmtMonthLong(parseMonth(x.fin))}`, `from ${fmtMonthLong(parseMonth(x.debut))} to ${fmtMonthLong(parseMonth(x.fin))}`));
+  sans.dataset.tip = t.length ? `${L('Indice Vigie calculé avec moins de signaux : ', 'Vigie Index calculated with fewer signals: ')}${t.map((x) => `${periode(x)}, ${L('sans', 'without')} ${liste(x.sans.map(nomLong))}`).join(L(' ; ', '; '))}.` : '';
 
   // Tableau accessible, du plus récent au plus ancien
   const parMois = new Map();
@@ -599,8 +660,8 @@ function renderCourbe(c) {
   }
   document.querySelector('#courbe-table tbody').replaceChildren(...[...parMois.keys()].sort().reverse().map((mois) => {
     const r = parMois.get(mois), tr = document.createElement('tr');
-    for (const v of [fmtMonthLong(parseMonth(mois)), r.indice ? f0(r.indice.valeur) : 'n.c.', r.tension ? f0(r.tension.valeur) : 'n.c.',
-      r.ciss ? f0(r.ciss.valeur) : 'n.c.', r.indice?.sans.length ? liste(r.indice.sans.map((n) => NOMS_LONGS[n])) : '']) {
+    for (const v of [fmtMonthLong(parseMonth(mois)), r.indice ? f0(r.indice.valeur) : nc(), r.tension ? f0(r.tension.valeur) : nc(),
+      r.ciss ? f0(r.ciss.valeur) : nc(), r.indice?.sans.length ? liste(r.indice.sans.map(nomLong)) : '']) {
       const td = document.createElement('td'); td.textContent = v; tr.append(td);
     }
     return tr;
@@ -611,7 +672,7 @@ function renderAuctionSource(adj) {
   const last = adj.lignes.filter((a) => a.source).at(-1);
   const a = document.getElementById('auction-source-last');
   if (!a) return; // index.html plus ancien que ce script (cache de GitHub Pages pendant un déploiement)
-  if (last) { a.href = last.source; a.textContent = `dernière vente, ${fmtDay(parseDay(last.date))}`; } else a.remove();
+  if (last) { a.href = last.source; a.textContent = `${L('dernière vente', 'latest auction')}, ${fmtDay(parseDay(last.date))}`; } else a.remove();
 }
 
 // Toutes les ventes du fichier, du plus récent au plus ancien ; celles d'août et de décembre sont signalées hors calcul.
@@ -619,25 +680,28 @@ function renderAuctionsTable(adj) {
   const calcul = new Set(couvertures(adj).map((a) => a.date));
   document.querySelector('#auctions-table tbody').replaceChildren(...[...adj.lignes].reverse().map((a) => {
     const tr = document.createElement('tr');
-    const cover = a.adjuge_mds && a.demande_mds != null ? f2(a.demande_mds / a.adjuge_mds) : 'n.c.';
-    for (const v of [fmtDay(parseDay(a.date)), nomLigne(a.ligne), a.taux != null ? `${f2(a.taux)} %` : 'n.c.',
-      a.demande_mds != null ? `${f1(a.demande_mds)} Md€` : 'n.c.', a.adjuge_mds ? `${f1(a.adjuge_mds)} Md€` : 'n.c.',
-      calcul.has(a.date) ? cover : `${cover} (hors calcul)`]) {
+    const cover = a.adjuge_mds && a.demande_mds != null ? f2(a.demande_mds / a.adjuge_mds) : nc();
+    for (const v of [fmtDay(parseDay(a.date)), nomLigne(a.ligne), a.taux != null ? pc(f2(a.taux)) : nc(),
+      a.demande_mds != null ? mds(a.demande_mds, f1) : nc(), a.adjuge_mds ? mds(a.adjuge_mds, f1) : nc(),
+      calcul.has(a.date) ? cover : `${cover} ${L('(hors calcul)', '(not counted)')}`]) {
       const td = document.createElement('td'); td.textContent = v; tr.append(td);
     }
     return tr;
   }));
 }
 
+const PERSPECTIVES = { stable: 'stable', négative: 'negative', positive: 'positive', 'en surveillance': 'under review' };
+
 function renderRatingsTable(r) {
   document.querySelector('#ratings-table tbody').replaceChildren(...r.agences.map((a) => {
     const tr = document.createElement('tr');
-    for (const v of [a.agence, a.note, a.perspective, a.derniere ? fmtDay(parseDay(a.derniere)) : 'n.c.', a.prochaine ? fmtDay(parseDay(a.prochaine)) : 'non fixée']) {
+    for (const v of [a.agence, a.note, L(a.perspective, PERSPECTIVES[a.perspective] ?? a.perspective), a.derniere ? fmtDay(parseDay(a.derniere)) : nc(),
+      a.prochaine ? fmtDay(parseDay(a.prochaine)) : L('non fixée', 'not set')]) {
       const td = document.createElement('td'); td.textContent = v; tr.append(td);
     }
     return tr;
   }));
-  const alerts = r.agences.filter((a) => a.alerte).map((a) => `${a.agence} : ${a.alerte}`);
+  const alerts = r.agences.filter((a) => a.alerte).map((a) => `${a.agence}${L(' : ', ': ')}${L(a.alerte, a.alerte_en ?? a.alerte)}`);
   const box = document.getElementById('ratings-alert');
   box.hidden = !alerts.length; box.textContent = alerts.join(' ');
 }
@@ -645,9 +709,12 @@ function renderRatingsTable(r) {
 // ---------- En-tête : Indice Vigie, sous-indices, CISS et repère historique ----------
 
 const NOMS_LONGS = {
-  spread: 'le spread', couverture: 'la couverture des adjudications', nonResidents: 'la part des non-résidents', notes: 'les notes', target: 'TARGET2',
+  fr: { spread: 'le spread', couverture: 'la couverture des adjudications', nonResidents: 'la part des non-résidents', notes: 'les notes', target: 'TARGET2' },
+  en: { spread: 'the spread', couverture: 'auction cover', nonResidents: 'the non-resident share', notes: 'the ratings', target: 'TARGET2' },
 };
-const liste = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} et ${xs.at(-1)}`);
+const nomLong = (n) => NOMS_LONGS[state.lang][n];
+const liste = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} ${L('et', 'and')} ${xs.at(-1)}`);
+const nc = () => L('n.c.', 'n/a');
 
 function el(tag, cls, txt) {
   const e = document.createElement(tag);
@@ -660,30 +727,33 @@ function el(tag, cls, txt) {
 function description({ bref, lire, calcul, sources }) {
   const d = el('details', 'desc');
   const s = el('summary');
-  s.append(el('span', 'desc-ouvrir', 'Afficher la description'), el('span', 'desc-fermer', 'Masquer la description'));
+  s.append(el('span', 'desc-ouvrir', L('Afficher la description', 'Show the description')), el('span', 'desc-fermer', L('Masquer la description', 'Hide the description')));
   const corps = el('div', 'desc-corps');
   const para = (titre, ...contenu) => { const p = el('p'); p.append(el('b', null, `${titre} `), ...contenu); return p; };
   const liens = sources.flatMap(([texte, url], i) => {
     const a = el('a', null, texte); a.href = url;
     if (url.startsWith('http')) { a.target = '_blank'; a.rel = 'noopener'; }
-    return i ? [document.createTextNode(' ; '), a] : [a];
+    return i ? [document.createTextNode(L(' ; ', '; ')), a] : [a];
   });
-  corps.append(para('En bref.', bref), para('Comment le lire.', lire), para('Comment c’est calculé.', calcul),
-    para('D’où viennent les chiffres.', ...liens, '.'));
+  corps.append(para(L('En bref.', 'In short.'), bref), para(L('Comment le lire.', 'How to read it.'), lire),
+    para(L('Comment c’est calculé.', 'How it is calculated.'), calcul), para(L('D’où viennent les chiffres.', 'Where the figures come from.'), ...liens, '.'));
   d.append(s, corps);
   return d;
 }
 
 const DESCRIPTIONS = {
   indice: () => ({
-    bref: 'Une note de 0 à 100 qui résume en un chiffre l’état de la dette française. Plus elle est haute, plus la situation est tendue.',
-    lire: 'De 0 à 25 : calme. De 25 à 50 : vigilance. De 50 à 75 : tension. Au-delà de 75 : crise. « Plus haut depuis » compare le chiffre du jour à tous les jours depuis 2008.',
-    calcul: 'Chacun des cinq signaux ci-dessous reçoit une note sur 100. On fait ensuite deux moyennes : ce que les marchés exigent pour prêter à la France (écart de taux avec l’Allemagne, demande lors des emprunts) et ses fragilités de fond (part détenue par l’étranger, notes des agences, solde TARGET2). L’indice est la moyenne des deux. Les cinq signaux sont toujours tous utilisés : s’il en manque un, l’indice n’est pas affiché.',
-    sources: [['les cinq signaux ci-dessous', '#spread'], ['formule ouverte', 'https://github.com/micka2000/vigie-dette-france/blob/main/score.mjs']],
+    bref: L('Une note de 0 à 100 qui résume en un chiffre l’état de la dette française. Plus elle est haute, plus la situation est tendue.',
+      'A score from 0 to 100 that sums up the state of French debt in a single figure. The higher it is, the more strained the situation.'),
+    lire: L('De 0 à 25 : calme. De 25 à 50 : vigilance. De 50 à 75 : tension. Au-delà de 75 : crise. « Plus haut depuis » compare le chiffre du jour à tous les jours depuis 2008.',
+      'From 0 to 25: calm. From 25 to 50: watch. From 50 to 75: stress. Above 75: crisis. “Highest since” compares today’s figure with every day since 2008.'),
+    calcul: L('Chacun des cinq signaux ci-dessous reçoit une note sur 100. On fait ensuite deux moyennes : ce que les marchés exigent pour prêter à la France (écart de taux avec l’Allemagne, demande lors des emprunts) et ses fragilités de fond (part détenue par l’étranger, notes des agences, solde TARGET2). L’indice est la moyenne des deux. Les cinq signaux sont toujours tous utilisés : s’il en manque un, l’indice n’est pas affiché.',
+      'Each of the five signals below gets a score out of 100. We then take two averages: what markets demand to lend to France (rate gap with Germany, demand at auctions) and its underlying weaknesses (share held abroad, agency ratings, TARGET2 balance). The index is the average of the two. All five signals are always used: if one is missing, the index is not shown.'),
+    sources: [[L('les cinq signaux ci-dessous', 'the five signals below'), '#spread'], [L('formule ouverte', 'open formula'), 'https://github.com/micka2000/vigie-dette-france/blob/main/score.mjs']],
   }),
 };
 
-function infoBtn(tip, label = 'En savoir plus') {
+function infoBtn(tip, label = L('En savoir plus', 'Learn more')) {
   const b = el('button', 'info', 'i');
   b.type = 'button'; b.dataset.tip = tip; b.setAttribute('aria-label', label);
   return b;
@@ -700,21 +770,28 @@ function repere(data, etat) {
   if (depuis && depuis.jour > `${+jour.slice(0, 4) - 1}${jour.slice(4)}`) return null;
   const sansAujourdhui = [...etat.tension.sans, ...etat.fond.sans];
   const sansAlors = (p) => p.sans.filter((n) => !sansAujourdhui.includes(n));
-  const note = (p) => (sansAlors(p).length ? ` À cette date, l’indice est calculé sans ${liste(sansAlors(p).map((n) => NOMS_LONGS[n]))}.` : '');
+  const note = (p) => (sansAlors(p).length ? L(` À cette date, l’indice est calculé sans ${liste(sansAlors(p).map(nomLong))}.`,
+    ` On that date, the index is calculated without ${liste(sansAlors(p).map(nomLong))}.`) : '');
 
   if (!depuis) {
     const debut = serie.find((p) => p.indice != null);
     const manquants = [...new Set(serie.filter((p) => p.indice != null).flatMap(sansAlors))];
-    return { texte: `Plus haut niveau depuis le début de l’indice (${fmtMonthLong(parseDay(debut.jour))}).`,
-      detail: manquants.length ? `Une partie de l’historique est calculée sans ${liste(manquants.map((n) => NOMS_LONGS[n]))}.` : 'Comparé à chaque séance depuis le début de l’indice.' };
+    const mois = fmtMonthLong(parseDay(debut.jour));
+    return { texte: L(`Plus haut niveau depuis le début de l’indice (${mois}).`, `Highest level since the index began (${mois}).`),
+      detail: manquants.length ? L(`Une partie de l’historique est calculée sans ${liste(manquants.map(nomLong))}.`, `Part of the history is calculated without ${liste(manquants.map(nomLong))}.`)
+        : L('Comparé à chaque séance depuis le début de l’indice.', 'Compared with every session since the index began.') };
   }
   const pic = picDuMois(serie, '2011-11');
-  const texte = `Plus haut depuis ${fmtMonthLong(parseDay(depuis.jour))}.`;
+  const texte = L(`Plus haut depuis ${fmtMonthLong(parseDay(depuis.jour))}.`, `Highest since ${fmtMonthLong(parseDay(depuis.jour))}.`);
+  const jourPic = pic && fmtDayLong(parseDay(pic.jour));
   if (pic && pic.jour === depuis.jour) {
-    return { texte, detail: `Le ${fmtDayLong(parseDay(pic.jour))}, au plus fort de la crise de l’euro, l’indice atteignait ${f0(pic.indice)}.${note(pic)}` };
+    return { texte, detail: L(`Le ${jourPic}, au plus fort de la crise de l’euro, l’indice atteignait ${f0(pic.indice)}.${note(pic)}`,
+      `On ${jourPic}, at the height of the euro crisis, the index reached ${f0(pic.indice)}.${note(pic)}`) };
   }
-  let detail = `${f0(depuis.indice)} le ${fmtDayLong(parseDay(depuis.jour))}.${note(depuis)}`;
-  if (pic && pic.jour < depuis.jour) detail += ` Au plus fort de la crise de l’euro, le ${fmtDayLong(parseDay(pic.jour))} : ${f0(pic.indice)}.${note(pic)}`;
+  let detail = `${f0(depuis.indice)} ${L('le', 'on')} ${fmtDayLong(parseDay(depuis.jour))}.${note(depuis)}`;
+  if (pic && pic.jour < depuis.jour) {
+    detail += L(` Au plus fort de la crise de l’euro, le ${jourPic} : ${f0(pic.indice)}.${note(pic)}`, ` At the height of the euro crisis, on ${jourPic}: ${f0(pic.indice)}.${note(pic)}`);
+  }
   return { texte, detail };
 }
 
@@ -723,24 +800,30 @@ function repere(data, etat) {
 const INDICE_VISIBLE = true;
 
 function renderHeader(data, etat) {
-  text('#donnees', `Données du ${fmtDay(parseDay(etat.cartes.spread.jour))}`);
+  text('#donnees', `${L('Données du', 'Data as of')} ${fmtDay(parseDay(etat.cartes.spread.jour))}`);
   if (!INDICE_VISIBLE) {
-    text('#verdict', 'L’Indice Vigie est en cours de révision. Les cinq signaux ci-dessous restent à jour chaque jour.');
+    text('#verdict', L('L’Indice Vigie est en cours de révision. Les cinq signaux ci-dessous restent à jour chaque jour.',
+      'The Vigie Index is under review. The five signals below are still updated every day.'));
     for (const id of ['indice', 'indice-desc', 'courbe']) document.getElementById(id).hidden = true;
     document.querySelector('.reperes').hidden = true;
     return;
   }
-  text('#verdict', etat.phrase);
+  text('#verdict', phraseVerdict(etat, state.lang));
   const { score, niveau } = etat.indice;
   const box = document.getElementById('indice');
   box.hidden = score == null;
   if (score != null) {
     text('#indice-num', f0(score));
     const p = document.getElementById('indice-niveau');
-    p.dataset.level = niveau; p.textContent = LEVEL_LABEL[niveau];
+    p.dataset.level = niveau; p.textContent = niveauTexte(niveau);
   }
+  // Créée une fois par langue : elle reste ouverte au rafraîchissement des données
   const di = document.getElementById('indice-desc');
-  if (!di.firstChild) di.append(description(DESCRIPTIONS.indice())); // créée une fois : rester ouverte au rafraîchissement
+  if (di.dataset.lang !== state.lang) {
+    const ouverte = di.querySelector('details')?.open ?? false;
+    const d = description(DESCRIPTIONS.indice()); d.open = ouverte;
+    di.replaceChildren(d); di.dataset.lang = state.lang;
+  }
   const r = repere(data, etat);
   document.getElementById('repere').hidden = !r;
   if (r) { text('#repere-texte', r.texte); document.getElementById('repere-info').dataset.tip = r.detail; }
@@ -749,15 +832,17 @@ function renderHeader(data, etat) {
 function renderSources(data) {
   const live = document.getElementById('live');
   live.dataset.on = String(data.live.length > 0);
-  live.textContent = data.live.length ? 'BCE en direct' : 'Données enregistrées';
+  live.textContent = data.live.length ? L('BCE en direct', 'ECB live') : L('Données enregistrées', 'Stored data');
   const retard = [...new Set((data.meta.echecs ?? []).map((e) => e.serie ?? String(e)))];
+  const misAJour = new Date(data.meta.mis_a_jour).toLocaleString(L('fr-FR', 'en-GB'), { dateStyle: 'long', timeStyle: 'short' });
   live.dataset.tip = [
-    data.live.length ? `Lu en direct à la BCE : ${liste(data.live)}.` : 'Lecture en direct de la BCE indisponible ou pas plus récente : fichiers enregistrés.',
-    `Fichiers mis à jour le ${new Date(data.meta.mis_a_jour).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' })}.`,
+    data.live.length ? L(`Lu en direct à la BCE : ${liste(data.live)}.`, `Read live from the ECB: ${liste(data.live)}.`)
+      : L('Lecture en direct de la BCE indisponible ou pas plus récente : fichiers enregistrés.', 'Live ECB reading unavailable or not more recent: stored files.'),
+    L(`Fichiers mis à jour le ${misAJour}.`, `Files updated on ${misAJour}.`),
   ].join(' ');
   const r = document.getElementById('retard');
   r.hidden = !retard.length;
-  r.textContent = retard.length ? `Séries en retard : ${liste(retard)}.` : '';
+  r.textContent = retard.length ? L(`Séries en retard : ${liste(retard)}.`, `Series running late: ${liste(retard)}.`) : '';
 }
 
 function render() {
@@ -806,6 +891,42 @@ document.addEventListener('click', (e) => { if (cibleDe(e)) montrerBulle(cibleDe
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cacherBulle(); });
 addEventListener('scroll', cacherBulle, { passive: true });
 
+// ---------- Langue : bouton FR / EN ----------
+// Textes fixes d'index.html (data-i18n, data-i18n-attr) : le français est lu une fois dans la page, l'anglais vient
+// d'anglais.mjs. Les textes calculés (chiffres, dates, infobulles, phrase du jour) passent par L() et sont redessinés.
+
+const FRANCAIS = new WeakMap();
+
+function traduirePage() {
+  document.documentElement.lang = state.lang;
+  for (const e of document.querySelectorAll('[data-i18n], [data-i18n-attr]')) {
+    if (!FRANCAIS.has(e)) {
+      const attrs = Object.fromEntries((e.dataset.i18nAttr ?? '').split(';').filter(Boolean).map((x) => [x.split(':')[0], e.getAttribute(x.split(':')[0])]));
+      FRANCAIS.set(e, { html: e.innerHTML, attrs });
+    }
+    const fr = FRANCAIS.get(e);
+    if (e.dataset.i18n) e.innerHTML = state.lang === 'en' ? EN[e.dataset.i18n] ?? fr.html : fr.html;
+    for (const x of (e.dataset.i18nAttr ?? '').split(';').filter(Boolean)) {
+      const [attr, cle] = x.split(':');
+      e.setAttribute(attr, state.lang === 'en' ? EN[cle] ?? fr.attrs[attr] : fr.attrs[attr]);
+    }
+  }
+}
+
+function changerLangue() {
+  state.lang = state.lang === 'fr' ? 'en' : 'fr';
+  try { localStorage.setItem('langue', state.lang); } catch (e) {}
+  cacherBulle();
+  langueD3();
+  traduirePage();
+  fillThresholds();
+  if (!state.data) return;
+  renderRatingsTable(state.data.ratings);
+  renderAuctionSource(state.data.adj); // le lien « dernière vente » vient d'être réécrit avec sa description
+  renderAuctionsTable(state.data.adj);
+  renderAll();
+}
+
 // ---------- Démarrage ----------
 
 document.addEventListener('click', (e) => {
@@ -820,6 +941,8 @@ document.getElementById('spread-step').addEventListener('click', (e) => {
   for (const b of e.currentTarget.querySelectorAll('button')) b.setAttribute('aria-pressed', String(b === btn));
   render();
 });
+
+document.getElementById('langue-toggle').addEventListener('click', changerLangue);
 
 document.getElementById('theme-toggle').addEventListener('click', () => {
   const root = document.documentElement;
@@ -843,6 +966,7 @@ function renderAll() {
   render();
 }
 
+traduirePage();
 fillThresholds();
 loadFiles().then((data) => {
   state.data = data;
@@ -852,6 +976,6 @@ loadFiles().then((data) => {
   renderAll();
   loadLive(data, renderAll);
 }).catch((err) => {
-  text('#verdict', 'Oups, les données n’ont pas pu être chargées. Recharge la page dans un instant.');
+  text('#verdict', L('Oups, les données n’ont pas pu être chargées. Recharge la page dans un instant.', 'Oops, the data could not be loaded. Please reload the page in a moment.'));
   console.error(err);
 });

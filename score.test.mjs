@@ -197,6 +197,16 @@ test('phrase incomplète', () => {
   assert.equal(p, `Indice incomplet : il manque non-résidents, notes et TARGET2. ${partieBCE('tension', 'calme')}`);
 });
 
+test('phrase en anglais : même structure, aucun mot français', () => {
+  const e = etatDuJour({ ...FIGE, ciss: { quotidien: [{ jour: '2026-10-19', valeur: 0.044 }] } }, LE_20_OCTOBRE);
+  assert.equal(phraseVerdict(e, 'en'), 'French debt is under stress. The rest of the financial markets remain calm.');
+  for (const I of NIVEAUX) for (const T of NIVEAUX) for (const V of NIVEAUX) for (const C of [...NIVEAUX, null]) {
+    const p = phraseVerdict({ indice: { niveau: I }, tension: { niveau: T }, fond: { niveau: V }, ciss: C ? { niveau: C } : null }, 'en');
+    assert.ok(!/undefined|null|dette|marchés|surtout|reste /.test(p), p);
+  }
+  assert.equal(phraseIncomplete(['nonResidents', 'notes', 'target'], 'en'), 'Incomplete index: missing non-residents, ratings and TARGET2.');
+});
+
 test('courbe : composition constante, tension depuis novembre 2004, indice depuis mai 2008 (méthode 2.0)', () => {
   const c = courbe(FIGE_21, '2026-09');
   assert.equal(c[0].mois, '2004-11'); // premier taux quotidien de la Banque de France

@@ -221,44 +221,74 @@ export function etatDuJour(fichiers, dateCalcul) {
 }
 
 // ---------- Phrase de verdict ----------
+// En français par défaut ; lang = 'en' pour la version anglaise de la page.
 
-export function partieDette(I, T, V) {
-  const tete = {
+const TETES = {
+  fr: {
     calme: 'Les signaux de la dette française sont calmes',
     vigilance: 'Les signaux de la dette française appellent à la vigilance',
     tension: 'La dette française est sous tension',
     crise: 'La dette française est en zone de crise',
-  }[I];
-  if (rang(T) > rang(V)) return `${tete}, surtout sur les marchés.`;
-  if (rang(V) > rang(T)) return `${tete}, surtout sur le fond.`;
+  },
+  en: {
+    calme: 'French debt signals are calm',
+    vigilance: 'French debt signals call for vigilance',
+    tension: 'French debt is under stress',
+    crise: 'French debt is in crisis territory',
+  },
+};
+const SURTOUT = {
+  fr: { marches: ', surtout sur les marchés.', fond: ', surtout sur le fond.' },
+  en: { marches: ', mostly in the markets.', fond: ', mostly in the fundamentals.' },
+};
+
+export function partieDette(I, T, V, lang = 'fr') {
+  const tete = TETES[lang][I];
+  if (rang(T) > rang(V)) return `${tete}${SURTOUT[lang].marches}`;
+  if (rang(V) > rang(T)) return `${tete}${SURTOUT[lang].fond}`;
   return `${tete}.`;
 }
 
 // Le CISS de la BCE, dit simplement : « le reste des marchés financiers ».
-const ETAT = { calme: 'calme', vigilance: 'en vigilance', tension: 'sous tension', crise: 'en crise' };
+const ETAT = {
+  fr: { calme: 'calme', vigilance: 'en vigilance', tension: 'sous tension', crise: 'en crise' },
+  en: { calme: 'calm', vigilance: 'on watch', tension: 'under stress', crise: 'in crisis' },
+};
 export const PHRASE_BCE_INDISPONIBLE = 'Stress des autres marchés indisponible pour le moment.';
+const BCE_INDISPONIBLE = { fr: PHRASE_BCE_INDISPONIBLE, en: 'Stress in other markets is unavailable for now.' };
 
-export function partieBCE(I, C) {
-  if (!C) return PHRASE_BCE_INDISPONIBLE;
+export function partieBCE(I, C, lang = 'fr') {
+  if (!C) return BCE_INDISPONIBLE[lang];
+  const e = ETAT[lang][C];
+  if (lang === 'en') {
+    const debut = 'The rest of the financial markets';
+    if (rang(C) < rang(I)) return `${debut} remain ${e}.`;
+    if (rang(C) === rang(I)) return `${debut} are also ${e}.`;
+    return `${debut} are ${e}, more than the debt.`;
+  }
   const debut = 'Le reste des marchés financiers';
-  if (rang(C) < rang(I)) return `${debut} reste ${ETAT[C]}.`;
-  if (rang(C) === rang(I)) return `${debut} est aussi ${ETAT[C]}.`;
-  return `${debut} est ${ETAT[C]}, plus que la dette.`;
+  if (rang(C) < rang(I)) return `${debut} reste ${e}.`;
+  if (rang(C) === rang(I)) return `${debut} est aussi ${e}.`;
+  return `${debut} est ${e}, plus que la dette.`;
 }
 
-const liste = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} et ${xs.at(-1)}`);
+export const NOMS_EN = {
+  spread: 'spread', couverture: 'auction cover', nonResidents: 'non-residents', notes: 'ratings', target: 'TARGET2',
+};
+const liste = (xs, et = 'et') => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} ${et} ${xs.at(-1)}`);
 
-export function phraseIncomplete(manquants) {
+export function phraseIncomplete(manquants, lang = 'fr') {
+  if (lang === 'en') return `Incomplete index: missing ${liste(manquants.map((n) => NOMS_EN[n]), 'and')}.`;
   return `Indice incomplet : il manque ${liste(manquants.map((n) => NOMS[n]))}.`;
 }
 
-export function phraseVerdict({ indice, tension, fond, ciss }) {
+export function phraseVerdict({ indice, tension, fond, ciss }, lang = 'fr') {
   const C = ciss?.niveau ?? null;
-  if (indice.niveau) return `${partieDette(indice.niveau, tension.niveau, fond.niveau)} ${partieBCE(indice.niveau, C)}`;
+  if (indice.niveau) return `${partieDette(indice.niveau, tension.niveau, fond.niveau, lang)} ${partieBCE(indice.niveau, C, lang)}`;
   const vide = tension.score == null ? tension : fond;
   const dispo = vide === tension ? fond : tension;
-  const base = phraseIncomplete(vide.sans);
-  return dispo.niveau ? `${base} ${partieBCE(dispo.niveau, C)}` : base;
+  const base = phraseIncomplete(vide.sans, lang);
+  return dispo.niveau ? `${base} ${partieBCE(dispo.niveau, C, lang)}` : base;
 }
 
 // ---------- Courbe mensuelle ----------

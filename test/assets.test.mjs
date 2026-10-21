@@ -18,7 +18,9 @@ test('index.html porte l’empreinte à jour de app.js et styles.css', () => {
   }
 });
 
-test('app.js importe score.mjs avec son empreinte à jour', () => {
-  const attendu = `'./score.mjs?v=${empreinte('score.mjs')}'`;
-  assert.ok(lire('app.js').includes(attendu), `app.js doit importer ${attendu} (lancer : node scripts/empreintes.mjs)`);
+test('app.js importe score.mjs et anglais.mjs avec leur empreinte à jour', () => {
+  for (const f of ['score.mjs', 'anglais.mjs']) {
+    const attendu = `'./${f}?v=${empreinte(f)}'`;
+    assert.ok(lire('app.js').includes(attendu), `app.js doit importer ${attendu} (lancer : node scripts/empreintes.mjs)`);
+  }
 });

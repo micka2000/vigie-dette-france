@@ -123,9 +123,10 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 /* En-tête */
 .masthead { background: var(--bg-accent); color: var(--fg-inverse); }
 .masthead .wrap { padding-block: var(--space-12) var(--space-8); display: grid; gap: var(--space-4); }
-.masthead-top { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
+.masthead-top { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
+.masthead-actions { display: flex; gap: var(--space-2); align-items: center; flex: none; }
 .masthead h1 {
-  font-family: var(--font-display); font-weight: 800; font-size: var(--text-h1);
+  font-family: var(--font-display); font-weight: 800; font-size: min(var(--text-h1), 8vw); min-width: 0;
   line-height: 1.05; letter-spacing: -0.03em; margin: 0; text-wrap: balance;
 }
 .verdict { font-size: clamp(18px, 2vw, 22px); max-width: 60ch; margin: 0; color: var(--fg-inverse); }
@@ -168,6 +169,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 .btn-icone:hover { background: color-mix(in srgb, currentColor 8%, transparent); }
 .btn-icone:active { transform: scale(0.94); background: color-mix(in srgb, currentColor 12%, transparent); }
 .btn-icone:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+/* Bouton de langue : même cercle, la langue proposée en lettres */
+.btn-langue { font-family: var(--font-display); font-weight: 600; font-size: 13px; letter-spacing: 0.02em; }
 
 /* Synthèse : sous-indices et CISS, puis les cinq signaux */
 .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: var(--space-3); }
