@@ -620,24 +620,81 @@ function el(tag, cls, txt) {
 
 function pillOf(level) { const p = el('span', 'pill', LEVEL_LABEL[level]); p.dataset.level = level; return p; }
 
+// Description repliable sous un indicateur : ce qu'il mesure, calcul, sources (liens).
+function description({ mesure, calcul, sources }) {
+  const d = el('details', 'desc');
+  const s = el('summary');
+  s.append(el('span', 'desc-ouvrir', 'Afficher la description'), el('span', 'desc-fermer', 'Masquer la description'));
+  const corps = el('div', 'desc-corps');
+  const para = (titre, ...contenu) => { const p = el('p'); p.append(el('b', null, `${titre} `), ...contenu); return p; };
+  const liens = sources.flatMap(([texte, url], i) => {
+    const a = el('a', null, texte); a.href = url; a.target = '_blank'; a.rel = 'noopener';
+    return i ? [document.createTextNode(' ; '), a] : [a];
+  });
+  corps.append(para('Ce qu’il mesure.', mesure), para('Calcul.', calcul), para('Sources.', ...liens, '.'));
+  d.append(s, corps);
+  return d;
+}
+
+// « 0 pb → 0, 50 pb → 25, … » tiré des ancrages de score.mjs, pour que le texte ne s'écarte jamais du calcul.
+const fmtAncre = (v) => String(v).replace('.', ',');
+const ancres = (signal, unite) => ANCRAGES[signal].map((v, i) => `${unite(fmtAncre(v))} → ${i * 25}`).join(', ');
+const NOTES_ANCRES = ['AAA → 0', 'AA- → 25', 'A+ → 50', 'BBB+ → 75', 'BBB- → 100'].join(', ');
+
+const SRC = {
+  bdfTec: ['Banque de France, TEC 10', 'https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.FR.EUR.FR2.BB.FRMOYTEC10.HSTA'],
+  bund: ['Bundesbank, rendement du Bund à 10 ans', 'https://www.bundesbank.de/dynamic/action/de/statistiken/zeitreihen-datenbanken/zeitreihen-datenbank/759778/759778?tsId=BBSIS.D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A'],
+  aft: ['adjudications de l’Agence France Trésor (dépêches Reuters sur Boursorama)', 'https://www.aft.gouv.fr/fr'],
+  bdfNr: ['Banque de France, titres de l’État détenus par des non-résidents', 'https://webstat.banque-france.fr/fr/catalogue/det2/DET2.Q.N.FR.W1.S13111.S1.N.L.LE.F3.T._Z.PT._T.M.V.N._T'],
+  notes: ['notes S&P, Moody’s et Fitch (Agence France Trésor)', 'https://www.aft.gouv.fr/fr/notation-de-la-france'],
+  target: ['BCE, solde TARGET de la Banque de France', 'https://data.ecb.europa.eu/data/datasets/TGB/TGB.M.FR.N.A094T.U2.EUR.E'],
+  ciss: ['BCE, CISS pour la France', 'https://data.ecb.europa.eu/data/datasets/CISS/CISS.D.FR.Z0Z.4F.EC.SS_CIN.IDX'],
+  code: ['score.mjs', 'score.mjs'],
+};
+
+const DESCRIPTIONS = {
+  indice: () => ({
+    mesure: 'Une note de 0 à 100 qui résume la santé de la dette française à partir de cinq signaux publics.',
+    calcul: `Chaque signal est converti en score de 0 à 100 par interpolation entre des seuils fixes (25 = vigilance, 50 = tension, 75 = crise). L’indice est la moyenne de deux sous-indices : la tension sur la dette et la vulnérabilité de fond. Sous 25 : calme ; de 25 à 50 : vigilance ; de 50 à 75 : tension ; 75 et plus : crise. Une donnée trop ancienne sort du calcul et la page le signale. Méthode ${METHODE_VERSION}.`,
+    sources: [SRC.bdfTec, SRC.bund, SRC.aft, SRC.bdfNr, SRC.notes, SRC.target, SRC.code],
+  }),
+  tension: () => ({
+    mesure: 'Ce que les investisseurs exigent aujourd’hui pour prêter à la France.',
+    calcul: `Moyenne de deux scores. Spread OAT-Bund : ${ancres('spread', (v) => `${v} pb`)} ; écarté au-delà de 7 jours. Couverture des adjudications : ${ancres('couverture', (v) => v)} ; écartée au-delà de 3 mois.`,
+    sources: [SRC.bdfTec, SRC.bund, SRC.aft],
+  }),
+  fond: () => ({
+    mesure: 'Les fragilités lentes qui rendent la dette sensible à un choc.',
+    calcul: `Moyenne de trois scores. Part des non-résidents : ${ancres('nonResidents', (v) => `${v} %`)} ; écartée au-delà de 15 mois. Note la plus basse des trois agences : ${NOTES_ANCRES}. Solde TARGET2 : ${ancres('target', (v) => `${v} Md€`)} ; écarté au-delà de 3 mois.`,
+    sources: [SRC.bdfNr, SRC.notes, SRC.target],
+  }),
+  ciss: () => ({
+    mesure: 'Le stress du reste des marchés financiers en France (monétaire, obligataire, actions, change, banques), mesuré par la BCE. Il n’entre pas dans l’Indice Vigie : il sert à voir si la tension vient de la dette elle-même.',
+    calcul: `Valeur du jour convertie sur 100 : ${ancres('ciss', (v) => v)} (0,8 est le maximum de 2008). Indisponible si la donnée a plus de 10 jours.`,
+    sources: [SRC.ciss],
+  }),
+};
+
 function infoBtn(tip, label = 'En savoir plus') {
   const b = el('button', 'info', 'i');
   b.type = 'button'; b.dataset.tip = tip; b.setAttribute('aria-label', label);
   return b;
 }
 
-function gauge({ name, tip, dates, score, level, lines }) {
+function gauge({ name, desc, dates, score, level, lines }) {
   const card = el('div', 'tile gauge');
   if (level) card.dataset.level = level;
-  const nom = el('span', 'tile-name', name);
-  nom.append(infoBtn(dates ? `${tip} Données : ${dates}.` : tip, `À propos : ${name}`));
-  card.append(nom);
+  card.append(el('span', 'tile-name', name));
   if (score == null) card.append(el('span', 'tile-value tile-na', 'Indisponible'));
   else {
     const v = el('span', 'tile-value', f0(score)); v.append(el('span', 'tile-unit', '/100'));
-    card.append(v, pillOf(level));
+    const ligne = el('span', 'tile-score');
+    ligne.append(pillOf(level));
+    if (dates) ligne.append(infoBtn(`Données : ${dates}.`, `Dates des données : ${name}`));
+    card.append(v, ligne);
   }
   for (const l of lines) if (l) card.append(el('span', 'tile-sub', l));
+  card.append(description(desc));
   return card;
 }
 
@@ -648,22 +705,20 @@ function renderGauges(etat) {
   const valable = (n) => s[n] && !s[n].perime;
   const tension = [valable('spread') && `spread du ${dateDonnee(s.spread.date)}`, valable('couverture') && `couverture du ${dateDonnee(s.couverture.date)}`];
   const fond = [valable('nonResidents') && `non-résidents ${dateDonnee(s.nonResidents.date)}`, valable('target') && `TARGET2 ${dateDonnee(s.target.date)}`, valable('notes') && 'notes à jour'];
-  const c = etat.ciss, I = etat.indice.niveau;
-  const ETAT = { calme: 'calme', vigilance: 'en vigilance', tension: 'sous tension', crise: 'en crise' };
-  const ecart = c && I && c.niveau !== I
-    ? ` Aujourd’hui, la dette est ${ETAT[I]} et le reste des marchés ${ETAT[c.niveau]} : ${NIVEAUX_SCORE.findIndex((n) => n.level === c.niveau) < NIVEAUX_SCORE.findIndex((n) => n.level === I) ? 'la tension vient de la dette elle-même.' : 'la tension ne vient pas que de la dette.'}`
-    : '';
+  const c = etat.ciss;
+  const ouvertes = [...document.querySelectorAll('#gauges details')].map((d) => d.open); // gardées ouvertes au rafraîchissement
   document.getElementById('gauges').replaceChildren(
     gauge({ name: 'Tension sur la dette', score: etat.tension.score, level: etat.tension.niveau,
-      tip: 'Ce que les investisseurs exigent de la France : moyenne du spread (prime de risque face à l’Allemagne) et de la couverture des adjudications (demande lors des émissions).',
+      desc: DESCRIPTIONS.tension(),
       dates: tension.filter(Boolean).join(', '), lines: [sansTexte(etat.tension.sans)] }),
     gauge({ name: 'Vulnérabilité de fond', score: etat.fond.score, level: etat.fond.niveau,
-      tip: 'Les fragilités lentes : moyenne de la part de dette détenue par des non-résidents, de la note la plus basse des agences et du solde TARGET2 de la Banque de France.',
+      desc: DESCRIPTIONS.fond(),
       dates: fond.filter(Boolean).join(', '), lines: [sansTexte(etat.fond.sans)] }),
     gauge({ name: 'Reste des marchés (CISS)', score: c?.score ?? null, level: c?.niveau,
-      tip: `Indicateur de stress systémique de la BCE pour la France : il mesure les tensions sur l’ensemble des marchés (actions, obligations, change, banques). Il n’entre pas dans l’Indice Vigie.${ecart}`,
+      desc: DESCRIPTIONS.ciss(),
       dates: c ? `valeur ${f3(c.valeur)} le ${fmtDay(parseDay(c.jour))}` : '', lines: [c ? null : 'Donnée de plus de 10 jours ou absente'] }),
   );
+  document.querySelectorAll('#gauges details').forEach((d, k) => { d.open = ouvertes[k] ?? false; });
 }
 
 // « Plus haut depuis… » : comparé à chaque séance passée (la pire séance d'un mois compte, pas seulement la dernière).
@@ -705,8 +760,8 @@ function renderHeader(data, etat) {
     const p = document.getElementById('indice-niveau');
     p.dataset.level = niveau; p.textContent = LEVEL_LABEL[niveau];
   }
-  document.getElementById('indice-info').dataset.tip = 'Note de 0 à 100 : moyenne de la tension sur la dette et de la vulnérabilité de fond. '
-    + `Sous 25 : calme ; 25 à 50 : vigilance ; 50 à 75 : tension ; 75 et plus : crise. Méthode ${METHODE_VERSION}.`;
+  const di = document.getElementById('indice-desc');
+  if (!di.firstChild) di.append(description(DESCRIPTIONS.indice())); // créée une fois : rester ouverte au rafraîchissement
   const r = repere(data, etat);
   document.getElementById('repere').hidden = !r;
   if (r) { text('#repere-texte', r.texte); document.getElementById('repere-info').dataset.tip = r.detail; }

@@ -319,3 +319,28 @@ footer p { margin: 0; max-width: 80ch; }
 .legend-btn[aria-pressed="false"] .sw { background: transparent !important; outline: 1.5px solid currentColor; }
 .legend .oeil { width: 16px; height: 16px; fill: currentColor; flex: none; }
 .legend .sw-dash { background: repeating-linear-gradient(90deg, currentColor 0 4px, transparent 4px 7px); }
+
+/* Description repliable sous chaque indicateur : ce qu'il mesure, calcul, sources */
+.desc { font-size: var(--text-sm); color: var(--fg-2); }
+.desc summary {
+  display: inline-flex; align-items: center; gap: 6px; cursor: pointer; list-style: none;
+  font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm); color: var(--fg-accent);
+}
+.desc summary::-webkit-details-marker { display: none; }
+.desc summary::before {
+  content: ''; width: 7px; height: 7px; border: solid currentColor; border-width: 0 2px 2px 0;
+  transform: rotate(-45deg); transition: transform 150ms var(--ease-standard);
+}
+.desc[open] summary::before { transform: rotate(45deg); }
+.desc .desc-fermer, .desc[open] .desc-ouvrir { display: none; }
+.desc[open] .desc-fermer { display: inline; }
+.desc-corps { margin-top: var(--space-2); display: grid; gap: var(--space-2); max-width: 80ch; }
+.desc-corps p { margin: 0; line-height: 1.55; }
+.desc-corps b { font-family: var(--font-display); font-weight: 600; color: var(--fg-1); }
+.desc-corps a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.masthead .desc, .masthead .desc-corps b { color: var(--fg-inverse); }
+.masthead .desc summary { color: var(--fg-inverse); opacity: 0.85; }
+.masthead .desc-corps { opacity: 0.9; }
+.gauge .desc { margin-top: var(--space-1); font-size: var(--text-xs); }
+.gauge .desc summary { font-size: var(--text-xs); }
+.tile-score { display: flex; align-items: center; }

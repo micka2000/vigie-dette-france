@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vigie Dette France</title>
 <meta name="description" content="Les cinq signaux de santé de la dette publique française, mis à jour chaque jour, avec leurs seuils de risque historiques.">
-<link rel="stylesheet" href="styles.css?v=7e32f72d">
+<link rel="stylesheet" href="styles.css?v=a862d17b">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
@@ -22,10 +22,11 @@
     <div class="indice" id="indice" hidden>
       <p class="indice-score"><span id="indice-num"></span><span class="indice-sur">/100</span></p>
       <div class="indice-side">
-        <span class="indice-nom">Indice Vigie <button type="button" class="info" id="indice-info" data-tip="" aria-label="Comment se calcule l’Indice Vigie">i</button></span>
+        <span class="indice-nom">Indice Vigie</span>
         <span class="pill" id="indice-niveau"></span>
       </div>
     </div>
+    <div id="indice-desc"></div>
     <p class="repere" id="repere" hidden><span id="repere-texte"></span> <button type="button" class="info" id="repere-info" data-tip="" aria-label="Détail du repère">i</button></p>
     <p class="stamp">
       <span class="live" id="live" data-on="false" data-tip="" tabindex="0">Données enregistrées</span>
@@ -54,9 +55,17 @@
     <article class="signal" id="courbe">
       <div class="signal-head">
         <div>
-          <h2>L’Indice Vigie dans le temps <button type="button" class="info" data-tip="Chaque point est la séance la plus tendue du mois, calculée avec les seules données disponibles à cette date. Le CISS de la BCE, en pointillé, mesure le stress de l’ensemble des marchés financiers." aria-label="À quoi sert cet indicateur">i</button></h2>
+          <h2>L’Indice Vigie dans le temps</h2>
         </div>
       </div>
+      <details class="desc">
+        <summary><span class="desc-ouvrir">Afficher la description</span><span class="desc-fermer">Masquer la description</span></summary>
+        <div class="desc-corps">
+          <p><b>Ce qu’il mesure.</b> Chaque point est la séance la plus tendue du mois, calculée avec les seules données disponibles à cette date. Le CISS de la BCE, en pointillé, mesure le stress de l’ensemble des marchés financiers.</p>
+          <p><b>Calcul.</b> Chaque point est la séance la plus tendue du mois, recalculée avec les seules données disponibles à cette date et les mêmes seuils qu’aujourd’hui : une date passée ne dépend jamais de données publiées après. Le CISS est son maximum du mois, converti sur 100 comme les autres scores. Les traits verticaux marquent quatre crises : Lehman (septembre 2008), crise de l’euro (novembre 2011), Covid (mars 2020) et dissolution de l’Assemblée (juin 2024).</p>
+          <p><b>Sources.</b> Calcul : <a href="score.mjs">score.mjs</a> à partir des fichiers de <a href="https://github.com/micka2000/vigie-dette-france/tree/main/data" target="_blank" rel="noopener">data/</a> ; CISS : <a href="https://data.ecb.europa.eu/data/datasets/CISS/CISS.D.FR.Z0Z.4F.EC.SS_CIN.IDX" target="_blank" rel="noopener">BCE, indicateur composite de stress systémique pour la France</a> (maximum du mois).</p>
+        </div>
+      </details>
       <p class="sr-only" id="courbe-resume"></p>
       <div class="chart" id="chart-indice"></div>
       <div class="legend-row"><ul class="legend" id="legend-indice"></ul><button type="button" class="info" id="courbe-sans" data-tip="" aria-label="Périodes calculées avec moins de signaux" hidden>i</button></div>
@@ -67,18 +76,25 @@
           <tbody></tbody>
         </table>
       </div>
-      <p class="source">Calcul : <a href="score.mjs">score.mjs</a> à partir des fichiers de <a href="https://github.com/micka2000/vigie-dette-france/tree/main/data" target="_blank" rel="noopener">data/</a> ; CISS : <a href="https://data.ecb.europa.eu/data/datasets/CISS/CISS.D.FR.Z0Z.4F.EC.SS_CIN.IDX" target="_blank" rel="noopener">BCE, indicateur composite de stress systémique pour la France</a> (maximum du mois).</p>
     </article>
 
     <article class="signal" id="spread">
       <div class="signal-head">
         <div>
-          <h2>Spread France-Allemagne <button type="button" class="info" data-tip="La prime de risque que les investisseurs exigent pour détenir de la dette française à 10 ans plutôt que le Bund allemand, référence sans risque de la zone euro." aria-label="À quoi sert cet indicateur">i</button></h2>
+          <h2>Spread France-Allemagne</h2>
         </div>
         <div class="signal-now"><span class="big" data-now="spread">—</span><span class="pill" data-pill="spread"></span><button type="button" class="info" data-delta="spread" data-tip="" aria-label="Détail du chiffre">i</button></div>
       </div>
+      <details class="desc">
+        <summary><span class="desc-ouvrir">Afficher la description</span><span class="desc-fermer">Masquer la description</span></summary>
+        <div class="desc-corps">
+          <p><b>Ce qu’il mesure.</b> La prime de risque que les investisseurs exigent pour détenir de la dette française à 10 ans plutôt que le Bund allemand, référence sans risque de la zone euro.</p>
+          <p><b>Calcul.</b> Taux de l’OAT à 10 ans moins le rendement du Bund allemand à 10 ans, à la clôture de chaque séance, en points de base (100 pb = 1 point de pourcentage). Aucune moyenne : en vue Semaine ou Mois, chaque point est la dernière séance de la période. Les seuils viennent des séances depuis novembre 2004 : le spread est resté sous 50 pb 69 % du temps et sous 80 pb 95 % du temps ; record de 214 pb le 17 novembre 2011.</p>
+          <p><b>Sources.</b> <a href="https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.FR.EUR.FR2.BB.FRMOYTEC10.HSTA" target="_blank" rel="noopener">Banque de France, taux de l'échéance constante à 10 ans (TEC 10)</a> et <a href="https://www.bundesbank.de/dynamic/action/de/statistiken/zeitreihen-datenbanken/zeitreihen-datenbank/759778/759778?tsId=BBSIS.D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A" target="_blank" rel="noopener">Bundesbank, rendement à 10 ans des titres fédéraux</a>.</p>
+        </div>
+      </details>
       <div class="chart-tools">
-        <span class="toolbar-label" id="step-label">Un point par</span><button type="button" class="info" data-tip="Clôture de chaque séance, jamais de moyenne : en vue Semaine ou Mois, chaque point est la dernière séance de la période." aria-label="Comment sont choisis les points">i</button>
+        <span class="toolbar-label" id="step-label">Un point par</span>
         <div class="seg" role="group" aria-labelledby="step-label" id="spread-step">
           <button type="button" data-step="jour" aria-pressed="true">Jour</button>
           <button type="button" data-step="semaine">Semaine</button>
@@ -86,51 +102,71 @@
         </div>
       </div>
       <div class="chart" id="chart-spread"></div>
-      <p class="source">Sources : <a href="https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.FR.EUR.FR2.BB.FRMOYTEC10.HSTA" target="_blank" rel="noopener">Banque de France, taux de l'échéance constante à 10 ans (TEC 10)</a> et <a href="https://www.bundesbank.de/dynamic/action/de/statistiken/zeitreihen-datenbanken/zeitreihen-datenbank/759778/759778?tsId=BBSIS.D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A" target="_blank" rel="noopener">Bundesbank, rendement à 10 ans des titres fédéraux</a>.</p>
-      <p class="seuils-titre">Seuils de risque <button type="button" class="info" data-tip="Seuils tirés des séances depuis novembre 2004 : le spread est resté sous 50 pb 69 % du temps et sous 80 pb 95 % du temps. Le record date de la crise des dettes souveraines : 214 pb le 17 novembre 2011." aria-label="D’où viennent ces seuils">i</button></p>
+      <p class="seuils-titre">Seuils de risque</p>
       <ul class="thresholds" data-thresholds="spread"></ul>
     </article>
 
     <article class="signal" id="adjudications">
       <div class="signal-head">
         <div>
-          <h2>Adjudications de l'Agence France Trésor <button type="button" class="info" data-tip="Le coût réel auquel l'État se finance sur sa ligne à 10 ans, et la demande des investisseurs au moment de l'émission (taux de couverture : montant demandé rapporté au montant servi)." aria-label="À quoi sert cet indicateur">i</button></h2>
+          <h2>Adjudications de l'Agence France Trésor</h2>
         </div>
         <div class="signal-now"><span class="big" data-now="adjudications">—</span><span class="pill" data-pill="adjudications"></span><button type="button" class="info" data-delta="adjudications" data-tip="" aria-label="Détail du chiffre">i</button></div>
       </div>
+      <details class="desc">
+        <summary><span class="desc-ouvrir">Afficher la description</span><span class="desc-fermer">Masquer la description</span></summary>
+        <div class="desc-corps">
+          <p><b>Ce qu’il mesure.</b> Le coût réel auquel l'État se finance sur sa ligne à 10 ans, et la demande des investisseurs au moment de l'émission (taux de couverture : montant demandé rapporté au montant servi).</p>
+          <p><b>Calcul.</b> Chaque mois, l’AFT vend aux enchères sa ligne de référence à 10 ans (le plus gros volume parmi les échéances de 8,5 à 11,5 ans). Le taux moyen pondéré est le taux réellement payé ce jour-là, à ne pas confondre avec le coupon de la ligne, fixé à sa création. Le taux de couverture divise le montant demandé par le montant servi : à 2, les investisseurs voulaient deux fois plus de titres que l’État n’en a vendu. Le niveau de risque suit la couverture : sous 2, la demande devient juste ; sous 1,5, l’appétit des investisseurs faiblit nettement.</p>
+          <p><b>Sources.</b> résultats publiés par l'<a href="https://www.aft.gouv.fr/fr" target="_blank" rel="noopener">Agence France Trésor</a>, repris par Reuters et Boursorama (<a id="auction-source-last" href="#" target="_blank" rel="noopener">dernière adjudication</a>) ; collecte automatique chaque matin.</p>
+        </div>
+      </details>
       <div class="chart-pair">
-        <div><p class="chart-title">Taux moyen pondéré à 10 ans <button type="button" class="info" data-tip="Le taux auquel l’État a réellement emprunté ce jour-là, en moyenne pondérée par les montants servis. À ne pas confondre avec le coupon de la ligne, fixé à sa création." aria-label="Définition">i</button></p><div class="chart" id="chart-auction-rate"></div></div>
-        <div><p class="chart-title">Taux de couverture <button type="button" class="info" data-tip="Montant demandé par les investisseurs divisé par le montant servi. À 2, ils voulaient deux fois plus de titres que l’État n’en a vendu." aria-label="Définition">i</button></p><div class="chart" id="chart-auction-cover"></div></div>
+        <div><p class="chart-title">Taux moyen pondéré à 10 ans</p><div class="chart" id="chart-auction-rate"></div></div>
+        <div><p class="chart-title">Taux de couverture</p><div class="chart" id="chart-auction-cover"></div></div>
       </div>
-      <p class="source" id="auction-source">Sources : résultats publiés par l'<a href="https://www.aft.gouv.fr/fr" target="_blank" rel="noopener">Agence France Trésor</a>, repris par Reuters et Boursorama (<a id="auction-source-last" href="#" target="_blank" rel="noopener">dernière adjudication</a>). Collecte automatique chaque matin.</p>
-      <p class="seuils-titre">Seuils de risque <button type="button" class="info" data-tip="Le niveau de risque suit le taux de couverture : sous 2, la demande devient juste pour une ligne de référence ; sous 1,5, l'appétit des investisseurs faiblit nettement." aria-label="D’où viennent ces seuils">i</button></p>
+      <p class="seuils-titre">Seuils de risque</p>
       <ul class="thresholds" data-thresholds="adjudications"></ul>
     </article>
 
     <article class="signal" id="non-residents">
       <div class="signal-head">
         <div>
-          <h2>Part des non-résidents <button type="button" class="info" data-tip="Plus elle est élevée, plus la dette dépend de capitaux étrangers, volatils, qui peuvent se retirer vite en cas de stress." aria-label="À quoi sert cet indicateur">i</button></h2>
+          <h2>Part des non-résidents</h2>
         </div>
         <div class="signal-now"><span class="big" data-now="non-residents">—</span><span class="pill" data-pill="non-residents"></span><button type="button" class="info" data-delta="non-residents" data-tip="" aria-label="Détail du chiffre">i</button></div>
       </div>
+      <details class="desc">
+        <summary><span class="desc-ouvrir">Afficher la description</span><span class="desc-fermer">Masquer la description</span></summary>
+        <div class="desc-corps">
+          <p><b>Ce qu’il mesure.</b> Plus elle est élevée, plus la dette dépend de capitaux étrangers, volatils, qui peuvent se retirer vite en cas de stress.</p>
+          <p><b>Calcul.</b> Part des titres de l’État (OAT et BTF) détenue par des investisseurs étrangers, en fin de trimestre : c’est cette courbe qui entre dans l’Indice Vigie. La seconde, annuelle, couvre toute la dette publique (État, collectivités, Sécurité sociale) ; une partie, comme les prêts bancaires, est surtout détenue en France, elle est donc plus basse. Point bas : 47,5 % fin 2021, quand la Banque de France rachetait massivement des titres ; record de 70,6 % mi-2010.</p>
+          <p><b>Sources.</b> <a href="https://webstat.banque-france.fr/fr/catalogue/det2/DET2.Q.N.FR.W1.S13111.S1.N.L.LE.F3.T._Z.PT._T.M.V.N._T" target="_blank" rel="noopener">Banque de France, titres de l'État détenus par des non-résidents</a> (fin de trimestre, depuis 2008) ; <a href="https://ec.europa.eu/eurostat/databrowser/view/gov_10dd_ggd/default/table" target="_blank" rel="noopener">Eurostat, gov_10dd_ggd</a> (dette publique au sens de Maastricht, annuel).</p>
+        </div>
+      </details>
       <div class="chart" id="chart-nonres"></div>
-      <div class="legend-row"><ul class="legend" id="legend-nonres"></ul><button type="button" class="info" data-tip="Les deux courbes mesurent la part détenue par des investisseurs étrangers, sur deux périmètres. La bleue ne compte que les titres émis par l’État : c’est elle qui entre dans l’Indice Vigie. La verte couvre toute la dette publique, dont une partie (prêts bancaires, dette des collectivités) est surtout détenue en France : elle est donc plus basse." aria-label="Pourquoi deux courbes">i</button></div>
-      <p class="source">Sources : <a href="https://webstat.banque-france.fr/fr/catalogue/det2/DET2.Q.N.FR.W1.S13111.S1.N.L.LE.F3.T._Z.PT._T.M.V.N._T" target="_blank" rel="noopener">Banque de France, titres de l'État détenus par des non-résidents</a> (fin de trimestre, depuis 2008) ; <a href="https://ec.europa.eu/eurostat/databrowser/view/gov_10dd_ggd/default/table" target="_blank" rel="noopener">Eurostat, gov_10dd_ggd</a> (dette publique au sens de Maastricht, annuel).</p>
-      <p class="seuils-titre">Seuils de risque <button type="button" class="info" data-tip="Point bas : 47,5 % fin 2021, quand la Banque de France rachetait massivement des titres. Au-delà de 60 %, la France retrouverait les niveaux de 2008 à 2016 ; le record est de 70,6 % mi-2010." aria-label="D’où viennent ces seuils">i</button></p>
+      <div class="legend-row"><ul class="legend" id="legend-nonres"></ul></div>
+      <p class="seuils-titre">Seuils de risque</p>
       <ul class="thresholds" data-thresholds="non-residents"></ul>
     </article>
 
     <article class="signal" id="notations">
       <div class="signal-head">
         <div>
-          <h2>Notes des agences <button type="button" class="info" data-tip="Une dégradation peut forcer des ventes chez les investisseurs soumis à des seuils de notation et renchérit mécaniquement le coût de la dette." aria-label="À quoi sert cet indicateur">i</button></h2>
+          <h2>Notes des agences</h2>
         </div>
         <div class="signal-now"><span class="big" data-now="notations">—</span><span class="pill" data-pill="notations"></span><button type="button" class="info" data-delta="notations" data-tip="" aria-label="Détail du chiffre">i</button></div>
       </div>
+      <details class="desc">
+        <summary><span class="desc-ouvrir">Afficher la description</span><span class="desc-fermer">Masquer la description</span></summary>
+        <div class="desc-corps">
+          <p><b>Ce qu’il mesure.</b> Une dégradation peut forcer des ventes chez les investisseurs soumis à des seuils de notation et renchérit mécaniquement le coût de la dette.</p>
+          <p><b>Calcul.</b> On retient la note la plus basse des trois agences (S&amp;P, Moody’s, Fitch), Moody’s converti cran pour cran (Aa3 = AA-). Les perspectives sont affichées mais ne changent pas le niveau. AA- est le plancher de nombreux mandats de gestion de réserves ; sous A-, la France approcherait la catégorie BBB, où les ventes forcées s’accélèrent. Chaque matin, un changement de note n’est enregistré que si deux sources indépendantes le confirment ; sinon, il est vérifié à la main.</p>
+          <p><b>Sources.</b> Notes et calendrier publiés par l’<a href="https://www.aft.gouv.fr/fr/notation-de-la-france" target="_blank" rel="noopener">Agence France Trésor</a> ; changements lus chaque matin sur <a href="https://en.wikipedia.org/wiki/List_of_countries_by_credit_rating" target="_blank" rel="noopener">Wikipédia</a> et <a href="https://countryeconomy.com/ratings/france" target="_blank" rel="noopener">countryeconomy.com</a>, recoupés.</p>
+        </div>
+      </details>
       <div class="chart" id="chart-ratings"></div>
       <ul class="legend" id="legend-ratings"></ul>
-      <p class="source">Source : <a href="https://www.aft.gouv.fr/fr/notation-de-la-france" target="_blank" rel="noopener">Agence France Trésor, « Notation de la France »</a>. Chaque matin, un changement de note n’est enregistré que si deux sources indépendantes le confirment ; sinon, il est vérifié à la main.</p>
       <div class="table-scroll">
         <table class="ratings-table" id="ratings-table">
           <thead><tr><th>Agence</th><th>Note</th><th>Perspective</th><th>Dernière décision</th><th>Prochaine revue</th></tr></thead>
@@ -138,20 +174,27 @@
         </table>
       </div>
       <p class="alert" id="ratings-alert" hidden></p>
-      <p class="seuils-titre">Seuils de risque <button type="button" class="info" data-tip="Le niveau porte sur la note la plus basse des trois agences. AA- est le plancher de nombreux mandats de gestion de réserves ; sous A-, la France approcherait la catégorie BBB, où les ventes forcées s'accélèrent." aria-label="D’où viennent ces seuils">i</button></p>
+      <p class="seuils-titre">Seuils de risque</p>
       <ul class="thresholds" data-thresholds="notations"></ul>
     </article>
 
     <article class="signal" id="target">
       <div class="signal-head">
         <div>
-          <h2>Solde TARGET2 de la Banque de France <button type="button" class="info" data-tip="Un solde de plus en plus négatif traduit des sorties de capitaux vers d'autres pays de la zone euro, signe de défiance des acteurs privés." aria-label="À quoi sert cet indicateur">i</button></h2>
+          <h2>Solde TARGET2 de la Banque de France</h2>
         </div>
         <div class="signal-now"><span class="big" data-now="target">—</span><span class="pill" data-pill="target"></span><button type="button" class="info" data-delta="target" data-tip="" aria-label="Détail du chiffre">i</button></div>
       </div>
+      <details class="desc">
+        <summary><span class="desc-ouvrir">Afficher la description</span><span class="desc-fermer">Masquer la description</span></summary>
+        <div class="desc-corps">
+          <p><b>Ce qu’il mesure.</b> Un solde de plus en plus négatif traduit des sorties de capitaux vers d'autres pays de la zone euro, signe de défiance des acteurs privés.</p>
+          <p><b>Calcul.</b> Créance ou dette de la Banque de France envers le reste de l’Eurosystème, en fin de mois, en milliards d’euros. Le solde dépend aussi des achats de titres de la BCE : il est donc classé dans la vulnérabilité de fond plutôt que dans la tension de marché. Seuils tirés de l’historique depuis 2008 : -118 Md€ au plus fort de la crise financière (décembre 2008), record à -240 Md€ en octobre 2025.</p>
+          <p><b>Sources.</b> <a href="https://data.ecb.europa.eu/data/datasets/TGB/TGB.M.FR.N.A094T.U2.EUR.E" target="_blank" rel="noopener">BCE, soldes TARGET de la Banque de France</a> (fin de mois, série TGB.M.FR).</p>
+        </div>
+      </details>
       <div class="chart" id="chart-target"></div>
-      <p class="source">Source : <a href="https://data.ecb.europa.eu/data/datasets/TGB/TGB.M.FR.N.A094T.U2.EUR.E" target="_blank" rel="noopener">BCE, soldes TARGET de la Banque de France</a> (fin de mois, série TGB.M.FR).</p>
-      <p class="seuils-titre">Seuils de risque <button type="button" class="info" data-tip="Seuils tirés de l'historique depuis 2008 : -118 Md€ au plus fort de la crise financière (décembre 2008), record à -240 Md€ en octobre 2025." aria-label="D’où viennent ces seuils">i</button></p>
+      <p class="seuils-titre">Seuils de risque</p>
       <ul class="thresholds" data-thresholds="target"></ul>
     </article>
 
@@ -175,6 +218,6 @@
     if (v) v.textContent = 'La page n’a pas pu se charger. Recharge-la dans un instant.';
   }, 10000);
 </script>
-<script type="module" src="app.js?v=d61d93a6"></script>
+<script type="module" src="app.js?v=745a6f57"></script>
 </body>
 </html>
