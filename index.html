@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vigie Dette France</title>
 <meta name="description" content="Les cinq signaux de santé de la dette publique française, mis à jour chaque jour, avec leurs seuils de risque historiques.">
-<link rel="stylesheet" href="styles.css?v=b712cbbb">
+<link rel="stylesheet" href="styles.css?v=d59d8e82">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
@@ -104,6 +104,7 @@
       <p class="signal-now"><span class="delta" data-delta="non-residents"></span></p>
       <div class="chart" id="chart-nonres"></div>
       <ul class="legend" id="legend-nonres"></ul>
+      <p class="threshold-note">Les deux courbes mesurent la part détenue par des investisseurs étrangers, sur deux périmètres. La bleue ne compte que les titres émis par l’État : c’est elle qui entre dans l’Indice Vigie. La verte couvre toute la dette publique, dont une partie (prêts bancaires, dette des collectivités) est surtout détenue en France : elle est donc plus basse.</p>
       <p class="source">Sources : <a href="https://webstat.banque-france.fr/fr/catalogue/det2/DET2.Q.N.FR.W1.S13111.S1.N.L.LE.F3.T._Z.PT._T.M.V.N._T" target="_blank" rel="noopener">Banque de France, titres de l'État détenus par des non-résidents</a> (fin de trimestre, depuis 2008) ; <a href="https://ec.europa.eu/eurostat/databrowser/view/gov_10dd_ggd/default/table" target="_blank" rel="noopener">Eurostat, gov_10dd_ggd</a> (dette publique au sens de Maastricht, annuel).</p>
       <ul class="thresholds" data-thresholds="non-residents"></ul>
       <p class="threshold-note">Point bas : 47,5 % fin 2021, quand la Banque de France rachetait massivement des titres. Au-delà de 60 %, la France retrouverait les niveaux de 2008 à 2016 ; le record est de 70,6 % mi-2010.</p>
@@ -167,6 +168,6 @@
     if (v) v.textContent = 'La page n’a pas pu se charger. Recharge-la dans un instant.';
   }, 10000);
 </script>
-<script type="module" src="app.js?v=bee47312"></script>
+<script type="module" src="app.js?v=e9a9446d"></script>
 </body>
 </html>

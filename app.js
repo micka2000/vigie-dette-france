@@ -345,7 +345,7 @@ function compute(data, etat) {
     level: niv.nonResidents.niveau, name: 'Part des non-résidents',
     value: `${f1(nr.part)} %`,
     sub: `Titres de l'État · fin ${fmtMonth(parseMonth(nr.date))}`,
-    delta: `Titres de l'État fin ${fmtMonth(parseMonth(nr.date))} · ${fSigned1(nr.part - nr1.part)} point depuis ${fmtMonth(parseMonth(nr1.date))}`,
+    delta: `Part des titres de l'État détenue par des non-résidents, fin ${fmtMonth(parseMonth(nr.date))} · ${fSigned1(nr.part - nr1.part)} point depuis ${fmtMonth(parseMonth(nr1.date))}`,
   };
 
   const worst = d3.min(data.ratings.agences, (a) => notch(a.note));
@@ -410,8 +410,8 @@ function renderCharts(data) {
   const aft = data.nrAft.points.map((p) => ({ d: parseMonth(p.date), v: p.part }));
   const es = data.nrEs.map((r) => ({ d: new Date(Date.UTC(r.annee, 11, 31)), v: r.part_nonres }));
   const nrSeries = [
-    { name: 'Titres de l’État (Banque de France, trimestriel)', endText: 'État', color: css('--series-1'), points: clip(aft) },
-    { name: 'Dette publique totale (Eurostat)', endText: 'Total', color: css('--series-2'), points: clip(es) },
+    { name: 'Titres de l’État, OAT et BTF (Banque de France, chaque trimestre) : utilisé dans l’indice', endText: 'État', color: css('--series-1'), points: clip(aft) },
+    { name: 'Toute la dette publique : État, collectivités, Sécurité sociale (Eurostat, chaque année)', endText: 'Ensemble', color: css('--series-2'), points: clip(es) },
   ].filter((s) => s.points.length);
   const nrAll = nrSeries.flatMap((s) => s.points);
   lineChart(document.getElementById('chart-nonres'), nrSeries, {
