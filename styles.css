@@ -379,6 +379,7 @@ footer p { margin: 0; max-width: 80ch; }
 html[lang="en"] [data-langue="fr"], html:not([lang="en"]) [data-langue="en"] { display: none !important; }
 .methode .signal p, .methode .signal li { max-width: 80ch; line-height: 1.6; margin: 0; }
 .methode .signal { display: grid; gap: var(--space-3); }
+.methode .signal h3 { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin: var(--space-2) 0 0; }
 .methode .signal ul { margin: 0; padding-left: 1.2em; display: grid; gap: var(--space-2); }
 .formule {
   font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.6;

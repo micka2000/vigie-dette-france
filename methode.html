@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Méthode de calcul · Vigie Dette France</title>
 <meta name="description" content="Comment l’Indice Vigie est calculé : les cinq signaux, la conversion en score sur 100, les deux parties, les règles de rigueur et un exemple complet.">
-<link rel="stylesheet" href="styles.css?v=7c290c93">
+<link rel="stylesheet" href="styles.css?v=200f9fc4">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   try { const l = localStorage.getItem('langue'); if (l === 'en' || (!l && !/^fr\b/i.test(navigator.language || 'fr'))) document.documentElement.lang = 'en'; } catch (e) {}
@@ -79,6 +79,54 @@ sous le premier repère : 0        au-delà du dernier : 100</pre>
     </tbody>
   </table></div>
   <p>Pour la couverture et TARGET2, une valeur basse est mauvaise : le barème descend, et la formule se lit dans l’autre sens. Les notes sont comptées en crans perdus depuis AAA : AA+ = 1, AA = 2, AA- = 3, A+ = 4… jusqu’à BBB- = 9.</p>
+</article>
+
+<article class="signal">
+  <h2>Pourquoi ces repères ?</h2>
+  <p>Les repères ne sortent pas tous du même raisonnement. Pour chacun, voici d’où il vient et ce qu’il vaut dans l’historique. Ils sont classés du plus solide (une règle publique) au plus fragile (un choix fait à la main).</p>
+  <h3>Notes : des règles publiques de la BCE et des marchés</h3>
+  <ul>
+    <li><b>AAA (0)</b> : la meilleure note possible.</li>
+    <li><b>AA- (25)</b> : dernier cran de la catégorie « haute qualité ». En dessous, la France passe en catégorie A.</li>
+    <li><b>A+ (50)</b> : entrée dans la catégorie A, où la France se trouve depuis l’automne 2025 (Fitch en septembre, S&amp;P en octobre).</li>
+    <li><b>BBB+ (75)</b> : entrée dans la catégorie BBB. La Banque centrale européenne applique alors une décote plus forte à la dette française que les banques lui déposent en garantie (troisième échelon de sa grille).</li>
+    <li><b>BBB- (100)</b> : dernier cran de la catégorie « investissement ». En dessous, beaucoup de fonds n’ont plus le droit de garder ces titres et doivent les vendre, et la BCE ne les accepte plus.</li>
+  </ul>
+  <h3>TARGET2 : calé sur les crises passées</h3>
+  <ul>
+    <li><b>-6 % (100)</b> : le pire niveau observé, en novembre 2008 (-6,0 %).</li>
+    <li><b>-4 % (75)</b> : seuls les mois de 2008-2009 et de la crise de l’euro (2011-2012) sont passés en dessous.</li>
+    <li><b>-2,5 % (50) et -1 % (25)</b> : choisis pour que le niveau suive l’histoire. Depuis 2008, 42 % des mois sont calmes, 32 % en vigilance, 18 % en tension et 8 % en crise.</li>
+    <li><b>+1 % (0)</b> : au-dessus du plus haut niveau observé (+0,9 %).</li>
+  </ul>
+  <h3>Spread : choisi au lancement, vérifié ensuite sur 5 576 séances depuis 2004</h3>
+  <ul>
+    <li><b>0 pb (0)</b> : la France emprunte au même taux que l’Allemagne.</li>
+    <li><b>50 pb (25)</b> : dépassé 31 % des jours. Au-delà, on sort de la normale.</li>
+    <li><b>80 pb (50)</b> : dépassé 5 % des jours : la crise de l’euro, la présidentielle de 2017, puis 2024-2026 après la dissolution.</li>
+    <li><b>120 pb (75)</b> : dépassé 1,3 % des jours, seulement en 2011-2012 et en 2026.</li>
+    <li><b>200 pb (100)</b> : proche du record, 214 pb le 17 novembre 2011.</li>
+  </ul>
+  <p>Ces valeurs ont été fixées à la main au lancement du site, puis vérifiées sur les données : elles tombent sur des moments marquants, mais aucune règle ne les a produites. Pour comparaison, cinq pays de la zone euro ont dû être secourus entre 2010 et 2012 avec un écart de 470 à 590 pb.</p>
+  <h3>Couverture : choisie au lancement, à revoir</h3>
+  <ul>
+    <li><b>3,5 (0)</b> : demande exceptionnelle, dépassée dans 2 % des ventes depuis 2004.</li>
+    <li><b>2,5 (25)</b> : niveau habituel avant 2008 (médiane 2,42 de 2004 à 2007). 81 % des ventes sont passées en dessous.</li>
+    <li><b>2,0 (50)</b> : c’est la médiane depuis 2004 (2,02) : une vente sur deux passe en dessous.</li>
+    <li><b>1,5 (75)</b> : seulement 2 % des ventes. Le plus bas : 1,39 en novembre 2014.</li>
+    <li><b>1,0 (100)</b> : limite absolue : les acheteurs ne demandent pas plus que ce que l’État vend.</li>
+  </ul>
+  <p>Faiblesse connue : la couverture est en « tension » la moitié du temps, et ses plus bas (2014, 2016, 2018) sont tombés en période calme. C’est un signal bruité, qui compte surtout quand il plonge en même temps que le spread monte.</p>
+  <h3>Non-résidents : choisi au lancement, à revoir</h3>
+  <ul>
+    <li><b>70 % (100)</b> : le record, 70,6 % en juin 2010.</li>
+    <li><b>60 % (75)</b> : niveau dépassé de 2008 à 2016, et à nouveau proche aujourd’hui (59,7 %).</li>
+    <li><b>55 % (50) et 50 % (25)</b> : paliers intermédiaires. Le plus bas observé est 47,5 %, fin 2021, quand la BCE détenait une grosse part de la dette française.</li>
+    <li><b>40 % (0)</b> : jamais atteint depuis 2008.</li>
+  </ul>
+  <p>Faiblesse connue : 43 % des trimestres depuis 2008 sont « en crise ». Le seuil de 60 % tombe dans une période où cette part était normalement haute, avant les rachats de la BCE. Ce barème est le prochain à recaler.</p>
+  <h3>Stress des marchés (hors indice)</h3>
+  <p>0,10, 0,20 et 0,35 sont dépassés respectivement par 41 %, 22 % et 10 % des mois depuis 1999. 0,80 est proche du record : 0,78 en décembre 2008. Pour repère : 0,62 en novembre 2011, 0,49 en mars 2020, 0,58 en octobre 2022.</p>
 </article>
 
 <article class="signal">
@@ -203,6 +251,54 @@ below the first point: 0        beyond the last: 100</pre>
     </tbody>
   </table></div>
   <p>For cover and TARGET2, a low value is bad: the scale goes down and the formula reads the other way. Ratings are counted in notches lost from AAA: AA+ = 1, AA = 2, AA- = 3, A+ = 4… down to BBB- = 9.</p>
+</article>
+
+<article class="signal">
+  <h2>Why these reference points?</h2>
+  <p>The reference points do not all come from the same reasoning. For each one, here is where it comes from and what it means in the history. They are ranked from the most solid (a public rule) to the most fragile (a choice made by hand).</p>
+  <h3>Ratings: public rules of the ECB and the markets</h3>
+  <ul>
+    <li><b>AAA (0)</b>: the best possible rating.</li>
+    <li><b>AA- (25)</b>: last notch of the “high grade” category. Below it, France moves into the A category.</li>
+    <li><b>A+ (50)</b>: entry into the A category, where France has been since autumn 2025 (Fitch in September, S&amp;P in October).</li>
+    <li><b>BBB+ (75)</b>: entry into the BBB category. The European Central Bank then applies a larger haircut to French debt that banks pledge as collateral (third step of its scale).</li>
+    <li><b>BBB- (100)</b>: last notch of the “investment grade” category. Below it, many funds are no longer allowed to hold these securities and must sell them, and the ECB no longer accepts them.</li>
+  </ul>
+  <h3>TARGET2: calibrated on past crises</h3>
+  <ul>
+    <li><b>-6% (100)</b>: the worst level observed, in November 2008 (-6.0%).</li>
+    <li><b>-4% (75)</b>: only months of 2008-2009 and of the euro crisis (2011-2012) went below it.</li>
+    <li><b>-2.5% (50) and -1% (25)</b>: chosen so that the level follows history. Since 2008, 42% of months are calm, 32% on watch, 18% under stress and 8% in crisis.</li>
+    <li><b>+1% (0)</b>: above the highest level observed (+0.9%).</li>
+  </ul>
+  <h3>Spread: chosen at launch, then checked against 5,576 sessions since 2004</h3>
+  <ul>
+    <li><b>0 bp (0)</b>: France borrows at the same rate as Germany.</li>
+    <li><b>50 bp (25)</b>: exceeded on 31% of days. Beyond it, things are no longer normal.</li>
+    <li><b>80 bp (50)</b>: exceeded on 5% of days: the euro crisis, the 2017 presidential election, then 2024-2026 after the snap election.</li>
+    <li><b>120 bp (75)</b>: exceeded on 1.3% of days, only in 2011-2012 and in 2026.</li>
+    <li><b>200 bp (100)</b>: close to the record, 214 bp on 17 November 2011.</li>
+  </ul>
+  <p>These values were set by hand when the site was launched, then checked against the data: they match notable moments, but no rule produced them. For comparison, five euro area countries had to be rescued between 2010 and 2012 with a spread of 470 to 590 bp.</p>
+  <h3>Cover: chosen at launch, to be reviewed</h3>
+  <ul>
+    <li><b>3.5 (0)</b>: exceptional demand, exceeded in 2% of auctions since 2004.</li>
+    <li><b>2.5 (25)</b>: the usual level before 2008 (median 2.42 from 2004 to 2007). 81% of auctions came in below it.</li>
+    <li><b>2.0 (50)</b>: the median since 2004 (2.02): one auction in two comes in below it.</li>
+    <li><b>1.5 (75)</b>: only 2% of auctions. The lowest: 1.39 in November 2014.</li>
+    <li><b>1.0 (100)</b>: absolute limit: buyers bid no more than the State sells.</li>
+  </ul>
+  <p>Known weakness: cover is “under stress” half the time, and its lows (2014, 2016, 2018) came in calm periods. It is a noisy signal, which matters mostly when it drops while the spread rises.</p>
+  <h3>Non-residents: chosen at launch, to be reviewed</h3>
+  <ul>
+    <li><b>70% (100)</b>: the record, 70.6% in June 2010.</li>
+    <li><b>60% (75)</b>: exceeded from 2008 to 2016, and close again today (59.7%).</li>
+    <li><b>55% (50) and 50% (25)</b>: intermediate steps. The lowest observed is 47.5%, at the end of 2021, when the ECB held a large share of French debt.</li>
+    <li><b>40% (0)</b>: never reached since 2008.</li>
+  </ul>
+  <p>Known weakness: 43% of quarters since 2008 are “in crisis”. The 60% threshold falls in a period when this share was normally high, before ECB purchases. This scale is the next one to recalibrate.</p>
+  <h3>Market stress (not in the index)</h3>
+  <p>0.10, 0.20 and 0.35 are exceeded by 41%, 22% and 10% of months since 1999 respectively. 0.80 is close to the record: 0.78 in December 2008. For reference: 0.62 in November 2011, 0.49 in March 2020, 0.58 in October 2022.</p>
 </article>
 
 <article class="signal">
