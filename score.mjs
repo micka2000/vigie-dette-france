@@ -257,6 +257,19 @@ export function phraseVerdict({ indice, tension, fond, ciss }) {
 
 // ---------- Courbe mensuelle ----------
 
+// Sous-indices et indice à partir des dernières données valables (absentes : undefined ou null).
+function pointA({ sp, tg, nr, dc, pire }, calcul) {
+  const s = {
+    spread: sp ? signal('spread', valeurSpread(sp), sp.jour, calcul) : null,
+    couverture: dc ? signal('couverture', dc.couverture, dc.date, calcul) : null,
+    nonResidents: nr ? signal('nonResidents', nr.part, nr.date, calcul) : null,
+    notes: pire ? signal('notes', pire.crans, null, calcul) : null,
+    target: tg ? signal('target', valeurTarget(tg), tg.mois, calcul) : null,
+  };
+  const tension = sousIndice(s, SOUS_INDICES.tension), fond = sousIndice(s, SOUS_INDICES.fond);
+  return { tension: tension.score, fond: fond.score, indice: indiceDe(tension, fond), sans: [...tension.sans, ...fond.sans] };
+}
+
 /**
  * Un point par mois, calculé avec les seules données valables à ce mois (ancrages fixes).
  * Le spread du mois est celui de sa dernière séance, jamais une moyenne.
@@ -275,16 +288,57 @@ export function courbe(fichiers, jusquA, dateCalcul = null) {
     const avant = (serie, cle) => serie.filter((r) => r[cle].slice(0, 7) <= mois).at(-1);
     const sp = avant(spread, 'jour'), tg = avant(target, 'mois'), nr = avant(nrAft.points, 'date'), dc = avant(couv, 'date');
     const pire = noteLaPlusBasse(ratings, `${mois}-31`);
-    const s = {
-      spread: sp ? signal('spread', valeurSpread(sp), sp.jour, calcul) : null,
-      couverture: dc ? signal('couverture', dc.couverture, dc.date, calcul) : null,
-      nonResidents: nr ? signal('nonResidents', nr.part, nr.date, calcul) : null,
-      notes: pire ? signal('notes', pire.crans, null, calcul) : null,
-      target: tg ? signal('target', valeurTarget(tg), tg.mois, calcul) : null,
-    };
-    const tension = sousIndice(s, SOUS_INDICES.tension), fond = sousIndice(s, SOUS_INDICES.fond);
-    const indice = indiceDe(tension, fond);
-    points.push({ mois, tension: tension.score, fond: fond.score, indice, sans: [...tension.sans, ...fond.sans] });
+    points.push({ mois, ...pointA({ sp, tg, nr, dc, pire }, calcul) });
   }
   return points;
+}
+
+// ---------- Série quotidienne et repères historiques ----------
+
+/**
+ * Un point par séance du spread, jusqu'à jusquA (« AAAA-MM-JJ ») inclus, calculé à la date de la séance.
+ * Mêmes règles que la courbe : une donnée datée au jour (spread, adjudication, note) compte à partir de ce jour,
+ * une donnée mensuelle ou trimestrielle (TARGET2, non-résidents) dès son mois. La dernière séance d'un mois
+ * donne donc le point de la courbe pour ce mois.
+ * Parcours en une passe (pointeurs), pour les quelque 5 500 séances depuis 2004.
+ * Renvoie [{ jour, tension, fond, indice, sans: [...] }].
+ */
+export function serieQuotidienne(fichiers, jusquA = null) {
+  const { spread, target, adj, ratings, nrAft } = fichiers;
+  const couv = couvertures(adj), nrs = nrAft.points;
+  const changements = [...new Set(ratings.agences.flatMap((a) => a.historique.map((h) => h.date)))].sort();
+  let iT = -1, iN = -1, iC = -1, iR = -1, pire = null;
+  const points = [];
+  for (const sp of spread) {
+    const jour = sp.jour, mois = jour.slice(0, 7);
+    if (jusquA && jour > jusquA) break;
+    while (iT + 1 < target.length && target[iT + 1].mois <= mois) iT++;
+    while (iN + 1 < nrs.length && nrs[iN + 1].date <= mois) iN++;
+    while (iC + 1 < couv.length && couv[iC + 1].date <= jour) iC++;
+    let r = iR;
+    while (r + 1 < changements.length && changements[r + 1] <= jour) r++;
+    if (r !== iR) { iR = r; pire = noteLaPlusBasse(ratings, jour); }
+    const calcul = new Date(`${jour}T00:00:00Z`);
+    points.push({ jour, ...pointA({ sp, tg: target[iT], nr: nrs[iN], dc: couv[iC], pire }, calcul) });
+  }
+  return points;
+}
+
+/**
+ * Repère « plus haut depuis » : la dernière séance avant `jour` dont l'indice atteint au moins `score`.
+ * null si aucune : le score est alors le plus haut de la série.
+ */
+export function plusHautDepuis(serie, score, jour) {
+  for (let i = serie.length - 1; i >= 0; i--) {
+    const p = serie[i];
+    if (p.jour < jour && p.indice != null && p.indice >= score) return p;
+  }
+  return null;
+}
+
+// Séance la plus haute d'un mois (« AAAA-MM ») : le repère de comparaison, plutôt que sa dernière séance.
+export function picDuMois(serie, mois) {
+  let pic = null;
+  for (const p of serie) if (p.jour.startsWith(mois) && p.indice != null && (!pic || p.indice > pic.indice)) pic = p;
+  return pic;
 }

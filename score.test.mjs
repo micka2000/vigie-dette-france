@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import {
   ANCRAGES, NIVEAUX, interpoler, niveauBrut, niveauScore, crans, notch, moisEcart, moisMoins,
   variationUnAn, variationUnAnJour, fusionnerSeries, spreadPb, etatDuJour, phraseVerdict, partieDette, partieBCE,
-  phraseIncomplete, cissDuJour, courbe,
+  phraseIncomplete, cissDuJour, courbe, serieQuotidienne, plusHautDepuis, picDuMois,
 } from './score.mjs';
 
 const lire = (dossier) => (f) => JSON.parse(readFileSync(new URL(`${dossier}/${f}`, import.meta.url)));
@@ -209,4 +209,45 @@ test('courbe : le mois en cours garde le spread de la dernière séance', () => 
   assert.deepEqual(c.at(-1).sans, []);
   proche(c.at(-1).indice, etatDuJour(FIGE, LE_20_OCTOBRE).indice.score);
   assert.deepEqual(courbe(FIGE, '2026-10').at(-1).sans, ['spread']); // calculé au 31 octobre : séance du 20 périmée
+});
+
+test('série quotidienne : la dernière séance de chaque mois donne le point de la courbe', () => {
+  const q = serieQuotidienne(FIGE);
+  const derniere = {};
+  for (const p of q) derniere[p.jour.slice(0, 7)] = p;
+  for (const p of courbe(FIGE, '2026-10', LE_20_OCTOBRE)) {
+    const d = derniere[p.mois];
+    for (const k of ['tension', 'fond', 'indice']) {
+      if (p[k] == null) assert.equal(d[k], null, `${p.mois} ${k}`);
+      else proche(d[k], p[k], 1e-9);
+    }
+    assert.deepEqual(d.sans, p.sans, p.mois);
+  }
+  assert.equal(q.at(-1).jour, '2026-10-20');
+  proche(q.at(-1).indice, etatDuJour(FIGE, LE_20_OCTOBRE).indice.score, 1e-9);
+  assert.equal(serieQuotidienne(FIGE, '2011-11-30').at(-1).jour, '2011-11-30');
+});
+
+test('série quotidienne : adjudication et note comptent à partir de leur jour, pas de leur mois', () => {
+  const q = serieQuotidienne(FIGE);
+  const le = (jour) => q.find((p) => p.jour === jour);
+  assert.deepEqual(le('2025-11-05').sans, ['couverture']); // première adjudication saisie : 6 novembre 2025
+  assert.deepEqual(le('2025-11-06').sans, []);
+  assert.ok(le('2012-01-13').fond > le('2012-01-12').fond); // S&P retire le AAA le 13 janvier 2012
+});
+
+test('repères : pic de novembre 2011 et « plus haut depuis »', () => {
+  const q = serieQuotidienne(FIGE);
+  const pic = picDuMois(q, '2011-11');
+  assert.equal(pic.jour, '2011-11-17'); // pire séance du mois, pas la dernière (30 novembre : 43)
+  proche(pic.indice, 59.7);
+  assert.deepEqual(pic.sans, ['couverture', 'nonResidents']);
+
+  // Le 20 octobre 2026 (63,7) dépasse toutes les séances précédentes de la copie figée.
+  assert.equal(plusHautDepuis(q, q.at(-1).indice, '2026-10-20'), null);
+  // Juste en dessous du pic : la séance du pic, pas une séance plus récente ni celle du jour même.
+  assert.equal(plusHautDepuis(q, pic.indice, '2011-11-18').jour, '2011-11-17');
+  const r = plusHautDepuis(q, 55, '2026-10-20');
+  assert.ok(r.jour < '2026-10-20' && r.indice >= 55);
+  assert.ok(q.every((p) => p.jour <= r.jour || p.jour >= '2026-10-20' || p.indice == null || p.indice < 55));
 });
