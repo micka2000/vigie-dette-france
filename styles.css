@@ -307,3 +307,15 @@ footer p { margin: 0; max-width: 80ch; }
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .live[data-tip] { cursor: help; }
 .retard[hidden] { display: none; }
+
+/* Légende à œil : masquer ou réafficher une courbe */
+.legend-btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 6px; margin: -4px 0;
+  font: inherit; color: inherit; background: transparent; border: 0; border-radius: var(--radius-pill); cursor: pointer;
+  transition: background 150ms var(--ease-standard), opacity 150ms var(--ease-standard);
+}
+.legend-btn:hover { background: var(--bg-inset); }
+.legend-btn[aria-pressed="false"] { opacity: 0.5; }
+.legend-btn[aria-pressed="false"] .sw { background: transparent !important; outline: 1.5px solid currentColor; }
+.legend .oeil { width: 16px; height: 16px; fill: currentColor; flex: none; }
+.legend .sw-dash { background: repeating-linear-gradient(90deg, currentColor 0 4px, transparent 4px 7px); }

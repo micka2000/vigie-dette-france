@@ -50,7 +50,7 @@ const parseQuarter = (s) => new Date(Date.UTC(+s.slice(0, 4), (+s.slice(-1) - 1)
 const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 const levelOf = (key, v) => niveauBrut(CLE_SCORE[key], v);
 
-const state = { years: 15, spreadStep: 'jour', data: null };
+const state = { years: 15, spreadStep: 'jour', data: null, masquees: {} };
 
 // ---------- Données ----------
 
@@ -289,11 +289,39 @@ function fillThresholds() {
   }
 }
 
-function legend(id, items) {
-  document.getElementById(id).replaceChildren(...items.map(([name, color]) => {
+// Icônes Material « visibility » et « visibility_off » (le design system repose sur Material 3).
+const OEIL = 'M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z';
+const OEIL_BARRE = 'M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z';
+
+function icone(d) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('aria-hidden', 'true'); svg.classList.add('oeil');
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', d); svg.append(path);
+  return svg;
+}
+
+// Courbes masquées, par graphique : elles le restent quand la page se redessine (période, thème, données en direct).
+const visibles = (chart, series) => series.filter((s) => !state.masquees[chart]?.has(s.name));
+
+// Légende ; avec `chart`, chaque entrée est un bouton œil qui masque ou réaffiche sa courbe (jamais la dernière visible).
+function legend(id, series, chart = null) {
+  document.getElementById(id).replaceChildren(...series.map((s) => {
     const li = document.createElement('li');
-    const sw = document.createElement('span'); sw.className = 'sw'; sw.style.background = color;
-    li.append(sw, document.createTextNode(name)); return li;
+    const sw = document.createElement('span'); sw.className = s.dash ? 'sw sw-dash' : 'sw'; sw.style.color = s.color; sw.style.background = s.dash ? '' : s.color;
+    if (!chart) { li.append(sw, document.createTextNode(s.name)); return li; }
+    const masquees = state.masquees[chart] ??= new Set();
+    const cachee = masquees.has(s.name);
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'legend-btn'; b.setAttribute('aria-pressed', String(!cachee));
+    b.setAttribute('aria-label', `${cachee ? 'Afficher' : 'Masquer'} la courbe ${s.name}`);
+    b.append(icone(cachee ? OEIL_BARRE : OEIL), sw, document.createTextNode(s.name));
+    b.addEventListener('click', () => {
+      if (!cachee && series.length - masquees.size <= 1) return;
+      if (cachee) masquees.delete(s.name); else masquees.add(s.name);
+      render();
+    });
+    li.append(b); return li;
   }));
 }
 
@@ -424,12 +452,12 @@ function renderCharts(data) {
     { name: 'Toute la dette publique : État, collectivités, Sécurité sociale (Eurostat, chaque année)', endText: 'Ensemble', color: css('--series-2'), points: clip(es) },
   ].filter((s) => s.points.length);
   const nrAll = nrSeries.flatMap((s) => s.points);
-  lineChart(document.getElementById('chart-nonres'), nrSeries, {
+  lineChart(document.getElementById('chart-nonres'), visibles('nonres', nrSeries), {
     bands: THRESHOLDS['non-residents'].bands, yDomain: [Math.min(44, d3.min(nrAll, (p) => p.v) - 2), Math.max(64, d3.max(nrAll, (p) => p.v) + 2)], yFormat: (v) => `${f0(v)} %`, tipFormat: (v) => `${f1(v)} %`,
     xDomain: [d3.min(nrAll, (p) => p.d), new Date()], dots: true, endLabels: true,
     label: 'Part de la dette française détenue par des non-résidents',
   });
-  legend('legend-nonres', nrSeries.map((s) => [s.name, s.color]));
+  legend('legend-nonres', nrSeries, 'nonres');
 
   const start = from ?? new Date(Date.UTC(2000, 0, 1));
   const ratingSeries = data.ratings.agences.map((a, i) => {
@@ -440,12 +468,12 @@ function renderCharts(data) {
     series.push({ ...series.at(-1), d: new Date() });
     return { name: a.agence, endText: `${a.agence} ${a.note}`, color: css(`--series-${i + 1}`), points: series, step: true };
   });
-  lineChart(document.getElementById('chart-ratings'), ratingSeries, {
+  lineChart(document.getElementById('chart-ratings'), visibles('notes', ratingSeries), {
     bands: THRESHOLDS.notations.bands, yDomain: [12.5, 20.5], yTicks: [13, 14, 15, 16, 17, 18, 19, 20],
     yFormat: notchLabel, tipFormat: (v, p) => p.note, xDomain: [start, new Date()], dateFormat: fmtDay, endLabels: true, offset: 3,
     label: 'Notes de la France par agence',
   });
-  legend('legend-ratings', ratingSeries.map((s) => [s.name, s.color]));
+  legend('legend-ratings', ratingSeries, 'notes');
 
   const auctions = data.adj.lignes.map((a) => ({ ...a, d: parseDay(a.date), cover: a.adjuge_mds ? a.demande_mds / a.adjuge_mds : null }));
   lineChart(document.getElementById('chart-auction-rate'), [{ name: 'Taux', color: css('--series-1'), points: auctions.map((a) => ({ d: a.d, v: a.taux, a })) }], {
@@ -514,7 +542,7 @@ function renderCourbe(c) {
     { name: 'CISS de la BCE', endText: 'CISS', color: css('--fg-3'), dash: '4 4', points: vers(ciss) },
   ].filter((s) => s.points.length);
   const debut = d3.min(series, (s) => s.points[0].d);
-  lineChart(document.getElementById('chart-indice'), series, {
+  lineChart(document.getElementById('chart-indice'), visibles('indice', series), {
     bands: NIVEAUX_SCORE, yDomain: [0, 100], yTicks: [0, 25, 50, 75, 100], yFormat: f0, endLabels: true, marks: EVENEMENTS,
     xDomain: [debut, new Date()], label: 'Indice Vigie, tension sur la dette et CISS de la BCE, séance la plus haute de chaque mois, sur 100',
     tipFormat: (v, pt) => {
@@ -526,7 +554,7 @@ function renderCourbe(c) {
       return `${f0(v)} le ${fmtDay(parseDay(p.jour))}${p.sans.length ? `, sans ${liste(p.sans.map((n) => NOMS_LONGS[n].replace(/^(le|la|les) /, '')))}` : ''}`;
     },
   });
-  legend('legend-indice', series.map((s) => [s.name, s.color]));
+  legend('legend-indice', series, 'indice');
 
   // Résumé texte : valeur actuelle, plus haut et plus bas de la période affichée
   if (indice.length) {
