@@ -59,9 +59,9 @@
         </div>
       </div>
       <div class="chart" id="chart-spread"></div>
+      <p class="source">Sources : <a href="https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.FR.EUR.FR2.BB.FRMOYTEC10.HSTA" target="_blank" rel="noopener">Banque de France, taux de l'échéance constante à 10 ans (TEC 10)</a> et <a href="https://www.bundesbank.de/dynamic/action/de/statistiken/zeitreihen-datenbanken/zeitreihen-datenbank/759778/759778?tsId=BBSIS.D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A" target="_blank" rel="noopener">Bundesbank, rendement à 10 ans des titres fédéraux</a>. Clôture de chaque séance, sans moyenne : en vue Semaine ou Mois, chaque point est la dernière séance de la période.</p>
       <ul class="thresholds" data-thresholds="spread"></ul>
       <p class="threshold-note">Seuils tirés des séances depuis novembre 2004 : le spread est resté sous 50 pb 69 % du temps et sous 80 pb 95 % du temps. Le record date de la crise des dettes souveraines : 214 pb le 17 novembre 2011.</p>
-      <p class="source">Source : Banque de France (taux de l'échéance constante à 10 ans, TEC 10) et Bundesbank (rendement à 10 ans des titres fédéraux, tiré de la courbe des taux). Clôture de chaque séance, sans moyenne : en vue Semaine ou Mois, chaque point est la dernière séance de la période.</p>
     </article>
 
     <article class="signal" id="adjudications">
@@ -77,9 +77,9 @@
         <div><p class="chart-title">Taux moyen pondéré à 10 ans</p><div class="chart" id="chart-auction-rate"></div></div>
         <div><p class="chart-title">Taux de couverture</p><div class="chart" id="chart-auction-cover"></div></div>
       </div>
+      <p class="source" id="auction-source">Sources : résultats publiés par l'<a href="https://www.aft.gouv.fr/fr" target="_blank" rel="noopener">Agence France Trésor</a>, repris par Reuters et Boursorama (<a id="auction-source-last" href="#" target="_blank" rel="noopener">dernière adjudication</a>). Saisie manuelle.</p>
       <ul class="thresholds" data-thresholds="adjudications"></ul>
       <p class="threshold-note">Le niveau de risque suit le taux de couverture : sous 2, la demande devient juste pour une ligne de référence ; sous 1,5, l'appétit des investisseurs faiblit nettement.</p>
-      <p class="source" id="auction-source">Source : résultats publiés par l'AFT, repris par Reuters et Boursorama. Saisie manuelle.</p>
     </article>
 
     <article class="signal" id="non-residents">
@@ -93,9 +93,9 @@
       <p class="signal-now"><span class="delta" data-delta="non-residents"></span></p>
       <div class="chart" id="chart-nonres"></div>
       <ul class="legend" id="legend-nonres"></ul>
+      <p class="source">Sources : <a href="https://webstat.banque-france.fr/fr/catalogue/det2/DET2.Q.N.FR.W1.S13111.S1.N.L.LE.F3.T._Z.PT._T.M.V.N._T" target="_blank" rel="noopener">Banque de France, titres de l'État détenus par des non-résidents</a> (fin de trimestre, depuis 2008) ; <a href="https://ec.europa.eu/eurostat/databrowser/view/gov_10dd_ggd/default/table" target="_blank" rel="noopener">Eurostat, gov_10dd_ggd</a> (dette publique au sens de Maastricht, annuel).</p>
       <ul class="thresholds" data-thresholds="non-residents"></ul>
-      <p class="threshold-note">Point bas récent : 47,2 % en 2021, quand la Banque de France rachetait massivement des titres. Au-delà de 60 %, la France retrouverait les niveaux de la fin des années 2000.</p>
-      <p class="source">Sources : AFT d'après la Banque de France (dette négociable de l'État, trimestriel) ; Eurostat gov_10dd_ggd (dette publique au sens de Maastricht, annuel).</p>
+      <p class="threshold-note">Point bas : 47,5 % fin 2021, quand la Banque de France rachetait massivement des titres. Au-delà de 60 %, la France retrouverait les niveaux de 2008 à 2016 ; le record est de 70,6 % mi-2010.</p>
     </article>
 
     <article class="signal" id="notations">
@@ -109,6 +109,7 @@
       <p class="signal-now"><span class="delta" data-delta="notations"></span></p>
       <div class="chart" id="chart-ratings"></div>
       <ul class="legend" id="legend-ratings"></ul>
+      <p class="source">Source : <a href="https://www.aft.gouv.fr/fr/notation-de-la-france" target="_blank" rel="noopener">Agence France Trésor, « Notation de la France »</a>, chaque changement de note recoupé dans la presse. Saisie manuelle.</p>
       <div class="table-scroll">
         <table class="ratings-table" id="ratings-table">
           <thead><tr><th>Agence</th><th>Note</th><th>Perspective</th><th>Dernière décision</th><th>Prochaine revue</th></tr></thead>
@@ -118,7 +119,6 @@
       <p class="alert" id="ratings-alert" hidden></p>
       <ul class="thresholds" data-thresholds="notations"></ul>
       <p class="threshold-note">Le niveau porte sur la note la plus basse des trois agences. AA- est le plancher de nombreux mandats de gestion de réserves ; sous A-, la France approcherait la catégorie BBB, où les ventes forcées s'accélèrent.</p>
-      <p class="source">Source : Agence France Trésor, page « Notation de la France ». Saisie manuelle.</p>
     </article>
 
     <article class="signal" id="target">
@@ -131,9 +131,9 @@
       </div>
       <p class="signal-now"><span class="delta" data-delta="target"></span></p>
       <div class="chart" id="chart-target"></div>
+      <p class="source">Source : <a href="https://data.ecb.europa.eu/data/datasets/TGB/TGB.M.FR.N.A094T.U2.EUR.E" target="_blank" rel="noopener">BCE, soldes TARGET de la Banque de France</a> (fin de mois, série TGB.M.FR).</p>
       <ul class="thresholds" data-thresholds="target"></ul>
       <p class="threshold-note">Seuils tirés de l'historique depuis 2008 : -118 Md€ au plus fort de la crise financière (décembre 2008), record à -240 Md€ en octobre 2025.</p>
-      <p class="source">Source : BCE, soldes TARGET en fin de mois (série TGB.M.FR).</p>
     </article>
 
   </div>
@@ -141,7 +141,7 @@
 
 <footer>
   <div class="wrap">
-    <p>Les séries BCE sont lues en direct à chaque visite ; les séries Eurostat sont mises à jour chaque jour par une GitHub Action. Les adjudications et les notes sont saisies à la main à partir des publications officielles.</p>
+    <p>Le spread, les non-résidents et les séries Eurostat sont collectés chaque matin par une GitHub Action ; le solde TARGET2 est lu en direct à la BCE à chaque visite. Les adjudications et les notes sont saisies à la main à partir des publications officielles.</p>
     <p>Les seuils de risque sont des repères tirés de l'historique de chaque série, pas des prévisions.</p>
   </div>
 </footer>

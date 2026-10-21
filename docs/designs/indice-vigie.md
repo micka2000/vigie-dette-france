@@ -709,7 +709,7 @@ Tâches tirées des constats de la revue. À exécuter avec Claude Code ; cocher
   - Constat : 0B, P6 et P7.
   - Fichiers : `data/notations.json`, `data/non_residents_aft.json`.
   - Vérification : chaque date a une URL de source.
-- [x] **T2 (P1, humain : ~1j / CC : ~30min)** : `score.mjs`. Module ES pur avec `etatDuJour()`, ancrages, `niveauBrut()`, `phraseVerdict()` (formulations D30), péremption en mois UTC (spread 2, TARGET2 3, couverture 3), spread et TARGET2 calculés depuis les valeurs brutes avec une seule règle d'arrondi, écart sur un an cherché par date (même mois un an plus tôt) et non par position, et `METHODE_VERSION`. _(fait le 2026-10-21)_
+- [x] **T2 (P1, humain : ~1j / CC : ~30min)** : `score.mjs`. Module ES pur avec `etatDuJour()`, ancrages, `niveauBrut()`, `phraseVerdict()` (formulations D30), péremption en mois UTC (TARGET2 3, couverture 3 ; spread 7 jours depuis le passage au quotidien), spread et TARGET2 calculés depuis les valeurs brutes avec une seule règle d'arrondi, écart sur un an cherché par date (même mois un an plus tôt) et non par position, et `METHODE_VERSION`. _(fait le 2026-10-21)_
   - Constat : méthode, section 5, O8, D27, D30, avis extérieur n°9, n°10 et n°15 (D6).
   - Fichier : `score.mjs` (pas de `package.json`, D1).
   - Vérification : `node --test`.
@@ -737,7 +737,7 @@ Tâches tirées des constats de la revue. À exécuter avec Claude Code ; cocher
   - Constat : CEO-S1, CEO-R1, O5, O11, avis extérieur n°2, n°3 et n°7 (D4, D6).
   - Fichiers : `index.html`, `.github/workflows/update-data.yml`, `.github/workflows/tests.yml`.
   - Vérification : test des SHA, un push qui déclenche `tests.yml` en vert, puis lancement manuel de `update-data.yml` en vert ; `curl -sI …/score.mjs` donne un type JavaScript.
-- [ ] **T7 (P1, humain : ~15min / CC : ~2min)** : textes. Corriger `index.html:55` (69e et 95e centile) et « un cran depuis 2024 ».
+- [x] **T7 (P1, humain : ~15min / CC : ~2min)** : textes. Corriger `index.html:55` (69e et 95e centile) et « un cran depuis 2024 ». _(fait le 2026-10-21 : centiles recalculés sur les séances quotidiennes avec le passage au spread de clôture (69e et 95e, record 214 pb le 17/11/2011) ; « trois crans » ne figure plus que dans le constat P5)_
   - Constat : P4, P5, O16.
   - Fichier : `index.html`.
   - Vérification : relecture.

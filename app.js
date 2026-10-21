@@ -92,7 +92,7 @@ async function loadLiveEcb() {
 async function loadAll() {
   const [spread, target, adj, ratings, nrAft, nrEs, meta] = await Promise.all([
     json('data/spread.json'), json('data/target.json'), json('data/adjudications.json'),
-    json('data/notations.json'), json('data/non_residents_aft.json'), json('data/non_residents_eurostat.json'),
+    json('data/notations.json'), json('data/non_residents_bdf.json'), json('data/non_residents_eurostat.json'),
     json('data/meta.json'),
   ]);
   let live = false;
@@ -341,8 +341,8 @@ function compute(data) {
   out['non-residents'] = {
     level: levelOf('non-residents', nr.part), name: 'Part des non-résidents',
     value: `${f1(nr.part)} %`,
-    sub: `Dette négociable · ${fmtMonth(parseMonth(nr.date))}`,
-    delta: `Dette négociable de l'État fin ${fmtMonth(parseMonth(nr.date))} · ${fSigned1(nr.part - nr1.part)} point depuis ${fmtMonth(parseMonth(nr1.date))}`,
+    sub: `Titres de l'État · fin ${fmtMonth(parseMonth(nr.date))}`,
+    delta: `Titres de l'État fin ${fmtMonth(parseMonth(nr.date))} · ${fSigned1(nr.part - nr1.part)} point depuis ${fmtMonth(parseMonth(nr1.date))}`,
   };
 
   const worst = d3.min(data.ratings.agences, (a) => notch(a.note));
@@ -415,12 +415,12 @@ function renderCharts(data) {
   const aft = data.nrAft.points.map((p) => ({ d: parseMonth(p.date), v: p.part }));
   const es = data.nrEs.map((r) => ({ d: new Date(Date.UTC(r.annee, 11, 31)), v: r.part_nonres }));
   const nrSeries = [
-    { name: 'Dette négociable de l’État (AFT)', endText: 'État', color: css('--series-1'), points: clip(aft) },
+    { name: 'Titres de l’État (Banque de France, trimestriel)', endText: 'État', color: css('--series-1'), points: clip(aft) },
     { name: 'Dette publique totale (Eurostat)', endText: 'Total', color: css('--series-2'), points: clip(es) },
   ].filter((s) => s.points.length);
   const nrAll = nrSeries.flatMap((s) => s.points);
   lineChart(document.getElementById('chart-nonres'), nrSeries, {
-    bands: THRESHOLDS['non-residents'].bands, yDomain: [44, 64], yFormat: (v) => `${f0(v)} %`, tipFormat: (v) => `${f1(v)} %`,
+    bands: THRESHOLDS['non-residents'].bands, yDomain: [Math.min(44, d3.min(nrAll, (p) => p.v) - 2), Math.max(64, d3.max(nrAll, (p) => p.v) + 2)], yFormat: (v) => `${f0(v)} %`, tipFormat: (v) => `${f1(v)} %`,
     xDomain: [d3.min(nrAll, (p) => p.d), new Date()], dots: true, endLabels: true,
     label: 'Part de la dette française détenue par des non-résidents',
   });
@@ -453,6 +453,12 @@ function renderCharts(data) {
     title: `${fmtDay(a.d)} · ${a.ligne}`,
     lines: a.cover != null ? [['Couverture', f2(a.cover)], ['Demandé', `${f1(a.demande_mds)} Md€`], ['Servi', `${f1(a.adjuge_mds)} Md€`]] : [['Couverture', 'non communiquée']],
   })), { bands: THRESHOLDS.adjudications.bands, yDomain: [0, 3], yFormat: (v) => f1(v), height: 240, label: 'Taux de couverture des adjudications à 10 ans' });
+}
+
+function renderAuctionSource(adj) {
+  const last = adj.lignes.filter((a) => a.source).at(-1);
+  const a = document.getElementById('auction-source-last');
+  if (last) { a.href = last.source; a.textContent = `dernière adjudication, ${fmtDay(parseDay(last.date))}`; } else a.remove();
 }
 
 function renderRatingsTable(r) {
@@ -507,6 +513,7 @@ loadAll().then((data) => {
   const signals = compute(data);
   renderSummary(signals);
   renderRatingsTable(data.ratings);
+  renderAuctionSource(data.adj);
   render();
   const live = document.getElementById('live');
   live.dataset.on = String(data.live);

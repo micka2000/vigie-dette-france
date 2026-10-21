@@ -30,6 +30,8 @@ BUNDESBANK = "https://api.statistiken.bundesbank.de/rest/data/BBSIS/"
 OAT10 = "FM.D.FR.EUR.FR2.BB.FRMOYTEC10.HSTA"
 # Rendement à 10 ans des titres fédéraux, au pair avec coupon annuel, tiré de la courbe des taux (comparable au TEC 10).
 BUND10 = "D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A"
+# Part des titres de l'État (court et long terme) détenue par les non-résidents, en %, fin de trimestre, depuis 2008.
+NONRES = "DET2.Q.N.FR.W1.S13111.S1.N.L.LE.F3.T._Z.PT._T.M.V.N._T"
 CLE_WEBSTAT = Path.home() / ".config" / "vigie" / "webstat_key"
 UA = {"User-Agent": "vigie-dette-france (github.com/micka2000/vigie-dette-france)"}
 
@@ -41,6 +43,7 @@ LIMITES_JOURS = {
     "ciss.json": 10,  # quotidien
     "dette_pib.json": 230,  # trimestriel, publié environ 4 mois après le trimestre
     "non_residents_eurostat.json": 550,  # annuel, publié en avril de l'année suivante
+    "non_residents_bdf.json": 200,  # trimestriel, publié environ 3 mois et demi après le trimestre
 }
 LIGNES_MIN_NOUVEAU_FICHIER = 12
 COUVERTURE_ALERTE_MOIS = 2  # un mois avant la sortie du calcul (péremption à 3 mois, D10)
@@ -112,6 +115,18 @@ def serie_spread():
     ]
 
 
+def serie_non_residents_bdf():
+    trimestres = webstat_jours(NONRES)
+    return {
+        "description": "Part des titres de l'État détenue par des non-résidents, en fin de trimestre (Banque de France).",
+        "source": f"Banque de France, Webstat, série {NONRES}",
+        "points": [
+            {"date": f"{t[:4]}-{3 * int(t[-1]):02d}", "part": round(v, 1)}
+            for t, v in sorted(trimestres.items())
+        ],
+    }
+
+
 def serie_target():
     target = ecb_series("TGB/M.FR.N.A094T.U2.EUR.E", "2008-01")
     return [{"mois": m, "solde_mds": round(v / 1000, 1), "solde_meur": v} for m, v in sorted(target.items())]
@@ -157,6 +172,7 @@ SERIES = {
     "target.json": serie_target,
     "ciss.json": serie_ciss,
     "non_residents_eurostat.json": serie_non_residents,
+    "non_residents_bdf.json": serie_non_residents_bdf,
     "dette_pib.json": serie_dette_pib,
 }
 
@@ -165,18 +181,18 @@ SERIES = {
 
 
 def lignes(payload):
-    return payload.get("mensuel", []) if isinstance(payload, dict) else payload
+    return payload if isinstance(payload, list) else payload.get("mensuel") or payload.get("points", [])
 
 
 def fin_de_periode(payload):
     """Date de fin de la période de la dernière donnée (jour, mois, trimestre ou année)."""
-    if isinstance(payload, dict):
+    if isinstance(payload, dict) and "quotidien" in payload:
         return date.fromisoformat(payload["quotidien"][-1]["jour"])
-    r = payload[-1]
+    r = lignes(payload)[-1]
     if "jour" in r:
         return date.fromisoformat(r["jour"])
-    if "mois" in r:
-        a, m = map(int, r["mois"].split("-"))
+    if "mois" in r or "date" in r:
+        a, m = map(int, r.get("mois", r.get("date")).split("-"))
         return date(a, m, calendar.monthrange(a, m)[1])
     if "trimestre" in r:
         a, q = int(r["trimestre"][:4]), int(r["trimestre"][-1])
@@ -187,7 +203,7 @@ def fin_de_periode(payload):
 def controle_forme(nom, payload, ancien, aujourd_hui):
     """Renvoie None si la série est acceptable, sinon la raison du refus."""
     n = len(lignes(payload))
-    if n == 0 or (isinstance(payload, dict) and not payload.get("quotidien")):
+    if n == 0 or (isinstance(payload, dict) and "quotidien" in payload and not payload["quotidien"]):
         return "série vide"
     if ancien is None:
         if n < LIGNES_MIN_NOUVEAU_FICHIER:

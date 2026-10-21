@@ -25,7 +25,7 @@ def mensuel(debut_annee, fin_mois, champ="solde_mds"):
 
 class ControleForme(unittest.TestCase):
     def test_vrais_fichiers_du_20_octobre_sans_echec(self):
-        for nom in ["spread.json", "target.json", "dette_pib.json", "non_residents_eurostat.json"]:
+        for nom in ["spread.json", "target.json", "dette_pib.json", "non_residents_eurostat.json", "non_residents_bdf.json"]:
             payload = json.loads((DATA / nom).read_text(encoding="utf-8"))
             self.assertIsNone(u.controle_forme(nom, payload, payload, LE_20_OCTOBRE), nom)
 
@@ -61,6 +61,7 @@ class ControleForme(unittest.TestCase):
 
     def test_fin_de_periode(self):
         self.assertEqual(u.fin_de_periode([{"jour": "2026-10-20"}]), date(2026, 10, 20))
+        self.assertEqual(u.fin_de_periode({"points": [{"date": "2026-06", "part": 59.7}]}), date(2026, 6, 30))
         self.assertEqual(u.fin_de_periode([{"trimestre": "2026-Q1"}]), date(2026, 3, 31))
         self.assertEqual(u.fin_de_periode([{"annee": 2025}]), date(2025, 12, 31))
         self.assertEqual(u.fin_de_periode([{"mois": "2026-02"}]), date(2026, 2, 28))
@@ -92,6 +93,22 @@ class Spread(unittest.TestCase):
         with mock.patch.dict(u.os.environ, {"WEBSTAT_API_KEY": ""}), mock.patch.object(u, "CLE_WEBSTAT", Path("/nexiste/pas")):
             with self.assertRaisesRegex(ValueError, "clé Webstat absente"):
                 u.serie_spread()
+
+
+class NonResidents(unittest.TestCase):
+    def test_trimestres_en_fin_de_mois(self):
+        texte = "time_period;obs_value\r\n2025-Q4;56.07\r\n2026-Q1;57.5\r\n2026-Q2;59.66\r\n"
+        with mock.patch.dict(u.os.environ, {"WEBSTAT_API_KEY": "cle"}), mock.patch.object(u, "get", lambda url, headers=None: texte):
+            serie = u.serie_non_residents_bdf()
+        self.assertEqual(serie["points"], [
+            {"date": "2025-12", "part": 56.1}, {"date": "2026-03", "part": 57.5}, {"date": "2026-06", "part": 59.7},
+        ])
+
+    def test_series_a_points_controlees(self):
+        serie = {"points": [{"date": f"{a}-{m:02d}", "part": 55.0} for a in range(2008, 2027) for m in (3, 6, 9, 12) if (a, m) <= (2026, 6)]}
+        self.assertIsNone(u.controle_forme("non_residents_bdf.json", serie, serie, LE_20_OCTOBRE))
+        self.assertEqual(u.controle_forme("non_residents_bdf.json", {"points": []}, serie, LE_20_OCTOBRE), "série vide")
+        self.assertIn("vieille", u.controle_forme("non_residents_bdf.json", serie, serie, date(2027, 2, 1)))
 
 
 class Couverture(unittest.TestCase):
