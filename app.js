@@ -1,8 +1,9 @@
 // Vigie Dette France : chargement des séries, niveaux de risque et graphiques.
 // Le calcul (scores, niveaux, phrase de verdict) vient tout entier de score.mjs.
 import {
-  SEUILS, METHODE_VERSION, niveauBrut, notch, notchLabel, fusionnerSeries, etatDuJour, serieQuotidienne, plusHautDepuis, picDuMois,
-} from './score.mjs?v=5c2f58de';
+  SEUILS, ANCRAGES, METHODE_VERSION, niveauBrut, niveauScore, interpoler, notch, notchLabel, fusionnerSeries, etatDuJour,
+  serieQuotidienne, plusHautDepuis, picDuMois, picsMensuels,
+} from './score.mjs?v=513ad217';
 
 window.vigieDemarre = true; // lu par le script de secours d'index.html
 
@@ -157,6 +158,14 @@ function lineChart(el, series, opts) {
     .attr('role', 'img').attr('aria-label', opts.label ?? '');
   const g = svg.append('g').attr('transform', `translate(${m.left},${m.top})`);
   if (opts.bands) drawBands(g, opts.bands, y, iw);
+  // Repères d'événements : trait vertical et libellé, seulement dans la période affichée
+  for (const mk of opts.marks ?? []) {
+    const [d0, d1] = x.domain();
+    if (mk.d < d0 || mk.d > d1) continue;
+    g.append('line').attr('x1', x(mk.d)).attr('x2', x(mk.d)).attr('y1', 0).attr('y2', ih)
+      .attr('stroke', css('--chart-axis')).attr('stroke-dasharray', '2 4');
+    g.append('text').attr('class', 'mark-label').attr('x', x(mk.d) + 4).attr('y', 10).text(mk.label);
+  }
 
   const yAxis = d3.axisLeft(y).tickSize(-iw).tickPadding(8).tickFormat(opts.yFormat ?? f0);
   if (opts.yTicks) yAxis.tickValues(opts.yTicks); else yAxis.ticks(5);
@@ -170,7 +179,7 @@ function lineChart(el, series, opts) {
     const off = opts.offset ? (si - (series.length - 1) / 2) * opts.offset : 0;
     const line = d3.line().x((p) => x(p.d)).y((p) => y(p.v) + off).curve(s.step ? d3.curveStepAfter : d3.curveLinear);
     g.append('path').datum(s.points).attr('fill', 'none').attr('stroke', s.color).attr('stroke-width', 2)
-      .attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round').attr('d', line);
+      .attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round').attr('stroke-dasharray', s.dash ?? null).attr('d', line);
     if (opts.dots) {
       g.selectAll(null).data(s.points).join('circle').attr('cx', (p) => x(p.d)).attr('cy', (p) => y(p.v))
         .attr('r', 4).attr('fill', s.color).attr('stroke', css('--bg-surface')).attr('stroke-width', 2);
@@ -450,6 +459,98 @@ function renderCharts(data) {
   })), { bands: THRESHOLDS.adjudications.bands, yDomain: [0, 3], yFormat: (v) => f1(v), height: 240, label: 'Taux de couverture des adjudications à 10 ans' });
 }
 
+// ---------- Courbe de l'Indice Vigie ----------
+
+const EVENEMENTS = [
+  { d: parseDay('2008-09-15'), label: 'Lehman' },
+  { d: parseDay('2011-11-17'), label: 'Crise de l’euro' },
+  { d: parseDay('2020-03-12'), label: 'Covid' },
+  { d: parseDay('2024-06-09'), label: 'Dissolution' },
+];
+const NIVEAUX_SCORE = ['calme', 'vigilance', 'tension', 'crise'].map((level, i) => ({ level, from: i * 25, to: i === 3 ? Infinity : (i + 1) * 25 }));
+
+// Séries mensuelles de la courbe ; recalculées seulement quand les données changent (renderAll).
+function courbeMensuelle(data) {
+  const serie = serieQuotidienne(data);
+  const ciss = (data.ciss?.mensuel ?? []).map((m) => ({ mois: m.mois, max: m.max }));
+  // Mois en cours : le maximum du fichier complété par les valeurs quotidiennes lues en direct
+  for (const q of data.ciss?.quotidien ?? []) {
+    const mois = q.jour.slice(0, 7), m = ciss.find((c) => c.mois === mois);
+    if (m) m.max = Math.max(m.max, q.valeur); else if (mois > (ciss.at(-1)?.mois ?? '')) ciss.push({ mois, max: q.valeur });
+  }
+  return {
+    indice: picsMensuels(serie, 'indice'),
+    tension: picsMensuels(serie, 'tension'),
+    ciss: ciss.map((c) => ({ ...c, valeur: interpoler(c.max, ANCRAGES.ciss) })),
+    cissDuJour: data.ciss?.quotidien?.at(-1) ?? null,
+  };
+}
+
+const de = (s) => (/^[aeiouyéèh]/i.test(s) ? `d’${s}` : `de ${s}`);
+
+// Tronçons consécutifs calculés sans les mêmes signaux : « de mai 2008 à octobre 2025, calculé sans … »
+function troncons(points) {
+  const out = [];
+  for (const p of points) {
+    const cle = p.sans.join();
+    const dernier = out.at(-1);
+    if (dernier && dernier.cle === cle) dernier.fin = p.mois;
+    else out.push({ cle, sans: p.sans, debut: p.mois, fin: p.mois });
+  }
+  return out.filter((t) => t.sans.length);
+}
+
+function renderCourbe(c) {
+  const from = since();
+  const moisDebut = from ? from.toISOString().slice(0, 7) : '';
+  const garde = (pts) => pts.filter((p) => p.mois >= moisDebut);
+  const indice = garde(c.indice), tension = garde(c.tension), ciss = garde(c.ciss);
+  const moisCourant = new Date().toISOString().slice(0, 7);
+  const vers = (pts) => pts.map((p) => ({ d: parseMonth(p.mois), v: p.valeur, p }));
+  const series = [
+    { name: 'Indice Vigie', endText: 'Indice', color: css('--series-1'), points: vers(indice) },
+    { name: 'Tension sur la dette', endText: 'Tension', color: css('--series-2'), points: vers(tension) },
+    { name: 'CISS de la BCE', endText: 'CISS', color: css('--fg-3'), dash: '4 4', points: vers(ciss) },
+  ].filter((s) => s.points.length);
+  const debut = d3.min(series, (s) => s.points[0].d);
+  lineChart(document.getElementById('chart-indice'), series, {
+    bands: NIVEAUX_SCORE, yDomain: [0, 100], yTicks: [0, 25, 50, 75, 100], yFormat: f0, endLabels: true, marks: EVENEMENTS,
+    xDomain: [debut, new Date()], label: 'Indice Vigie, tension sur la dette et CISS de la BCE, séance la plus haute de chaque mois, sur 100',
+    tipFormat: (v, pt) => {
+      const p = pt.p;
+      if (p.max != null) {
+        const enCours = p.mois === moisCourant && c.cissDuJour;
+        return `${f0(v)}${enCours ? ` (maximum du mois à ce jour ; ${f0(interpoler(c.cissDuJour.valeur, ANCRAGES.ciss))} le ${fmtDay(parseDay(c.cissDuJour.jour))})` : ''}`;
+      }
+      return `${f0(v)} le ${fmtDay(parseDay(p.jour))}${p.sans.length ? `, sans ${liste(p.sans.map((n) => NOMS_LONGS[n].replace(/^(le|la|les) /, '')))}` : ''}`;
+    },
+  });
+  legend('legend-indice', series.map((s) => [s.name, s.color]));
+
+  // Résumé texte : valeur actuelle, plus haut et plus bas de la période affichée
+  if (indice.length) {
+    const haut = indice.reduce((a, b) => (b.valeur > a.valeur ? b : a));
+    const bas = indice.reduce((a, b) => (b.valeur < a.valeur ? b : a));
+    text('#courbe-resume', `Sur la période affichée : ce mois-ci ${f0(indice.at(-1).valeur)}, plus haut ${f0(haut.valeur)} (${fmtMonthLong(parseMonth(haut.mois))}), plus bas ${f0(bas.valeur)} (${fmtMonthLong(parseMonth(bas.mois))}).`);
+  }
+  const t = troncons(indice);
+  text('#courbe-sans', t.length ? `Indice Vigie calculé avec moins de signaux : ${t.map((x) => `${x.debut === x.fin ? `en ${fmtMonthLong(parseMonth(x.debut))}` : `${de(fmtMonthLong(parseMonth(x.debut)))} à ${fmtMonthLong(parseMonth(x.fin))}`}, sans ${liste(x.sans.map((n) => NOMS_LONGS[n]))}`).join(' ; ')}.` : '');
+
+  // Tableau accessible, du plus récent au plus ancien
+  const parMois = new Map();
+  for (const [k, pts] of [['indice', indice], ['tension', tension], ['ciss', ciss]]) {
+    for (const p of pts) parMois.set(p.mois, { ...parMois.get(p.mois), [k]: p });
+  }
+  document.querySelector('#courbe-table tbody').replaceChildren(...[...parMois.keys()].sort().reverse().map((mois) => {
+    const r = parMois.get(mois), tr = document.createElement('tr');
+    for (const v of [fmtMonthLong(parseMonth(mois)), r.indice ? f0(r.indice.valeur) : 'n.c.', r.tension ? f0(r.tension.valeur) : 'n.c.',
+      r.ciss ? f0(r.ciss.valeur) : 'n.c.', r.indice?.sans.length ? liste(r.indice.sans.map((n) => NOMS_LONGS[n])) : '']) {
+      const td = document.createElement('td'); td.textContent = v; tr.append(td);
+    }
+    return tr;
+  }));
+}
+
 function renderAuctionSource(adj) {
   const last = adj.lignes.filter((a) => a.source).at(-1);
   const a = document.getElementById('auction-source-last');
@@ -587,6 +688,7 @@ function renderSources(data) {
 
 function render() {
   if (!state.data) return;
+  if (state.courbe) renderCourbe(state.courbe);
   renderCharts(state.data);
 }
 
@@ -615,6 +717,13 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
 });
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
 
+document.getElementById('courbe-table-btn').addEventListener('click', (e) => {
+  const wrap = document.getElementById('courbe-table-wrap');
+  wrap.hidden = !wrap.hidden;
+  e.currentTarget.setAttribute('aria-expanded', String(!wrap.hidden));
+  e.currentTarget.textContent = wrap.hidden ? 'Voir les valeurs mois par mois' : 'Masquer les valeurs';
+});
+
 let resizeTimer;
 window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(render, 150); });
 
@@ -624,6 +733,7 @@ function renderAll() {
   renderHeader(data, etat);
   renderSummary(compute(data, etat));
   renderSources(data);
+  state.courbe = courbeMensuelle(data);
   render();
 }
 

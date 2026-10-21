@@ -224,6 +224,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 .chart text { fill: var(--fg-3); font-family: var(--font-body); font-size: 12px; }
 .chart .grid line { stroke: var(--chart-grid); }
 .chart .axis path, .chart .axis line { stroke: var(--chart-axis); }
+.chart .mark-label { font-family: var(--font-display); font-weight: 600; font-size: 11px; fill: var(--fg-2); paint-order: stroke; stroke: var(--bg-surface); stroke-width: 3px; }
 .chart .end-label { font-family: var(--font-display); font-weight: 600; fill: var(--fg-1); }
 .chart-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: var(--space-6); }
 .chart-title { font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm); color: var(--fg-2); margin: 0 0 var(--space-2); }
@@ -263,3 +264,11 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 footer { border-top: 1px solid var(--border-subtle); }
 footer .wrap { padding-block: var(--space-8); font-size: var(--text-sm); color: var(--fg-3); display: grid; gap: var(--space-2); }
 footer p { margin: 0; max-width: 80ch; }
+
+.btn-table {
+  font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm); justify-self: start;
+  background: transparent; color: var(--fg-accent); border: 1.5px solid currentColor;
+  border-radius: var(--radius-pill); padding: 6px 14px; cursor: pointer;
+}
+.table-scroll[hidden] { display: none; }
+#courbe-table-wrap { max-height: 420px; overflow-y: auto; }

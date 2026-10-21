@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import {
   ANCRAGES, NIVEAUX, interpoler, niveauBrut, niveauScore, crans, notch, moisEcart, moisMoins,
   variationUnAn, variationUnAnJour, fusionnerSeries, spreadPb, etatDuJour, phraseVerdict, partieDette, partieBCE,
-  phraseIncomplete, cissDuJour, courbe, serieQuotidienne, plusHautDepuis, picDuMois,
+  phraseIncomplete, cissDuJour, courbe, serieQuotidienne, plusHautDepuis, picDuMois, picsMensuels,
 } from './score.mjs';
 
 const lire = (dossier) => (f) => JSON.parse(readFileSync(new URL(`${dossier}/${f}`, import.meta.url)));
@@ -250,4 +250,19 @@ test('repères : pic de novembre 2011 et « plus haut depuis »', () => {
   const r = plusHautDepuis(q, 55, '2026-10-20');
   assert.ok(r.jour < '2026-10-20' && r.indice >= 55);
   assert.ok(q.every((p) => p.jour <= r.jour || p.jour >= '2026-10-20' || p.indice == null || p.indice < 55));
+});
+
+test('courbe affichée : pire séance de chaque mois, comme le repère « plus haut depuis »', () => {
+  const q = serieQuotidienne(FIGE);
+  const pics = picsMensuels(q, 'indice');
+  assert.equal(pics[0].mois, '2008-05');
+  const nov2011 = pics.find((p) => p.mois === '2011-11');
+  const pic = picDuMois(q, '2011-11');
+  assert.equal(nov2011.jour, pic.jour);
+  assert.equal(nov2011.valeur, pic.indice);
+  assert.deepEqual(nov2011.sans, pic.sans);
+  assert.equal(pics.at(-1).mois, '2026-10');
+  const t = picsMensuels(q, 'tension');
+  assert.equal(t[0].mois, '2004-11'); // la tension sur la dette commence avec le spread
+  assert.ok(t.every((p, i) => i === 0 || p.mois > t[i - 1].mois));
 });

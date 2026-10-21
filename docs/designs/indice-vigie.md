@@ -725,7 +725,7 @@ Tâches tirées des constats de la revue. À exécuter avec Claude Code ; cocher
   - Constat : sections 4, 5 et 11, D25, D27, avis extérieur n°6 et n°13 (D6, D9).
   - Fichiers : `app.js`, `index.html`, `styles.css`.
   - Vérification : `python3 -m http.server`, console vide, `score.mjs` renommé à la main → message d'erreur, 390 px, deux thèmes, capture.
-- [ ] **T5b (P1, humain : ~4h / CC : ~15min)** : courbe. Indice Vigie depuis mai 2008, tension sur la dette depuis 1999, CISS en pointillé au maximum mensuel, point du mois en cours « maximum du mois à ce jour » avec la valeur du jour en infobulle, mentions « calculé sans », tableau accessible.
+- [x] **T5b (P1, humain : ~4h / CC : ~15min)** : courbe. Indice Vigie depuis mai 2008, tension sur la dette depuis 1999, CISS en pointillé au maximum mensuel, point du mois en cours « maximum du mois à ce jour » avec la valeur du jour en infobulle, mentions « calculé sans », tableau accessible. _(fait le 2026-10-21 : chaque point est la séance la plus haute du mois (`picsMensuels`), comme le repère « plus haut depuis » (décision A), et non la dernière séance ; tension depuis novembre 2004, premier taux quotidien ; indice depuis mars 2008 avec la série BdF ; repères Lehman, crise de l'euro, Covid, dissolution ; résumé texte et tableau mois par mois.)_
   - Constat : D26, O4, O13, avis extérieur n°8 (D7).
   - Fichiers : `app.js`, `styles.css`.
   - Vérification : 390 px, deux thèmes, capture.

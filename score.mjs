@@ -146,7 +146,8 @@ function signal(nom, valeur, date, dateCalcul, niveau) {
 }
 
 // Les notes sont valables sans limite de date : seules, elles ne suffisent pas à rendre le fond calculable.
-// L'Indice Vigie commence donc avec TARGET2, en mai 2008.
+// L'Indice Vigie commence donc avec le premier signal de fond daté : mars 2008 avec la série Banque de France des non-résidents
+// (mai 2008, avec TARGET2, dans la copie figée du 20/10/2026 qui utilisait la série AFT).
 function fondCalculable(fond) {
   return SOUS_INDICES.fond.some((n) => n !== 'notes' && !fond.sans.includes(n));
 }
@@ -341,4 +342,20 @@ export function picDuMois(serie, mois) {
   let pic = null;
   for (const p of serie) if (p.jour.startsWith(mois) && p.indice != null && (!pic || p.indice > pic.indice)) pic = p;
   return pic;
+}
+
+/**
+ * Courbe affichée : la séance la plus haute de chaque mois pour `champ` ('indice' ou 'tension'),
+ * le même repère que « plus haut depuis ». Les mois sans valeur sont absents.
+ * Renvoie [{ mois, jour, valeur, sans: [...] }].
+ */
+export function picsMensuels(serie, champ) {
+  const pics = [];
+  for (const p of serie) {
+    if (p[champ] == null) continue;
+    const mois = p.jour.slice(0, 7), dernier = pics.at(-1);
+    if (dernier?.mois !== mois) pics.push({ mois, jour: p.jour, valeur: p[champ], sans: p.sans });
+    else if (p[champ] > dernier.valeur) Object.assign(dernier, { jour: p.jour, valeur: p[champ], sans: p.sans });
+  }
+  return pics;
 }

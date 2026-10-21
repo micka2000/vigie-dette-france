@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vigie Dette France</title>
 <meta name="description" content="Les cinq signaux de santé de la dette publique française, mis à jour chaque jour, avec leurs seuils de risque historiques.">
-<link rel="stylesheet" href="styles.css?v=d59d8e82">
+<link rel="stylesheet" href="styles.css?v=aee3a9bc">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
@@ -51,6 +51,27 @@
   </div>
 
   <div class="signals">
+
+    <article class="signal" id="courbe">
+      <div class="signal-head">
+        <div>
+          <h2>L’Indice Vigie dans le temps</h2>
+          <p class="signal-why">Chaque point est la séance la plus tendue du mois, calculée avec les seules données disponibles à cette date. Le CISS de la BCE, en pointillé, mesure le stress de l’ensemble des marchés financiers.</p>
+        </div>
+      </div>
+      <p class="signal-now"><span class="delta" id="courbe-resume"></span></p>
+      <div class="chart" id="chart-indice"></div>
+      <ul class="legend" id="legend-indice"></ul>
+      <p class="threshold-note" id="courbe-sans"></p>
+      <button type="button" class="btn-table" id="courbe-table-btn" aria-expanded="false" aria-controls="courbe-table-wrap">Voir les valeurs mois par mois</button>
+      <div class="table-scroll" id="courbe-table-wrap" hidden>
+        <table class="ratings-table" id="courbe-table">
+          <thead><tr><th>Mois</th><th>Indice Vigie</th><th>Tension sur la dette</th><th>CISS</th><th>Calculé sans</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="source">Calcul : <a href="score.mjs">score.mjs</a> à partir des fichiers de <a href="https://github.com/micka2000/vigie-dette-france/tree/main/data" target="_blank" rel="noopener">data/</a> ; CISS : <a href="https://data.ecb.europa.eu/data/datasets/CISS/CISS.D.FR.Z0Z.4F.EC.SS_CIN.IDX" target="_blank" rel="noopener">BCE, indicateur composite de stress systémique pour la France</a> (maximum du mois).</p>
+    </article>
 
     <article class="signal" id="spread">
       <div class="signal-head">
@@ -168,6 +189,6 @@
     if (v) v.textContent = 'La page n’a pas pu se charger. Recharge-la dans un instant.';
   }, 10000);
 </script>
-<script type="module" src="app.js?v=e9a9446d"></script>
+<script type="module" src="app.js?v=7879a1cd"></script>
 </body>
 </html>
