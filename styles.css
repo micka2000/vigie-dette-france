@@ -220,7 +220,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 .signal-now .big { font-family: var(--font-display); font-weight: 800; font-size: 40px; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .signal-now .delta { font-size: var(--text-sm); color: var(--fg-3); }
 
-.chart { position: relative; min-height: 280px; min-width: 0; }
+.chart { position: relative; min-height: 220px; min-width: 0; }
 .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
 .chart text { fill: var(--fg-3); font-family: var(--font-body); font-size: 12px; }
 .chart .grid line { stroke: var(--chart-grid); }
@@ -245,7 +245,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 .legend li { display: inline-flex; align-items: center; gap: 6px; }
 .legend .sw { width: 14px; height: 3px; border-radius: 2px; flex: none; }
 
-.thresholds { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.thresholds { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
 .thresholds li { background: var(--bg-inset); border-radius: var(--radius-md); padding: var(--space-2) var(--space-3); display: grid; gap: 2px; }
 .thresholds .range { font-size: var(--text-sm); color: var(--fg-1); font-variant-numeric: tabular-nums; }
 .threshold-note { font-size: var(--text-sm); color: var(--fg-3); margin: 0; max-width: 80ch; }
@@ -334,7 +334,17 @@ footer p { margin: 0; max-width: 80ch; }
 .desc[open] summary::before { transform: rotate(45deg); }
 .desc .desc-fermer, .desc[open] .desc-ouvrir { display: none; }
 .desc[open] .desc-fermer { display: inline; }
-.desc-corps { margin-top: var(--space-2); display: grid; gap: var(--space-2); max-width: 80ch; }
+/* Empilées sur mobile et dans les jauges ; sur tablette, le calcul à droite ; sur grand écran, trois colonnes */
+.desc-corps { margin-top: var(--space-2); display: grid; gap: var(--space-2) var(--space-6); align-items: start; }
+@media (min-width: 700px) {
+  :is(.signal, .masthead) .desc-corps { grid-template-columns: 1fr 1.3fr; grid-template-areas: "mesure calcul" "sources calcul"; }
+  :is(.signal, .masthead) .desc-corps > p:nth-child(1) { grid-area: mesure; }
+  :is(.signal, .masthead) .desc-corps > p:nth-child(2) { grid-area: calcul; }
+  :is(.signal, .masthead) .desc-corps > p:nth-child(3) { grid-area: sources; }
+}
+@media (min-width: 1100px) {
+  :is(.signal, .masthead) .desc-corps { grid-template-columns: 1fr 1.4fr 1fr; grid-template-areas: "mesure calcul sources"; }
+}
 .desc-corps p { margin: 0; line-height: 1.55; }
 .desc-corps b { font-family: var(--font-display); font-weight: 600; color: var(--fg-1); }
 .desc-corps a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
@@ -346,3 +356,30 @@ footer p { margin: 0; max-width: 80ch; }
 .tile-score { display: flex; align-items: center; }
 .periode { display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .periode[hidden] { display: none; }
+
+/* ---------- Usage de l'espace selon l'appareil ---------- */
+
+/* Mobile : deux tuiles par ligne, chiffres un peu plus petits */
+@media (max-width: 599px) {
+  .signals-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .signals-summary .tile-value { font-size: 26px; }
+  .tile { padding: var(--space-3); }
+  .signal { padding: var(--space-4); }
+  .signal-now .big { font-size: 32px; }
+  .signal h2 { font-size: 22px; }
+}
+
+/* Grand écran : l'indice à droite de la phrase, la description en pleine largeur dessous */
+@media (min-width: 960px) {
+  .masthead .wrap {
+    grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space-12);
+    grid-template-areas: "top top" "verdict indice" "repere indice" "stamp indice" "desc desc";
+    align-items: start;
+  }
+  .masthead-top { grid-area: top; }
+  .masthead .verdict { grid-area: verdict; font-size: clamp(22px, 2vw, 28px); }
+  .masthead .indice { grid-area: indice; align-self: center; }
+  #indice-desc { grid-area: desc; }
+  .masthead .repere { grid-area: repere; }
+  .masthead .stamp { grid-area: stamp; }
+}

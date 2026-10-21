@@ -137,6 +137,9 @@ function drawBands(g, bands, y, width) {
   }
 }
 
+// Hauteur selon la largeur : un graphique large n'est plus une bande plate, un graphique étroit reste lisible.
+const hauteurGraphique = (largeur, ratio = 0.34) => Math.round(Math.min(460, Math.max(220, largeur * ratio)));
+
 /**
  * series : [{ name, color, points: [{ d: Date, v: number }], step? }]
  * opts : { bands, yDomain, yTicks, yFormat, tipFormat, xDomain, dateFormat, height, endLabels, dots }
@@ -144,7 +147,7 @@ function drawBands(g, bands, y, width) {
 function lineChart(el, series, opts) {
   el.replaceChildren();
   const width = Math.max(280, el.clientWidth);
-  const height = opts.height ?? 280;
+  const height = opts.height ?? hauteurGraphique(width, opts.ratio);
   const m = { top: 12, right: opts.endLabels ? 70 : 16, bottom: 28, left: 48 };
   const iw = width - m.left - m.right, ih = height - m.top - m.bottom;
   const all = series.flatMap((s) => s.points);
@@ -234,7 +237,7 @@ function lineChart(el, series, opts) {
 function barChart(el, rows, opts) {
   el.replaceChildren();
   const width = Math.max(280, el.clientWidth);
-  const height = opts.height ?? 280;
+  const height = opts.height ?? hauteurGraphique(width, opts.ratio);
   const m = { top: 12, right: 16, bottom: 28, left: 40 };
   const iw = width - m.left - m.right, ih = height - m.top - m.bottom;
   const x = d3.scaleBand(rows.map((r) => r.key), [0, iw]).padding(0.35);
@@ -500,7 +503,7 @@ function renderCharts(data) {
 
   const auctions = data.adj.lignes.map((a) => ({ ...a, d: parseDay(a.date), cover: a.adjuge_mds ? a.demande_mds / a.adjuge_mds : null }));
   lineChart(document.getElementById('chart-auction-rate'), [{ name: 'Taux', color: css('--series-1'), points: auctions.map((a) => ({ d: a.d, v: a.taux, a })) }], {
-    yFormat: (v) => `${f1(v)} %`, tipFormat: (v, p) => `${f2(v)} % · ${nomLigne(p.a.ligne)}`, dateFormat: fmtDay, dots: true, height: 240,
+    yFormat: (v) => `${f1(v)} %`, tipFormat: (v, p) => `${f2(v)} % · ${nomLigne(p.a.ligne)}`, dateFormat: fmtDay, dots: true, ratio: 0.45,
     xDomain: [d3.min(auctions, (a) => a.d), d3.max(auctions, (a) => a.d)],
     label: 'Taux moyen pondéré des adjudications à 10 ans',
   });
@@ -508,7 +511,7 @@ function renderCharts(data) {
     key: a.date, tick: fmtMonth(a.d), v: a.cover, level: a.cover != null ? levelOf('adjudications', a.cover) : null,
     title: `${fmtDay(a.d)} · ${nomLigne(a.ligne)}`,
     lines: a.cover != null ? [['Couverture', f2(a.cover)], ['Demandé', `${f1(a.demande_mds)} Md€`], ['Servi', `${f1(a.adjuge_mds)} Md€`]] : [['Couverture', 'non communiquée']],
-  })), { bands: THRESHOLDS.adjudications.bands, yDomain: [0, 3], yFormat: (v) => f1(v), height: 240, label: 'Taux de couverture des adjudications à 10 ans' });
+  })), { bands: THRESHOLDS.adjudications.bands, yDomain: [0, 3], yFormat: (v) => f1(v), ratio: 0.45, label: 'Taux de couverture des adjudications à 10 ans' });
 }
 
 // ---------- Courbe de l'Indice Vigie ----------
