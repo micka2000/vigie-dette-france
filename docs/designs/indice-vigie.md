@@ -63,7 +63,7 @@ La méthode a changé après relecture. Le document proposait d'abord un centile
 | Couverture de l'adjudication à 10 ans (sens inversé) | `data/adjudications.json` | 3,5 | 2,5 | 2,0 | 1,5 | 1,0 |
 | Part des non-résidents | AFT, `data/non_residents_aft.json` (Eurostat est affiché sur le graphique, pas utilisé dans le score) | 40 % | 50 % | 55 % | 60 % | 70 % |
 | Note la plus basse | `data/notations.json` | AAA | AA- | A+ | BBB+ | BBB- |
-| Solde TARGET2 (sens inversé) | BCE TGB, `data/target.json` | +50 Md€ | -50 Md€ | -120 Md€ | -200 Md€ | -300 Md€ |
+| Solde TARGET2 en % du bilan de l'Eurosystème (sens inversé, méthode 2.1) | BCE TGB et ILM, `data/target.json` et `data/bilan_bce.json` | +1 % | -1 % | -2,5 % | -4 % | -6 % |
 | CISS France (lecture officielle, hors indice) | BCE CISS, `data/ciss.json` | 0 | 0,10 | 0,20 | 0,35 | 0,80 |
 
 - **Notes.** Les trois agences sont S&P, Moody's et Fitch, et on retient la note la plus basse des trois. L'échelle va de 0 (AAA) à 9 (BBB-), et Moody's se convertit cran pour cran : Aaa = AAA, Aa1 = AA+, Aa2 = AA, Aa3 = AA-, A1 = A+, A2 = A, A3 = A-, Baa1 = BBB+, Baa2 = BBB, Baa3 = BBB-. Les ancrages en crans sont 0 → 0, 3 → 25, 4 → 50, 7 → 75, 9 → 100. Au-delà de BBB-, le score reste à 100. Dans le code, les crans perdus valent `20 - notch(note)`, où `notch()` est la fonction existante de `app.js` (AAA = 20), déplacée dans `score.mjs`. Les perspectives et les mises sous surveillance ne changent pas le score : elles s'affichent en texte à côté.
@@ -120,6 +120,7 @@ Calculées avec la méthode ci-dessus, TARGET2 classé dans le fond :
 
 - Spread 96,7 pb (moyenne de septembre) → 60,4 ; couverture 2,0035 (12,564 Md€ demandés pour 6,271 servis, 1er octobre) → 49,8, niveau vigilance ; **Tension sur la dette → 55,1, affiché 55, niveau tension**.
 - Non-résidents 57,5 % → 62,5 ; note la plus basse A+ → 50 ; TARGET2 -181,3 Md€ → 69,2 ; **Vulnérabilité de fond → 60,6, affiché 61, niveau tension**.
+- _Méthode 2.1 (21/10/2026) : TARGET2 -181,3 Md€ pour un bilan de 5 915,3 Md€, soit -3,06 % → 59,4 ; vulnérabilité de fond → 57,3 ; Indice Vigie sur la même copie figée → 62,0 (test `copie figée : sous-indices et Indice Vigie du jour`)._
 - **Indice Vigie → 57,8, affiché 58/100, niveau tension.** C'est aussi le plus haut de la série reconstituée depuis mai 2008, mais cette série est calculée sans les non-résidents avant 2022 : cette comparaison n'est pas affichée (CEO-D1).
 - CISS 0,044 → 11, niveau calme.
 - Repères historiques calculés avec la même méthode et les signaux disponibles à chaque date : novembre 2011 → 53 (tension sur la dette 86, fond 19, calculé sans les non-résidents) ; décembre 2008 → 25 ; avril 2020 → 25 ; juillet 2024 → 42.
