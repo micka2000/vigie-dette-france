@@ -50,6 +50,7 @@ NAVIGATEUR = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) vigie-dette-france 
 LIMITES_JOURS = {
     "spread.json": 7,  # quotidien : un long week-end férié, plus une marge
     "target.json": 100,  # mensuel, publié 7 à 8 semaines après la fin du mois
+    "bilan_bce.json": 45,  # hebdomadaire, ramené au mois : le mois en cours ou le précédent
     "ciss.json": 10,  # quotidien
     "dette_pib.json": 230,  # trimestriel, publié environ 4 mois après le trimestre
     "non_residents_eurostat.json": 550,  # annuel, publié en avril de l'année suivante
@@ -142,6 +143,18 @@ def serie_target():
     return [{"mois": m, "solde_mds": round(v / 1000, 1), "solde_meur": v} for m, v in sorted(target.items())]
 
 
+def serie_bilan_bce():
+    """Total du bilan de l'Eurosystème (BCE et banques centrales nationales), dernière semaine de chaque mois, en Md€.
+    Sert de dénominateur au solde TARGET2 (méthode 2.1) : il neutralise le gonflement des soldes dû aux rachats de dette."""
+    semaines = ecb_series("ILM/W.U2.C.T000000.Z5.Z01", "2008-01")
+    mensuel = {}
+    for s, v in sorted(semaines.items()):
+        annee, num = s.split("-W")
+        vendredi = date.fromisocalendar(int(annee), int(num), 5)
+        mensuel[vendredi.strftime("%Y-%m")] = {"mois": vendredi.strftime("%Y-%m"), "semaine": vendredi.isoformat(), "bilan_mds": round(v / 1000, 1)}
+    return [mensuel[m] for m in sorted(mensuel)]
+
+
 def serie_ciss():
     jours = ecb_series("CISS/D.FR.Z0Z.4F.EC.SS_CIN.IDX")
     mensuel = {}
@@ -180,6 +193,7 @@ def serie_dette_pib():
 SERIES = {
     "spread.json": serie_spread,
     "target.json": serie_target,
+    "bilan_bce.json": serie_bilan_bce,
     "ciss.json": serie_ciss,
     "non_residents_eurostat.json": serie_non_residents,
     "non_residents_bdf.json": serie_non_residents_bdf,

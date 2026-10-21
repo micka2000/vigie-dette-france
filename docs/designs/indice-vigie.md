@@ -126,6 +126,22 @@ Calculées avec la méthode ci-dessus, TARGET2 classé dans le fond :
 
 Ces valeurs sont cohérentes avec la page actuelle : 4 signaux sur 5 en tension, la couverture en vigilance. L'indice dira donc « tension » aujourd'hui. Ce n'est pas un défaut : la moyenne de septembre du spread (96,7 pb) est la plus haute depuis 2012 [measured: data/spread.json], et la note la plus basse a perdu un cran depuis 2024, de AA- à A+ [data/notations.json, historique à vérifier sur source]. Le risque d'alarmisme vient de la façon de le dire. La phrase de verdict sépare donc toujours la tension sur la dette du stress financier global.
 
+### Méthode 2.1 (2026-10-21) : TARGET2 rapporté au bilan de l'Eurosystème
+
+Constat de l'utilisateur : le solde en milliards faisait d'octobre 2025 (-240 Md€) un pire moment que novembre 2008 (-119 Md€), alors que 2008 était une vraie fuite des capitaux. Trois corrections comparées sur 2008-2026 :
+
+| Correction | Pire mois | Novembre 2008 | Octobre 2025 | Août 2026 |
+|---|---|---|---|---|
+| Milliards d'euros constants (IPCH France) | oct. 2025 | -160 | -240 | -181 |
+| % du PIB (Eurostat, 4 trimestres glissants) | oct. 2025 | -6,0 % | -8,0 % | -6,0 % |
+| % du bilan de l'Eurosystème (BCE, ILM hebdomadaire) | **nov. 2008** | **-6,0 %** | -3,9 % | -3,1 % |
+
+Seul le rapport au bilan retrouve la hiérarchie des crises (2008-2009, puis 2011-2012) : les rachats de dette de la BCE, qui ont triplé le bilan depuis 2008, creusent les soldes TARGET2 sans fuite des capitaux, et l'inflation ou le PIB ne corrigent pas cet effet. La variation sur 12 mois a été écartée : ses pires mois (2022-2024) suivent la réduction du bilan de la BCE, pas la confiance dans la France.
+
+- **Dénominateur** : total du bilan de l'Eurosystème, dernière semaine de chaque mois (`data/bilan_bce.json`, série BCE `ILM.W.U2.C.T000000.Z5.Z01`, collectée chaque matin). Un mois sans bilan prend le dernier bilan connu avant lui (`partsTarget` dans score.mjs) ; le bilan est toujours publié avant le solde TARGET2.
+- **Seuils** : calme au-dessus de -1 %, vigilance de -1 à -2,5 %, tension de -2,5 à -4 %, crise sous -4 %. Sur 220 mois : 93 / 72 / 38 / 17. La crise ne contient que des mois de 2008-2009 et de 2011-2012. Ancrages des scores : 1 / -1 / -2,5 / -4 / -6 % (novembre 2008 = 100).
+- **Effet sur l'indice** (pire séance de chaque mois) : écart moyen +1,0 point, de -2,7 à +9,2. Novembre 2008 : 43,0 → 51,4 ; janvier 2012 : 59,8 → 64,8 ; octobre 2026 : 66,0 → 64,4. Le 21 octobre 2026 n'est plus un record depuis 2008 mais le plus haut depuis le 19 janvier 2012.
+
 ### Méthode 2.0 (2026-10-21) : composition constante
 
 Constat de l'utilisateur : la couverture des adjudications pesait un quart de l'indice mais n'existait que depuis novembre 2025 ; avant, l'indice était calculé sans elle, et un signal manquant était remplacé par la moyenne des restants. La courbe et les repères comparaient donc des formules différentes. Indice masqué sur le site le temps de corriger.

@@ -2,9 +2,9 @@
 // Le calcul (scores, niveaux, phrase de verdict) vient tout entier de score.mjs.
 import {
   SEUILS, ANCRAGES, METHODE_VERSION, couvertures, niveauBrut, niveauScore, interpoler, notch, notchLabel, fusionnerSeries, etatDuJour,
-  serieQuotidienne, plusHautDepuis, picDuMois, picsMensuels, phraseVerdict,
-} from './score.mjs?v=eb51fbb0';
-import { EN } from './anglais.mjs?v=564b41d5';
+  serieQuotidienne, plusHautDepuis, picDuMois, picsMensuels, phraseVerdict, partsTarget,
+} from './score.mjs?v=8b8453e3';
+import { EN } from './anglais.mjs?v=efbb2c58';
 
 window.vigieDemarre = true; // lu par le script de secours d'index.html
 
@@ -27,16 +27,16 @@ const TEXTES_SEUILS = {
   fr: {
     spread: { calme: 'moins de 50 pb', vigilance: '50 à 80 pb', tension: '80 à 120 pb', crise: '120 pb et plus' },
     adjudications: { calme: 'couverture de 2,5 et plus', vigilance: 'de 2 à 2,5', tension: 'de 1,5 à 2', crise: 'moins de 1,5' },
-    'non-residents': { calme: 'moins de 50 %', vigilance: '50 à 55 %', tension: '55 à 60 %', crise: '60 % et plus' },
+    'non-residents': { calme: 'moins de 50 %', vigilance: '50 à 55 %', tension: '55 à 60 %', crise: '60 % et plus' },
     notations: { calme: 'AA ou mieux', vigilance: 'AA-', tension: 'A+ à A-', crise: 'BBB+ ou moins' },
-    target: { calme: 'au-dessus de -50 Md€', vigilance: '-120 à -50 Md€', tension: '-200 à -120 Md€', crise: '-200 Md€ et moins' },
+    target: { calme: 'au-dessus de -1 % du bilan', vigilance: '-2,5 à -1 %', tension: '-4 à -2,5 %', crise: '-4 % et moins' },
   },
   en: {
     spread: { calme: 'below 50 bp', vigilance: '50 to 80 bp', tension: '80 to 120 bp', crise: '120 bp and above' },
     adjudications: { calme: 'cover of 2.5 and above', vigilance: '2 to 2.5', tension: '1.5 to 2', crise: 'below 1.5' },
     'non-residents': { calme: 'below 50%', vigilance: '50 to 55%', tension: '55 to 60%', crise: '60% and above' },
     notations: { calme: 'AA or better', vigilance: 'AA-', tension: 'A+ to A-', crise: 'BBB+ or lower' },
-    target: { calme: 'above -€50bn', vigilance: '-€120bn to -€50bn', tension: '-€200bn to -€120bn', crise: '-€200bn and below' },
+    target: { calme: 'above -1% of the balance sheet', vigilance: '-2.5% to -1%', tension: '-4% to -2.5%', crise: '-4% and below' },
   },
 };
 const THRESHOLDS = Object.fromEntries(Object.entries(CLE_SCORE).map(([key, s]) => [key, {
@@ -53,11 +53,11 @@ const f1 = nombre(',.1f');
 const f2 = nombre(',.2f');
 const f0 = nombre(',.0f');
 const fSigned1 = nombre('+,.1f');
-const pc = (txt) => L(`${txt} %`, `${txt}%`);
+const pc = (txt) => L(`${txt} %`, `${txt}%`); // espace fine insécable : jamais « % » seul en début de ligne
 const pb = (txt) => L(`${txt} pb`, `${txt} bp`);
-// Milliards d'euros : « -240 Md€ » ou « -€240bn »
-const mds = (v, f = f0) => L(`${f(v)} Md€`, `${v < 0 ? '-' : ''}€${f(Math.abs(v))}bn`);
-const mdsSigne = (v) => L(`${fSigned1(v)} Md€`, `${v < 0 ? '-' : '+'}€${f1(Math.abs(v))}bn`);
+// Milliards d'euros : « -240 Md€ » ou « -€240bn »
+const mds = (v, f = f0) => L(`${f(v)} Md€`, `${v < 0 ? '-' : ''}€${f(Math.abs(v))}bn`);
+const mdsSigne = (v) => L(`${fSigned1(v)} Md€`, `${v < 0 ? '-' : '+'}€${f1(Math.abs(v))}bn`);
 const DATES = {
   fr: {
     mois: ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
@@ -112,12 +112,12 @@ async function ecbLive(key, start) {
 
 // Les fichiers d'abord : la page s'affiche sans attendre la BCE. Le CISS manquant ne bloque rien.
 async function loadFiles() {
-  const [spread, target, adj, ratings, nrAft, nrEs, meta, ciss] = await Promise.all([
+  const [spread, target, adj, ratings, nrAft, nrEs, meta, ciss, bilan] = await Promise.all([
     json('data/spread.json'), json('data/target.json'), json('data/adjudications.json'),
     json('data/notations.json'), json('data/non_residents_bdf.json'), json('data/non_residents_eurostat.json'),
-    json('data/meta.json'), json('data/ciss.json').catch(() => null),
+    json('data/meta.json'), json('data/ciss.json').catch(() => null), json('data/bilan_bce.json'),
   ]);
-  return { spread, target, adj, ratings, nrAft, nrEs, meta, ciss, live: [] };
+  return { spread, target, adj, ratings, nrAft, nrEs, meta, ciss, bilan, live: [] };
 }
 
 // Lectures BCE en direct, chacune avec un délai de 8 s : elles remplacent leur série seulement si elles sont plus récentes.
@@ -405,7 +405,7 @@ function lastOfPeriod(rows, step) {
   return rows.filter((r, i) => i === rows.length - 1 || key(rows[i + 1]) !== key(r));
 }
 
-// « OAT 3,70 % 25/11/2036 » : le pourcentage est le coupon fixé à la création de la ligne, pas le taux payé à l'adjudication.
+// « OAT 3,70 % 25/11/2036 » : le pourcentage est le coupon fixé à la création de la ligne, pas le taux payé à l'adjudication.
 function nomLigne(ligne) {
   const m = ligne.match(/^OAT (?:([\d,]+ %) )?(\d{2}\/\d{2}\/\d{4})$/);
   if (!m) return ligne;
@@ -466,13 +466,16 @@ function compute(data, etat) {
       `Lowest rating: ${notchLabel(worst)} (${worstAgency}).${nextReview ? ` Next review: ${nextReview.agence}, on ${revue}.` : ''}`),
   };
 
-  const tg = data.target.at(-1), tg12 = data.target.at(-13);
-  const moisTg = fmtMonth(parseMonth(tg.mois)), surUnAn = `${mdsSigne(tg.solde_mds - tg12.solde_mds)} ${L('sur un an', 'over a year')}`;
+  // Méthode 2.1 : solde rapporté au bilan de l'Eurosystème du même mois ; le montant en milliards reste en infobulle.
+  const parts = partsTarget(data.target, data.bilan);
+  const tg = parts.at(-1), pire = parts.reduce((a, b) => (b.part < a.part ? b : a));
+  const moisTg = fmtMonth(parseMonth(tg.mois));
   out.target = {
     level: niv.target.niveau, name: L('Solde TARGET2', 'TARGET2 balance'),
-    value: mds(tg.solde_mds),
-    sub: `${moisTg} · ${surUnAn}`,
-    delta: `${L('Fin', 'End')} ${moisTg} · ${surUnAn} · ${L('record', 'record')}${L(' : ', ': ')}${mds(d3.min(data.target, (r) => r.solde_mds))}`,
+    value: pc(f1(tg.part)),
+    sub: L(`Fin ${moisTg} · ${mds(tg.solde_mds)}`, `End ${moisTg} · ${mds(tg.solde_mds)}`),
+    delta: L(`Fin ${moisTg} : ${mds(tg.solde_mds)}, soit ${pc(f1(tg.part))} du bilan de l’Eurosystème (${mds(tg.bilan_mds)}) · pire niveau : ${pc(f1(pire.part))} en ${fmtMonthLong(parseMonth(pire.mois))}`,
+      `End ${moisTg}: ${mds(tg.solde_mds)}, or ${pc(f1(tg.part))} of the Eurosystem balance sheet (${mds(tg.bilan_mds)}) · worst level: ${pc(f1(pire.part))} in ${fmtMonthLong(parseMonth(pire.mois))}`),
   };
   return out;
 }
@@ -515,11 +518,12 @@ function renderCharts(data) {
   });
 
   clip = clipDe('target');
-  const target = clip(data.target.map((r) => ({ d: parseMonth(r.mois), v: r.solde_mds })));
+  const target = clip(partsTarget(data.target, data.bilan).map((r) => ({ d: parseMonth(r.mois), v: r.part, r })));
   lineChart(document.getElementById('chart-target'), [{ name: L('Solde', 'Balance'), color: css('--series-1'), points: target }], {
-    bands: THRESHOLDS.target.bands, yDomain: [Math.min(-260, d3.min(target, (p) => p.v) - 10), Math.max(20, d3.max(target, (p) => p.v) + 10)],
-    yFormat: (v) => `${f0(v)}`, tipFormat: (v) => mds(v, f1), xDomain: xDom('target', target),
-    label: L('Solde TARGET2 de la Banque de France en milliards d’euros', 'Banque de France TARGET2 balance in billions of euros'),
+    bands: THRESHOLDS.target.bands, yDomain: [Math.min(-6.5, d3.min(target, (p) => p.v) - 0.3), Math.max(1.5, d3.max(target, (p) => p.v) + 0.3)],
+    yFormat: (v) => pc(f0(v)), xDomain: xDom('target', target),
+    tipFormat: (v, p) => L(`${pc(f1(v))} du bilan · ${mds(p.r.solde_mds)}`, `${pc(f1(v))} of the balance sheet · ${mds(p.r.solde_mds)}`),
+    label: L('Solde TARGET2 de la Banque de France en % du bilan de l’Eurosystème', 'Banque de France TARGET2 balance as a % of the Eurosystem balance sheet'),
   });
 
   clip = clipDe('nonres');

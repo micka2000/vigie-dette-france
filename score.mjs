@@ -3,7 +3,9 @@
 
 // 2.0 (21/10/2026) : composition constante (couverture reconstituée depuis 2004, pas de moyenne sur un signal manquant),
 // séances d'août et de décembre écartées de la couverture.
-export const METHODE_VERSION = '2.0';
+// 2.1 (21/10/2026) : solde TARGET2 rapporté au bilan de l'Eurosystème, pour neutraliser le gonflement des soldes
+// dû aux rachats de dette de la BCE (en milliards, octobre 2025 dépassait 2008 ; rapporté au bilan, 2008 reste le pire).
+export const METHODE_VERSION = '2.1';
 
 export const NIVEAUX = ['calme', 'vigilance', 'tension', 'crise'];
 
@@ -14,7 +16,7 @@ export const ANCRAGES = {
   couverture: [3.5, 2.5, 2.0, 1.5, 1.0], // demandé / servi
   nonResidents: [40, 50, 55, 60, 70], // %
   notes: [0, 3, 4, 7, 9], // crans perdus depuis AAA (BBB- = 9)
-  target: [50, -50, -120, -200, -300], // Md€
+  target: [1, -1, -2.5, -4, -6], // % du bilan de l'Eurosystème (nov. 2008 : -6,0)
   ciss: [0, 0.10, 0.20, 0.35, 0.80],
 };
 
@@ -24,7 +26,8 @@ export const SEUILS = {
   couverture: [['calme', 2.5, Infinity], ['vigilance', 2, 2.5], ['tension', 1.5, 2], ['crise', -Infinity, 1.5]],
   nonResidents: [['calme', -Infinity, 50], ['vigilance', 50, 55], ['tension', 55, 60], ['crise', 60, Infinity]],
   notes: [['calme', 18, Infinity], ['vigilance', 17, 18], ['tension', 14, 17], ['crise', -Infinity, 14]], // échelle AAA = 20
-  target: [['calme', -50, Infinity], ['vigilance', -120, -50], ['tension', -200, -120], ['crise', -Infinity, -200]],
+  // Crise sous -4 % : les mois de 2008-2009 et de la crise de l'euro (2011-2012), et eux seuls.
+  target: [['calme', -1, Infinity], ['vigilance', -2.5, -1], ['tension', -4, -2.5], ['crise', -Infinity, -4]],
 };
 
 // Âge maximal d'une donnée, en mois (mois du calcul − mois de la donnée), avant de sortir du calcul.
@@ -119,7 +122,23 @@ export function fusionnerSeries(fichier, direct, cle = 'mois') {
 // ---------- Valeurs brutes par signal ----------
 
 const valeurSpread = (r) => (r.fr10 != null && r.de10 != null ? spreadPb(r.fr10, r.de10) : r.spread_pb);
-const valeurTarget = (r) => (r.solde_meur != null ? r.solde_meur / 1000 : r.solde_mds);
+const valeurTarget = (r) => r.part;
+
+/**
+ * Solde TARGET2 en % du bilan de l'Eurosystème du même mois (dernière semaine du mois), ou du dernier bilan connu avant.
+ * Les mois sans bilan connu sont écartés. Renvoie les lignes de target avec { bilan_mds, part }.
+ */
+export function partsTarget(target, bilan) {
+  const out = [];
+  let i = -1;
+  for (const r of target) {
+    while (i + 1 < bilan.length && bilan[i + 1].mois <= r.mois) i++;
+    if (i < 0) continue;
+    const solde = r.solde_meur != null ? r.solde_meur / 1000 : r.solde_mds;
+    out.push({ ...r, bilan_mds: bilan[i].bilan_mds, part: (100 * solde) / bilan[i].bilan_mds });
+  }
+  return out;
+}
 
 // Août et décembre : l'AFT y tient des adjudications mixtes dont les lignes de 8,5 à 11,5 ans sont d'anciennes lignes
 // à petit volume, à la couverture nettement plus haute (déc. 2011 : 3,05 contre 2,02 pour les séances voisines).
@@ -174,10 +193,11 @@ export function cissDuJour(ciss, dateCalcul) {
 
 /**
  * État du jour à partir des fichiers bruts de data/ (déjà fusionnés avec la BCE en direct).
- * fichiers : { spread, target, adj, ratings, nrAft, ciss? } ; dateCalcul : Date (UTC).
+ * fichiers : { spread, target, bilan, adj, ratings, nrAft, ciss? } ; dateCalcul : Date (UTC).
  */
 export function etatDuJour(fichiers, dateCalcul) {
-  const { spread, target, adj, ratings, nrAft } = fichiers;
+  const { spread, adj, ratings, nrAft } = fichiers;
+  const target = partsTarget(fichiers.target, fichiers.bilan);
   const sp = spread.at(-1), tg = target.at(-1), nr = nrAft.points.at(-1);
   const couv = couvertures(adj), dc = couv.at(-1);
   const pire = noteLaPlusBasse(ratings);
@@ -207,7 +227,7 @@ export function etatDuJour(fichiers, dateCalcul) {
     nonResidents: { valeur: nr.part, niveau: s.nonResidents.niveau, date: nr.date, precedent: nrAft.points.at(-2) },
     notes: { note: pire.note, notch: 20 - pire.crans, niveau: s.notes.niveau, agences: pire.agences },
     target: {
-      valeur: s.target.valeur, niveau: s.target.niveau, mois: tg.mois,
+      valeur: s.target.valeur, niveau: s.target.niveau, mois: tg.mois, solde: tg.solde_mds, bilan: tg.bilan_mds,
       variationUnAn: variationUnAn(target.map((r) => ({ mois: r.mois, v: valeurTarget(r) })), 'mois', 'v'),
       record: Math.min(...target.map(valeurTarget)),
     },
@@ -313,7 +333,8 @@ function pointA({ sp, tg, nr, dc, pire }, calcul) {
  * Renvoie [{ mois, tension, fond, indice, sans: [...] }] ; indice vaut null tant qu'un sous-indice est vide.
  */
 export function courbe(fichiers, jusquA, dateCalcul = null) {
-  const { spread, target, adj, ratings, nrAft } = fichiers;
+  const { spread, adj, ratings, nrAft } = fichiers;
+  const target = partsTarget(fichiers.target, fichiers.bilan);
   const couv = couvertures(adj);
   const debut = spread[0].jour.slice(0, 7);
   const points = [];
@@ -340,7 +361,8 @@ export function courbe(fichiers, jusquA, dateCalcul = null) {
  * Renvoie [{ jour, tension, fond, indice, sans: [...] }].
  */
 export function serieQuotidienne(fichiers, jusquA = null) {
-  const { spread, target, adj, ratings, nrAft } = fichiers;
+  const { spread, adj, ratings, nrAft } = fichiers;
+  const target = partsTarget(fichiers.target, fichiers.bilan);
   const couv = couvertures(adj), nrs = nrAft.points;
   const changements = [...new Set(ratings.agences.flatMap((a) => a.historique.map((h) => h.date)))].sort();
   let iT = -1, iN = -1, iC = -1, iR = -1, pire = null;
