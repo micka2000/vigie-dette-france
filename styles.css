@@ -122,7 +122,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 
 /* En-tête */
 .masthead { background: var(--bg-accent); color: var(--fg-inverse); }
-.masthead .wrap { padding-block: var(--space-12) var(--space-8); display: grid; gap: var(--space-4); }
+.masthead .wrap { padding-block: var(--space-12); display: grid; gap: var(--space-4); }
 .masthead-top { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
 .masthead-actions { display: flex; gap: var(--space-2); align-items: center; flex: none; }
 .masthead h1 {
@@ -132,6 +132,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 .verdict { font-size: clamp(18px, 2vw, 22px); max-width: 60ch; margin: 0; color: var(--fg-inverse); }
 .verdict b { font-family: var(--font-display); font-weight: 700; }
 .stamp { font-size: var(--text-sm); opacity: 0.85; margin: 0; display: flex; gap: var(--space-3); flex-wrap: wrap; align-items: center; }
+/* Le repère et la date des données vont ensemble : plus proches l'un de l'autre que du reste */
+.reperes:not([hidden]) + .stamp { margin-top: calc(-1 * var(--space-2)); }
 
 /* Indice Vigie dans l'en-tête */
 .indice { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
