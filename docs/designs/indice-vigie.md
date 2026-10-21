@@ -1027,6 +1027,16 @@ Artefact mis à jour : `~/.gstack/projects/micka2000-vigie-dette-france/micka-ma
 - Parallelization : 2 lanes, 1 parallel / 3 sequential.
 - Lake Score : 8/9 (D2, D3, D4, D5, D6, D8, D9, D10 ont pris l'option la plus complète proposée en recommandation ; D9 A à 9/10 face à C à 10/10 ; D7 sans score).
 
+### Spread quotidien, sans moyenne (décision du 2026-10-21)
+
+Constat de l'utilisateur : la moyenne mensuelle de la BCE (96,7 pb pour septembre) masquait un spread d'environ 151 pb le 20/10/2026 (OAT 4,93 %, Bund 3,42 %), au-delà du seuil de crise. Décisions :
+- Source : taux à 10 ans quotidien de la Banque de France (Webstat, clé d'API de l'utilisateur, secret `WEBSTAT_API_KEY`) et Bund quotidien de la Bundesbank (BBSIS, sans clé, 7 062 séances depuis 1999). Calcul par l'Action chaque matin ; la page lit le fichier (clôture de la veille), plus de lecture BCE en direct pour le spread.
+- Aucune moyenne : carte et score = dernier jour où les deux taux existent ; courbe de l'Indice Vigie = spread du dernier jour de cotation de chaque mois.
+- Graphique du spread : sélecteur Jour / Semaine / Mois (clôture de chaque séance, du dernier jour de cotation de la semaine, du mois), en plus de la période. Vue par défaut : Jour.
+- Péremption du spread : 7 jours (au lieu de 2 mois). Les ancrages 50/80/120/200 pb restent ; le texte des centiles est recalculé sur les données quotidiennes.
+- ENG-R1 amendé pour le seul spread : la carte passe d'environ 97 pb (tension) à la dernière clôture ; les quatre autres cartes ne changent pas.
+- En attente : clé Webstat de l'utilisateur.
+
 ## Decision ledger
 
 ### ENG-R1: contrat de non-régression des cinq cartes existantes
