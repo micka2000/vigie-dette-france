@@ -837,16 +837,7 @@ function renderHeader(data, etat) {
 }
 
 function renderSources(data) {
-  const live = document.getElementById('live');
-  live.dataset.on = String(data.live.length > 0);
-  live.textContent = data.live.length ? L('BCE en direct', 'ECB live') : L('Données enregistrées', 'Stored data');
   const retard = [...new Set((data.meta.echecs ?? []).map((e) => e.serie ?? String(e)))];
-  const misAJour = new Date(data.meta.mis_a_jour).toLocaleString(L('fr-FR', 'en-GB'), { dateStyle: 'long', timeStyle: 'short' });
-  live.dataset.tip = [
-    data.live.length ? L(`Lu en direct à la BCE : ${liste(data.live)}.`, `Read live from the ECB: ${liste(data.live)}.`)
-      : L('Lecture en direct de la BCE indisponible ou pas plus récente : fichiers enregistrés.', 'Live ECB reading unavailable or not more recent: stored files.'),
-    L(`Fichiers mis à jour le ${misAJour}.`, `Files updated on ${misAJour}.`),
-  ].join(' ');
   const r = document.getElementById('retard');
   r.hidden = !retard.length;
   r.textContent = retard.length ? L(`Séries en retard : ${liste(retard)}.`, `Series running late: ${liste(retard)}.`) : '';

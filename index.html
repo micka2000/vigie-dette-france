@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title data-i18n="titre">Vigie Dette France</title>
 <meta name="description" data-i18n-attr="content:meta.description" content="Les cinq signaux de santé de la dette publique française, mis à jour chaque jour, avec leurs seuils de risque historiques.">
-<link rel="stylesheet" href="styles.css?v=7df062ef">
+<link rel="stylesheet" href="styles.css?v=0c9df959">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   try { const l = localStorage.getItem('langue'); if (l === 'en' || (!l && !/^fr\b/i.test(navigator.language || 'fr'))) document.documentElement.lang = 'en'; } catch (e) {}
@@ -35,7 +35,6 @@
             <p class="repere" id="repere" hidden><span id="repere-texte"></span> <button type="button" class="info" id="repere-info" data-tip="" aria-label="Détail du repère" data-i18n-attr="aria-label:repere.aria">i</button></p>
     </div>
     <p class="stamp">
-      <span class="live" id="live" data-on="false" data-tip="" tabindex="0">Données enregistrées</span>
       <span id="donnees"></span>
     </p>
   </div>
@@ -235,6 +234,6 @@
     if (v) v.textContent = document.documentElement.lang === 'en' ? 'The page could not load. Please reload it in a moment.' : 'La page n’a pas pu se charger. Recharge-la dans un instant.';
   }, 10000);
 </script>
-<script type="module" src="app.js?v=e32a037d"></script>
+<script type="module" src="app.js?v=d58f3fd7"></script>
 </body>
 </html>

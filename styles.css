@@ -132,15 +132,6 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 .verdict { font-size: clamp(18px, 2vw, 22px); max-width: 60ch; margin: 0; color: var(--fg-inverse); }
 .verdict b { font-family: var(--font-display); font-weight: 700; }
 .stamp { font-size: var(--text-sm); opacity: 0.85; margin: 0; display: flex; gap: var(--space-3); flex-wrap: wrap; align-items: center; }
-.live {
-  font-family: var(--font-display); font-weight: 600; font-size: var(--text-xs);
-  display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(255, 255, 255, 0.16); padding: 3px 10px; border-radius: var(--radius-pill);
-}
-.live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.live[data-on="true"]::before { animation: pulse 1.5s infinite; }
-@keyframes pulse { 50% { opacity: 0.35; } }
-@media (prefers-reduced-motion: reduce) { .live::before { animation: none !important; } }
 
 /* Indice Vigie dans l'en-tête */
 .indice { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
@@ -303,7 +294,6 @@ footer p { margin: 0; max-width: 80ch; }
 .legend-row { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
 .tile-name { display: flex; align-items: center; }
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.live[data-tip] { cursor: help; }
 .retard[hidden] { display: none; }
 
 /* Légende à œil : masquer ou réafficher une courbe */
