@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vigie Dette France</title>
 <meta name="description" content="Les cinq signaux de santé de la dette publique française, mis à jour chaque jour, avec leurs seuils de risque historiques.">
-<link rel="stylesheet" href="styles.css?v=c799270e">
+<link rel="stylesheet" href="styles.css?v=b28a8b15">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
@@ -87,7 +87,7 @@
         <div class="desc-corps">
           <p><b>En bref.</b> L’écart entre le taux auquel la France emprunte sur 10 ans et celui de l’Allemagne, le pays jugé le plus sûr de la zone euro. Plus l’écart est grand, plus les investisseurs voient de risque à prêter à la France.</p>
           <p><b>Comment lire le graphique.</b> La courbe donne l’écart en points de base : 100 points de base valent 1 %. Un écart de 150 signifie que la France paie chaque année 1,5 % de plus que l’Allemagne pour emprunter. Les fonds colorés montrent les seuils de risque.</p>
-          <p><b>Comment c’est calculé.</b> Taux à 10 ans de la France moins taux à 10 ans de l’Allemagne, chaque jour à la fermeture des marchés. Depuis 2004, l’écart est resté sous 50 sept jours sur dix ; son record, 214, date de novembre 2011.</p>
+          <p><b>Comment c’est calculé.</b> Taux à 10 ans de la France moins taux à 10 ans de l’Allemagne, chaque jour à la fermeture des marchés. Depuis 2004, l’écart est resté sous 50 points de base 7 jours sur 10. Son record, 214 points de base, date du 17 novembre 2011.</p>
           <p><b>D’où viennent les chiffres.</b> <a href="https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.FR.EUR.FR2.BB.FRMOYTEC10.HSTA" target="_blank" rel="noopener">Banque de France</a> pour le taux français, <a href="https://www.bundesbank.de/dynamic/action/de/statistiken/zeitreihen-datenbanken/zeitreihen-datenbank/759778/759778?tsId=BBSIS.D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A" target="_blank" rel="noopener">Bundesbank</a> pour le taux allemand, mis à jour chaque matin.</p>
         </div>
       </details>
@@ -116,16 +116,22 @@
         <summary><span class="desc-ouvrir">Afficher la description</span><span class="desc-fermer">Masquer la description</span></summary>
         <div class="desc-corps">
           <p><b>En bref.</b> Chaque mois, l’État emprunte en vendant aux enchères des obligations à 10 ans. On regarde à quel taux il emprunte et si les acheteurs sont nombreux.</p>
-          <p><b>Comment lire le graphique.</b> À gauche, le taux payé par l’État lors de chaque vente. À droite, la demande : à 2, les investisseurs voulaient acheter deux fois plus que ce que l’État a vendu. Sous 2, la demande devient juste ; sous 1,5, elle faiblit nettement.</p>
+          <p><b>Comment lire le graphique.</b> Chaque point est une vente. La courbe montre la demande : à 2, les investisseurs voulaient acheter deux fois plus que ce que l’État a vendu. Sous 2, la demande devient juste ; sous 1,5, elle faiblit nettement. Les fonds colorés montrent les seuils de risque. Le taux payé à chaque vente est dans le détail des ventes, sous le graphique.</p>
           <p><b>Comment c’est calculé.</b> On suit à chaque fois l’obligation à 10 ans de référence. Les ventes d’août et de décembre sont mises de côté : ce sont des ventes particulières, qui fausseraient la comparaison.</p>
           <p><b>D’où viennent les chiffres.</b> <a href="https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx" target="_blank" rel="noopener">Agence France Trésor</a>, qui gère la dette de l’État (historique depuis 2004), puis ses résultats repris chaque mois par Reuters (<a id="auction-source-last" href="#" target="_blank" rel="noopener">dernière vente</a>), relevés chaque matin.</p>
         </div>
       </details>
       <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-adj">Période</span><div class="seg" role="group" aria-labelledby="periode-adj" data-periode="adj"></div></div></div>
-      <div class="chart-pair">
-        <div><p class="chart-title">Taux moyen pondéré à 10 ans</p><div class="chart" id="chart-auction-rate"></div></div>
-        <div><p class="chart-title">Taux de couverture</p><div class="chart" id="chart-auction-cover"></div></div>
-      </div>
+      <div class="chart" id="chart-auction-cover"></div>
+      <details class="desc detail-table">
+        <summary><span class="desc-ouvrir">Afficher le détail des ventes</span><span class="desc-fermer">Masquer le détail des ventes</span></summary>
+        <div class="table-scroll" id="auctions-table-wrap">
+          <table class="ratings-table" id="auctions-table">
+            <thead><tr><th>Vente</th><th>Obligation</th><th>Taux payé</th><th>Demandé</th><th>Vendu</th><th>Couverture</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </details>
       <p class="seuils-titre">Seuils de risque</p>
       <ul class="thresholds" data-thresholds="adjudications"></ul>
     </article>
@@ -228,6 +234,6 @@
     if (v) v.textContent = 'La page n’a pas pu se charger. Recharge-la dans un instant.';
   }, 10000);
 </script>
-<script type="module" src="app.js?v=c4acb4a8"></script>
+<script type="module" src="app.js?v=b4574a37"></script>
 </body>
 </html>

@@ -388,13 +388,11 @@ function compute(data, etat) {
   // Séances du calcul (score.mjs) : août et décembre écartés, comme pour le niveau
   const auctions = couvertures(data.adj).map((a) => ({ ...a, cover: a.couverture }));
   const lastCover = auctions.at(-1), prevCover = auctions.at(-2);
-  const lastRate = data.adj.lignes.at(-1);
   out.adjudications = {
-    level: niv.couverture.niveau, name: 'Adjudication à 10 ans',
-    value: `${f2(lastRate.taux)} %`,
-    sub: `${fmtDay(parseDay(lastRate.date))} · couverture ${f2(lastCover.cover)}`,
+    level: niv.couverture.niveau, name: 'Couverture des adjudications',
+    value: f2(lastCover.cover),
+    sub: `Vente du ${fmtDay(parseDay(lastCover.date))} · taux ${f2(lastCover.taux)} %`,
     delta: `Adjudication du ${fmtDay(parseDay(lastCover.date))}, ${nomLigne(lastCover.ligne)} : taux payé ${f2(lastCover.taux)} %, ${f1(lastCover.demande_mds)} Md€ demandés pour ${f1(lastCover.adjuge_mds)} Md€ servis, couverture ${f2(lastCover.cover)} (contre ${f2(prevCover.cover)} à la séance précédente)`,
-    nowText: `${f2(lastRate.taux)} %`,
   };
 
   const nr = data.nrAft.points.at(-1), nr1 = data.nrAft.points.at(-2);
@@ -501,19 +499,15 @@ function renderCharts(data) {
   });
   legend('legend-ratings', ratingSeries, 'notes');
 
-  // Séances du calcul seulement (août et décembre écartés), depuis 2004 : courbes plutôt que barres
+  // Séances du calcul seulement (août et décembre écartés), depuis 2004
   const toutes = couvertures(data.adj).map((a) => ({ ...a, d: parseDay(a.date), cover: a.couverture }));
   periodes('adj', toutes[0].d);
   const auctions = clipDe('adj')(toutes);
   const points = auctions.length <= 40;
-  lineChart(document.getElementById('chart-auction-rate'), [{ name: 'Taux', color: css('--series-1'), points: auctions.map((a) => ({ d: a.d, v: a.taux, a })) }], {
-    yFormat: (v) => `${f1(v)} %`, tipFormat: (v, p) => `${f2(v)} % · ${nomLigne(p.a.ligne)}`, dateFormat: fmtDay, dots: points, ratio: 0.45,
-    xDomain: xDom('adj', auctions), label: 'Taux moyen pondéré des adjudications à 10 ans',
-  });
   lineChart(document.getElementById('chart-auction-cover'), [{ name: 'Couverture', color: css('--series-1'), points: auctions.map((a) => ({ d: a.d, v: a.cover, a })) }], {
     bands: THRESHOLDS.adjudications.bands, yDomain: [0, Math.max(3.5, d3.max(auctions, (a) => a.cover) + 0.2)],
-    yFormat: (v) => f1(v), dateFormat: fmtDay, dots: points, ratio: 0.45,
-    tipFormat: (v, p) => `${f2(v)} : ${f1(p.a.demande_mds)} Md€ demandés pour ${f1(p.a.adjuge_mds)} Md€ servis · ${nomLigne(p.a.ligne)}`,
+    yFormat: (v) => f1(v), dateFormat: fmtDay, dots: points,
+    tipFormat: (v, p) => `${f2(v)} : ${f1(p.a.demande_mds)} Md€ demandés pour ${f1(p.a.adjuge_mds)} Md€ vendus, au taux de ${f2(p.a.taux)} %`,
     xDomain: xDom('adj', auctions), label: 'Taux de couverture des adjudications à 10 ans',
   });
 }
@@ -618,6 +612,21 @@ function renderAuctionSource(adj) {
   const a = document.getElementById('auction-source-last');
   if (!a) return; // index.html plus ancien que ce script (cache de GitHub Pages pendant un déploiement)
   if (last) { a.href = last.source; a.textContent = `dernière vente, ${fmtDay(parseDay(last.date))}`; } else a.remove();
+}
+
+// Toutes les ventes du fichier, du plus récent au plus ancien ; celles d'août et de décembre sont signalées hors calcul.
+function renderAuctionsTable(adj) {
+  const calcul = new Set(couvertures(adj).map((a) => a.date));
+  document.querySelector('#auctions-table tbody').replaceChildren(...[...adj.lignes].reverse().map((a) => {
+    const tr = document.createElement('tr');
+    const cover = a.adjuge_mds && a.demande_mds != null ? f2(a.demande_mds / a.adjuge_mds) : 'n.c.';
+    for (const v of [fmtDay(parseDay(a.date)), nomLigne(a.ligne), a.taux != null ? `${f2(a.taux)} %` : 'n.c.',
+      a.demande_mds != null ? `${f1(a.demande_mds)} Md€` : 'n.c.', a.adjuge_mds ? `${f1(a.adjuge_mds)} Md€` : 'n.c.',
+      calcul.has(a.date) ? cover : `${cover} (hors calcul)`]) {
+      const td = document.createElement('td'); td.textContent = v; tr.append(td);
+    }
+    return tr;
+  }));
 }
 
 function renderRatingsTable(r) {
@@ -839,6 +848,7 @@ loadFiles().then((data) => {
   state.data = data;
   renderRatingsTable(data.ratings);
   renderAuctionSource(data.adj);
+  renderAuctionsTable(data.adj);
   renderAll();
   loadLive(data, renderAll);
 }).catch((err) => {

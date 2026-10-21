@@ -265,7 +265,7 @@ footer { border-top: 1px solid var(--border-subtle); }
 footer .wrap { padding-block: var(--space-8); font-size: var(--text-sm); color: var(--fg-3); display: grid; gap: var(--space-2); }
 footer p { margin: 0; max-width: 80ch; }
 
-#courbe-table-wrap { max-height: 420px; overflow-y: auto; }
+#courbe-table-wrap, #auctions-table-wrap { max-height: 420px; overflow-y: auto; }
 
 /* Infobulles : bouton « i » et bulle unique (design system : sombre, 6 px, Roboto 12 px, flèche de 5 px) */
 .info {
