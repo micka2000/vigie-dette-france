@@ -56,10 +56,10 @@
       <details class="desc">
         <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Afficher la description</span><span class="desc-fermer" data-i18n="desc.fermer">Masquer la description</span></summary>
         <div class="desc-corps">
-          <p data-i18n="courbe.bref"><b>En bref.</b> L’évolution de l’Indice Vigie depuis 2008, pour situer la situation d’aujourd’hui par rapport aux crises passées.</p>
-          <p data-i18n="courbe.lire"><b>Comment lire le graphique.</b> En bleu, l’Indice Vigie. En vert, sa partie « marchés » : ce que les investisseurs exigent pour prêter à la France, suivi depuis 2004. En pointillés gris, le stress de l’ensemble des marchés financiers en France, mesuré par la Banque centrale européenne : il n’entre pas dans l’indice, il sert de point de comparaison. Quand le bleu monte et pas le gris, c’est la dette française elle-même qui inquiète. Les fonds colorés indiquent le niveau (calme, vigilance, tension, crise), les traits verticaux les grandes crises. L’œil de la légende masque ou affiche une courbe.</p>
-          <p data-i18n="courbe.calcul"><b>Comment c’est calculé.</b> Pour chaque mois, on garde la journée la plus tendue, calculée uniquement avec les informations connues ce jour-là.</p>
-          <p data-i18n="courbe.sources"><b>D’où viennent les chiffres.</b> calcul ouvert et vérifiable (<a href="https://github.com/micka2000/vigie-dette-france/blob/main/score.mjs" target="_blank" rel="noopener">formule</a>, <a href="https://github.com/micka2000/vigie-dette-france/tree/main/data" target="_blank" rel="noopener">données</a>) ; stress des marchés : <a href="https://data.ecb.europa.eu/data/datasets/CISS/CISS.D.FR.Z0Z.4F.EC.SS_CIN.IDX" target="_blank" rel="noopener">Banque centrale européenne</a>.</p>
+          <p data-i18n="courbe.quoi"><b>Ce que c’est.</b> Une note de 0 à 100 qui résume l’état de la dette française, mois par mois.</p>
+          <p data-i18n="courbe.pourquoi"><b>Pourquoi ça compte.</b> Pour situer aujourd’hui par rapport aux crises passées : 2008, la crise de l’euro en 2011, le Covid en 2020. Quand l’indice monte sans que le reste des marchés ne bouge, c’est la dette française elle-même qui inquiète.</p>
+          <p data-i18n="courbe.lire"><b>Comment lire le graphique.</b> En bleu, l’Indice Vigie. En vert, sa partie « marchés » : ce que les investisseurs exigent pour prêter à la France. En pointillés gris, le stress de l’ensemble des marchés financiers en France, qui sert de comparaison. Chaque mois montre sa journée la plus tendue. Les fonds colorés donnent le niveau, l’œil de la légende masque ou affiche une courbe.</p>
+          <p data-i18n="courbe.qui"><b>Qui le mesure, et quand.</b> Vigie Dette France, à partir des cinq signaux de la page (<a href="https://github.com/micka2000/vigie-dette-france/blob/main/score.mjs" target="_blank" rel="noopener">formule</a>, <a href="https://github.com/micka2000/vigie-dette-france/tree/main/data" target="_blank" rel="noopener">données</a>) ; le stress des marchés vient de la <a href="https://data.ecb.europa.eu/data/datasets/CISS/CISS.D.FR.Z0Z.4F.EC.SS_CIN.IDX" target="_blank" rel="noopener">Banque centrale européenne</a>. Depuis mai 2008, recalculé chaque matin avec les seules informations connues chaque jour.</p>
         </div>
       </details>
       <p class="sr-only" id="courbe-resume"></p>
@@ -87,10 +87,10 @@
       <details class="desc">
         <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Afficher la description</span><span class="desc-fermer" data-i18n="desc.fermer">Masquer la description</span></summary>
         <div class="desc-corps">
-          <p data-i18n="spread.bref"><b>En bref.</b> L’écart entre le taux auquel la France emprunte sur 10 ans et celui de l’Allemagne, le pays jugé le plus sûr de la zone euro. Plus l’écart est grand, plus les investisseurs voient de risque à prêter à la France.</p>
-          <p data-i18n="spread.lire"><b>Comment lire le graphique.</b> La courbe donne l’écart en points de base : 100 points de base valent 1 %. Un écart de 150 signifie que la France paie chaque année 1,5 % de plus que l’Allemagne pour emprunter. Les fonds colorés montrent les seuils de risque.</p>
-          <p data-i18n="spread.calcul"><b>Comment c’est calculé.</b> Taux à 10 ans de la France moins taux à 10 ans de l’Allemagne, chaque jour à la fermeture des marchés. Depuis 2004, l’écart est resté sous 50 points de base 7 jours sur 10. Son record, 214 points de base, date du 17 novembre 2011.</p>
-          <p data-i18n="spread.sources"><b>D’où viennent les chiffres.</b> <a href="https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.FR.EUR.FR2.BB.FRMOYTEC10.HSTA" target="_blank" rel="noopener">Banque de France</a> pour le taux français, <a href="https://www.bundesbank.de/dynamic/action/de/statistiken/zeitreihen-datenbanken/zeitreihen-datenbank/759778/759778?tsId=BBSIS.D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A" target="_blank" rel="noopener">Bundesbank</a> pour le taux allemand, mis à jour chaque matin.</p>
+          <p data-i18n="spread.quoi"><b>Ce que c’est.</b> L’écart entre le taux auquel la France emprunte sur 10 ans et celui de l’Allemagne, le pays jugé le plus sûr de la zone euro.</p>
+          <p data-i18n="spread.pourquoi"><b>Pourquoi ça compte.</b> Plus l’écart grandit, plus les investisseurs jugent risqué de prêter à la France. Depuis 2004, il est resté sous 50 points 7 jours sur 10 ; son record, 214 points, date du 17 novembre 2011.</p>
+          <p data-i18n="spread.lire"><b>Comment lire le graphique.</b> L’écart est donné en points de base : 100 points valent 1 %. À 150, la France paie chaque année 1,5 % de plus que l’Allemagne pour emprunter. Les fonds colorés montrent les seuils de risque.</p>
+          <p data-i18n="spread.qui"><b>Qui le mesure, et quand.</b> La <a href="https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.FR.EUR.FR2.BB.FRMOYTEC10.HSTA" target="_blank" rel="noopener">Banque de France</a> pour le taux français et la <a href="https://www.bundesbank.de/dynamic/action/de/statistiken/zeitreihen-datenbanken/zeitreihen-datenbank/759778/759778?tsId=BBSIS.D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A" target="_blank" rel="noopener">Bundesbank</a> pour le taux allemand, chaque jour à la fermeture des marchés depuis 2004 ; relevé chaque matin.</p>
         </div>
       </details>
       <div class="chart-tools">
@@ -117,10 +117,10 @@
       <details class="desc">
         <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Afficher la description</span><span class="desc-fermer" data-i18n="desc.fermer">Masquer la description</span></summary>
         <div class="desc-corps">
-          <p data-i18n="adj.bref"><b>En bref.</b> Chaque mois, l’État emprunte en vendant aux enchères des obligations à 10 ans. On regarde à quel taux il emprunte et si les acheteurs sont nombreux.</p>
-          <p data-i18n="adj.lire"><b>Comment lire le graphique.</b> Chaque point est une vente. La courbe montre la demande : à 2, les investisseurs voulaient acheter deux fois plus que ce que l’État a vendu. Sous 2, la demande devient juste ; sous 1,5, elle faiblit nettement. Les fonds colorés montrent les seuils de risque. Le taux payé à chaque vente est dans le détail des ventes, sous le graphique.</p>
-          <p data-i18n="adj.calcul"><b>Comment c’est calculé.</b> On suit à chaque fois l’obligation à 10 ans de référence. Les ventes d’août et de décembre sont mises de côté : ce sont des ventes particulières, qui fausseraient la comparaison.</p>
-          <p data-i18n="adj.sources"><b>D’où viennent les chiffres.</b> <a href="https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx" target="_blank" rel="noopener">Agence France Trésor</a>, qui gère la dette de l’État (historique depuis 2004), puis ses résultats repris chaque mois par Reuters (<a id="auction-source-last" href="#" target="_blank" rel="noopener">dernière vente</a>), relevés chaque matin.</p>
+          <p data-i18n="adj.quoi"><b>Ce que c’est.</b> La demande des investisseurs quand l’État vend aux enchères ses obligations à 10 ans pour emprunter.</p>
+          <p data-i18n="adj.pourquoi"><b>Pourquoi ça compte.</b> Une demande qui faiblit signifie que l’État a plus de mal à trouver des prêteurs, et devra les payer plus cher. Sous 2, la demande devient juste ; sous 1,5, elle faiblit nettement.</p>
+          <p data-i18n="adj.lire"><b>Comment lire le graphique.</b> Chaque point est une vente : montant demandé divisé par montant vendu. À 2, les acheteurs voulaient deux fois plus que ce qui a été vendu. Les fonds colorés montrent les seuils de risque ; le taux payé à chaque vente est dans le détail des ventes.</p>
+          <p data-i18n="adj.qui"><b>Qui le mesure, et quand.</b> L’<a href="https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx" target="_blank" rel="noopener">Agence France Trésor</a>, qui vend au nom de l’État, en général le premier jeudi du mois, depuis 2004 ; ses résultats sont repris par Reuters (<a id="auction-source-last" href="#" target="_blank" rel="noopener">dernière vente</a>) et relevés chaque matin. Les ventes d’août et de décembre, particulières, sont mises de côté.</p>
         </div>
       </details>
       <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-adj" data-i18n="periode">Période</span><div class="seg" role="group" aria-labelledby="periode-adj" data-periode="adj"></div></div></div>
@@ -148,10 +148,10 @@
       <details class="desc">
         <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Afficher la description</span><span class="desc-fermer" data-i18n="desc.fermer">Masquer la description</span></summary>
         <div class="desc-corps">
-          <p data-i18n="nonres.bref"><b>En bref.</b> La part de la dette de l’État détenue par des investisseurs étrangers. Plus elle est élevée, plus la France dépend de capitaux qui peuvent partir vite en cas de crise.</p>
-          <p data-i18n="nonres.lire"><b>Comment lire le graphique.</b> En bleu, la dette émise par l’État, chaque trimestre : c’est elle qui compte dans l’indice. En vert, toute la dette publique (État, collectivités, Sécurité sociale), une fois par an ; elle est plus basse, car une partie est prêtée par des banques françaises.</p>
-          <p data-i18n="nonres.calcul"><b>Comment c’est calculé.</b> Pourcentage des titres de l’État détenus hors de France, en fin de trimestre. Au-delà de 60 %, la France retrouverait la dépendance de 2008 à 2016.</p>
-          <p data-i18n="nonres.sources"><b>D’où viennent les chiffres.</b> <a href="https://webstat.banque-france.fr/fr/catalogue/det2/DET2.Q.N.FR.W1.S13111.S1.N.L.LE.F3.T._Z.PT._T.M.V.N._T" target="_blank" rel="noopener">Banque de France</a> pour la dette de l’État, <a href="https://ec.europa.eu/eurostat/databrowser/view/gov_10dd_ggd/default/table" target="_blank" rel="noopener">Eurostat</a> pour l’ensemble de la dette publique.</p>
+          <p data-i18n="nonres.quoi"><b>Ce que c’est.</b> La part de la dette de l’État détenue par des investisseurs étrangers.</p>
+          <p data-i18n="nonres.pourquoi"><b>Pourquoi ça compte.</b> Plus cette part est élevée, plus la France dépend de capitaux qui peuvent partir vite en cas de crise. Au-delà de 60 %, elle retrouverait la dépendance de 2008 à 2016.</p>
+          <p data-i18n="nonres.lire"><b>Comment lire le graphique.</b> En bleu, la dette de l’État, celle qui compte dans l’indice. En vert, toute la dette publique (État, collectivités, Sécurité sociale) : elle est plus basse, car une partie est prêtée par des banques françaises. Les fonds colorés montrent les seuils de risque.</p>
+          <p data-i18n="nonres.qui"><b>Qui le mesure, et quand.</b> La <a href="https://webstat.banque-france.fr/fr/catalogue/det2/DET2.Q.N.FR.W1.S13111.S1.N.L.LE.F3.T._Z.PT._T.M.V.N._T" target="_blank" rel="noopener">Banque de France</a> pour la dette de l’État, chaque trimestre depuis 2008 ; <a href="https://ec.europa.eu/eurostat/databrowser/view/gov_10dd_ggd/default/table" target="_blank" rel="noopener">Eurostat</a> pour toute la dette publique, une fois par an.</p>
         </div>
       </details>
       <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-nonres" data-i18n="periode">Période</span><div class="seg" role="group" aria-labelledby="periode-nonres" data-periode="nonres"></div></div></div>
@@ -171,10 +171,10 @@
       <details class="desc">
         <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Afficher la description</span><span class="desc-fermer" data-i18n="desc.fermer">Masquer la description</span></summary>
         <div class="desc-corps">
-          <p data-i18n="notes.bref"><b>En bref.</b> Les notes que trois agences (S&amp;P, Moody’s et Fitch) donnent à la France sur sa capacité à rembourser. Une baisse de note rend les emprunts plus chers et peut obliger certains investisseurs à vendre.</p>
-          <p data-i18n="notes.lire"><b>Comment lire le graphique.</b> Une ligne par agence : plus elle est haute, meilleure est la note. AAA est la meilleure note possible. Moody’s écrit ses notes autrement (Aa3 équivaut à AA-).</p>
-          <p data-i18n="notes.calcul"><b>Comment c’est calculé.</b> On retient la note la plus basse des trois. Sous AA-, beaucoup de grands investisseurs réduisent leurs achats ; vers A-, la France approcherait la catégorie où les ventes forcées s’accélèrent.</p>
-          <p data-i18n="notes.sources"><b>D’où viennent les chiffres.</b> notes publiées par les agences et recensées par l’<a href="https://www.aft.gouv.fr/fr/notation-de-la-france" target="_blank" rel="noopener">Agence France Trésor</a>. Chaque matin, un changement n’est enregistré que si deux sources indépendantes le confirment (<a href="https://en.wikipedia.org/wiki/List_of_countries_by_credit_rating" target="_blank" rel="noopener">Wikipédia</a>, <a href="https://countryeconomy.com/ratings/france" target="_blank" rel="noopener">countryeconomy.com</a>).</p>
+          <p data-i18n="notes.quoi"><b>Ce que c’est.</b> Les notes qui jugent la capacité de la France à rembourser sa dette. AAA est la meilleure note.</p>
+          <p data-i18n="notes.pourquoi"><b>Pourquoi ça compte.</b> Une baisse de note rend les emprunts plus chers. Sous AA-, beaucoup de grands investisseurs réduisent leurs achats ; vers A-, la France approcherait la catégorie où les ventes forcées s’accélèrent.</p>
+          <p data-i18n="notes.lire"><b>Comment lire le graphique.</b> Une ligne par agence : plus elle est haute, meilleure est la note. On retient la plus basse des trois. Moody’s écrit ses notes autrement : Aa3 équivaut à AA-.</p>
+          <p data-i18n="notes.qui"><b>Qui le mesure, et quand.</b> S&amp;P, Moody’s et Fitch, à des dates de revue annoncées à l’avance ; notes recensées par l’<a href="https://www.aft.gouv.fr/fr/notation-de-la-france" target="_blank" rel="noopener">Agence France Trésor</a>. Relevées chaque matin, un changement n’est enregistré que si deux sources indépendantes le confirment (<a href="https://en.wikipedia.org/wiki/List_of_countries_by_credit_rating" target="_blank" rel="noopener">Wikipédia</a>, <a href="https://countryeconomy.com/ratings/france" target="_blank" rel="noopener">countryeconomy.com</a>).</p>
         </div>
       </details>
       <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-notes" data-i18n="periode">Période</span><div class="seg" role="group" aria-labelledby="periode-notes" data-periode="notes"></div></div></div>
@@ -204,10 +204,10 @@
       <details class="desc">
         <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Afficher la description</span><span class="desc-fermer" data-i18n="desc.fermer">Masquer la description</span></summary>
         <div class="desc-corps">
-          <p data-i18n="target.bref"><b>En bref.</b> Le solde entre la Banque de France et les autres banques centrales de la zone euro. Quand l’argent quitte la France pour d’autres pays de la zone, ce solde baisse.</p>
-          <p data-i18n="target.lire"><b>Comment lire le graphique.</b> La courbe donne le solde en milliards d’euros, à la fin de chaque mois. Plus elle descend, plus les capitaux sortent de France. C’est un signal lent, qui dépend aussi des achats de la Banque centrale européenne.</p>
-          <p data-i18n="target.calcul"><b>Comment c’est calculé.</b> Solde publié chaque mois par la Banque centrale européenne. Repères : -118 milliards au plus fort de la crise de 2008, record de -240 milliards en octobre 2025.</p>
-          <p data-i18n="target.sources"><b>D’où viennent les chiffres.</b> <a href="https://data.ecb.europa.eu/data/datasets/TGB/TGB.M.FR.N.A094T.U2.EUR.E" target="_blank" rel="noopener">Banque centrale européenne</a>, chaque mois.</p>
+          <p data-i18n="target.quoi"><b>Ce que c’est.</b> Le solde entre la Banque de France et les autres banques centrales de la zone euro, en milliards d’euros.</p>
+          <p data-i18n="target.pourquoi"><b>Pourquoi ça compte.</b> Une forte baisse peut signaler que l’argent quitte la France pour d’autres pays de la zone. C’est un signal lent, qui dépend aussi des achats de la BCE. Repères : -118 milliards au plus fort de la crise de 2008, record de -240 milliards en octobre 2025.</p>
+          <p data-i18n="target.lire"><b>Comment lire le graphique.</b> La courbe donne le solde à la fin de chaque mois. Plus elle descend, plus les capitaux sortent de France. Les fonds colorés montrent les seuils de risque.</p>
+          <p data-i18n="target.qui"><b>Qui le mesure, et quand.</b> La <a href="https://data.ecb.europa.eu/data/datasets/TGB/TGB.M.FR.N.A094T.U2.EUR.E" target="_blank" rel="noopener">Banque centrale européenne</a>, qui publie le solde de la Banque de France à la fin de chaque mois, depuis 2008 ; lu directement chez elle.</p>
         </div>
       </details>
       <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-target" data-i18n="periode">Période</span><div class="seg" role="group" aria-labelledby="periode-target" data-periode="target"></div></div></div>
@@ -235,6 +235,6 @@
     if (v) v.textContent = document.documentElement.lang === 'en' ? 'The page could not load. Please reload it in a moment.' : 'La page n’a pas pu se charger. Recharge-la dans un instant.';
   }, 10000);
 </script>
-<script type="module" src="app.js?v=bdc88187"></script>
+<script type="module" src="app.js?v=f5edcbc2"></script>
 </body>
 </html>

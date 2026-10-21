@@ -4,7 +4,7 @@ import {
   SEUILS, ANCRAGES, METHODE_VERSION, couvertures, niveauBrut, niveauScore, interpoler, notch, notchLabel, fusionnerSeries, etatDuJour,
   serieQuotidienne, plusHautDepuis, picDuMois, picsMensuels, phraseVerdict,
 } from './score.mjs?v=eb51fbb0';
-import { EN } from './anglais.mjs?v=6032f9be';
+import { EN } from './anglais.mjs?v=7c3e268d';
 
 window.vigieDemarre = true; // lu par le script de secours d'index.html
 
@@ -723,8 +723,9 @@ function el(tag, cls, txt) {
   return e;
 }
 
-// Description repliable sous un indicateur : ce qu'il mesure, calcul, sources (liens).
-function description({ bref, lire, calcul, sources }) {
+// Description repliable sous un indicateur, en quatre rubriques qui répondent au QQOQCP :
+// ce que c'est, pourquoi ça compte, comment le lire, qui le mesure et quand (sources en liens).
+function description({ quoi, pourquoi, lire, qui, sources }) {
   const d = el('details', 'desc');
   const s = el('summary');
   s.append(el('span', 'desc-ouvrir', L('Afficher la description', 'Show the description')), el('span', 'desc-fermer', L('Masquer la description', 'Hide the description')));
@@ -733,23 +734,25 @@ function description({ bref, lire, calcul, sources }) {
   const liens = sources.flatMap(([texte, url], i) => {
     const a = el('a', null, texte); a.href = url;
     if (url.startsWith('http')) { a.target = '_blank'; a.rel = 'noopener'; }
-    return i ? [document.createTextNode(L(' ; ', '; ')), a] : [a];
+    return i ? [document.createTextNode(', '), a] : [a];
   });
-  corps.append(para(L('En bref.', 'In short.'), bref), para(L('Comment le lire.', 'How to read it.'), lire),
-    para(L('Comment c’est calculé.', 'How it is calculated.'), calcul), para(L('D’où viennent les chiffres.', 'Where the figures come from.'), ...liens, '.'));
+  corps.append(para(L('Ce que c’est.', 'What it is.'), quoi), para(L('Pourquoi ça compte.', 'Why it matters.'), pourquoi),
+    para(L('Comment le lire.', 'How to read it.'), lire), para(L('Qui le mesure, et quand.', 'Who measures it, and when.'), qui, ' (', ...liens, ').'));
   d.append(s, corps);
   return d;
 }
 
 const DESCRIPTIONS = {
   indice: () => ({
-    bref: L('Une note de 0 à 100 qui résume en un chiffre l’état de la dette française. Plus elle est haute, plus la situation est tendue.',
-      'A score from 0 to 100 that sums up the state of French debt in a single figure. The higher it is, the more strained the situation.'),
-    lire: L('De 0 à 25 : calme. De 25 à 50 : vigilance. De 50 à 75 : tension. Au-delà de 75 : crise. « Plus haut depuis » compare le chiffre du jour à tous les jours depuis 2008.',
-      'From 0 to 25: calm. From 25 to 50: watch. From 50 to 75: stress. Above 75: crisis. “Highest since” compares today’s figure with every day since 2008.'),
-    calcul: L('Chacun des cinq signaux ci-dessous reçoit une note sur 100. On fait ensuite deux moyennes : ce que les marchés exigent pour prêter à la France (écart de taux avec l’Allemagne, demande lors des emprunts) et ses fragilités de fond (part détenue par l’étranger, notes des agences, solde TARGET2). L’indice est la moyenne des deux. Les cinq signaux sont toujours tous utilisés : s’il en manque un, l’indice n’est pas affiché.',
-      'Each of the five signals below gets a score out of 100. We then take two averages: what markets demand to lend to France (rate gap with Germany, demand at auctions) and its underlying weaknesses (share held abroad, agency ratings, TARGET2 balance). The index is the average of the two. All five signals are always used: if one is missing, the index is not shown.'),
-    sources: [[L('les cinq signaux ci-dessous', 'the five signals below'), '#spread'], [L('formule ouverte', 'open formula'), 'https://github.com/micka2000/vigie-dette-france/blob/main/score.mjs']],
+    quoi: L('Une note de 0 à 100 qui résume en un chiffre l’état de la dette française, à partir des cinq signaux ci-dessous.',
+      'A score from 0 to 100 that sums up the state of French debt in a single figure, from the five signals below.'),
+    pourquoi: L('Plus elle est haute, plus la situation est tendue. « Plus haut depuis » dit si l’on n’a pas vu pire depuis longtemps : il compare le chiffre du jour à chaque journée depuis 2008.',
+      'The higher it is, the more strained the situation. “Highest since” tells whether things have not been this bad for a long time: it compares today’s figure with every day since 2008.'),
+    lire: L('De 0 à 25 : calme. De 25 à 50 : vigilance. De 50 à 75 : tension. Au-delà de 75 : crise. L’indice est la moyenne de deux parties : ce que les marchés exigent pour prêter à la France (écart de taux avec l’Allemagne, demande lors des emprunts) et ses fragilités de fond (part détenue par l’étranger, notes des agences, solde TARGET2). Il n’est affiché que si les cinq signaux sont disponibles.',
+      'From 0 to 25: calm. From 25 to 50: watch. From 50 to 75: stress. Above 75: crisis. The index is the average of two parts: what markets demand to lend to France (rate gap with Germany, demand at auctions) and its underlying weaknesses (share held abroad, agency ratings, TARGET2 balance). It is shown only when all five signals are available.'),
+    qui: L('Vigie Dette France, recalculé chaque matin à partir des sources de chaque signal',
+      'Vigie Dette France, recalculated every morning from the sources of each signal'),
+    sources: [[L('les cinq signaux', 'the five signals'), '#spread'], [L('formule ouverte', 'open formula'), 'https://github.com/micka2000/vigie-dette-france/blob/main/score.mjs']],
   }),
 };
 
