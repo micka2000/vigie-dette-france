@@ -326,10 +326,11 @@ footer p { margin: 0; max-width: 80ch; }
 .desc[open] .desc-fermer { display: inline; }
 /* Empilées sur mobile et dans les jauges ; sur tablette, le calcul à droite ; sur grand écran, trois colonnes */
 .desc-corps { margin-top: var(--space-2); display: grid; gap: var(--space-2) var(--space-6); align-items: start; }
-/* Quatre parties : une colonne sur mobile ; au-delà, grille 2 × 2 remplie colonne par colonne,
-   pour que chaque paragraphe de droite parte à la hauteur de celui de gauche */
+/* Quatre parties : une colonne sur mobile ; au-delà, deux colonnes de journal. Le texte coule de l'une à l'autre :
+   pas de trou sous un paragraphe court (une grille alignait les rubriques mais laissait des blancs) */
 @media (min-width: 700px) {
-  :is(.signal, .masthead) .desc-corps { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; grid-auto-flow: column; gap: var(--space-3) var(--space-8); }
+  :is(.signal, .masthead) .desc-corps { display: block; columns: 2; column-gap: var(--space-8); }
+  :is(.signal, .masthead) .desc-corps > p { break-inside: avoid; margin-bottom: var(--space-3); }
 }
 .desc-corps p { margin: 0; line-height: 1.55; text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
 .desc-corps b { font-family: var(--font-display); font-weight: 600; color: var(--fg-1); }
