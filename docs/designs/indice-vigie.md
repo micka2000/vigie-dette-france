@@ -66,20 +66,20 @@ La méthode a changé après relecture. Le document proposait d'abord un centile
 | Solde TARGET2 (sens inversé) | BCE TGB, `data/target.json` | +50 Md€ | -50 Md€ | -120 Md€ | -200 Md€ | -300 Md€ |
 | CISS France (lecture officielle, hors indice) | BCE CISS, `data/ciss.json` | 0 | 0,10 | 0,20 | 0,35 | 0,80 |
 
-- **Notes.** Les trois agences sont S&P, Moody's et Fitch, et on retient la note la plus basse des trois. L'échelle va de 0 (AAA) à 9 (BBB-), et Moody's se convertit cran pour cran : Aaa = AAA, Aa1 = AA+, Aa2 = AA, Aa3 = AA-, A1 = A+, A2 = A, A3 = A-, Baa1 = BBB+, Baa2 = BBB, Baa3 = BBB-. Les ancrages en crans sont 0 → 0, 3 → 25, 4 → 50, 7 → 75, 9 → 100. Au-delà de BBB-, le score reste à 100. Dans le code, les crans perdus valent `20 - notch(note)`, où `notch()` est la fonction existante de `app.js` (AAA = 20), déplacée dans `score.js`. Les perspectives et les mises sous surveillance ne changent pas le score : elles s'affichent en texte à côté.
+- **Notes.** Les trois agences sont S&P, Moody's et Fitch, et on retient la note la plus basse des trois. L'échelle va de 0 (AAA) à 9 (BBB-), et Moody's se convertit cran pour cran : Aaa = AAA, Aa1 = AA+, Aa2 = AA, Aa3 = AA-, A1 = A+, A2 = A, A3 = A-, Baa1 = BBB+, Baa2 = BBB, Baa3 = BBB-. Les ancrages en crans sont 0 → 0, 3 → 25, 4 → 50, 7 → 75, 9 → 100. Au-delà de BBB-, le score reste à 100. Dans le code, les crans perdus valent `20 - notch(note)`, où `notch()` est la fonction existante de `app.js` (AAA = 20), déplacée dans `score.mjs`. Les perspectives et les mises sous surveillance ne changent pas le score : elles s'affichent en texte à côté.
 - **CISS.** Ses ancrages viennent de son historique depuis 1999 : 0,10 est à peu près le 75e centile, 0,20 se situe entre le 75e et le 90e (0,28), 0,35 entre le 90e et le 95e (0,42), et 0,80 correspond au maximum de 2008.
 - **Niveaux.** Les mêmes seuils servent pour chaque score, chaque sous-indice, l'Indice Vigie et le CISS : moins de 25 = calme, de 25 inclus à 50 exclu = vigilance, de 50 inclus à 75 exclu = tension, 75 et plus = crise. Un score égal à un seuil prend donc le niveau le plus grave. Exception, pour rester identique à la page actuelle : le niveau d'un signal seul se lit sur sa valeur brute, avec les seuils déjà publiés. Pour les signaux où une valeur haute est mauvaise, une valeur égale au seuil prend le niveau le plus grave (spread de 50 pb exactement = vigilance). Pour les signaux inversés, elle prend le niveau le moins grave (couverture de 2,0 exactement = vigilance). Les seuils de score (25, 50, 75) servent pour les sous-indices, l'Indice Vigie et le CISS. La section Méthode le dit en une phrase : « le niveau d'un signal se lit sur sa valeur brute ; pour un signal inversé pile sur un seuil, le score peut valoir 50 avec le niveau vigilance ». Le cas d'une couverture de 2,0 fait partie des tests aux bornes.
-- **Arrondis.** Les calculs restent en valeurs non arrondies jusqu'au bout. Seul l'affichage arrondit à l'entier le plus proche, et le niveau se lit sur la valeur non arrondie.
+- **Arrondis.** Les calculs restent en valeurs non arrondies jusqu'au bout. Seul l'affichage arrondit à l'entier le plus proche, et le niveau se lit sur la valeur non arrondie. Le spread et TARGET2 se calculent dans `score.mjs` à partir des valeurs brutes (`fr10` et `de10`, solde en M€), avec la même règle pour le fichier et la lecture en direct : une donnée ne change pas de niveau quand la BCE en direct remplace le fichier (D6).
 - **Regroupement.** Le sous-indice « Tension sur la dette » est la moyenne du spread et de la couverture. Le sous-indice « Vulnérabilité de fond » est la moyenne des non-résidents, des notes et de TARGET2. TARGET2 y est classé parce que son solde bouge lentement et dépend en grande partie des achats de titres de la BCE. Classé dans la tension de marché, il donnerait aujourd'hui un stress supérieur à celui de 2011, ce qui est faux. L'Indice Vigie est la moyenne des deux sous-indices.
 - **Poids effectifs.** Spread 25 %, couverture 25 %, non-résidents 16,7 %, notes 16,7 %, TARGET2 16,7 %. Ils sont affichés dans la section Méthode.
-- **Signal manquant ou périmé.** Une valeur reste valable tant que (mois du calcul − mois de la donnée) ne dépasse pas 2 pour une série mensuelle (spread, TARGET2), 3 pour la couverture (une adjudication 10 ans par mois en temps normal) et 15 pour les non-résidents, sans limite pour les notes. Le mois du calcul est celui de l'exécution pour l'état du jour, et celui du point pour la courbe historique. Un signal périmé sort de la moyenne de son sous-indice, et la page le dit (« calculé sans : couverture, donnée de plus de 3 mois »). Si un sous-indice n'a plus aucun signal, l'Indice Vigie n'est pas affiché. La même règle vaut pour l'historique : un point de la courbe existe dès que chaque sous-indice a au moins un signal valable. L'indice est donc calculable dès janvier 2008 : la tension sur la dette a le spread, le fond a les notes et TARGET2.
-- **Code.** Tout le calcul vit dans un module pur, `score.js`, chargé par `app.js` et testé sur des valeurs connues. Les tests couvrent : interpolation, sens inversé, plafond, notes Moody's et S&P, signal périmé, niveaux aux bornes et phrase de verdict.
+- **Signal manquant ou périmé.** Une valeur reste valable tant que (mois du calcul − mois de la donnée) ne dépasse pas 2 pour le spread, 3 pour TARGET2 (publié avec 7 à 8 semaines de décalage, D27), 3 pour la couverture (une adjudication 10 ans par mois en temps normal) et 15 pour les non-résidents, sans limite pour les notes. Le mois du calcul est celui de l'exécution pour l'état du jour, toujours en UTC, dans la page comme dans l'Action (D6), et celui du point pour la courbe historique. Un signal périmé sort de la moyenne de son sous-indice, et la page le dit (« calculé sans : couverture, donnée de plus de 3 mois »). Si un sous-indice n'a plus aucun signal, l'Indice Vigie n'est pas affiché. La même règle vaut pour l'historique : un point de la courbe existe dès que chaque sous-indice a au moins un signal valable. L'indice est donc calculable dès mai 2008, premier mois de TARGET2 (O4, D26) : la tension sur la dette a le spread, le fond a les notes et TARGET2.
+- **Code.** Tout le calcul vit dans un module pur, `score.mjs`, chargé par `app.js` et testé sur des valeurs connues. Les tests couvrent : interpolation, sens inversé, plafond, notes Moody's et S&P, signal périmé, niveaux aux bornes et phrase de verdict.
 
 ### Ajouts de la revue CEO : spécifications
 
-**Source unique des chiffres publiés.** La GitHub Action calcule chaque matin l'état du jour avec `score.js` et l'écrit dans `data/indice.json` : scores, niveaux, phrase de verdict, dates des données, version de méthode. Le flux RSS et l'image de partage sont produits à partir de ce fichier. La page recalcule le même état dans le navigateur, avec les séries BCE lues en direct quand elles sont plus récentes. Si le niveau de I diffère de celui de `data/indice.json`, la page affiche les deux dates : « Image et flux du [date] : [niveau de I] ». `data/indice.json` ne contient aucune heure d'exécution, seulement des dates de données, pour ne pas créer de commit quand rien ne change.
+**Source unique des chiffres publiés.** La GitHub Action calcule chaque matin l'état du jour avec `score.mjs` et l'écrit dans `data/indice.json` : scores, niveaux, phrase de verdict, dates des données, version de méthode. Le flux RSS et l'image de partage sont produits à partir de ce fichier. La page recalcule le même état dans le navigateur, avec les séries BCE lues en direct quand elles sont plus récentes. Si le niveau de I diffère de celui de `data/indice.json`, la page affiche les deux dates : « Image et flux du [date] : [niveau de I] ». `data/indice.json` ne contient aucune heure d'exécution, seulement des dates de données, pour ne pas créer de commit quand rien ne change.
 
-**Format de `score.js`.** C'est un module ES (`export function …`), sans accès au DOM. `index.html` charge `app.js` avec `<script type="module">`, et `app.js` importe `score.js` ; d3 reste chargé en script classique avant, comme variable globale. Node l'importe tel quel dans l'Action et dans `score.test.mjs` (`node --test`). Un `package.json` minimal, sans dépendance, contenant `{"type": "module", "private": true}`, garantit que Node lit `score.js` comme un module ES. L'Action fixe `node-version: 22`. Conséquences du passage en module : `app.js` s'exécute après le chargement de la page et en mode strict. Le script en ligne d'`index.html` (thème, lignes 9 à 11) ne dépend d'aucune variable d'`app.js`. En local, la page s'ouvre avec `python3 -m http.server`, pas en `file://` (déjà indiqué dans le README).
+**Format de `score.mjs`.** C'est un module ES (`export function …`), sans accès au DOM. L'extension `.mjs` suffit à Node : pas de `package.json` (D1 de la revue d'ingénierie). `index.html` charge `app.js` avec `<script type="module">`, et `app.js` importe `./score.mjs?v=[version]` pour qu'un navigateur ne mélange pas un nouvel `app.js` et un ancien `score.mjs` pendant les 10 minutes de cache de Pages. d3 reste chargé en script classique avant, comme variable globale. Un petit script classique en ligne affiche « La page n'a pas pu se charger » si `app.js` n'a pas signalé son démarrage après 10 s (fichier absent, mauvais type MIME, erreur de syntaxe ou export manquant), au lieu de laisser « Chargement… » (D6). Node l'importe tel quel dans `score.test.mjs` (`node --test`), lancé par `tests.yml` avec `node-version: 22` (D4). Conséquences du passage en module : `app.js` s'exécute après le chargement de la page et en mode strict. Le script en ligne d'`index.html` (thème, lignes 9 à 11) ne dépend d'aucune variable d'`app.js`. En local, la page s'ouvre avec `python3 -m http.server`, pas en `file://` (déjà indiqué dans le README).
 
 **Flux RSS (CEO-E1).**
 - Fichier `feed.xml` (RSS 2.0) à la racine, annoncé dans `index.html` par `<link rel="alternate" type="application/rss+xml">`. Canal : `title` « Vigie Dette France », `link` l'URL du site, `description` « Changements de niveau de l'Indice Vigie et de ses signaux », `language` `fr`, et `atom:link rel="self"` vers l'URL du flux.
@@ -96,13 +96,13 @@ La méthode a changé après relecture. Le document proposait d'abord un centile
 - Polices : librsvg passe par fontconfig et ignore les fichiers référencés dans le SVG. L'Action copie donc `fonts/*.ttf` dans `~/.local/share/fonts` puis lance `fc-cache -f`. Le SVG nomme les familles « Bricolage Grotesque » et « Roboto ». Les symboles de niveau ▲ et ◆ n'existent pas dans ces polices (vérifié par `fc-query` en relecture) : dans `og.svg`, les quatre symboles sont dessinés en formes SVG (`<circle>`, `<path>`) et non en texte. Sur la page, ils viennent de la police de secours du navigateur, comme aujourd'hui. Le rendu des graisses avec ces polices variables est vérifié une fois au premier passage, sur une capture.
 - L'Action installe `librsvg2-bin` (`apt-get`) et convertit avec `rsvg-convert` vers `og.png`.
 - Balises de partage : les aperçus des réseaux n'exécutent pas JavaScript. `build_outputs.mjs` réécrit donc dans `index.html`, entre deux commentaires repères `<!-- og:start -->` et `<!-- og:end -->`, les balises `og:title` (« Indice Vigie : [score]/100, [niveau] (données du [date]) »), `og:description` (= phrase de verdict), `og:image:width` = 1200, `og:image:height` = 630, `og:image` en URL absolue (`https://micka2000.github.io/vigie-dette-france/og.png?v=[date des données]`) et `twitter:card` = `summary_large_image`.
-- Indice incalculable : l'image affiche les sous-indices disponibles et la même phrase « Indice incomplet : il manque [signaux] … » produite par `score.js`. CISS indisponible : la phrase utilise la variante « Indice de la BCE indisponible ».
+- Indice incalculable : l'image affiche les sous-indices disponibles et la même phrase « Indice incomplet : il manque [signaux] … » produite par `score.mjs`. CISS indisponible : la phrase utilise la variante « Indice de la BCE indisponible ».
 - Règle unique de réécriture : `build_outputs.mjs` calcule une clé de l'image (score affiché, niveau, phrase de verdict, date des données, version de méthode) et la compare à `cle_image` enregistrée dans `data/indice.json`. Le rendu `rsvg-convert` et le commit de `og.png` n'ont lieu que si la clé a changé ; la nouvelle clé est alors enregistrée. Une mise à jour de librsvg ou des polices ne crée donc aucun commit tant que le contenu ne change pas. Comme la date des données fait partie de l'image, celle-ci change en pratique à chaque nouvelle donnée, soit à peu près chaque jour ouvré à cause du CISS. Coût accepté : un PNG d'environ 50 Ko par jour dans l'historique Git.
 
 **Journal de méthode (CEO-E4).**
-- `score.js` exporte `METHODE_VERSION` au format `MAJEUR.MINEUR`. MAJEUR change quand un ancrage, un poids ou le classement d'un signal change, car les scores historiques changent alors. MINEUR change pour une règle d'affichage ou de phrase qui ne change aucun score.
+- `score.mjs` exporte `METHODE_VERSION` au format `MAJEUR.MINEUR`. MAJEUR change quand un ancrage, un poids ou le classement d'un signal change, car les scores historiques changent alors. MINEUR change pour une règle d'affichage ou de phrase qui ne change aucun score.
 - `data/methode.json` : liste de `{version, date, changement, raison}`. Première entrée : `{"version": "1.0", "date": "[date de mise en ligne]", "changement": "Première version de l'Indice Vigie", "raison": "Revue CEO du 2026-10-20"}`.
-- Toute la courbe historique est recalculée avec la version courante, et la section Méthode le dit en toutes lettres. Un test vérifie que la dernière version de `methode.json` est égale à `METHODE_VERSION`.
+- Toute la courbe historique est recalculée avec la version courante, et la section Méthode le dit en toutes lettres. Un test vérifie que la dernière version de `methode.json` est égale à `METHODE_VERSION` ; il arrive en V2 avec `methode.json` (T12, D5).
 
 **Voisins de la zone euro (CEO-E2).**
 - Séries BCE IRS `M.IT`, `M.ES`, `M.PT`, `M.GR` (vérifiées en relecture : 333 mois chacune), écart au Bund calculé comme pour la France. Elles sont ajoutées à `update_data.py` dans `data/spreads_ze.json` (fichier de secours) et lues en direct après le premier affichage de la page.
@@ -112,7 +112,7 @@ La méthode a changé après relecture. Le document proposait d'abord un centile
 
 **GitHub Action.** `update-data.yml` gagne quatre étapes : `actions/setup-node` avec `node-version: 22`, l'installation de `librsvg2-bin` avec la copie des polices et `fc-cache -f`, `node scripts/build_outputs.mjs`, puis `rsvg-convert` si la clé de l'image a changé (voir Image de partage). L'étape `git add` existante est étendue à `feed.xml`, `og.png` et `index.html`. Le contrôle avant commit porte sur tout `data/` sauf `meta.json`, et sur `feed.xml`, `og.png` et `index.html` (balises de partage).
 
-**Fichiers touchés (recompte).** Code : `score.js` (nouveau), `score.test.mjs` (nouveau), `scripts/build_outputs.mjs` (nouveau), `package.json` (nouveau, sans dépendance), `app.js`, `index.html`, `styles.css`, `scripts/update_data.py`, `.github/workflows/update-data.yml`, `.gitignore`, soit 10 fichiers. Données et sorties : `data/ciss.json`, `data/spreads_ze.json`, `data/indice.json`, `data/methode.json`, `data/notations.json`, `data/adjudications.json`, `data/meta.json`, `feed.xml`, `og.png` (et `og.svg`, temporaire, ignoré par Git). Documents : `TODOS.md`, ce fichier. Dépendances : aucune dépendance npm ; un paquet système dans l'Action (`librsvg2-bin`).
+**Fichiers touchés (recompte).** Code : `score.mjs` (nouveau), `score.test.mjs` (nouveau), `test/workflow.test.mjs` (nouveau), `scripts/test_update_data.py` (nouveau), `scripts/build_outputs.mjs` (nouveau, V2), `.github/workflows/tests.yml` (nouveau), `app.js`, `index.html`, `styles.css`, `scripts/update_data.py`, `.github/workflows/update-data.yml`, `.gitignore`, soit 12 fichiers. Copie figée : `test/fixtures/2026-10-20/` (ENG-R1). Données et sorties : `data/ciss.json`, `data/spreads_ze.json`, `data/indice.json`, `data/methode.json`, `data/notations.json`, `data/adjudications.json`, `data/meta.json`, `feed.xml`, `og.png` (et `og.svg`, temporaire, ignoré par Git). Documents : `TODOS.md`, ce fichier. Dépendances : aucune dépendance npm ; un paquet système dans l'Action (`librsvg2-bin`).
 
 ### Valeurs d'aujourd'hui (données du 20/10/2026)
 
@@ -120,7 +120,7 @@ Calculées avec la méthode ci-dessus, TARGET2 classé dans le fond :
 
 - Spread 96,7 pb (moyenne de septembre) → 60,4 ; couverture 2,0035 (12,564 Md€ demandés pour 6,271 servis, 1er octobre) → 49,8, niveau vigilance ; **Tension sur la dette → 55,1, affiché 55, niveau tension**.
 - Non-résidents 57,5 % → 62,5 ; note la plus basse A+ → 50 ; TARGET2 -181,3 Md€ → 69,2 ; **Vulnérabilité de fond → 60,6, affiché 61, niveau tension**.
-- **Indice Vigie → 57,8, affiché 58/100, niveau tension.** C'est aussi le plus haut de la série reconstituée depuis janvier 2008, mais cette série est calculée sans les non-résidents avant 2022 : cette comparaison n'est pas affichée (CEO-D1).
+- **Indice Vigie → 57,8, affiché 58/100, niveau tension.** C'est aussi le plus haut de la série reconstituée depuis mai 2008, mais cette série est calculée sans les non-résidents avant 2022 : cette comparaison n'est pas affichée (CEO-D1).
 - CISS 0,044 → 11, niveau calme.
 - Repères historiques calculés avec la même méthode et les signaux disponibles à chaque date : novembre 2011 → 53 (tension sur la dette 86, fond 19, calculé sans les non-résidents) ; décembre 2008 → 25 ; avril 2020 → 25 ; juillet 2024 → 42.
 
@@ -137,33 +137,33 @@ La phrase s'appuie sur le niveau de l'Indice Vigie (I), le même que celui affic
    - crise : « La dette française est en zone de crise »
    Suivi d'un complément quand T et V n'ont pas le même niveau : « , surtout sur les marchés. » si T est plus haut, « , surtout sur le fond (détenteurs, notes, TARGET2). » si V est plus haut, sinon un simple point.
 2. **Partie BCE**, en comparant le niveau de C à celui de I :
-   - C plus bas que I : « Le stress financier global mesuré par la BCE est plus bas ([niveau de C]) : pas de contagion au reste du système financier. »
+   - C plus bas que I : « Le stress financier global mesuré par la BCE reste [niveau de C] : la tension reste concentrée sur la dette. » (formulation prudente, D30)
    - C au même niveau que I : « Le stress financier global mesuré par la BCE est au même niveau ([niveau de C]). »
    - C plus haut que I, avec I au-dessus de calme : « Le stress financier global mesuré par la BCE est plus élevé ([niveau de C]) : la tension ne vient pas que de la dette. »
    - C plus haut que I, avec I calme : « Le stress financier global mesuré par la BCE est plus élevé ([niveau de C]) : il vient d'ailleurs que de la dette. »
    - C indisponible : « Indice de la BCE indisponible pour le moment. »
-3. **Indice incalculable** (un sous-indice sans signal valable) : la partie dette devient « Indice incomplet : il manque [signaux] », suivie de la partie BCE comparée au sous-indice disponible. Cette chaîne unique est produite par `score.js` (`phraseVerdict()`) et réutilisée telle quelle par la page, le flux, l'image et `og:description`.
+3. **Indice incalculable** (un sous-indice sans signal valable) : la partie dette devient « Indice incomplet : il manque [signaux] », suivie de la partie BCE comparée au sous-indice disponible. Cette chaîne unique est produite par `score.mjs` (`phraseVerdict()`) et réutilisée telle quelle par la page, le flux, l'image et `og:description`.
 
 Exemples de phrases complètes :
-- Aujourd'hui (I tension, T tension, V tension, C calme) : « La dette française est sous tension. Le stress financier global mesuré par la BCE est plus bas (calme) : pas de contagion au reste du système financier. »
-- I vigilance, T calme, V tension, C calme : « Les signaux de la dette française appellent à la vigilance, surtout sur le fond (détenteurs, notes, TARGET2). Le stress financier global mesuré par la BCE est plus bas (calme) : pas de contagion au reste du système financier. »
+- Aujourd'hui (I tension, T tension, V tension, C calme) : « La dette française est sous tension. Le stress financier global mesuré par la BCE reste calme : la tension reste concentrée sur la dette. »
+- I vigilance, T calme, V tension, C calme : « Les signaux de la dette française appellent à la vigilance, surtout sur le fond (détenteurs, notes, TARGET2). Le stress financier global mesuré par la BCE reste calme : la tension reste concentrée sur la dette. »
 - I tension, T crise, V calme, C crise : « La dette française est sous tension, surtout sur les marchés. Le stress financier global mesuré par la BCE est plus élevé (crise) : la tension ne vient pas que de la dette. »
 
-Les tests de `score.js` parcourent toutes les combinaisons atteignables. Un couple de niveaux (T, V) peut donner plusieurs niveaux de I (T calme et V crise donnent I entre 37,5 et 62,5, donc vigilance ou tension). Les tests énumèrent donc les triplets (I, T, V) atteignables, calculés par le test à partir des bornes, et les croisent avec les 5 cas de C (4 niveaux et « indisponible »), plus la variante « indice incomplet ».
+Les tests de `score.mjs` parcourent toutes les combinaisons atteignables. Un couple de niveaux (T, V) peut donner plusieurs niveaux de I (T calme et V crise donnent I entre 37,5 et 62,5, donc vigilance ou tension). Les tests énumèrent donc les triplets (I, T, V) atteignables, calculés par le test à partir des bornes, et les croisent avec les 5 cas de C (4 niveaux et « indisponible »), plus la variante « indice incomplet ».
 
 ### Structure de page (de haut en bas)
 
-1. **En-tête** : la phrase de verdict, l'Indice Vigie sur 100 avec son libellé et son symbole de niveau, la date des données et le numéro de version de la méthode. Les lignes de repère historique (« plus haut depuis… », comparaison avec 2011) sont reportées jusqu'à la série longue des non-résidents (CEO-D1, TODOS.md). La promesse « X % du pic de 2011 » est retirée.
+1. **En-tête** : la phrase de verdict, l'Indice Vigie sur 100 avec son libellé et son symbole de niveau, la date des données et le numéro de version de la méthode. Les lignes de repère historique (« plus haut depuis… », comparaison avec 2011) sont reportées jusqu'à la série longue des non-résidents (CEO-D1, TODOS.md). La promesse « X % du pic de 2011 » est retirée. La phrase actuelle « Sur cinq signaux : 4 en tension… » (`app.js:385`) est retirée : la phrase de verdict la remplace, et chaque carte garde son niveau (D9).
 2. **Deux sous-indices et le CISS**, chacun avec son score, son libellé, son symbole et sa date en texte. Un encadré fixe explique la différence entre les deux mesures quand le niveau de I et celui de C diffèrent, la même comparaison que la phrase de verdict. Le CISS mesure un stress aigu sur l'ensemble des marchés financiers ; la tension sur la dette mesure ce que les investisseurs exigent de la France. Les deux peuvent diverger.
-3. **Courbe dans le temps**, au pas mensuel (dernière valeur de chaque mois). Chaque point est calculé avec les signaux valables à cette date (règle de péremption ci-dessus). Les ancrages sont fixes, donc une date passée ne dépend pas des données postérieures. Il y a deux tracés : la Tension sur la dette depuis 1999 (spread seul jusqu'en novembre 2025, puis avec la couverture) et l'Indice Vigie depuis janvier 2008, premier mois où chaque sous-indice a un signal. Le CISS est en pointillé. Les crises sont marquées : Lehman, crise de l'euro, Covid, dissolution de 2024. Les tronçons calculés avec moins de signaux portent une mention « calculé sans : … ».
+3. **Courbe dans le temps**, au pas mensuel (dernière valeur de chaque mois ; maximum du mois pour le CISS, O13). Chaque point est calculé avec les signaux valables à cette date (règle de péremption ci-dessus). Les ancrages sont fixes, donc une date passée ne dépend pas des données postérieures. Il y a deux tracés : la Tension sur la dette depuis 1999 (spread seul jusqu'en novembre 2025, puis avec la couverture) et l'Indice Vigie depuis mai 2008, premier mois où chaque sous-indice a un signal. Le CISS est en pointillé ; son point du mois en cours porte « maximum du mois à ce jour », recalculé dans la page avec les 60 valeurs quotidiennes lues en direct, et son infobulle donne aussi la valeur du jour affichée dans l'en-tête (D7). Les crises sont marquées : Lehman, crise de l'euro, Covid, dissolution de 2024. Les tronçons calculés avec moins de signaux portent une mention « calculé sans : … ».
 4. **Les cinq signaux existants**, avec en plus leur score et le badge « saisi à la main le … » sur les adjudications et les notes.
-5. **Section Méthode** : le tableau des ancrages, les poids effectifs, les règles de péremption, les règles de la phrase de verdict, et un lien vers `score.js` et `data/`.
+5. **Section Méthode** : le tableau des ancrages, les poids effectifs, les règles de péremption, les règles de la phrase de verdict, et un lien vers `score.mjs` et `data/`.
 
 ### Données en échec
 
 - L'ordre des sources est le même que pour le spread aujourd'hui : lecture BCE en direct, puis le fichier `data/*.json` écrit chaque jour par l'Action.
 - Chaque score affiche la date de sa donnée (« données du … »), qu'elle soit automatique ou saisie.
-- Si le CISS dépasse 7 jours d'âge ou manque, sa jauge affiche « Indisponible ». La phrase de verdict passe à la variante « Indice de la BCE indisponible », et l'encadré d'écart est masqué.
+- Si le CISS dépasse 10 jours d'âge (O13) ou manque, sa jauge affiche « Indisponible ». La phrase de verdict passe à la variante « Indice de la BCE indisponible », et l'encadré d'écart est masqué.
 - Si l'Indice Vigie ne peut pas être calculé (sous-indice vide), l'en-tête affiche les sous-indices disponibles et la phrase de verdict, qui commence alors par « Indice incomplet : il manque [signaux] ».
 
 ### Accessibilité
@@ -179,7 +179,7 @@ Chaque jauge montre en texte le score, le libellé du niveau et son symbole (●
 ## Success Criteria
 
 - Un lecteur non économiste répond correctement à « la France va-t-elle bien ? » après 10 secondes sur la page. Le test se fait avec 3 personnes différentes de celles du test de départ (voir The Assignment).
-- Chaque score affiché se recalcule à la main depuis la section Méthode et les fichiers de `data/`, et `score.js` passe ses tests.
+- Chaque score affiché se recalcule à la main depuis la section Méthode et les fichiers de `data/`, et `score.mjs` passe ses tests.
 - Quand le niveau de l'Indice Vigie et celui du CISS diffèrent, l'encadré qui explique l'écart est visible.
 - Toute donnée affichée porte sa date ; toute donnée saisie à la main porte en plus sa source.
 - La page reste lisible à 390 px de large et dans les deux thèmes.
@@ -196,7 +196,7 @@ GitHub Pages sur `main` et la lecture BCE en direct restent inchangés. La GitHu
 
 0. Faire le test de départ (The Assignment) avant toute ligne de code.
 1. Vérifier sur source l'historique des notes (`data/notations.json`) et sourcer chaque point non-résidents.
-2. Écrire `score.js` (module ES) et `score.test.mjs` : ancrages, sens inversé, notes, péremption, niveaux aux bornes, phrase de verdict, combinaisons atteignables, `METHODE_VERSION` égale à `methode.json`.
+2. Écrire `score.mjs` (module ES) et `score.test.mjs` : ancrages, sens inversé, notes, péremption, niveaux aux bornes, phrase de verdict, combinaisons atteignables. Le test de `METHODE_VERSION` arrive en V2 (T12). Ordre détaillé : voir Implementation Tasks, qui fait foi.
 3. Ajouter le CISS et les quatre spreads voisins à `scripts/update_data.py` et à la lecture en direct.
 4. Construire l'en-tête, les deux sous-indices, la jauge CISS et l'encadré d'écart ; passer `app.js` en module.
 5. Construire la courbe mensuelle, les spreads voisins et la section Méthode avec le journal de méthode.
@@ -325,7 +325,7 @@ Le vrai problème : un citoyen non économiste ne sait pas dire si la dette fran
 | Notes en crans | `app.js` `notch()` | Base du score des notes |
 | Mise à jour quotidienne | `.github/workflows/update-data.yml:5` (cron 06:30 UTC) | Inchangée |
 
-Aucune reconstruction : tout s'ajoute aux fonctions existantes, plus un module pur `score.js`.
+Aucune reconstruction : tout s'ajoute aux fonctions existantes, plus un module pur `score.mjs`.
 
 **Table des prémisses factuelles**
 
@@ -358,7 +358,7 @@ unverified=4 (P6, P7, P8, P10), faux=2 (P4, P5).
 Le plan va dans cette direction. Il pose la méthode et la crédibilité, sur lesquelles tout le reste s'appuie.
 
 REALITY: premise-table finding unverified=4, faux=2 (P4 ligne 58, P5 ligne 88) docs/designs/indice-vigie.md:58
-REALITY: already-done pass aucun commit sur origin/main depuis le 2026-10-20 touchant app.js, score.js, scripts/update_data.py ; score.js et data/ciss.json absents app.js:77
+REALITY: already-done pass aucun commit sur origin/main depuis le 2026-10-20 touchant app.js, score.mjs, scripts/update_data.py ; score.mjs et data/ciss.json absents app.js:77
 REALITY: surface-check pass séries BCE IRS, TGB et CISS vérifiées en direct ; cron vérifié .github/workflows/update-data.yml:5
 REALITY: binding-decisions pass gstack-decision-search --scope branch --recent 50 : aucune décision ; décisions OH-1 à OH-3 de cette séance docs/designs/indice-vigie.md:46
 REALITY: numbers finding P4 et P5 recalculés et faux ; valeurs d'aujourd'hui recalculées [measured: data/*.json 2026-10-20] docs/designs/indice-vigie.md:82
@@ -371,7 +371,7 @@ Mode : SELECTIVE EXPANSION ; décisions approuvées : OH-1, OH-2, OH-3. Provenan
 
 ### 0G. Vérifications de maintien (incluses dans l'expansion sélective)
 
-1. **Complexité.** (Recompté après les ajouts : voir « Fichiers touchés », 10 fichiers de code dont 4 nouveaux.) Avant les ajouts : environ 10 fichiers touchés, mais 6 fichiers de code seulement : `score.js` (nouveau), `score.test.mjs` (nouveau, `node --test`, sans dépendance), `app.js`, `index.html`, `styles.css`, `scripts/update_data.py`. Les autres sont des données : `data/ciss.json` (généré), `data/notations.json`, `data/adjudications.json`. Aucun nouveau service. Pas de partie mobile à retirer : le module pur sépare le calcul de l'affichage.
+1. **Complexité.** (Recompté après les ajouts : voir « Fichiers touchés », 10 fichiers de code dont 4 nouveaux.) Avant les ajouts : environ 10 fichiers touchés, mais 6 fichiers de code seulement : `score.mjs` (nouveau), `score.test.mjs` (nouveau, `node --test`, sans dépendance), `app.js`, `index.html`, `styles.css`, `scripts/update_data.py`. Les autres sont des données : `data/ciss.json` (généré), `data/notations.json`, `data/adjudications.json`. Aucun nouveau service. Pas de partie mobile à retirer : le module pur sépare le calcul de l'affichage.
 2. **Minimum et éléments reportables.** Les repères historiques de l'en-tête (« plus haut depuis », « novembre 2011 ») dépendent de la question ouverte n°1 : ils peuvent être faux tant que la série longue des non-résidents manque. Le report de ces repères fait l'objet de la question CEO-D1.
 3. **Réparations dans le périmètre** (nécessaires pour tenir l'hypothèse 4, sans question) :
    - corriger P4 : 50 pb ≈ 69e centile, 80 pb ≈ 95e ;
@@ -394,7 +394,7 @@ Mode : SELECTIVE EXPANSION ; décisions approuvées : OH-1, OH-2, OH-3. Provenan
 
 Conséquences pour le plan :
 - L'en-tête affiche la phrase de verdict, l'Indice Vigie, son niveau et la date, sans les deux lignes de repère (CEO-D1).
-- Le calcul du score doit tourner à la fois dans le navigateur et dans l'Action (RSS, image). `score.js` est donc un module JavaScript pur, sans accès au DOM, exécuté par Node dans l'Action.
+- Le calcul du score doit tourner à la fois dans le navigateur et dans l'Action (RSS, image). `score.mjs` est donc un module JavaScript pur, sans accès au DOM, exécuté par Node dans l'Action.
 
 ### Hors périmètre
 
@@ -408,7 +408,7 @@ Résumé CEO : `~/.gstack/projects/micka2000-vigie-dette-france/ceo-plans/2026-1
 ### 0I. Interrogation temporelle
 
 ```
-  HEURE 1 (fondations)   score.js en module ES + package.json {"type":"module"} ; ancrages,
+  HEURE 1 (fondations)   score.mjs en module ES (sans package.json, D1 eng) ; ancrages,
                          notch() déplacé depuis app.js ; vérifier l'historique des notes sur source
   HEURES 2-3 (cœur)      phraseVerdict() et triplets (I,T,V) atteignables ; règles de péremption
                          en mois ; courbe mensuelle ; tests node --test
@@ -430,7 +430,7 @@ Bloquants de faisabilité : aucun. L'historique des notes (P6) doit être vérif
 
 ### Section 1 : Architecture
 
-Schéma : voir la conversation de revue, reporté ici en résumé. La BCE alimente la page (en direct) et l'Action (06:30 UTC). `score.js` est le seul module de calcul, importé par `app.js`, `build_outputs.mjs` et les tests. `build_outputs.mjs` écrit `data/indice.json`, `feed.xml`, `og.png` et les balises `og:*` d'`index.html`.
+Schéma : voir la conversation de revue, reporté ici en résumé. La BCE alimente la page (en direct) et l'Action (06:30 UTC). `score.mjs` est le seul module de calcul, importé par `app.js`, `build_outputs.mjs` et les tests. `build_outputs.mjs` écrit `data/indice.json`, `feed.xml`, `og.png` et les balises `og:*` d'`index.html`.
 - **WARNING** : un robot modifie `index.html` chaque jour. Correction : le README indique `git pull --rebase` avant tout `git push`.
 - Point de défaillance unique : l'API BCE. Secours : les fichiers de la veille (page) et l'isolation par série (CEO-R1).
 - Retour arrière : `git revert`, puis 1 à 2 minutes de republication sur Pages.
@@ -439,8 +439,10 @@ Schéma : voir la conversation de revue, reporté ici en résumé. La BCE alimen
 
 Décision CEO-R1 (D23 « A) Isoler et signaler ») :
 - `update_data.py` collecte chaque série dans son propre `try`, avec les exceptions nommées `urllib.error.URLError`, `HTTPError`, `KeyError` et `ValueError`. En cas d'échec, l'ancien fichier est conservé, et `data/meta.json` reçoit `{serie, date, erreur}` dans `echecs`.
-- Contrôle de forme après chaque collecte : nombre de lignes au moins égal à celui de la veille moins 1, et dernière date de moins de 70 jours (série mensuelle) ou de moins de 10 jours (CISS). Sinon, la série est traitée comme un échec.
-- `build_outputs.mjs` : un `indice.json` illisible ou une erreur de `score.js` conservent les sorties de la veille et sont notés dans `echecs`. Un échec de `rsvg-convert` conserve l'ancien `og.png`.
+- Contrôle de forme après chaque collecte : nombre de lignes au moins égal à celui de la veille moins 1, et dernière date plus récente que la limite de sa série (D3) : spread 70 jours, TARGET2 100 jours (80 jours le 20/10/2026), CISS 10 jours, Eurostat trimestriel (`dette_pib.json`) 200 jours, Eurostat annuel (`non_residents_eurostat.json`) 550 jours. Sinon, la série est traitée comme un échec. Un test lance ce contrôle sur les vrais fichiers de `data/` à la date du 20/10/2026 et attend zéro échec.
+- Fichier nouveau (premier passage, par exemple `data/ciss.json`) : pas de contrôle du nombre de lignes, seulement la limite de date et au moins 12 lignes (D6).
+- Couverture saisie à la main : si la dernière adjudication 10 ans a plus de 2 mois, l'Action ajoute « couverture à saisir » dans `echecs`, un mois avant que le signal sorte du calcul (D10).
+- `build_outputs.mjs` : un `indice.json` illisible ou une erreur de `score.mjs` conservent les sorties de la veille et sont notés dans `echecs`. Un échec de `rsvg-convert` conserve l'ancien `og.png`.
 - Le job produit tout ce qui peut l'être, commit, puis se termine en échec s'il y a des `echecs`. L'e-mail d'échec de GitHub prévient le propriétaire.
 - `concurrency: { group: update-data, cancel-in-progress: false }` dans `update-data.yml`.
 - Le pied de page affiche « Séries en retard : … » à partir de `meta.json`.
@@ -458,17 +460,17 @@ Décision CEO-R1 (D23 « A) Isoler et signaler ») :
 Décision CEO-L1 (D25 « A) Fichiers d'abord ») :
 - `loadAll()` affiche d'abord la page avec `data/*.json`. Chaque lecture BCE part ensuite séparément, avec `AbortController` et un délai de 8 s. Elle remplace sa série seulement si elle est plus récente que le fichier, puis relance `render()`.
 - Le badge d'en-tête indique « BCE en direct » ou « Données enregistrées » ; le détail par série apparaît dans le pied de page.
-- CISS : en direct, `startPeriod` = aujourd'hui moins 60 jours. `data/ciss.json` contient la moyenne mensuelle depuis 1985 et les 60 derniers jours en quotidien.
+- CISS : en direct, `startPeriod` = aujourd'hui moins 60 jours. `data/ciss.json` contient le maximum mensuel depuis 1985 (O13) et les 60 derniers jours en quotidien.
 - Les quatre voisins sont lus après le premier affichage (déjà prévu).
 - Tests : BCE muette (délai dépassé), BCE en erreur 500, réponse BCE plus ancienne que le fichier. Dans tous les cas, la page reste affichée avec les fichiers.
 - Ordre asynchrone : les deux ordres d'arrivée (lecture en direct avant ou après un changement de filtre ou de thème) sont sûrs, car `render()` relit `state.data` à chaque appel. Test : une lecture BCE résolue après un changement de période redessine avec la période choisie.
 
 ### Section 5 : Qualité du code
 
-- **Doublon à éviter (correction déterminée)** : `THRESHOLDS` (`app.js:7`) et les ancrages de `score.js` décrivent les mêmes seuils. `score.js` devient la seule source : il exporte `ANCRAGES` et `niveauBrut()`, et `app.js` en dérive l'affichage des seuils. Sans cela, la règle « le niveau d'un signal reste celui de la page » peut diverger.
-- **Doublon** : `notch()` (`app.js`) est déplacé dans `score.js`, comme déjà prévu.
+- **Doublon à éviter (correction déterminée)** : `THRESHOLDS` (`app.js:7`) et les ancrages de `score.mjs` décrivent les mêmes seuils. `score.mjs` devient la seule source : il exporte `ANCRAGES` et `niveauBrut()`, et `app.js` en dérive l'affichage des seuils. Sans cela, la règle « le niveau d'un signal reste celui de la page » peut diverger.
+- **Doublon** : `notch()` (`app.js`) est déplacé dans `score.mjs`, comme déjà prévu.
 - **Complexité** : `phraseVerdict()` dépasserait 5 branches. Elle se découpe en `partieDette(I, T, V)`, `partieBCE(I, C)` et `phraseIncomplete(manquants)`, chacune testée seule.
-- `compute()` (`app.js`) se réduit à l'affichage, et les calculs passent dans `score.js`.
+- `compute()` (`app.js`) se réduit à l'affichage, et les calculs passent dans `score.mjs`.
 - Pas de sur-ingénierie : pas de framework, pas de bundler, un seul module pur.
 
 ### Section 6 : Tests
@@ -476,13 +478,13 @@ Décision CEO-L1 (D25 « A) Fichiers d'abord ») :
 ```
  NOUVEAU                          | TYPE        | HEUREUX            | ÉCHEC                     | BORD
  ---------------------------------|-------------|--------------------|---------------------------|------------------------
- score.js ancrages / interpolation| unit        | valeurs du jour    | valeur NaN → erreur nommée| seuil exact, plafond
- score.js niveaux bruts inversés  | unit        | couverture 2,0035  | n/a                       | 2,0 exact = vigilance
- score.js notes (S&P, Moody's)    | unit        | A+ → 50            | note inconnue → erreur    | BBB- et au-delà = 100
- score.js péremption              | unit        | spread de 1 mois   | 3 mois → exclu            | 2 mois pile → gardé
- score.js phraseVerdict           | unit        | phrase du jour     | indice incomplet          | triplets (I,T,V) × 5 C
- score.js 5 lignes de 48 car.     | unit        | phrase du jour     | phrase la plus longue     | complément raccourci
- score.js METHODE_VERSION         | unit        | = methode.json     | écart → échec             |
+ score.mjs ancrages / interpolation| unit        | valeurs du jour    | valeur NaN → erreur nommée| seuil exact, plafond
+ score.mjs niveaux bruts inversés  | unit        | couverture 2,0035  | n/a                       | 2,0 exact = vigilance
+ score.mjs notes (S&P, Moody's)    | unit        | A+ → 50            | note inconnue → erreur    | BBB- et au-delà = 100
+ score.mjs péremption              | unit        | spread de 1 mois   | 3 mois → exclu            | 2 mois pile → gardé
+ score.mjs phraseVerdict           | unit        | phrase du jour     | indice incomplet          | triplets (I,T,V) × 5 C
+ score.mjs 5 lignes de 48 car. (V2)| unit        | phrase du jour     | phrase la plus longue     | complément raccourci
+ score.mjs METHODE_VERSION (V2)    | unit        | = methode.json     | écart → échec             |
  build_outputs RSS                | integration | 1 changement       | indice.json absent        | 2 passages le même jour
  build_outputs clé d'image        | integration | clé inchangée      | rsvg absent → garde png   | changement de version
  build_outputs balises og         | integration | repères présents   | repères absents → erreur  | texte avec & et <
@@ -491,13 +493,13 @@ Décision CEO-L1 (D25 « A) Fichiers d'abord ») :
  update-data.yml SHA              | unit        | 40 caractères      | étiquette → échec         |
 ```
 
-- Tests déjà approuvés ou découlant des décisions : ceux de `score.js` (OH-2), de CEO-R1, CEO-S1 et CEO-L1, et l'absence de doublon RSS (critère de réussite).
+- Tests déjà approuvés ou découlant des décisions : ceux de `score.mjs` (OH-2), de CEO-R1, CEO-S1 et CEO-L1, et l'absence de doublon RSS (critère de réussite).
 - `no_claim` : les tests de `build_outputs` ne prouvent pas l'aspect réel de l'image sur LinkedIn (rendu mocké : on vérifie le SVG, pas le PNG). Ils ne prouvent pas non plus que la BCE répond (réponses simulées).
 - Test du vendredi 2 h du matin : `node --test` vert, plus une exécution de `build_outputs.mjs` sur un `data/` copié, qui produit un `feed.xml` valide et une clé d'image stable.
 - Test du QA hostile : `notations.json` avec une note « AA » sans signe, ou une date au mauvais format. Attendu : une erreur nommée et notée dans `echecs`, sans chiffre faux publié.
 - Test chaos : supprimer `data/indice.json` et lancer deux fois de suite. Attendu : une seule entrée « Lancement ».
-- Pyramide : surtout des tests unitaires sur `score.js`. Rien ne dépend de l'heure (date injectée) ni du réseau (fetch simulé).
-- Commande : `node --test` et `python3 -m unittest scripts/test_update_data.py`, toutes deux lancées dans l'Action avant la collecte.
+- Pyramide : surtout des tests unitaires sur `score.mjs`. Rien ne dépend de l'heure (date injectée) ni du réseau (fetch simulé).
+- Commande : `node --test` et `python3 -m unittest scripts/test_update_data.py`, lancées par `.github/workflows/tests.yml` à chaque `push` et `pull_request`, avec `node-version: 22`. Elles ne tournent pas dans `update-data.yml` : un test cassé ne bloque jamais la collecte (D4).
 
 ### Section 7 : Performance
 
@@ -518,7 +520,7 @@ Décision CEO-L1 (D25 « A) Fichiers d'abord ») :
 ### Section 9 : Déploiement
 
 - Pas de migration ni de base. Déployer = pousser sur `main` ; Pages republie en 1 à 2 minutes.
-- Ordre : (1) `score.js`, ses tests et `package.json` ; (2) `app.js` en module, avec vérification locale sur `python3 -m http.server` ; (3) `update_data.py` ; (4) `build_outputs.mjs` et le workflow ; (5) lancement manuel de l'Action, puis vérification.
+- Ordre : (1) `score.mjs` et ses tests (sans `package.json`) ; (2) `app.js` en module, avec vérification locale sur `python3 -m http.server` ; (3) `update_data.py` ; (4) `build_outputs.mjs` et le workflow ; (5) lancement manuel de l'Action, puis vérification.
 - Risque pendant la bascule : si `app.js` en module plante, les graphiques ne s'affichent plus. Parade : les tests et une vérification locale avant le push. Retour arrière par `git revert`.
 - Vérifications après déploiement : la page se charge sans erreur de console, et l'en-tête affiche la phrase et l'indice. `feed.xml` passe le validateur W3C. `og.png` s'ouvre, avec les symboles dessinés. L'aperçu LinkedIn est vérifié avec le Post Inspector. Le job est vert.
 - Calendrier : Moody's rend sa décision le 23/10/2026. `notations.json` doit être mis à jour dès la décision, et le flux montrera le changement s'il y en a un.
@@ -527,9 +529,9 @@ Décision CEO-L1 (D25 « A) Fichiers d'abord ») :
 
 - Dette créée : les données saisies à la main (adjudications, notes). Elles sont visibles et datées, et en partie résolues par la série BdF (TODOS.md).
 - Réversibilité : 4/5. Tout est dans Git. Seuls les flux RSS déjà lus et les images déjà mises en cache par les réseaux ne se rattrapent pas.
-- Plateforme : `score.js` et `indice.json` permettront plus tard le curseur (CEO-E5), le bulletin quotidien (approche C) ou d'autres pays.
+- Plateforme : `score.mjs` et `indice.json` permettront plus tard le curseur (CEO-E5), le bulletin quotidien (approche C) ou d'autres pays.
 - Rétrospective sur les ajouts : CEO-E3 (image) est le plus coûteux et ajoute une dépendance système, alors que CEO-E1 (RSS) couvre déjà le suivi. Les deux reports (CEO-D1, CEO-E5) dépendent de la même série BdF, qui devient le prochain chantier.
-- Dans 12 mois, un nouveau venu s'y retrouvera grâce à `score.js`, à la section Méthode et à ce document.
+- Dans 12 mois, un nouveau venu s'y retrouvera grâce à `score.mjs`, à la section Méthode et à ce document.
 
 ### Section 11 : Design et UX
 
@@ -561,10 +563,10 @@ Codex est indisponible : jeton expiré (`401 invalid_refresh_token`), à répare
 | O2 | La partie dette est mensuelle, l'image affiche la date du CISS | **CEO-O2, D27 « A) Dates par partie »** |
 | O3 | La diffusion part avant le test de compréhension ; estimation trop optimiste | **CEO-O3, D28 « A) Deux versions »** |
 | O4 | TARGET2 commence en 2008-05 (vérifié : `data/target.json`, 220 points) | Correction : l'indice est calculable à partir de mai 2008 ; règle de départ explicite |
-| O5 | `meta.json` n'est pas commité un jour de panne totale | Correction de CEO-R1 : `meta.json` compte dans le contrôle avant commit quand `echecs` n'est pas vide |
+| O5 | `meta.json` n'est pas commité un jour de panne totale | Correction de CEO-R1 : `meta.json` est commité dès que `echecs` diffère de la version déjà commitée, y compris quand une panne se résout (D6) |
 | O6 | TARGET2 pile à la limite de péremption | Couvert par D27 (limite à 3 mois) |
 | O7 | Couverture : 25 % sur 7 saisies manuelles | **CEO-O4, D29 « C) Garder »** : dernière adjudication, poids de 25 % |
-| O8 | Mise en forme des données dupliquée entre la page et l'Action | Correction de la section 5 : `score.js` exporte `etatDuJour(fichiersBruts, dateDuCalcul)`, sans d3, utilisé par `app.js` et `build_outputs.mjs` |
+| O8 | Mise en forme des données dupliquée entre la page et l'Action | Correction de la section 5 : `score.mjs` exporte `etatDuJour(fichiersBruts, dateDuCalcul)`, sans d3, utilisé par `app.js` et `build_outputs.mjs` |
 | O9 | « Pas de contagion » est une affirmation causale | **CEO-O5, D30 « A) Formulations prudentes »** |
 | O10 | Tests de chargement de `app.js` impossibles sans DOM ni npm | Correction : fonction pure `fusionnerSeries(fichier, direct)` testée sous Node ; l'affichage est vérifié à la main |
 | O11 | `index.html` réécrit chaque jour par un robot | **CEO-O6, D31 « A) Balises fixes »** ; l'Action fait `git pull --rebase` avant `git push` (correction) |
@@ -577,14 +579,14 @@ Codex est indisponible : jeton expiré (`401 invalid_refresh_token`), à répare
 **Décisions appliquées :**
 - **CEO-O2 (D27).** L'en-tête et l'image affichent « dette : données de [mois] · BCE : [jour] ». La clé de l'image ne dépend que des données de l'indice (CISS exclu). La Méthode indique que la partie dette est mensuelle. La péremption de TARGET2 passe à 3 mois. Tests : dates affichées ; clé stable quand seul le CISS change ; TARGET2 gardé à 3 mois.
 - **CEO-O3 (D28).** Deux versions, sans changement de périmètre.
-  - **V1** : `score.js` et ses tests, `package.json`, le CISS, l'en-tête, les sous-indices, l'encadré d'écart, la courbe, la Méthode, ainsi que CEO-R1, CEO-S1 et CEO-L1.
+  - **V1** : `score.mjs` et ses tests, le CISS, l'en-tête, les sous-indices, l'encadré d'écart, la courbe, la Méthode, ainsi que CEO-R1, CEO-S1 et CEO-L1.
   - Entre les deux : le test auprès de 3 personnes sur la V1.
   - **V2** : CEO-E1 (RSS), CEO-E2 (voisins), CEO-E3 (og.png) et CEO-E4 (journal de méthode).
   - Estimation révisée : V1 environ 2 à 3 h avec CC, V2 environ 2 h.
 - **CEO-O5 (D30).** La partie BCE « C plus bas que I » devient : « Le stress financier global mesuré par la BCE reste [niveau de C] : la tension reste concentrée sur la dette. » Il n'y a pas de bandeau d'écart en haut de page : l'écart avec l'image ou le flux est indiqué dans le pied de page.
 - **CEO-O6 (D31).** `og:title` = « Indice Vigie : le thermomètre de la dette française ». `og:description` est fixe. `og:image` = `https://micka2000.github.io/vigie-dette-france/og.png`, sans `?v=`. `build_outputs.mjs` ne touche plus `index.html`. La règle README `git pull --rebase` est retirée, et `index.html` sort du contrôle avant commit de l'Action.
 
-Les sections antérieures du document qui disent le contraire (balises réécrites entre repères, « pas de contagion », bandeau d'écart, date des données CISS inclus, péremption de 2 mois pour TARGET2, départ de la courbe en janvier 2008) sont remplacées par ces décisions.
+Les sections antérieures du document qui disent le contraire (balises réécrites entre repères, « pas de contagion », bandeau d'écart, date des données CISS inclus, péremption de 2 mois pour TARGET2, départ de la courbe en janvier 2008) sont remplacées par ces décisions. Depuis la revue d'ingénierie (D5), ces passages sont réécrits dans le texte même.
 
 ### Registre des décisions (suite et état final)
 
@@ -626,7 +628,7 @@ PLAN_REALITY: phase=ceo rows=7/7 missing=none unverified=4 verdict=complete
 
 ### Ce qui existe déjà
 
-`ecbLive()` (`app.js:77`), `ecb_series()` (`scripts/update_data.py`), `THRESHOLDS` (`app.js:7`, déplacé vers `score.js`), `notch()`, `lineChart()` et `drawBands()`, le workflow quotidien (`update-data.yml`), les données de `data/`. Tout est réutilisé ; rien n'est réécrit.
+`ecbLive()` (`app.js:77`), `ecb_series()` (`scripts/update_data.py`), `THRESHOLDS` (`app.js:7`, déplacé vers `score.mjs`), `notch()`, `lineChart()` et `drawBands()`, le workflow quotidien (`update-data.yml`), les données de `data/`. Tout est réutilisé ; rien n'est réécrit.
 
 ### Écart avec la cible à 12 mois
 
@@ -639,7 +641,7 @@ Après V1 et V2 : un indice transparent, versionné, suivi par flux et partageab
 | `update_data.py` par série | BCE ou Eurostat en panne | `URLError`, `HTTPError` | ancien fichier gardé, `echecs`, job rouge | « Séries en retard : … » |
 | `update_data.py` par série | forme changée, série vide ou trop ancienne | `KeyError`, `ValueError`, contrôle de forme | idem | idem |
 | `build_outputs.mjs` | `indice.json` illisible | `SyntaxError` | sorties de la veille, `echecs` | flux et image de la veille |
-| `build_outputs.mjs` | `score.js` lève (saisie mal formée) | `TypeError`, erreur nommée | idem | idem |
+| `build_outputs.mjs` | `score.mjs` lève (saisie mal formée) | `TypeError`, erreur nommée | idem | idem |
 | `rsvg-convert` | absent ou échec | code de sortie ≠ 0 | ancien `og.png`, `echecs` | image de la veille |
 | `app.js` lecture en direct | BCE lente | `AbortError` après 8 s | données des fichiers | « Données enregistrées » |
 | `app.js` lecture en direct | HTTP ≠ 200 ou CSV vide | `Error` | données des fichiers | idem |
@@ -683,7 +685,7 @@ Voir le résumé CEO `~/.gstack/projects/micka2000-vigie-dette-france/ceo-plans/
 **Déploiement et retour arrière**
 
 ```
-  V1 : score.js+tests → app.js module (test local) → update_data.py → workflow (SHA) → lancement manuel
+  V1 : score.mjs+tests → app.js module (test local) → update_data.py → workflow (SHA) → lancement manuel
        → vérification (console, en-tête, job vert) ──► test 3 personnes ──► V2 : RSS, voisins, og.png, journal
   Panne après push : git revert <commit> → Pages republie (1-2 min) → relancer l'Action si data/ touché
 ```
@@ -698,39 +700,53 @@ Fichiers touchés : aucun diagramme ASCII dans `app.js`, `index.html`, `update_d
 
 Tâches tirées des constats de la revue. À exécuter avec Claude Code ; cocher au fil de la livraison. Hypothèse d'effort : fonctionnalités environ ×30, tests environ ×50.
 
-**Version 1**
+**Version 1** (réécrite après la revue d'ingénierie, D3 à D10 ; cette liste fait foi)
+- [ ] **T0 (P1, humain : ~1h, avant T1 pour la capture, avant T5a pour le test)** : base de comparaison. Prendre la capture « avant » de la page actuelle (390 px et bureau, deux thèmes), puis montrer cette page à 3 proches non économistes et noter leurs réponses mot pour mot (The Assignment).
+  - Constat : avis extérieur n°11 et n°12 (D6, D8).
+  - Fichiers : `docs/designs/assets/avant-v1-*.png`, ce document.
+  - Vérification : 4 captures et 3 réponses consignées.
 - [ ] **T1 (P1, humain : ~2h / CC : ~10min)** : données des notes. Vérifier sur source l'historique de `data/notations.json` et sourcer chaque point non-résidents.
   - Constat : 0B, P6 et P7.
   - Fichiers : `data/notations.json`, `data/non_residents_aft.json`.
   - Vérification : chaque date a une URL de source.
-- [ ] **T2 (P1, humain : ~1j / CC : ~30min)** : `score.js`. Module ES pur avec `etatDuJour()`, ancrages, `niveauBrut()`, `phraseVerdict()` (formulations D30), péremption (TARGET2 à 3 mois) et `METHODE_VERSION`.
-  - Constat : méthode, section 5, O8, D27, D30.
-  - Fichiers : `score.js`, `package.json`.
+- [ ] **T2 (P1, humain : ~1j / CC : ~30min)** : `score.mjs`. Module ES pur avec `etatDuJour()`, ancrages, `niveauBrut()`, `phraseVerdict()` (formulations D30), péremption en mois UTC (spread 2, TARGET2 3, couverture 3), spread et TARGET2 calculés depuis les valeurs brutes avec une seule règle d'arrondi, écart sur un an cherché par date (même mois un an plus tôt) et non par position, et `METHODE_VERSION`.
+  - Constat : méthode, section 5, O8, D27, D30, avis extérieur n°9, n°10 et n°15 (D6).
+  - Fichier : `score.mjs` (pas de `package.json`, D1).
   - Vérification : `node --test`.
-- [ ] **T3 (P1, humain : ~1j / CC : ~20min)** : tests. Écrire `score.test.mjs` (bornes, triplets (I, T, V), 5 lignes de 48 caractères, version, `fusionnerSeries`).
-  - Constat : section 6, O10.
-  - Fichier : `score.test.mjs`.
+- [ ] **T3 (P1, humain : ~1j / CC : ~20min)** : tests. Écrire `score.test.mjs` (bornes, triplets (I, T, V), `fusionnerSeries`, copie figée ENG-R1, écart sur un an avec un mois manquant, même niveau pour le fichier et la lecture en direct) et `test/workflow.test.mjs` (SHA de 40 caractères). Les tests des 5 lignes de 48 caractères et de `METHODE_VERSION` arrivent en V2 (T10, T12).
+  - Constat : section 6, O10, ENG-R1, avis extérieur n°5 et n°16 (D5, D6).
+  - Fichiers : `score.test.mjs`, `test/workflow.test.mjs`, `test/fixtures/2026-10-20/`.
   - Vérification : `node --test` vert.
-- [ ] **T4 (P1, humain : ~1j / CC : ~20min)** : collecte. Ajouter le CISS (60 jours en quotidien, et maximum mensuel), isoler chaque série, alimenter `echecs` et faire le contrôle de forme.
-  - Constat : CEO-R1, CEO-L1, O13.
+- [ ] **T4 (P1, humain : ~1j / CC : ~20min)** : collecte. Ajouter le CISS (60 jours en quotidien, et maximum mensuel), isoler chaque série, alimenter `echecs`, contrôle de forme avec une limite d'âge par série (D3), règle du premier passage pour un fichier neuf (D6), alerte « couverture à saisir » à 2 mois (D10).
+  - Constat : CEO-R1, CEO-L1, O13, avis extérieur n°1, n°14 et n°17.
   - Fichiers : `scripts/update_data.py`, `scripts/test_update_data.py`, `data/ciss.json`.
-  - Vérification : `python3 -m unittest`.
-- [ ] **T5 (P1, humain : ~1,5j / CC : ~40min)** : page. `app.js` en module : affichage des fichiers d'abord, lecture BCE avec délai de 8 s, en-tête avec dates par partie, sous-indices, jauge CISS, encadré d'écart (I contre C), courbe depuis mai 2008 avec « calculé sans », Méthode.
-  - Constat : sections 4, 5 et 11, D25, D26, D27.
+  - Vérification : `python3 -m unittest`, dont un test sur les vrais fichiers de `data/` au 20/10/2026 qui attend zéro échec.
+- [ ] **T5a (P1, humain : ~1j / CC : ~20min)** : en-tête. `app.js` en module, import `./score.mjs?v=…`, script de secours « La page n'a pas pu se charger » à 10 s, affichage des fichiers d'abord, lecture BCE avec délai de 8 s, phrase de verdict, Indice Vigie, dates par partie, sous-indices, jauge CISS (valeur du jour), encadré d'écart (I contre C). La phrase « Sur cinq signaux : … » (`app.js:385`) est retirée.
+  - Constat : sections 4, 5 et 11, D25, D27, avis extérieur n°6 et n°13 (D6, D9).
   - Fichiers : `app.js`, `index.html`, `styles.css`.
-  - Vérification : `python3 -m http.server`, console vide, 390 px, deux thèmes.
-- [ ] **T6 (P1, humain : ~1h / CC : ~5min)** : verrouillage. Ajouter le SRI sur d3, désigner les actions par SHA, ajouter `concurrency`, `git pull --rebase` avant le push, et `meta.json` commité si `echecs` n'est pas vide.
-  - Constat : CEO-S1, CEO-R1, O5, O11.
-  - Fichiers : `index.html`, `.github/workflows/update-data.yml`.
-  - Vérification : test des SHA, puis lancement manuel vert.
+  - Vérification : `python3 -m http.server`, console vide, `score.mjs` renommé à la main → message d'erreur, 390 px, deux thèmes, capture.
+- [ ] **T5b (P1, humain : ~4h / CC : ~15min)** : courbe. Indice Vigie depuis mai 2008, tension sur la dette depuis 1999, CISS en pointillé au maximum mensuel, point du mois en cours « maximum du mois à ce jour » avec la valeur du jour en infobulle, mentions « calculé sans », tableau accessible.
+  - Constat : D26, O4, O13, avis extérieur n°8 (D7).
+  - Fichiers : `app.js`, `styles.css`.
+  - Vérification : 390 px, deux thèmes, capture.
+- [ ] **T5c (P1, humain : ~2h / CC : ~10min)** : section Méthode. Tableau des ancrages, poids effectifs, limites de péremption, règles de la phrase, liens vers `score.mjs` et `data/`.
+  - Constat : section 11, D9.
+  - Fichiers : `index.html`, `app.js`.
+  - Vérification : chaque score du jour se recalcule à la main depuis cette section.
+- [ ] **T6 (P1, humain : ~2h / CC : ~10min)** : verrouillage et tests en continu. Ajouter le SRI sur d3, désigner les actions par SHA, ajouter `concurrency`, `git pull --rebase` avant le push, commiter `meta.json` dès que `echecs` diffère de la version commitée, et créer `.github/workflows/tests.yml` (`push` et `pull_request`, `actions/setup-node` en `node-version: 22`, `node --test`, `python3 -m unittest`), séparé de la collecte.
+  - Constat : CEO-S1, CEO-R1, O5, O11, avis extérieur n°2, n°3 et n°7 (D4, D6).
+  - Fichiers : `index.html`, `.github/workflows/update-data.yml`, `.github/workflows/tests.yml`.
+  - Vérification : test des SHA, un push qui déclenche `tests.yml` en vert, puis lancement manuel de `update-data.yml` en vert ; `curl -sI …/score.mjs` donne un type JavaScript.
 - [ ] **T7 (P1, humain : ~15min / CC : ~2min)** : textes. Corriger `index.html:55` (69e et 95e centile) et « un cran depuis 2024 ».
   - Constat : P4, P5, O16.
   - Fichier : `index.html`.
   - Vérification : relecture.
 
+Ordre : T0 (capture) → T1 → T2 → T3 → T4 → T0 (test auprès de 3 personnes) → T5a → T5b → T5c → T6 → T7 → T8 → push sur `main`.
+
 **Entre V1 et V2**
-- [ ] **T8 (P1, humain : ~1h)** : test de compréhension. Montrer la V1 à 3 personnes nouvelles et noter leurs réponses.
-  - Constat : D28, critère de réussite n°1.
+- [ ] **T8 (P1, humain : ~1h)** : test de compréhension. Montrer la V1 en local (`python3 -m http.server`), avant le push sur `main`, à 3 personnes nouvelles et noter leurs réponses, à comparer avec celles de T0.
+  - Constat : D28, critère de réussite n°1, avis extérieur n°12 (D8).
   - Vérification : les 3 réponses sont consignées dans ce document.
 
 **Version 2**
@@ -800,17 +816,277 @@ _Artefact JSONL non écrit : `jq` n'est pas installé sur cette machine. Pour l'
 
 Aucune : chaque question posée a reçu une réponse.
 
+## Revue d'ingénierie (2026-10-21)
+
+Cible : `docs/designs/indice-vigie.md` (ce fichier), priorité V1 (T1 à T7). Fichier de rapport : ce fichier.
+
+### Périmètre (Scope Challenge B)
+
+feature answers: aucune coupe proposée ; structure: B (D1 « B) Smaller arrangement ») ; accepted scope: V1 telle qu'approuvée en revue CEO, avec `score.mjs` au lieu de `score.js` et sans `package.json` ; pending remedies: aucune.
+Conséquences : `score.test.mjs` importe `./score.mjs` ; `app.js` est chargé en `<script type="module">` et importe `./score.mjs`. Vérification restant à faire : GitHub Pages sert `.mjs` avec un type JavaScript (contrôlé au premier déploiement de la V1 : `curl -sI …/score.mjs | grep -i content-type`).
+
+### Scope Challenge C : constats
+
+- `[P2] (confidence: 9/10) app.js:42`. `notch()` renvoie 21 pour une note inconnue : une faute de saisie donne un score meilleur que AAA, sans erreur. Disposition : couvert par le test approuvé « note inconnue → erreur » (revue CEO, section 6).
+- `[P2] (confidence: 9/10) .github/workflows/update-data.yml:25`. Le contrôle avant commit ignore `ciss.json` et `meta.json`. Disposition : couvert par T6 (CEO-R1, O5).
+- `[P3] (confidence: 8/10) data/notations.json:6`. Les historiques commencent par une amorce `2000-01-01 AAA`, qui n'est pas une date réelle. Disposition : couvert par T1.
+- Vérifié sans constat : `app.js:65` (`levelOf`, `v >= b.from && v < b.to`) applique déjà la règle des seuils pile égaux décrite dans le plan.
+
+Résultat : scope accepted as-is.
+
+REALITY: premise-table pass 3 prémisses techniques vérifiées (levelOf aux bornes, notch, contrôle avant commit), unverified=1 (type MIME de .mjs sur Pages) app.js:65
+REALITY: already-done pass seul commit de code 84e7f4e, aucun score.mjs sur origin/main app.js:42
+REALITY: surface-check pass `node --test` (Node 24 local, 22 en CI via `tests.yml`, D4), `python3 -m unittest`, requête CISS `startPeriod` à 60 jours (43 lignes) vérifiés .github/workflows/update-data.yml:19
+REALITY: binding-decisions pass décisions CEO D14 à D31 et D1 de cette revue respectées docs/designs/indice-vigie.md:809
+REALITY: numbers pass seuils de app.js:7 recoupés avec le tableau d'ancrages ; estimation V1 [estimated] 2 à 3 h CC app.js:7
+REALITY: deferred-asks pass aucun ticket lié docs/designs/indice-vigie.md:1
+REALITY: pr-count pass pas de ship-policy ; deux livraisons sur main (V1, V2) docs/designs/indice-vigie.md:809
+
+### 1. Architecture
+
+```
+  index.html ─ d3 (CDN, SRI) ─┐
+       └─ <script type=module> app.js ── import ── score.mjs ◄── import ── score.test.mjs (node --test)
+                       │   ▲                         (pur : etatDuJour, ancrages, niveauBrut,
+                       │   │                          phraseVerdict, fusionnerSeries, péremption)
+       fetch data/*.json ──┘   fetch BCE (8 s, AbortController) ──► fusionnerSeries(fichier, direct)
+  update-data.yml ─► test_update_data.py ─► update_data.py ─► data/*.json, meta.json(echecs) ─► commit
+```
+
+- Frontières : `score.mjs` ne connaît ni le DOM, ni d3, ni le réseau. `app.js` s'occupe de l'affichage et des lectures. L'Action s'occupe de la collecte. OK.
+- Défaillance réaliste par intégration : BCE muette (CEO-L1 : fichiers puis délai de 8 s) ; clé de série BCE renommée (CEO-R1 : `echecs`, job rouge) ; saisie manuelle invalide (erreur nommée dans `score.mjs`, testée).
+- Sécurité : inchangée par rapport à la revue CEO (SRI, actions par SHA, `textContent`).
+- Distribution : pas de nouvel artefact à publier ; Pages sert le dépôt tel quel.
+
+No issues found.
+
+### 2. Qualité du code
+
+- `[P2] (confidence: 8/10) app.js:309`. `compute()` mélange la mise en forme des données (`d3.min`, couverture = demandé / servi, dernier point, note la plus basse) et l'affichage. Disposition : couvert par O8 (`etatDuJour()` dans `score.mjs`). `app.js` ne garde que le texte affiché.
+- `[P3] (confidence: 8/10) app.js:7`. `THRESHOLDS` porte à la fois les seuils (`from`, `to`) et le texte affiché (`text`). Disposition : couvert par la correction de la section 5 de la revue CEO (`score.mjs` exporte `ANCRAGES` et `niveauBrut()`). Le texte affiché reste dans `app.js`.
+- Code partagé : un seul module, `score.mjs`, avec deux appelants vérifiés (`app.js`, `score.test.mjs`) et un troisième proposé en V2 (`build_outputs.mjs`). L'extraction déplace environ 120 lignes d'`app.js` (fonctions `notch`, `levelOf`, `compute`) et ajoute environ 200 lignes à `score.mjs` (verdict, péremption, fusion). Le total, tests compris, augmente d'environ 400 à 500 lignes [estimated]. C'est le prix des tests, pas un doublon.
+- Diagrammes ASCII dans les fichiers touchés : aucun.
+
+### 3. Tests
+
+Cadre détecté : aucun pour l'instant (pas de `package.json`, aucun fichier de test). Plan : `node --test` (natif, Node 22+) et `python3 -m unittest` (bibliothèque standard), approuvés en revue CEO, sans dépendance.
+
+```
+CODE PATHS (V1, proposés)                               USER FLOWS
+[+] score.mjs                                           [+] Ouvrir la page
+  ├── interpoler(valeur, ancrages)                        ├── [GAP→prévu] fichiers d'abord, puis BCE (fusionnerSeries)
+  │   ├── [GAP→prévu] ancrage exact, entre deux, plafond  ├── [GAP→prévu] BCE muette 8 s : la page reste affichée
+  │   └── [GAP→prévu] sens inversé (couverture, TARGET2)  └── [manuel] capture avant/après (ENG-R1)
+  ├── niveauBrut(signal, valeur)                        [+] Changer de période / de thème
+  │   └── [GAP→prévu] bornes : 50 pb, 2,0, -120 Md€       └── [GAP→prévu] lecture BCE résolue après le clic
+  ├── crans(note)                                       [+] États d'erreur visibles
+  │   ├── [GAP→prévu] S&P, Fitch, Moody's (Aa3 = AA-)     ├── [GAP→prévu] « Indice incomplet : il manque … »
+  │   └── [GAP→prévu] note inconnue → erreur nommée       ├── [GAP→prévu] CISS indisponible (> 10 jours)
+  ├── perime(dateDonnee, dateCalcul, limite)              └── [GAP→prévu] « Séries en retard » (meta.json)
+  │   └── [GAP→prévu] 2 mois pile gardé, 3 exclu ;
+  │                   TARGET2 3 mois gardé, 4 exclu
+  ├── etatDuJour(fichiersBruts, dateCalcul)
+  │   ├── [GAP→prévu] copie figée du 20/10 → 5 cartes inchangées (ENG-R1) ; I 57,8 ; T 55,1 ; V 60,6
+  │   └── [GAP→prévu] sous-indice vide → indice null + manquants
+  ├── phraseVerdict(I, T, V, C)
+  │   ├── [GAP→prévu] triplets (I, T, V) atteignables × 5 cas de C
+  │   └── [GAP→prévu] formulation D30, variante incomplète
+  └── fusionnerSeries(fichier, direct)
+      └── [GAP→prévu] direct plus récent / plus ancien / vide / null
+[+] update_data.py
+  ├── [GAP→prévu] une série en panne : les autres écrites, echecs rempli
+  ├── [GAP→prévu] série vide ou trop ancienne → échec de forme
+  └── [GAP→prévu] CISS : 60 jours quotidiens + maximum mensuel
+[+] update-data.yml
+  └── [GAP→prévu] chaque `uses:` porte un SHA de 40 caractères (CEO-S1)
+
+COVERAGE (avant V1) : 0/27 chemins testés ; tous les manques ont un test prévu par une décision approuvée.
+QUALITÉ VISÉE : ★★★ sur score.mjs (comportement, bornes, erreurs) ; ★★ sur update_data.py ; affichage vérifié à la main.
+```
+
+Tests prévus (fichiers, assertions, cartes de valeur) :
+- `score.test.mjs` / interpolation et bornes : spread 96,7 → 60,4 ; couverture 2,0035 → 49,8 et niveau vigilance ; 2,0 pile → vigilance ; TARGET2 -181,3 → 69,2.
+  Value: protects=scores et niveaux aux bornes ; fails_when=inversion de sens ou `>=` changé en `>` ; why_new=aucun test ; seam=none ; no_claim=none beyond protects
+- `score.test.mjs` / copie figée (ENG-R1) : `test/fixtures/2026-10-20/` → les 5 cartes d'aujourd'hui.
+  Value: protects=valeurs et niveaux publiés aujourd'hui ; fails_when=l'extraction change un calcul ; why_new=aucun test des cartes ; seam=none ; no_claim=mise en page (capture manuelle)
+- `score.test.mjs` / crans : AAA→0, Aa3→3, A+→4, BBB-→9, « A + » → erreur.
+  Value: protects=score des notes ; fails_when=une note inconnue redevient 21 (app.js:42) ; why_new=aucun test ; seam=none ; no_claim=exactitude de l'historique saisi (T1)
+- `score.test.mjs` / péremption : 2 mois gardé, 3 exclu ; TARGET2 3 gardé, 4 exclu ; date injectée.
+  Value: protects=règle de péremption (D27) ; fails_when=calcul en jours au lieu de mois ; why_new=nouveau ; seam=none ; no_claim=délai réel de publication BCE
+- `score.test.mjs` / phrase : triplets atteignables × C ; variante incomplète (le test des 5 lignes de 48 caractères passe en V2 avec l'image, D5).
+  Value: protects=phrase publique (D30) ; fails_when=une combinaison produit une phrase contradictoire ; why_new=nouveau ; seam=none ; no_claim=compréhension par le public (T8)
+- `score.test.mjs` / fusionnerSeries : quatre cas.
+  Value: protects=« fichiers d'abord » (CEO-L1) ; fails_when=une série BCE plus ancienne écrase le fichier ; why_new=nouveau ; seam=none ; no_claim=comportement réseau réel (fetch non testé)
+- `scripts/test_update_data.py` : panne simulée par série (urlopen remplacé), série vide, série trop ancienne.
+  Value: protects=isolation par série (CEO-R1) ; fails_when=une exception arrête tout le script ; why_new=aucun test ; seam=none ; no_claim=disponibilité réelle de la BCE (réponses simulées)
+- `test/workflow.test.mjs` / workflow : chaque `uses:` de `update-data.yml` et `tests.yml` porte un SHA de 40 caractères (fichier séparé, D6).
+  Value: protects=verrouillage CEO-S1 ; fails_when=retour à une étiquette @v4 ; why_new=nouveau ; seam=none ; no_claim=intégrité réelle des actions
+
+Tests rendus obsolètes : aucun (il n'en existe pas). Aucun appel à un LLM : pas d'éval.
+
+Dispositions : tous les tests ci-dessus découlent de décisions approuvées (revue CEO sections 2, 3, 4 et 6 ; O10 ; D27 ; D30 ; ENG-R1/D2). Aucun choix en attente.
+
+### 4. Performance
+
+- `[P3] (confidence: 8/10) app.js:77`. `ecbLive()` lit `startPeriod=1999-01` pour le spread français à chaque visite, soit 333 mois et environ 27 Ko de CSV [measured: data/spread.json, 333 lignes]. Volume acceptable, et la lecture n'a lieu qu'après le premier affichage (CEO-L1). Pas de changement.
+- CISS : en direct sur 60 jours (43 lignes [measured: requête du 2026-10-21]) au lieu d'environ 10 900 lignes. Déjà décidé (CEO-L1).
+- Calcul de la courbe mensuelle : environ 222 mois × 5 signaux dans le navigateur, négligeable.
+- Aucune boucle de requêtes, base de données, cache ou appel sans délai d'attente restant (le délai de 8 s couvre toutes les lectures BCE).
+
+No issues found beyond the P3 above (aucune action).
+
+### 5. Avis extérieur (repli interne)
+
+Codex indisponible (401 invalid_refresh_token, à réparer par `! codex logout` puis `! codex login`). Repli natif : sous-agent Claude « Plan », terminé en 2 min 44, 17 constats. Vérifiés sur les fichiers : `data/target.json` s'arrête en 2026-08 (80 jours le 20/10/2026), `non_residents_eurostat.json` est annuel (2025), `dette_pib.json` trimestriel (2026-Q1), `update-data.yml` n'a que `schedule` et `workflow_dispatch`, et les passages périmés du plan existaient bien.
+
+| # | Gravité | Constat | Disposition |
+|---|---|---|---|
+| 1 | Critique | Limite de 70 jours : TARGET2 et Eurostat toujours en échec | D3 A : limite par série, test sur les vrais fichiers |
+| 2 | Élevé | Aucun test au push, le filet D2 ne joue pas | D4 A : `tests.yml` sur push et pull_request, Node 22 |
+| 3 | Élevé | Tests avant la collecte : un test cassé fige les données | D4 A : tests hors de `update-data.yml` |
+| 4 | Élevé | Tâches et méthode contredisent D1, D26, D27, D30, O13 | D5 A : réécriture en une passe (faite) |
+| 5 | Moyen | T3 teste `methode.json` (V2) et les 5 lignes (V2) | D5 A : déplacés en V2 |
+| 6 | Moyen | `score.mjs` introuvable : page bloquée sur « Chargement » ; cache mixte | D6 A : script de secours à 10 s, `?v=` sur l'import |
+| 7 | Moyen | `meta.json` garde une panne résolue | D6 A : commit dès que `echecs` change |
+| 8 | Moyen | CISS de l'en-tête et de la courbe différents | D7 A : jour en tête, maximum sur la courbe, étiquette « maximum du mois à ce jour » |
+| 9 | Moyen | Arrondis Python et JavaScript différents | D6 A : calcul depuis les valeurs brutes dans `score.mjs` |
+| 10 | Moyen | Écart sur un an par position | D6 A : recherche par date, test avec un mois manquant |
+| 11 | Moyen | Capture « avant » et T1 non ordonnées | D6 A : capture en T0, avant T1 |
+| 12 | Moyen | Test de départ sans tâche ; T8 sur le site public | D8 A : T0 avant T5a ; T8 en local avant le push |
+| 13 | Moyen | T5 sous-estimé ; phrase de comptage non tranchée | D9 A : T5a, T5b, T5c ; « Sur cinq signaux » retirée |
+| 14 | Faible | Contrôle de forme sans cas pour un fichier neuf | D6 A : limite de date et 12 lignes au moins |
+| 15 | Faible | Mois du calcul en heure locale | D6 A : UTC partout |
+| 16 | Faible | Test des SHA dans `score.test.mjs` | D6 A : `test/workflow.test.mjs` |
+| 17 | Faible | Couverture saisie à la main, sans rappel | D10 A : « couverture à saisir » dans `echecs` à 2 mois |
+
+Tension entre les deux avis : cette revue avait validé la limite de 70 jours (CEO-R1) et jugé le filet D2 suffisant. Le relecteur montre, chiffres à l'appui, que l'un échoue dès le premier jour et que l'autre ne tourne jamais tout seul. Ses conclusions sont retenues. Aucun désaccord restant.
+
+### Hors périmètre (revue d'ingénierie)
+
+- Revue design avant T5 : proposée en D9 (option C), non retenue ; l'ajustement visuel se fait sur captures pendant T5a à T5c.
+- Blocage de la publication Pages tant que `tests.yml` n'est pas vert : non prévu, Pages publie `main` directement ; les tests signalent sans bloquer (D4).
+- Série BdF des non-résidents, repères historiques, curseur de date : déjà dans `TODOS.md` (revue CEO).
+- Tests DOM automatisés de `app.js` : restent manuels (O10), la mise en forme est couverte par les captures.
+
+### Ce qui existe déjà
+
+- `levelOf` (`app.js:65`) applique déjà la règle des seuils égaux : repris tel quel dans `niveauBrut()`.
+- `notch()` (`app.js:42`) : déplacé, avec une erreur nommée au lieu de 21.
+- `ecbLive()` (`app.js:77`) : réutilisé pour le CISS, avec `AbortController`.
+- `ecb_series()` et `eurostat()` (`scripts/update_data.py`) : réutilisés, chaque appel dans son propre `try`.
+- Croissance nette : environ 400 à 500 lignes tests compris [estimated], un seul module partagé (voir section 2).
+
+### Modes de défaillance (chemins nouveaux)
+
+| Chemin | Défaillance réaliste | Test | Gestion d'erreur | Visible ? |
+|---|---|---|---|---|
+| Import de `score.mjs` | fichier absent, MIME, export manquant | vérification manuelle T5a | script de secours à 10 s | oui, message |
+| Lecture BCE en direct | délai dépassé, 500 | test `fusionnerSeries`, vérif. manuelle | fichiers d'abord, badge | oui, badge |
+| Contrôle de forme | limite trop stricte | test sur les vrais fichiers | `echecs`, job rouge | oui, e-mail et pied de page |
+| Panne résolue | `meta.json` périmé | test unitaire du commit sur changement | commit sur différence | oui |
+| Couverture non saisie | trou de plus de 2 mois | test unitaire | `echecs` « couverture à saisir » | oui, e-mail |
+| Régression de `score.mjs` | carte modifiée | copie figée ENG-R1 | `tests.yml` rouge | oui, e-mail GitHub |
+| CISS mois en cours | en-tête et courbe différents | vérification manuelle T5b | étiquette et infobulle | oui, expliqué |
+
+Failure modes: 0 critical gaps flagged.
+
+### Parallélisation
+
+| Étape | Modules | Dépend de |
+|---|---|---|
+| Notes et sources (T1) | `data/` | T0 (capture) |
+| Calcul (T2, T3) | `score.mjs`, `test/` | — |
+| Collecte (T4) | `scripts/`, `data/ciss.json` | — |
+| Page (T5a à T5c) | `app.js`, `index.html`, `styles.css` | T2 |
+| Verrouillage (T6) | `.github/`, `index.html` | T3, T4 |
+
+Voie A : T2 → T3 → T5a → T5b → T5c. Voie B : T4 (indépendant). Lancer A et B ensemble, fusionner, puis T6 et T7. Conflit possible : `index.html` (T5 et T6), à faire dans l'ordre. En pratique, avec un seul développeur et des tâches de 10 à 20 minutes CC, l'exécution séquentielle suffit.
+
+### TODOS.md
+
+Aucun nouveau report dans cette revue : chaque constat a reçu une disposition A (appliquer). `TODOS.md` est inchangé.
+
+### Plan de test
+
+Artefact mis à jour : `~/.gstack/projects/micka2000-vigie-dette-france/micka-main-eng-review-test-plan-20261020-213441.md` (ajouts D3, D4, D6, D7).
+
+### Completion summary (revue d'ingénierie)
+
+- Step 0 : Scope Challenge, scope accepted as-is (D1 : `score.mjs`, sans `package.json`).
+- Reality rows : 7/7 (PLAN_REALITY), 1 prémisse non vérifiée (type MIME de `.mjs` sur Pages, vérifié en T6).
+- Architecture Review : 0 issues found.
+- Code Quality Review : 2 issues found (couverts par O8 et la section 5 CEO).
+- Test Review : diagram produced, 1 gap identified (contrat de non-régression, ENG-R1/D2).
+- Performance Review : 1 issue found (P3, aucune action).
+- NOT in scope : written.
+- What already exists : written.
+- TODOS.md updates : 0 items proposed.
+- Failure modes : 0 critical gaps flagged.
+- Unresolved decisions : 0 in this review.
+- Outside voice : codex unavailable (auth 401) ; native fallback in-host completed, 17 findings, 17 resolved (D3 à D10).
+- Parallelization : 2 lanes, 1 parallel / 3 sequential.
+- Lake Score : 8/9 (D2, D3, D4, D5, D6, D8, D9, D10 ont pris l'option la plus complète proposée en recommandation ; D9 A à 9/10 face à C à 10/10 ; D7 sans score).
+
+## Decision ledger
+
+### ENG-R1: contrat de non-régression des cinq cartes existantes
+Finding: n°1, P1 (régression), confidence 9/10, app.js:309 (`compute()`) et app.js:65 (`levelOf`), relecteur : revue d'ingénierie.
+Plan baseline: extraction vers `score.mjs` approuvée (O8 en revue CEO, D1 de cette revue) ; aucun contrat de non-régression décidé.
+Runtime evidence: la page en ligne affiche aujourd'hui spread 97 pb (tension), adjudication 4,93 % et couverture 2,00 (vigilance), non-résidents 57,5 % (tension), note A+ (tension), TARGET2 -181 Md€ (tension) ; aucun test existant.
+Comparison grid:
+| Engagement | Actuel | A | B |
+|---|---|---|---|
+| Valeurs et niveaux des 5 cartes après extraction | non protégés | identiques, test automatique sur une copie figée de data/ | identiques, vérification manuelle avant/après |
+| Changements voulus | aucun listé | aucun (les nouveaux blocs s'ajoutent, les cartes ne changent pas) | aucun |
+| Extraction (O8, D1) | approuvée | inchangée | inchangée |
+Question D2:
+D2 — ENG-R1 : comment garantir que les cinq cartes actuelles ne changent pas pendant l'extraction ?
+Projet : vigie-dette-france, main, V1 (T2 à T5).
+ELI10 : pour construire l'indice, on déplace le calcul des cinq cartes de `app.js` vers `score.mjs`. Si ce déplacement introduit une erreur, une carte pourrait afficher un autre chiffre ou un autre niveau que ce que le site montre aujourd'hui. Il faut décider comment on le vérifie.
+Stakes if we pick wrong : un chiffre public change sans que personne ne le remarque, sur un site qui mise sur la crédibilité.
+Recommendation : A, parce qu'un test automatique attrape la régression à chaque modification, pas seulement le jour du déplacement.
+Completeness: A=9/10, B=5/10
+Net : un filet permanent contre une vérification ponctuelle.
+Header: ENG-R1
+Options:
+A) Test sur copie figée (recommended)
+`score.test.mjs` charge une copie figée des fichiers du 20/10/2026 (`test/fixtures/2026-10-20/`) et vérifie, pour chaque carte, la valeur et le niveau affichés aujourd'hui (97 pb tension, 4,93 % et 2,00 vigilance, 57,5 % tension, A+ tension, -181 Md€ tension), ainsi que les variations sur un an. Plus une capture avant/après de la page. Effort : humain ~2 h / CC ~10 min ; risque faible ; maintenance : la copie figée ne change jamais. ✅ Toute modification future de `score.mjs` qui change une carte fait échouer `node --test`. ✅ La capture avant/après couvre aussi ce que le test ne voit pas (mise en page). ❌ Une copie figée de `data/` (environ 70 Ko) s'ajoute au dépôt.
+B) Vérification manuelle
+Comparaison à l'œil de la page avant et après l'extraction, sans test automatique. Effort : humain ~15 min / CC ~2 min ; risque moyen : une régression ultérieure passerait inaperçue ; maintenance nulle. ✅ Rien à ajouter au dépôt, et c'est fait en un quart d'heure. ✅ Suffit pour vérifier le jour même du déplacement. ❌ Une régression introduite plus tard dans `score.mjs` ne serait détectée par personne.
+
+State: approved
+Actual answer: A) Test sur copie figée (D2, 2026-10-21)
+Accepted scope: `test/fixtures/2026-10-20/` = copie figée de `data/` au 20/10/2026 ; `score.test.mjs` vérifie pour chaque carte la valeur et le niveau affichés aujourd'hui (spread 97 pb tension, adjudication 4,93 % et couverture 2,00 vigilance, non-résidents 57,5 % tension, note A+ tension, TARGET2 -181 Md€ tension) et les variations sur un an (spread +15,0 pb, TARGET2 +10,1 Md€) ; capture de la page avant et après l'extraction, comparée à l'œil. Aucun changement voulu sur les cinq cartes.
+History: none
+
+### ENG-O1 à ENG-O8 : constats de l'avis extérieur (D3 à D10)
+
+| ID | Question | Réponse (2026-10-21) | Portée acceptée |
+|---|---|---|---|
+| ENG-O1 | D3 limite d'âge | A) Limite par série | spread 70 j, TARGET2 100 j, CISS 10 j, trimestriel 200 j, annuel 550 j ; test sur `data/` réel |
+| ENG-O2 | D4 tests au push | A) Workflow tests séparé | `tests.yml` (push, pull_request, Node 22), hors collecte |
+| ENG-O3 | D5 cohérence | A) Réécrire en une passe | texte aligné sur D1, D26, D27, D30, O13 ; tests V2 sortis de T3 |
+| ENG-O4 | D6 correctifs | A) Tout appliquer | secours à 10 s et `?v=`, `meta.json` sur différence, arrondi unique, écart par date, capture en T0, fichier neuf, UTC, test des SHA séparé |
+| ENG-O5 | D7 CISS | A) Jour en tête, max sur courbe | étiquette « maximum du mois à ce jour » et valeur du jour en infobulle |
+| ENG-O6 | D8 test public | A) T0 + test V1 en local | T0 avant T5a ; T8 en local avant le push |
+| ENG-O7 | D9 T5 | A) Découper, retirer le comptage | T5a, T5b, T5c ; « Sur cinq signaux » retirée |
+| ENG-O8 | D10 couverture | A) Alerte à 2 mois | « couverture à saisir » dans `echecs` |
+
+State: approved (toutes). History: none.
+
+Approval readiness: PASS (ENG-R1 → D2 A ; ENG-O1 à ENG-O8 → D3 à D10, réponses A ; D1 B pour le périmètre).
+
 ## GSTACK REVIEW REPORT
 
 | Review | Trigger | Why | Runs | Status | Findings |
 |--------|---------|-----|------|--------|----------|
 | CEO Review | `/plan-ceo-review` | Scope & strategy | 1 | CLEAR | 6 proposals, 4 accepted, 2 deferred |
-| Outside Review | codex (auto, plan-review) | Independent 2nd opinion | 1 | unavailable | codex auth failure, no completed external review ; native fallback (in-host) : 16 findings, 16 resolved, 0 unresolved |
-| Eng Review | `/plan-eng-review` | Architecture & tests (required) | 0 | — | — |
+| Outside Review | codex (auto, plan-review) | Independent 2nd opinion | 2 | unavailable | codex auth failure both times ; native fallback (in-host) : CEO 16 findings, Eng 17 findings, all resolved |
+| Eng Review | `/plan-eng-review` | Architecture & tests (required) | 1 | ISSUES OPEN | 4 issues, 0 critical gaps (all mapped to approved tasks) |
 | Design Review | `/plan-design-review` | UI/UX gaps | 0 | — | — |
 | DX Review | `/plan-devex-review` | Developer experience gaps | 0 | — | — |
 
-- **OUTSIDE COVERAGE:** codex, phase plan-review, unavailable (401 invalid_refresh_token, à réparer par `codex login`). Repli natif Claude « Plan » terminé en 2 min 18 : 16 constats, tous traités (7 par décision D26 à D31, 8 par correction factuelle, 1 conservé tel quel). Aucune couverture extérieure.
-- **VERDICT:** CEO CLEARED, eng review required.
+- **OUTSIDE COVERAGE:** codex, phase plan-review, unavailable aux deux revues (401 invalid_refresh_token, à réparer par `codex login`). Repli natif Claude « Plan » terminé aux deux revues : 16 constats (CEO), 17 constats (Eng), tous traités. Aucune couverture extérieure.
+- **VERDICT:** CEO CLEARED. Eng review terminée en ISSUES OPEN : les 4 constats sont du travail planifié dans des tâches approuvées (T0 à T8), aucune décision en attente ; eng review required (statut non CLEAR tant que la V1 n'est pas construite).
 
 NO UNRESOLVED DECISIONS
