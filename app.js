@@ -856,6 +856,14 @@ document.addEventListener('click', (e) => { if (cibleDe(e)) montrerBulle(cibleDe
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cacherBulle(); });
 addEventListener('scroll', cacherBulle, { passive: true });
 
+// Panneau de description des jauges : un seul ouvert, fermé par un clic ailleurs ou Échap.
+const panneauxJauges = () => document.querySelectorAll('#gauges details[open]');
+document.addEventListener('toggle', (e) => {
+  if (e.target.matches?.('#gauges details') && e.target.open) panneauxJauges().forEach((d) => { if (d !== e.target) d.open = false; });
+}, true);
+document.addEventListener('click', (e) => { if (!e.target.closest('#gauges details')) panneauxJauges().forEach((d) => { d.open = false; }); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') panneauxJauges().forEach((d) => { d.open = false; }); });
+
 // ---------- Démarrage ----------
 
 document.addEventListener('click', (e) => {

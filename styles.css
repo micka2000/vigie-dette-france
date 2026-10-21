@@ -383,3 +383,14 @@ footer p { margin: 0; max-width: 80ch; }
   .masthead .repere { grid-area: repere; }
   .masthead .stamp { grid-area: stamp; }
 }
+
+/* Jauges : la description s'ouvre en panneau flottant sous la carte, sans agrandir la rangée ni pousser la suite */
+.gauges { align-items: start; }
+.gauge { position: relative; }
+.gauge .desc-corps {
+  position: absolute; z-index: 20; left: 0; right: 0; top: calc(100% + var(--space-2)); margin-top: 0;
+  padding: var(--space-4); background: var(--bg-surface); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  animation: bulle 120ms ease;
+}
+@media (prefers-reduced-motion: reduce) { .gauge .desc-corps { animation: none; } }
