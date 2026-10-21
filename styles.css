@@ -326,15 +326,14 @@ footer p { margin: 0; max-width: 80ch; }
 .desc[open] .desc-fermer { display: inline; }
 /* Empilées sur mobile et dans les jauges ; sur tablette, le calcul à droite ; sur grand écran, trois colonnes */
 .desc-corps { margin-top: var(--space-2); display: grid; gap: var(--space-2) var(--space-6); align-items: start; }
-/* Quatre parties : une colonne sur mobile ; au-delà, deux colonnes de journal. Le texte coule de l'une à l'autre :
-   pas de trou sous un paragraphe court (une grille alignait les rubriques mais laissait des blancs) */
+/* Quatre parties : une colonne sur mobile ; au-delà, deux colonnes de journal. Le texte coule de l'une à l'autre,
+   une rubrique peut passer d'une colonne à l'autre : la gauche est pleine, la droite finit plus haut ou au même niveau */
 @media (min-width: 700px) {
   :is(.signal, .masthead) .desc-corps { display: block; columns: 2; column-gap: var(--space-8); }
-  :is(.signal, .masthead) .desc-corps > p { break-inside: avoid; margin-bottom: var(--space-3); }
+  :is(.signal, .masthead) .desc-corps > p { margin-bottom: var(--space-3); }
 }
-/* Une puce par rubrique, lignes suivantes alignées sous le texte (retrait suspendu), justifié sans coupure de mots */
-.desc-corps p { margin: 0; line-height: 1.55; text-align: justify; hyphens: manual; position: relative; padding-left: 1.4em; }
-.desc-corps p::before { content: '•'; position: absolute; left: 0.35em; top: 0; }
+/* Justifié, sans coupure de mots */
+.desc-corps p { margin: 0; line-height: 1.55; text-align: justify; hyphens: manual; }
 .desc-corps b { font-family: var(--font-display); font-weight: 600; color: var(--fg-1); }
 .desc-corps a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .masthead .desc, .masthead .desc-corps b { color: var(--fg-inverse); }
