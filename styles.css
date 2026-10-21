@@ -158,13 +158,13 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 .reperes:not(:has(> :not([hidden]))) { display: none; }
 .repere[hidden] { display: none; }
 
-/* Bouton-icône Material 3 (icône « light_mode ») : 40 px, voile d'état au survol */
+/* Bouton-icône à contour Material 3 (icône « light_mode ») : 40 px, voile d'état au survol */
 .btn-icone {
   display: inline-grid; place-items: center; width: 40px; height: 40px; flex: none;
-  background: transparent; color: inherit; border: 0; border-radius: 50%; cursor: pointer;
+  background: transparent; color: inherit; border: 1.5px solid currentColor; border-radius: 50%; cursor: pointer;
   transition: background-color 150ms var(--ease-standard), transform 150ms var(--ease-standard);
 }
-.btn-icone svg { width: 24px; height: 24px; fill: currentColor; }
+.btn-icone svg { width: 22px; height: 22px; fill: currentColor; }
 .btn-icone:hover { background: color-mix(in srgb, currentColor 8%, transparent); }
 .btn-icone:active { transform: scale(0.94); background: color-mix(in srgb, currentColor 12%, transparent); }
 .btn-icone:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
