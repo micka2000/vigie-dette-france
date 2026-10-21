@@ -4,7 +4,7 @@ import {
   SEUILS, ANCRAGES, METHODE_VERSION, couvertures, niveauBrut, niveauScore, interpoler, notch, notchLabel, fusionnerSeries, etatDuJour,
   serieQuotidienne, plusHautDepuis, picDuMois, picsMensuels, phraseVerdict, partsTarget,
 } from './score.mjs?v=8b8453e3';
-import { EN } from './anglais.mjs?v=efbb2c58';
+import { EN } from './anglais.mjs?v=f5d3152c';
 
 window.vigieDemarre = true; // lu par le script de secours d'index.html
 

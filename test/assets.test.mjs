@@ -24,3 +24,8 @@ test('app.js importe score.mjs et anglais.mjs avec leur empreinte à jour', () =
     assert.ok(lire('app.js').includes(attendu), `app.js doit importer ${attendu} (lancer : node scripts/empreintes.mjs)`);
   }
 });
+
+test('methode.html porte l’empreinte à jour de styles.css', () => {
+  const attendu = `styles.css?v=${empreinte('styles.css')}`;
+  assert.ok(lire('methode.html').includes(`"${attendu}"`), `methode.html doit appeler ${attendu} (lancer : node scripts/empreintes.mjs)`);
+});

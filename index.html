@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title data-i18n="titre">Vigie Dette France</title>
 <meta name="description" data-i18n-attr="content:meta.description" content="Les cinq signaux de santé de la dette publique française, mis à jour chaque jour, avec leurs seuils de risque historiques.">
-<link rel="stylesheet" href="styles.css?v=ce71bda4">
+<link rel="stylesheet" href="styles.css?v=7c290c93">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   try { const l = localStorage.getItem('langue'); if (l === 'en' || (!l && !/^fr\b/i.test(navigator.language || 'fr'))) document.documentElement.lang = 'en'; } catch (e) {}
@@ -222,6 +222,7 @@
   <div class="wrap">
     <p data-i18n="pied.collecte">Collecte chaque matin (BCE, Banque de France, Bundesbank, Eurostat, dépêches Reuters) ; TARGET2 et le CISS sont aussi lus en direct. Les seuils sont des repères tirés de l’historique de chaque série, pas des prévisions.</p>
     <p class="retard" id="retard" hidden></p>
+    <p><a href="methode.html" data-i18n="pied.methode">Méthode de calcul de l’Indice Vigie, avec un exemple complet</a></p>
   </div>
 </footer>
 
@@ -234,6 +235,6 @@
     if (v) v.textContent = document.documentElement.lang === 'en' ? 'The page could not load. Please reload it in a moment.' : 'La page n’a pas pu se charger. Recharge-la dans un instant.';
   }, 10000);
 </script>
-<script type="module" src="app.js?v=ac7ccc95"></script>
+<script type="module" src="app.js?v=4f2ddd19"></script>
 </body>
 </html>
