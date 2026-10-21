@@ -154,8 +154,6 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 /* Sur le bleu de l'en-tête, les couleurs de niveau ne contrastent pas : pastille sur fond de carte */
 .masthead .pill { background: var(--bg-surface); font-size: var(--text-sm); padding: 4px 12px; }
 .repere { margin: 0; max-width: 70ch; font-size: var(--text-body); }
-.indice-sans { margin: 0; font-size: var(--text-sm); opacity: 0.85; }
-.indice-sans[hidden] { display: none; }
 .reperes { display: grid; gap: var(--space-1); }
 .reperes:not(:has(> :not([hidden]))) { display: none; }
 .repere[hidden] { display: none; }
@@ -380,3 +378,4 @@ footer p { margin: 0; max-width: 80ch; }
 .detail-table .table-scroll { margin-top: var(--space-2); }
 .detail-table .ratings-table { color: var(--fg-1); }
 #indice-desc[hidden], .reperes[hidden], .signal[hidden] { display: none; }
+.info[hidden] { display: none; }

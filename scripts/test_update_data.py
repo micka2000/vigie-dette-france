@@ -117,7 +117,10 @@ class Couverture(unittest.TestCase):
         return {"lignes": [{"date": jour, "adjuge_mds": 6.0, "demande_mds": 12.0}, {"date": "2026-10-15", "taux": 3.5}]}
 
     def test_couverture_recente(self):
-        self.assertIsNone(u.alerte_couverture(self.adj("2026-08-06"), LE_20_OCTOBRE))
+        self.assertIsNone(u.alerte_couverture(self.adj("2026-09-03"), LE_20_OCTOBRE))
+
+    def test_seances_d_aout_et_de_decembre_ignorees(self):
+        self.assertEqual(u.alerte_couverture(self.adj("2026-08-06"), LE_20_OCTOBRE), "aucune couverture saisie")
 
     def test_couverture_a_saisir_a_plus_de_2_mois(self):
         self.assertIn("couverture à saisir", u.alerte_couverture(self.adj("2026-07-02"), LE_20_OCTOBRE))

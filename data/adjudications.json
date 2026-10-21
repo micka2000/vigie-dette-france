@@ -1,13 +1,1845 @@
 {
- "description": "Adjudications d'OAT long terme : ligne de référence à 10 ans. Taux de couverture = montant demandé / montant adjugé. Collecte automatique (scripts/update_data.py) depuis les dépêches Reuters « Détails de l'adjudication d'OAT » publiées par Boursorama ; avant août 2026, saisie manuelle depuis les mêmes dépêches.",
+ "description": "Adjudications d'OAT : par séance, la ligne de 8,5 à 11,5 ans au plus gros volume adjugé. Couverture = volume demandé / volume adjugé (définition de l'AFT). De 2004 à 2025-07-03 : historique officiel de l'AFT (data/sources/aft_2025-07_hist_mlt.xlsx, reconstitué par scripts/reconstituer_couverture.py) ; 2 octobre 2025 : page de l'AFT archivée ; ensuite : dépêches Reuters publiées par Boursorama, collectées chaque matin. Les séances d'août et de décembre (adjudications mixtes) sont gardées mais écartées du calcul.",
  "a_completer": [
-  "2025-12 (couverture)",
+  "2025-09",
   "2026-01",
   "2026-03",
   "2026-05",
   "2026-06"
  ],
  "lignes": [
+  {
+   "date": "2004-01-08",
+   "ligne": "OAT 4,00 % 25/10/2013",
+   "adjuge_mds": 3.331,
+   "demande_mds": 8.156,
+   "taux": 4.27,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2004-02-05",
+   "ligne": "OAT 4,00 % 25/10/2013",
+   "adjuge_mds": 2.686,
+   "demande_mds": 9.825,
+   "taux": 4.21,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2004-03-04",
+   "ligne": "OAT 4,00 % 25/04/2014",
+   "adjuge_mds": 5.746,
+   "demande_mds": 10.753,
+   "taux": 4.16,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2004-05-06",
+   "ligne": "OAT 4,00 % 25/04/2014",
+   "adjuge_mds": 3.522,
+   "demande_mds": 8.305,
+   "taux": 4.24,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2004-06-03",
+   "ligne": "OAT 4,00 % 25/04/2014",
+   "adjuge_mds": 3.37,
+   "demande_mds": 8.855,
+   "taux": 4.41,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2004-07-01",
+   "ligne": "OAT 4,00 % 25/04/2014",
+   "adjuge_mds": 3.692,
+   "demande_mds": 9.76,
+   "taux": 4.34,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2004-09-02",
+   "ligne": "OAT 4,00 % 25/10/2014",
+   "adjuge_mds": 5.22,
+   "demande_mds": 11.57,
+   "taux": 4.09,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2004-10-07",
+   "ligne": "OAT 4,00 % 25/10/2014",
+   "adjuge_mds": 2.005,
+   "demande_mds": 6.385,
+   "taux": 4.05,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2004-11-04",
+   "ligne": "OAT 4,00 % 25/10/2014",
+   "adjuge_mds": 2.252,
+   "demande_mds": 5.98,
+   "taux": 3.92,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2005-01-06",
+   "ligne": "OAT 4,00 % 25/10/2014",
+   "adjuge_mds": 3.765,
+   "demande_mds": 7.065,
+   "taux": 3.67,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2005-02-03",
+   "ligne": "OAT 3,50 % 25/04/2015",
+   "adjuge_mds": 5.965,
+   "demande_mds": 12.19,
+   "taux": 3.6,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2005-03-03",
+   "ligne": "OAT 3,50 % 25/04/2015",
+   "adjuge_mds": 3.153,
+   "demande_mds": 8.051,
+   "taux": 3.79,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2005-04-07",
+   "ligne": "OAT 3,50 % 25/04/2015",
+   "adjuge_mds": 4.235,
+   "demande_mds": 8.225,
+   "taux": 3.63,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2005-06-02",
+   "ligne": "OAT 3,50 % 25/04/2015",
+   "adjuge_mds": 2.409,
+   "demande_mds": 6.29,
+   "taux": 3.25,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2005-07-07",
+   "ligne": "OAT 3,00 % 25/10/2015",
+   "adjuge_mds": 5.115,
+   "demande_mds": 7.965,
+   "taux": 3.26,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2005-09-01",
+   "ligne": "OAT 3,00 % 25/10/2015",
+   "adjuge_mds": 2.147,
+   "demande_mds": 6.246,
+   "taux": 3.15,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2005-10-06",
+   "ligne": "OAT 3,00 % 25/10/2015",
+   "adjuge_mds": 2.785,
+   "demande_mds": 6.44,
+   "taux": 3.2,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2005-11-03",
+   "ligne": "OAT 3,00 % 25/10/2015",
+   "adjuge_mds": 3.766,
+   "demande_mds": 8.145,
+   "taux": 3.48,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2006-01-05",
+   "ligne": "OAT 3,00 % 25/10/2015",
+   "adjuge_mds": 3.004,
+   "demande_mds": 7.34,
+   "taux": 3.3,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2006-02-02",
+   "ligne": "OAT 3,25 % 25/04/2016",
+   "adjuge_mds": 5.582,
+   "demande_mds": 11.185,
+   "taux": 3.54,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2006-03-02",
+   "ligne": "OAT 3,25 % 25/04/2016",
+   "adjuge_mds": 2.949,
+   "demande_mds": 7.57,
+   "taux": 3.54,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2006-04-06",
+   "ligne": "OAT 3,25 % 25/04/2016",
+   "adjuge_mds": 2.89,
+   "demande_mds": 6.285,
+   "taux": 3.9,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2006-05-04",
+   "ligne": "OAT 3,25 % 25/04/2016",
+   "adjuge_mds": 2.675,
+   "demande_mds": 6.48,
+   "taux": 4.03,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2006-06-01",
+   "ligne": "OAT 3,25 % 25/04/2016",
+   "adjuge_mds": 2.65,
+   "demande_mds": 6.245,
+   "taux": 4.02,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2006-07-06",
+   "ligne": "OAT 3,25 % 25/04/2016",
+   "adjuge_mds": 2.363,
+   "demande_mds": 5.23,
+   "taux": 4.13,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2006-10-05",
+   "ligne": "OAT 5,00 % 25/10/2016",
+   "adjuge_mds": 2.33,
+   "demande_mds": 7.325,
+   "taux": 3.72,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2006-11-02",
+   "ligne": "OAT 5,00 % 25/10/2016",
+   "adjuge_mds": 3.04,
+   "demande_mds": 7.26,
+   "taux": 3.74,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2007-01-04",
+   "ligne": "OAT 3,75 % 25/04/2017",
+   "adjuge_mds": 5.994,
+   "demande_mds": 14.489,
+   "taux": 3.97,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2007-02-01",
+   "ligne": "OAT 3,75 % 25/04/2017",
+   "adjuge_mds": 2.78,
+   "demande_mds": 7.88,
+   "taux": 4.12,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2007-03-01",
+   "ligne": "OAT 3,75 % 25/04/2017",
+   "adjuge_mds": 2.42,
+   "demande_mds": 5.59,
+   "taux": 4.01,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2007-04-05",
+   "ligne": "OAT 3,75 % 25/04/2017",
+   "adjuge_mds": 2.943,
+   "demande_mds": 8.68,
+   "taux": 4.13,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2007-06-07",
+   "ligne": "OAT 3,75 % 25/04/2017",
+   "adjuge_mds": 3.315,
+   "demande_mds": 7.27,
+   "taux": 4.53,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2007-07-05",
+   "ligne": "OAT 3,75 % 25/04/2017",
+   "adjuge_mds": 2.1,
+   "demande_mds": 7.485,
+   "taux": 4.67,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2007-09-06",
+   "ligne": "OAT 4,25 % 25/10/2017",
+   "adjuge_mds": 3.91,
+   "demande_mds": 9.11,
+   "taux": 4.35,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2007-10-04",
+   "ligne": "OAT 4,25 % 25/10/2017",
+   "adjuge_mds": 1.842,
+   "demande_mds": 7.324,
+   "taux": 4.44,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2007-11-08",
+   "ligne": "OAT 4,25 % 25/10/2017",
+   "adjuge_mds": 2.26,
+   "demande_mds": 6.58,
+   "taux": 4.25,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2008-01-03",
+   "ligne": "OAT 4,25 % 25/10/2017",
+   "adjuge_mds": 2.6,
+   "demande_mds": 6.37,
+   "taux": 4.31,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2008-02-07",
+   "ligne": "OAT 4,25 % 25/10/2017",
+   "adjuge_mds": 2.275,
+   "demande_mds": 7.32,
+   "taux": 4.01,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2008-03-06",
+   "ligne": "OAT 4,25 % 25/10/2017",
+   "adjuge_mds": 1.395,
+   "demande_mds": 3.525,
+   "taux": 4.07,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2008-04-03",
+   "ligne": "OAT 4,00 % 25/04/2018",
+   "adjuge_mds": 5.145,
+   "demande_mds": 10.085,
+   "taux": 4.24,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2008-04-30",
+   "ligne": "OAT 4,00 % 25/04/2018",
+   "adjuge_mds": 2.38,
+   "demande_mds": 5.52,
+   "taux": 4.35,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2008-06-05",
+   "ligne": "OAT 4,00 % 25/04/2018",
+   "adjuge_mds": 3.165,
+   "demande_mds": 7.335,
+   "taux": 4.61,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2008-07-03",
+   "ligne": "OAT 4,00 % 25/04/2018",
+   "adjuge_mds": 2.723,
+   "demande_mds": 5.648,
+   "taux": 4.85,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2008-09-04",
+   "ligne": "OAT 4,00 % 25/04/2018",
+   "adjuge_mds": 2.965,
+   "demande_mds": 5.64,
+   "taux": 4.36,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2008-10-02",
+   "ligne": "OAT 4,25 % 25/10/2018",
+   "adjuge_mds": 4.21,
+   "demande_mds": 7.075,
+   "taux": 4.43,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2008-11-06",
+   "ligne": "OAT 4,00 % 25/04/2018",
+   "adjuge_mds": 2.49,
+   "demande_mds": 3.945,
+   "taux": 4.18,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2009-01-08",
+   "ligne": "OAT 4,25 % 25/10/2018",
+   "adjuge_mds": 3.578,
+   "demande_mds": 5.603,
+   "taux": 3.67,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2009-02-05",
+   "ligne": "OAT 4,25 % 25/10/2018",
+   "adjuge_mds": 2.58,
+   "demande_mds": 5.33,
+   "taux": 3.81,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2009-03-05",
+   "ligne": "OAT 4,25 % 25/10/2018",
+   "adjuge_mds": 3.495,
+   "demande_mds": 5.99,
+   "taux": 3.72,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2009-04-02",
+   "ligne": "OAT 4,25 % 25/04/2019",
+   "adjuge_mds": 3.37,
+   "demande_mds": 6.31,
+   "taux": 3.62,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2009-05-07",
+   "ligne": "OAT 4,25 % 25/04/2019",
+   "adjuge_mds": 3.435,
+   "demande_mds": 5.51,
+   "taux": 3.67,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2009-07-02",
+   "ligne": "OAT 3,75 % 25/10/2019",
+   "adjuge_mds": 5.12,
+   "demande_mds": 8.72,
+   "taux": 3.82,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2009-09-03",
+   "ligne": "OAT 3,75 % 25/10/2019",
+   "adjuge_mds": 3.54,
+   "demande_mds": 6.615,
+   "taux": 3.56,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2009-10-01",
+   "ligne": "OAT 3,75 % 25/10/2019",
+   "adjuge_mds": 3.695,
+   "demande_mds": 5.845,
+   "taux": 3.57,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2009-11-05",
+   "ligne": "OAT 3,75 % 25/10/2019",
+   "adjuge_mds": 2.49,
+   "demande_mds": 5.19,
+   "taux": 3.62,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2010-01-07",
+   "ligne": "OAT 3,75 % 25/10/2019",
+   "adjuge_mds": 4.27,
+   "demande_mds": 7.289,
+   "taux": 3.6,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2010-02-04",
+   "ligne": "OAT 3,50 % 25/04/2020",
+   "adjuge_mds": 4.709,
+   "demande_mds": 7.92,
+   "taux": 3.58,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2010-03-04",
+   "ligne": "OAT 3,50 % 25/04/2020",
+   "adjuge_mds": 4.544,
+   "demande_mds": 8.315,
+   "taux": 3.45,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2010-04-01",
+   "ligne": "OAT 3,50 % 25/04/2020",
+   "adjuge_mds": 3.512,
+   "demande_mds": 6.635,
+   "taux": 3.41,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2010-05-06",
+   "ligne": "OAT 3,50 % 25/04/2020",
+   "adjuge_mds": 5.315,
+   "demande_mds": 8.165,
+   "taux": 3.18,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2010-06-03",
+   "ligne": "OAT 3,75 % 25/04/2021",
+   "adjuge_mds": 3.364,
+   "demande_mds": 5.705,
+   "taux": 3.15,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2010-07-01",
+   "ligne": "OAT 3,50 % 25/04/2020",
+   "adjuge_mds": 2.017,
+   "demande_mds": 7.08,
+   "taux": 3.04,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2010-09-02",
+   "ligne": "OAT 3,50 % 25/04/2020",
+   "adjuge_mds": 2.895,
+   "demande_mds": 6.27,
+   "taux": 2.55,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2010-10-07",
+   "ligne": "OAT 2,50 % 25/10/2020",
+   "adjuge_mds": 5.075,
+   "demande_mds": 9.025,
+   "taux": 2.68,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2010-11-04",
+   "ligne": "OAT 2,50 % 25/10/2020",
+   "adjuge_mds": 4.66,
+   "demande_mds": 8.735,
+   "taux": 2.87,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2011-01-06",
+   "ligne": "OAT 2,50 % 25/10/2020",
+   "adjuge_mds": 4.48,
+   "demande_mds": 8.94,
+   "taux": 3.36,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2011-02-03",
+   "ligne": "OAT 2,50 % 25/10/2020",
+   "adjuge_mds": 2.58,
+   "demande_mds": 7.305,
+   "taux": 3.61,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2011-03-03",
+   "ligne": "OAT 2,50 % 25/10/2020",
+   "adjuge_mds": 3.22,
+   "demande_mds": 7.24,
+   "taux": 3.61,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2011-04-07",
+   "ligne": "OAT 2,50 % 25/10/2020",
+   "adjuge_mds": 4.44,
+   "demande_mds": 11.22,
+   "taux": 3.77,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2011-05-05",
+   "ligne": "OAT 2,50 % 25/10/2020",
+   "adjuge_mds": 2.999,
+   "demande_mds": 10.005,
+   "taux": 3.64,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2011-06-01",
+   "ligne": "OAT 3,25 % 25/10/2021",
+   "adjuge_mds": 5.0,
+   "demande_mds": 12.685,
+   "taux": 3.5,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2011-07-07",
+   "ligne": "OAT 3,25 % 25/10/2021",
+   "adjuge_mds": 4.05,
+   "demande_mds": 7.825,
+   "taux": 3.49,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2011-09-01",
+   "ligne": "OAT 3,25 % 25/10/2021",
+   "adjuge_mds": 3.02,
+   "demande_mds": 6.975,
+   "taux": 2.9,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2011-10-06",
+   "ligne": "OAT 3,25 % 25/10/2021",
+   "adjuge_mds": 4.388,
+   "demande_mds": 8.876,
+   "taux": 2.72,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2011-11-03",
+   "ligne": "OAT 3,25 % 25/10/2021",
+   "adjuge_mds": 2.865,
+   "demande_mds": 6.415,
+   "taux": 3.22,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2011-12-01",
+   "ligne": "OAT 3,25 % 25/10/2021",
+   "adjuge_mds": 1.571,
+   "demande_mds": 4.785,
+   "taux": 3.18,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2012-01-05",
+   "ligne": "OAT 3,25 % 25/10/2021",
+   "adjuge_mds": 4.02,
+   "demande_mds": 6.605,
+   "taux": 3.29,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2012-02-02",
+   "ligne": "OAT 3,00 % 25/04/2022",
+   "adjuge_mds": 5.698,
+   "demande_mds": 9.73,
+   "taux": 3.13,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2012-03-01",
+   "ligne": "OAT 3,00 % 25/04/2022",
+   "adjuge_mds": 3.915,
+   "demande_mds": 8.575,
+   "taux": 2.91,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2012-04-05",
+   "ligne": "OAT 3,00 % 25/04/2022",
+   "adjuge_mds": 4.319,
+   "demande_mds": 11.075,
+   "taux": 2.98,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2012-05-03",
+   "ligne": "OAT 3,00 % 25/04/2022",
+   "adjuge_mds": 3.323,
+   "demande_mds": 6.578,
+   "taux": 2.96,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2012-06-07",
+   "ligne": "OAT 3,00 % 25/04/2022",
+   "adjuge_mds": 3.48,
+   "demande_mds": 7.045,
+   "taux": 2.46,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2012-07-05",
+   "ligne": "OAT 3,00 % 25/04/2022",
+   "adjuge_mds": 4.671,
+   "demande_mds": 8.991,
+   "taux": 2.53,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2012-09-06",
+   "ligne": "OAT 3,00 % 25/04/2022",
+   "adjuge_mds": 2.998,
+   "demande_mds": 6.308,
+   "taux": 2.21,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2012-10-04",
+   "ligne": "OAT 2,25 % 25/10/2022",
+   "adjuge_mds": 4.805,
+   "demande_mds": 10.342,
+   "taux": 2.28,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2012-10-31",
+   "ligne": "OAT 2,25 % 25/10/2022",
+   "adjuge_mds": 4.369,
+   "demande_mds": 8.535,
+   "taux": 2.22,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2013-01-03",
+   "ligne": "OAT 2,25 % 25/10/2022",
+   "adjuge_mds": 3.53,
+   "demande_mds": 6.085,
+   "taux": 2.07,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2013-02-07",
+   "ligne": "OAT 2,25 % 25/10/2022",
+   "adjuge_mds": 3.02,
+   "demande_mds": 9.34,
+   "taux": 2.3,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2013-03-07",
+   "ligne": "OAT 2,25 % 25/10/2022",
+   "adjuge_mds": 3.495,
+   "demande_mds": 7.675,
+   "taux": 2.1,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2013-04-04",
+   "ligne": "OAT 2,25 % 25/10/2022",
+   "adjuge_mds": 2.006,
+   "demande_mds": 6.17,
+   "taux": 1.94,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2013-05-02",
+   "ligne": "OAT 1,75 % 25/05/2023",
+   "adjuge_mds": 4.015,
+   "demande_mds": 8.045,
+   "taux": 1.81,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2013-06-06",
+   "ligne": "OAT 1,75 % 25/05/2023",
+   "adjuge_mds": 3.84,
+   "demande_mds": 6.18,
+   "taux": 2.04,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2013-07-04",
+   "ligne": "OAT 1,75 % 25/05/2023",
+   "adjuge_mds": 5.36,
+   "demande_mds": 9.11,
+   "taux": 2.32,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2013-09-05",
+   "ligne": "OAT 1,75 % 25/05/2023",
+   "adjuge_mds": 4.24,
+   "demande_mds": 8.157,
+   "taux": 2.57,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2013-10-03",
+   "ligne": "OAT 1,75 % 25/05/2023",
+   "adjuge_mds": 5.105,
+   "demande_mds": 9.605,
+   "taux": 2.37,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2013-11-07",
+   "ligne": "OAT 2,25 % 25/05/2024",
+   "adjuge_mds": 4.283,
+   "demande_mds": 8.46,
+   "taux": 2.41,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2014-01-09",
+   "ligne": "OAT 2,25 % 25/05/2024",
+   "adjuge_mds": 5.046,
+   "demande_mds": 7.771,
+   "taux": 2.51,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2014-02-06",
+   "ligne": "OAT 2,25 % 25/05/2024",
+   "adjuge_mds": 4.055,
+   "demande_mds": 8.68,
+   "taux": 2.25,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2014-03-06",
+   "ligne": "OAT 2,25 % 25/05/2024",
+   "adjuge_mds": 3.08,
+   "demande_mds": 6.43,
+   "taux": 2.2,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2014-04-03",
+   "ligne": "OAT 2,25 % 25/05/2024",
+   "adjuge_mds": 4.103,
+   "demande_mds": 8.053,
+   "taux": 2.15,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2014-04-30",
+   "ligne": "OAT 2,25 % 25/05/2024",
+   "adjuge_mds": 3.853,
+   "demande_mds": 8.396,
+   "taux": 2.0,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2014-06-05",
+   "ligne": "OAT 1,75 % 25/11/2024",
+   "adjuge_mds": 5.39,
+   "demande_mds": 9.33,
+   "taux": 1.96,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2014-07-03",
+   "ligne": "OAT 1,75 % 25/11/2024",
+   "adjuge_mds": 3.398,
+   "demande_mds": 9.305,
+   "taux": 1.77,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2014-09-04",
+   "ligne": "OAT 1,75 % 25/11/2024",
+   "adjuge_mds": 4.297,
+   "demande_mds": 12.195,
+   "taux": 1.32,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2014-10-02",
+   "ligne": "OAT 1,75 % 25/11/2024",
+   "adjuge_mds": 3.548,
+   "demande_mds": 7.062,
+   "taux": 1.23,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2014-11-06",
+   "ligne": "OAT 1,75 % 25/11/2024",
+   "adjuge_mds": 5.315,
+   "demande_mds": 7.366,
+   "taux": 1.18,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2014-12-04",
+   "ligne": "OAT 6,00 % 25/10/2025",
+   "adjuge_mds": 1.332,
+   "demande_mds": 3.245,
+   "taux": 1.11,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2015-01-08",
+   "ligne": "OAT 1,75 % 25/11/2024",
+   "adjuge_mds": 4.854,
+   "demande_mds": 9.486,
+   "taux": 0.79,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2015-02-05",
+   "ligne": "OAT 0,50 % 25/05/2025",
+   "adjuge_mds": 4.625,
+   "demande_mds": 8.641,
+   "taux": 0.61,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2015-03-05",
+   "ligne": "OAT 0,50 % 25/05/2025",
+   "adjuge_mds": 4.6,
+   "demande_mds": 7.051,
+   "taux": 0.67,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2015-04-02",
+   "ligne": "OAT 0,50 % 25/05/2025",
+   "adjuge_mds": 4.711,
+   "demande_mds": 8.081,
+   "taux": 0.46,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2015-05-07",
+   "ligne": "OAT 0,50 % 25/05/2025",
+   "adjuge_mds": 3.717,
+   "demande_mds": 6.266,
+   "taux": 0.98,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2015-06-04",
+   "ligne": "OAT 0,50 % 25/05/2025",
+   "adjuge_mds": 3.775,
+   "demande_mds": 6.636,
+   "taux": 1.28,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2015-07-02",
+   "ligne": "OAT 0,50 % 25/05/2025",
+   "adjuge_mds": 4.554,
+   "demande_mds": 9.462,
+   "taux": 1.3,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2015-08-06",
+   "ligne": "OAT 6,00 % 25/10/2025",
+   "adjuge_mds": 1.84,
+   "demande_mds": 3.731,
+   "taux": 1.02,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2015-09-03",
+   "ligne": "OAT 1,00 % 25/11/2025",
+   "adjuge_mds": 5.533,
+   "demande_mds": 9.144,
+   "taux": 1.21,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2015-10-01",
+   "ligne": "OAT 1,00 % 25/11/2025",
+   "adjuge_mds": 3.859,
+   "demande_mds": 8.611,
+   "taux": 0.98,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2015-11-05",
+   "ligne": "OAT 1,00 % 25/11/2025",
+   "adjuge_mds": 3.146,
+   "demande_mds": 7.973,
+   "taux": 0.95,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2016-01-07",
+   "ligne": "OAT 1,00 % 25/11/2025",
+   "adjuge_mds": 4.553,
+   "demande_mds": 6.57,
+   "taux": 0.86,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2016-02-04",
+   "ligne": "OAT 1,00 % 25/11/2025",
+   "adjuge_mds": 5.094,
+   "demande_mds": 12.065,
+   "taux": 0.64,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2016-03-03",
+   "ligne": "OAT 0,50 % 25/05/2026",
+   "adjuge_mds": 5.1,
+   "demande_mds": 8.185,
+   "taux": 0.63,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2016-04-07",
+   "ligne": "OAT 0,50 % 25/05/2026",
+   "adjuge_mds": 4.487,
+   "demande_mds": 7.475,
+   "taux": 0.43,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2016-05-04",
+   "ligne": "OAT 0,50 % 25/05/2026",
+   "adjuge_mds": 4.12,
+   "demande_mds": 7.095,
+   "taux": 0.57,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2016-06-02",
+   "ligne": "OAT 0,50 % 25/05/2026",
+   "adjuge_mds": 4.14,
+   "demande_mds": 7.34,
+   "taux": 0.49,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2016-07-07",
+   "ligne": "OAT 0,50 % 25/05/2026",
+   "adjuge_mds": 3.109,
+   "demande_mds": 7.67,
+   "taux": 0.16,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2016-08-04",
+   "ligne": "OAT 0,50 % 25/05/2026",
+   "adjuge_mds": 3.038,
+   "demande_mds": 8.57,
+   "taux": 0.19,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2016-09-01",
+   "ligne": "OAT 0,25 % 25/11/2026",
+   "adjuge_mds": 5.265,
+   "demande_mds": 10.857,
+   "taux": 0.26,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2016-10-06",
+   "ligne": "OAT 0,25 % 25/11/2026",
+   "adjuge_mds": 3.16,
+   "demande_mds": 9.695,
+   "taux": 0.28,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2016-11-03",
+   "ligne": "OAT 0,25 % 25/11/2026",
+   "adjuge_mds": 5.499,
+   "demande_mds": 10.954,
+   "taux": 0.46,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2017-01-05",
+   "ligne": "OAT 0,25 % 25/11/2026",
+   "adjuge_mds": 4.175,
+   "demande_mds": 8.495,
+   "taux": 0.78,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2017-02-02",
+   "ligne": "OAT 0,25 % 25/11/2026",
+   "adjuge_mds": 3.996,
+   "demande_mds": 8.34,
+   "taux": 1.07,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2017-03-02",
+   "ligne": "OAT 0,25 % 25/11/2026",
+   "adjuge_mds": 3.622,
+   "demande_mds": 9.967,
+   "taux": 0.91,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2017-04-06",
+   "ligne": "OAT 1,00 % 25/05/2027",
+   "adjuge_mds": 4.908,
+   "demande_mds": 9.945,
+   "taux": 0.97,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2017-05-04",
+   "ligne": "OAT 1,00 % 25/05/2027",
+   "adjuge_mds": 3.885,
+   "demande_mds": 7.86,
+   "taux": 0.81,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2017-06-01",
+   "ligne": "OAT 1,00 % 25/05/2027",
+   "adjuge_mds": 5.08,
+   "demande_mds": 8.95,
+   "taux": 0.72,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2017-07-06",
+   "ligne": "OAT 1,00 % 25/05/2027",
+   "adjuge_mds": 3.789,
+   "demande_mds": 7.405,
+   "taux": 0.82,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2017-08-03",
+   "ligne": "OAT 1,00 % 25/05/2027",
+   "adjuge_mds": 3.598,
+   "demande_mds": 7.724,
+   "taux": 0.75,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2017-09-07",
+   "ligne": "OAT 1,00 % 25/05/2027",
+   "adjuge_mds": 5.214,
+   "demande_mds": 10.394,
+   "taux": 0.67,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2017-10-05",
+   "ligne": "OAT 0,75 % 25/05/2028",
+   "adjuge_mds": 3.998,
+   "demande_mds": 7.405,
+   "taux": 0.88,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2017-11-02",
+   "ligne": "OAT 0,75 % 25/05/2028",
+   "adjuge_mds": 4.341,
+   "demande_mds": 6.821,
+   "taux": 0.76,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2017-12-07",
+   "ligne": "OAT 0,25 % 25/11/2026",
+   "adjuge_mds": 1.99,
+   "demande_mds": 3.692,
+   "taux": 0.36,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2018-01-04",
+   "ligne": "OAT 0,75 % 25/05/2028",
+   "adjuge_mds": 5.211,
+   "demande_mds": 7.501,
+   "taux": 0.79,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2018-02-01",
+   "ligne": "OAT 0,75 % 25/05/2028",
+   "adjuge_mds": 3.621,
+   "demande_mds": 7.312,
+   "taux": 0.98,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2018-03-01",
+   "ligne": "OAT 0,75 % 25/05/2028",
+   "adjuge_mds": 2.921,
+   "demande_mds": 5.421,
+   "taux": 0.9,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2018-04-05",
+   "ligne": "OAT 0,75 % 25/05/2028",
+   "adjuge_mds": 4.197,
+   "demande_mds": 8.122,
+   "taux": 0.74,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2018-05-03",
+   "ligne": "OAT 0,75 % 25/05/2028",
+   "adjuge_mds": 3.611,
+   "demande_mds": 6.796,
+   "taux": 0.81,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2018-06-07",
+   "ligne": "OAT 0,75 % 25/11/2028",
+   "adjuge_mds": 3.387,
+   "demande_mds": 6.507,
+   "taux": 0.9,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2018-07-05",
+   "ligne": "OAT 0,75 % 25/11/2028",
+   "adjuge_mds": 4.248,
+   "demande_mds": 8.118,
+   "taux": 0.67,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2018-08-02",
+   "ligne": "OAT 5,50 % 25/04/2029",
+   "adjuge_mds": 2.41,
+   "demande_mds": 4.762,
+   "taux": 0.74,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2018-09-06",
+   "ligne": "OAT 0,75 % 25/11/2028",
+   "adjuge_mds": 3.36,
+   "demande_mds": 6.543,
+   "taux": 0.71,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2018-10-04",
+   "ligne": "OAT 0,75 % 25/11/2028",
+   "adjuge_mds": 4.645,
+   "demande_mds": 7.399,
+   "taux": 0.86,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2018-11-08",
+   "ligne": "OAT 0,75 % 25/11/2028",
+   "adjuge_mds": 3.76,
+   "demande_mds": 6.82,
+   "taux": 0.82,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2019-01-10",
+   "ligne": "OAT 0,75 % 25/11/2028",
+   "adjuge_mds": 4.855,
+   "demande_mds": 8.302,
+   "taux": 0.68,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2019-02-07",
+   "ligne": "OAT 0,75 % 25/11/2028",
+   "adjuge_mds": 4.45,
+   "demande_mds": 9.585,
+   "taux": 0.57,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2019-03-07",
+   "ligne": "OAT 0,50 % 25/05/2029",
+   "adjuge_mds": 6.494,
+   "demande_mds": 12.195,
+   "taux": 0.57,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2019-04-04",
+   "ligne": "OAT 0,50 % 25/05/2029",
+   "adjuge_mds": 5.491,
+   "demande_mds": 11.295,
+   "taux": 0.39,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2019-05-02",
+   "ligne": "OAT 0,50 % 25/05/2029",
+   "adjuge_mds": 3.957,
+   "demande_mds": 12.322,
+   "taux": 0.37,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2019-06-06",
+   "ligne": "OAT 0,50 % 25/05/2029",
+   "adjuge_mds": 3.998,
+   "demande_mds": 10.27,
+   "taux": 0.14,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2019-07-04",
+   "ligne": "OAT 0,50 % 25/05/2029",
+   "adjuge_mds": 4.972,
+   "demande_mds": 9.74,
+   "taux": -0.13,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2019-08-01",
+   "ligne": "OAT 2,50 % 25/05/2030",
+   "adjuge_mds": 2.125,
+   "demande_mds": 5.352,
+   "taux": -0.1,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2019-09-05",
+   "ligne": "OAT 0,50 % 25/05/2029",
+   "adjuge_mds": 3.945,
+   "demande_mds": 6.45,
+   "taux": -0.36,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2019-10-03",
+   "ligne": "OAT 0,00 % 25/11/2029",
+   "adjuge_mds": 5.807,
+   "demande_mds": 9.75,
+   "taux": -0.24,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2019-11-07",
+   "ligne": "OAT 0,00 % 25/11/2029",
+   "adjuge_mds": 5.185,
+   "demande_mds": 11.008,
+   "taux": -0.03,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2019-12-05",
+   "ligne": "OAT 5,50 % 25/04/2029",
+   "adjuge_mds": 2.036,
+   "demande_mds": 4.056,
+   "taux": 0.0,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2020-01-09",
+   "ligne": "OAT 0,00 % 25/11/2029",
+   "adjuge_mds": 6.202,
+   "demande_mds": 10.442,
+   "taux": 0.04,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2020-02-06",
+   "ligne": "OAT 0,00 % 25/11/2029",
+   "adjuge_mds": 4.931,
+   "demande_mds": 10.667,
+   "taux": -0.11,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2020-03-05",
+   "ligne": "OAT 0,00 % 25/11/2029",
+   "adjuge_mds": 5.109,
+   "demande_mds": 11.096,
+   "taux": -0.32,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2020-04-02",
+   "ligne": "OAT 0,75 % 25/11/2028",
+   "adjuge_mds": 4.928,
+   "demande_mds": 7.273,
+   "taux": 0.0,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2020-05-07",
+   "ligne": "OAT 0,00 % 25/11/2029",
+   "adjuge_mds": 4.958,
+   "demande_mds": 10.07,
+   "taux": 0.03,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2020-06-04",
+   "ligne": "OAT 0,00 % 25/11/2030",
+   "adjuge_mds": 5.095,
+   "demande_mds": 9.711,
+   "taux": 0.0,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2020-07-02",
+   "ligne": "OAT 0,00 % 25/11/2030",
+   "adjuge_mds": 5.554,
+   "demande_mds": 15.14,
+   "taux": -0.09,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2020-08-06",
+   "ligne": "OAT 2,50 % 25/05/2030",
+   "adjuge_mds": 3.019,
+   "demande_mds": 6.476,
+   "taux": -0.27,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2020-09-03",
+   "ligne": "OAT 0,00 % 25/11/2030",
+   "adjuge_mds": 5.725,
+   "demande_mds": 9.441,
+   "taux": -0.19,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2020-10-01",
+   "ligne": "OAT 0,00 % 25/11/2030",
+   "adjuge_mds": 5.508,
+   "demande_mds": 10.002,
+   "taux": -0.25,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2020-11-05",
+   "ligne": "OAT 0,00 % 25/11/2030",
+   "adjuge_mds": 3.498,
+   "demande_mds": 8.241,
+   "taux": -0.38,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2021-01-07",
+   "ligne": "OAT 0,00 % 25/11/2030",
+   "adjuge_mds": 4.998,
+   "demande_mds": 9.607,
+   "taux": -0.33,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2021-02-04",
+   "ligne": "OAT 0,00 % 25/11/2030",
+   "adjuge_mds": 6.154,
+   "demande_mds": 13.448,
+   "taux": -0.25,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2021-03-04",
+   "ligne": "OAT 0,00 % 25/11/2030",
+   "adjuge_mds": 6.272,
+   "demande_mds": 12.789,
+   "taux": -0.07,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2021-04-08",
+   "ligne": "OAT 0,00 % 25/11/2031",
+   "adjuge_mds": 6.569,
+   "demande_mds": 10.85,
+   "taux": 0.0,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2021-05-06",
+   "ligne": "OAT 0,00 % 25/11/2031",
+   "adjuge_mds": 6.81,
+   "demande_mds": 11.748,
+   "taux": 0.0,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2021-06-03",
+   "ligne": "OAT 0,00 % 25/11/2031",
+   "adjuge_mds": 6.27,
+   "demande_mds": 12.42,
+   "taux": 0.16,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2021-07-01",
+   "ligne": "OAT 0,00 % 25/11/2031",
+   "adjuge_mds": 4.176,
+   "demande_mds": 8.925,
+   "taux": 0.13,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2021-08-05",
+   "ligne": "OAT 1,50 % 25/05/2031",
+   "adjuge_mds": 4.16,
+   "demande_mds": 7.354,
+   "taux": -0.23,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2021-09-02",
+   "ligne": "OAT 0,00 % 25/11/2031",
+   "adjuge_mds": 6.315,
+   "demande_mds": 11.407,
+   "taux": -0.05,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2021-10-07",
+   "ligne": "OAT 0,00 % 25/11/2031",
+   "adjuge_mds": 4.93,
+   "demande_mds": 10.466,
+   "taux": 0.15,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2021-11-04",
+   "ligne": "OAT 0,00 % 25/11/2031",
+   "adjuge_mds": 6.52,
+   "demande_mds": 11.628,
+   "taux": 0.16,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2022-01-06",
+   "ligne": "OAT 0,00 % 25/05/2032",
+   "adjuge_mds": 5.87,
+   "demande_mds": 12.436,
+   "taux": 0.3,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2022-02-03",
+   "ligne": "OAT 0,00 % 25/05/2032",
+   "adjuge_mds": 3.435,
+   "demande_mds": 9.007,
+   "taux": 0.45,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2022-03-03",
+   "ligne": "OAT 0,00 % 25/05/2032",
+   "adjuge_mds": 6.339,
+   "demande_mds": 11.078,
+   "taux": 0.52,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2022-04-07",
+   "ligne": "OAT 0,00 % 25/05/2032",
+   "adjuge_mds": 6.433,
+   "demande_mds": 11.732,
+   "taux": 1.17,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2022-05-05",
+   "ligne": "OAT 0,00 % 25/05/2032",
+   "adjuge_mds": 6.279,
+   "demande_mds": 11.159,
+   "taux": 1.51,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2022-06-02",
+   "ligne": "OAT 0,00 % 25/05/2032",
+   "adjuge_mds": 6.114,
+   "demande_mds": 12.354,
+   "taux": 1.72,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2022-07-07",
+   "ligne": "OAT 2,00 % 25/11/2032",
+   "adjuge_mds": 5.622,
+   "demande_mds": 10.863,
+   "taux": 1.92,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2022-08-04",
+   "ligne": "OAT 2,00 % 25/11/2032",
+   "adjuge_mds": 4.131,
+   "demande_mds": 10.192,
+   "taux": 1.43,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2022-09-01",
+   "ligne": "OAT 1,50 % 25/05/2031",
+   "adjuge_mds": 4.407,
+   "demande_mds": 9.03,
+   "taux": 1.94,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2022-10-06",
+   "ligne": "OAT 2,00 % 25/11/2032",
+   "adjuge_mds": 5.926,
+   "demande_mds": 13.946,
+   "taux": 2.59,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2022-11-03",
+   "ligne": "OAT 2,00 % 25/11/2032",
+   "adjuge_mds": 5.058,
+   "demande_mds": 10.424,
+   "taux": 2.76,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2022-12-01",
+   "ligne": "OAT 0,00 % 25/11/2031",
+   "adjuge_mds": 2.844,
+   "demande_mds": 6.126,
+   "taux": 2.19,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2023-01-05",
+   "ligne": "OAT 2,00 % 25/11/2032",
+   "adjuge_mds": 6.113,
+   "demande_mds": 11.765,
+   "taux": 2.77,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2023-02-02",
+   "ligne": "OAT 2,00 % 25/11/2032",
+   "adjuge_mds": 4.568,
+   "demande_mds": 9.567,
+   "taux": 2.68,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2023-03-02",
+   "ligne": "OAT 2,00 % 25/11/2032",
+   "adjuge_mds": 5.055,
+   "demande_mds": 11.483,
+   "taux": 3.2,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2023-04-06",
+   "ligne": "OAT 3,00 % 25/05/2033",
+   "adjuge_mds": 6.664,
+   "demande_mds": 13.525,
+   "taux": 2.7,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2023-05-04",
+   "ligne": "OAT 3,00 % 25/05/2033",
+   "adjuge_mds": 5.075,
+   "demande_mds": 9.739,
+   "taux": 2.83,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2023-06-01",
+   "ligne": "OAT 3,00 % 25/05/2033",
+   "adjuge_mds": 6.388,
+   "demande_mds": 11.912,
+   "taux": 2.85,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2023-07-06",
+   "ligne": "OAT 3,00 % 25/05/2033",
+   "adjuge_mds": 5.952,
+   "demande_mds": 11.332,
+   "taux": 3.04,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2023-08-03",
+   "ligne": "OAT 3,00 % 25/05/2033",
+   "adjuge_mds": 5.814,
+   "demande_mds": 10.657,
+   "taux": 3.09,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2023-09-07",
+   "ligne": "OAT 3,00 % 25/05/2033",
+   "adjuge_mds": 5.785,
+   "demande_mds": 9.941,
+   "taux": 3.15,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2023-10-05",
+   "ligne": "OAT 3,50 % 25/11/2033",
+   "adjuge_mds": 6.4,
+   "demande_mds": 11.994,
+   "taux": 3.56,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2023-11-02",
+   "ligne": "OAT 3,50 % 25/11/2033",
+   "adjuge_mds": 5.29,
+   "demande_mds": 10.679,
+   "taux": 3.32,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2023-12-07",
+   "ligne": "OAT 1,25 % 25/05/2034",
+   "adjuge_mds": 2.01,
+   "demande_mds": 5.931,
+   "taux": 2.75,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2024-01-04",
+   "ligne": "OAT 3,50 % 25/11/2033",
+   "adjuge_mds": 7.239,
+   "demande_mds": 12.884,
+   "taux": 2.59,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2024-02-01",
+   "ligne": "OAT 3,50 % 25/11/2033",
+   "adjuge_mds": 7.454,
+   "demande_mds": 14.457,
+   "taux": 2.7,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2024-03-07",
+   "ligne": "OAT 3,50 % 25/11/2033",
+   "adjuge_mds": 4.681,
+   "demande_mds": 13.463,
+   "taux": 2.79,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2024-04-04",
+   "ligne": "OAT 3,50 % 25/11/2033",
+   "adjuge_mds": 6.571,
+   "demande_mds": 12.328,
+   "taux": 2.87,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2024-05-02",
+   "ligne": "OAT 3,50 % 25/11/2033",
+   "adjuge_mds": 4.324,
+   "demande_mds": 10.155,
+   "taux": 3.01,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2024-06-06",
+   "ligne": "OAT 3,00 % 25/11/2034",
+   "adjuge_mds": 7.174,
+   "demande_mds": 14.118,
+   "taux": 3.05,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2024-07-04",
+   "ligne": "OAT 3,00 % 25/05/2033",
+   "adjuge_mds": 3.984,
+   "demande_mds": 10.756,
+   "taux": 3.17,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2024-08-01",
+   "ligne": "OAT 3,00 % 25/11/2034",
+   "adjuge_mds": 4.956,
+   "demande_mds": 11.15,
+   "taux": 3.01,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2024-09-05",
+   "ligne": "OAT 3,00 % 25/11/2034",
+   "adjuge_mds": 6.969,
+   "demande_mds": 15.282,
+   "taux": 2.95,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2024-10-03",
+   "ligne": "OAT 3,00 % 25/11/2034",
+   "adjuge_mds": 6.165,
+   "demande_mds": 13.231,
+   "taux": 2.92,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2024-11-07",
+   "ligne": "OAT 3,00 % 25/11/2034",
+   "adjuge_mds": 6.938,
+   "demande_mds": 13.769,
+   "taux": 3.24,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2025-01-09",
+   "ligne": "OAT 3,00 % 25/11/2034",
+   "adjuge_mds": 7.059,
+   "demande_mds": 13.997,
+   "taux": 3.4,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2025-02-06",
+   "ligne": "OAT 3,20 % 25/05/2035",
+   "adjuge_mds": 8.641,
+   "demande_mds": 19.264,
+   "taux": 3.15,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2025-03-06",
+   "ligne": "OAT 3,20 % 25/05/2035",
+   "adjuge_mds": 6.383,
+   "demande_mds": 18.301,
+   "taux": 3.54,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2025-04-03",
+   "ligne": "OAT 3,20 % 25/05/2035",
+   "adjuge_mds": 5.93,
+   "demande_mds": 18.041,
+   "taux": 3.37,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2025-05-07",
+   "ligne": "OAT 3,20 % 25/05/2035",
+   "adjuge_mds": 7.768,
+   "demande_mds": 21.785,
+   "taux": 3.24,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2025-06-05",
+   "ligne": "OAT 3,20 % 25/05/2035",
+   "adjuge_mds": 6.734,
+   "demande_mds": 19.026,
+   "taux": 3.17,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2025-07-03",
+   "ligne": "OAT 3,20 % 25/05/2035",
+   "adjuge_mds": 7.674,
+   "demande_mds": 17.82,
+   "taux": 3.27,
+   "source": "https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx"
+  },
+  {
+   "date": "2025-10-02",
+   "ligne": "OAT 3,50 % 25/11/2035",
+   "adjuge_mds": 5.49,
+   "demande_mds": 13.906,
+   "taux": 3.51,
+   "source": "https://web.archive.org/web/20251009042138/https://www.aft.gouv.fr/fr/dernieres-adjudications"
+  },
   {
    "date": "2025-11-06",
    "ligne": "OAT 3,50 % 25/11/2035",

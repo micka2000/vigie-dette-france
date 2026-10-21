@@ -1,7 +1,9 @@
 // Vigie Dette France : calcul pur des scores, des niveaux et de la phrase de verdict.
 // Aucun accès au DOM, à d3 ni au réseau : importé par app.js et par les tests (node --test).
 
-export const METHODE_VERSION = '1.0';
+// 2.0 (21/10/2026) : composition constante (couverture reconstituée depuis 2004, pas de moyenne sur un signal manquant),
+// séances d'août et de décembre écartées de la couverture.
+export const METHODE_VERSION = '2.0';
 
 export const NIVEAUX = ['calme', 'vigilance', 'tension', 'crise'];
 
@@ -119,8 +121,13 @@ export function fusionnerSeries(fichier, direct, cle = 'mois') {
 const valeurSpread = (r) => (r.fr10 != null && r.de10 != null ? spreadPb(r.fr10, r.de10) : r.spread_pb);
 const valeurTarget = (r) => (r.solde_meur != null ? r.solde_meur / 1000 : r.solde_mds);
 
+// Août et décembre : l'AFT y tient des adjudications mixtes dont les lignes de 8,5 à 11,5 ans sont d'anciennes lignes
+// à petit volume, à la couverture nettement plus haute (déc. 2011 : 3,05 contre 2,02 pour les séances voisines).
+// Ces deux mois sont écartés, dans l'historique comme dans la collecte, puisque les dépêches ne disent pas le type de séance.
+export const MOIS_ECARTES = ['08', '12'];
+
 export function couvertures(adj) {
-  return adj.lignes.filter((a) => a.adjuge_mds && a.demande_mds != null)
+  return adj.lignes.filter((a) => a.adjuge_mds && a.demande_mds != null && !MOIS_ECARTES.includes(a.date.slice(5, 7)))
     .map((a) => ({ ...a, couverture: a.demande_mds / a.adjuge_mds }));
 }
 
@@ -145,20 +152,15 @@ function signal(nom, valeur, date, dateCalcul, niveau) {
   return { nom, valeur, date, age, niveau, score: interpoler(valeur, ANCRAGES[nom]), perime };
 }
 
-// Les notes sont valables sans limite de date : seules, elles ne suffisent pas à rendre le fond calculable.
-// L'Indice Vigie commence donc avec le premier signal de fond daté : mars 2008 avec la série Banque de France des non-résidents
-// (mai 2008, avec TARGET2, dans la copie figée du 20/10/2026 qui utilisait la série AFT).
-function fondCalculable(fond) {
-  return SOUS_INDICES.fond.some((n) => n !== 'notes' && !fond.sans.includes(n));
-}
-
+// Composition constante : un sous-indice n'existe que si tous ses signaux sont valables, jamais une moyenne des restants.
+// L'Indice Vigie commence donc quand les cinq signaux existent : mai 2008, premier mois de TARGET2.
 function indiceDe(tension, fond) {
-  return tension.score != null && fondCalculable(fond) ? (tension.score + fond.score) / 2 : null;
+  return tension.score != null && fond.score != null ? (tension.score + fond.score) / 2 : null;
 }
 
 function sousIndice(signaux, noms) {
   const valables = noms.filter((n) => signaux[n] && !signaux[n].perime);
-  const score = valables.length ? moyenne(valables.map((n) => signaux[n].score)) : null;
+  const score = valables.length === noms.length ? moyenne(valables.map((n) => signaux[n].score)) : null;
   return { score, niveau: niveauScore(score), sans: noms.filter((n) => !valables.includes(n)) };
 }
 

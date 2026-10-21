@@ -14,6 +14,11 @@ function fichiers(dossier) {
   return { spread: r('spread.json'), target: r('target.json'), adj: r('adjudications.json'), ratings: r('notations.json'), nrAft: r('non_residents_aft.json') };
 }
 const FIGE = fichiers('test/fixtures/2026-10-20');
+// Copie du 21/10/2026, méthode 2.0 : couverture reconstituée depuis 2004 (AFT), non-résidents Banque de France depuis 2008.
+const FIGE_21 = (() => {
+  const r = lire('test/fixtures/2026-10-21');
+  return { spread: r('spread.json'), target: r('target.json'), adj: r('adjudications.json'), ratings: r('notations.json'), nrAft: r('non_residents_bdf.json') };
+})();
 const LE_20_OCTOBRE = new Date('2026-10-20T12:00:00Z');
 const proche = (a, b, eps = 0.05) => assert.ok(Math.abs(a - b) < eps, `${a} ≠ ${b}`);
 
@@ -192,17 +197,23 @@ test('phrase incomplète', () => {
   assert.equal(p, `Indice incomplet : il manque non-résidents, notes et TARGET2. ${partieBCE('tension', 'calme')}`);
 });
 
-test('courbe : l\'Indice Vigie commence en mai 2008, repères historiques', () => {
-  const c = courbe(FIGE, '2026-09');
-  assert.equal(c.find((p) => p.indice != null).mois, '2008-05');
+test('courbe : composition constante, tension depuis novembre 2004, indice depuis mai 2008 (méthode 2.0)', () => {
+  const c = courbe(FIGE_21, '2026-09');
   assert.equal(c[0].mois, '2004-11'); // premier taux quotidien de la Banque de France
-  assert.ok(c[0].tension != null);
-  const nov2011 = c.find((p) => p.mois === '2011-11'); // séance du 30 novembre : 108,1 pb
-  assert.equal(Math.round(nov2011.indice), 43);
-  assert.equal(Math.round(nov2011.tension), 68);
-  assert.equal(Math.round(nov2011.fond), 19);
-  assert.deepEqual(nov2011.sans, ['couverture', 'nonResidents']);
-  assert.equal(Math.round(c.find((p) => p.mois === '2024-07').indice), 41);
+  assert.ok(c.every((p) => p.tension != null)); // couverture reconstituée : aucun mois sans tension
+  assert.equal(c.find((p) => p.indice != null).mois, '2008-05'); // premier mois de TARGET2
+  assert.ok(c.filter((p) => p.mois >= '2008-05').every((p) => p.indice != null && p.sans.length === 0));
+  const nov2011 = c.find((p) => p.mois === '2011-11'); // séance du 30 novembre
+  assert.equal(Math.round(nov2011.indice), 48);
+  assert.equal(Math.round(nov2011.tension), 53);
+  assert.equal(Math.round(nov2011.fond), 43);
+});
+
+test('un signal manquant rend son sous-indice et l\'indice incalculables, sans moyenne des restants', () => {
+  const c = courbe(FIGE, '2026-09'); // copie du 20/10 : couverture seulement depuis novembre 2025
+  assert.equal(c.find((p) => p.mois === '2011-11').tension, null);
+  assert.equal(c.find((p) => p.mois === '2011-11').indice, null);
+  assert.equal(c.find((p) => p.indice != null).mois, '2025-11');
 });
 
 test('courbe : le mois en cours garde le spread de la dernière séance', () => {
@@ -230,31 +241,31 @@ test('série quotidienne : la dernière séance de chaque mois donne le point de
 });
 
 test('série quotidienne : adjudication et note comptent à partir de leur jour, pas de leur mois', () => {
-  const q = serieQuotidienne(FIGE);
-  const le = (jour) => q.find((p) => p.jour === jour);
-  assert.deepEqual(le('2025-11-05').sans, ['couverture']); // première adjudication saisie : 6 novembre 2025
-  assert.deepEqual(le('2025-11-06').sans, []);
-  assert.ok(le('2012-01-13').fond > le('2012-01-12').fond); // S&P retire le AAA le 13 janvier 2012
+  const le = (q, jour) => q.find((p) => p.jour === jour);
+  const avant = serieQuotidienne(FIGE); // copie du 20/10 : première adjudication saisie le 6 novembre 2025
+  assert.equal(le(avant, '2025-11-05').tension, null);
+  assert.deepEqual(le(avant, '2025-11-05').sans, ['couverture']);
+  assert.ok(le(avant, '2025-11-06').tension != null);
+  const q = serieQuotidienne(FIGE_21);
+  assert.ok(le(q, '2012-01-13').fond > le(q, '2012-01-12').fond); // S&P retire le AAA le 13 janvier 2012
 });
 
-test('repères : pic de novembre 2011 et « plus haut depuis »', () => {
-  const q = serieQuotidienne(FIGE);
+test('repères : pic de novembre 2011 et « plus haut depuis » (méthode 2.0)', () => {
+  const q = serieQuotidienne(FIGE_21);
   const pic = picDuMois(q, '2011-11');
-  assert.equal(pic.jour, '2011-11-17'); // pire séance du mois, pas la dernière (30 novembre : 43)
-  proche(pic.indice, 59.7);
-  assert.deepEqual(pic.sans, ['couverture', 'nonResidents']);
-
-  // Le 20 octobre 2026 (63,7) dépasse toutes les séances précédentes de la copie figée.
-  assert.equal(plusHautDepuis(q, q.at(-1).indice, '2026-10-20'), null);
-  // Juste en dessous du pic : la séance du pic, pas une séance plus récente ni celle du jour même.
+  assert.equal(pic.jour, '2011-11-17'); // pire séance du mois, pas la dernière (30 novembre : 48)
+  proche(pic.indice, 55.9);
+  assert.deepEqual(pic.sans, []);
+  // Le 21 octobre 2026 (66) dépasse toutes les séances depuis mai 2008, à composition égale.
+  assert.equal(plusHautDepuis(q, q.at(-1).indice, '2026-10-21'), null);
   assert.equal(plusHautDepuis(q, pic.indice, '2011-11-18').jour, '2011-11-17');
-  const r = plusHautDepuis(q, 55, '2026-10-20');
-  assert.ok(r.jour < '2026-10-20' && r.indice >= 55);
-  assert.ok(q.every((p) => p.jour <= r.jour || p.jour >= '2026-10-20' || p.indice == null || p.indice < 55));
+  const r = plusHautDepuis(q, 55, '2026-10-21');
+  assert.ok(r.jour < '2026-10-21' && r.indice >= 55);
+  assert.ok(q.every((p) => p.jour <= r.jour || p.jour >= '2026-10-21' || p.indice == null || p.indice < 55));
 });
 
 test('courbe affichée : pire séance de chaque mois, comme le repère « plus haut depuis »', () => {
-  const q = serieQuotidienne(FIGE);
+  const q = serieQuotidienne(FIGE_21);
   const pics = picsMensuels(q, 'indice');
   assert.equal(pics[0].mois, '2008-05');
   const nov2011 = pics.find((p) => p.mois === '2011-11');

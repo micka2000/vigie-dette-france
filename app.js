@@ -1,9 +1,9 @@
 // Vigie Dette France : chargement des séries, niveaux de risque et graphiques.
 // Le calcul (scores, niveaux, phrase de verdict) vient tout entier de score.mjs.
 import {
-  SEUILS, ANCRAGES, METHODE_VERSION, niveauBrut, niveauScore, interpoler, notch, notchLabel, fusionnerSeries, etatDuJour,
+  SEUILS, ANCRAGES, METHODE_VERSION, couvertures, niveauBrut, niveauScore, interpoler, notch, notchLabel, fusionnerSeries, etatDuJour,
   serieQuotidienne, plusHautDepuis, picDuMois, picsMensuels,
-} from './score.mjs?v=7a4ff747';
+} from './score.mjs?v=bef6a61c';
 
 window.vigieDemarre = true; // lu par le script de secours d'index.html
 
@@ -50,7 +50,7 @@ const parseQuarter = (s) => new Date(Date.UTC(+s.slice(0, 4), (+s.slice(-1) - 1)
 const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 const levelOf = (key, v) => niveauBrut(CLE_SCORE[key], v);
 
-const state = { periodes: { indice: 15, spread: 15, nonres: 15, notes: 15, target: 15 }, spreadStep: 'jour', data: null, masquees: {} };
+const state = { periodes: { indice: 15, spread: 15, adj: 15, nonres: 15, notes: 15, target: 15 }, spreadStep: 'jour', data: null, masquees: {} };
 
 // ---------- Données ----------
 
@@ -385,15 +385,15 @@ function compute(data, etat) {
     delta: `OAT ${f2(sp.fr10)} % contre Bund ${f2(sp.de10)} % à la clôture du ${fmtWeekday(parseDay(sp.jour))}${yearText}`,
   };
 
-  const auctions = data.adj.lignes.map((a) => ({ ...a, cover: a.adjuge_mds ? a.demande_mds / a.adjuge_mds : null }));
-  const lastCover = auctions.filter((a) => a.cover != null).at(-1);
-  const prevCover = auctions.filter((a) => a.cover != null).at(-2);
-  const lastRate = auctions.at(-1);
+  // Séances du calcul (score.mjs) : août et décembre écartés, comme pour le niveau
+  const auctions = couvertures(data.adj).map((a) => ({ ...a, cover: a.couverture }));
+  const lastCover = auctions.at(-1), prevCover = auctions.at(-2);
+  const lastRate = data.adj.lignes.at(-1);
   out.adjudications = {
     level: niv.couverture.niveau, name: 'Adjudication à 10 ans',
     value: `${f2(lastRate.taux)} %`,
     sub: `${fmtDay(parseDay(lastRate.date))} · couverture ${f2(lastCover.cover)}`,
-    delta: `Adjudication du ${fmtDay(parseDay(lastCover.date))}, ${nomLigne(lastCover.ligne)} : taux payé ${f2(lastCover.taux)} %, ${f1(lastCover.demande_mds)} Md€ demandés pour ${f1(lastCover.adjuge_mds)} Md€ servis, couverture ${f2(lastCover.cover)} (contre ${f2(prevCover.cover)} le mois précédent)`,
+    delta: `Adjudication du ${fmtDay(parseDay(lastCover.date))}, ${nomLigne(lastCover.ligne)} : taux payé ${f2(lastCover.taux)} %, ${f1(lastCover.demande_mds)} Md€ demandés pour ${f1(lastCover.adjuge_mds)} Md€ servis, couverture ${f2(lastCover.cover)} (contre ${f2(prevCover.cover)} à la séance précédente)`,
     nowText: `${f2(lastRate.taux)} %`,
   };
 
@@ -501,17 +501,21 @@ function renderCharts(data) {
   });
   legend('legend-ratings', ratingSeries, 'notes');
 
-  const auctions = data.adj.lignes.map((a) => ({ ...a, d: parseDay(a.date), cover: a.adjuge_mds ? a.demande_mds / a.adjuge_mds : null }));
+  // Séances du calcul seulement (août et décembre écartés), depuis 2004 : courbes plutôt que barres
+  const toutes = couvertures(data.adj).map((a) => ({ ...a, d: parseDay(a.date), cover: a.couverture }));
+  periodes('adj', toutes[0].d);
+  const auctions = clipDe('adj')(toutes);
+  const points = auctions.length <= 40;
   lineChart(document.getElementById('chart-auction-rate'), [{ name: 'Taux', color: css('--series-1'), points: auctions.map((a) => ({ d: a.d, v: a.taux, a })) }], {
-    yFormat: (v) => `${f1(v)} %`, tipFormat: (v, p) => `${f2(v)} % · ${nomLigne(p.a.ligne)}`, dateFormat: fmtDay, dots: true, ratio: 0.45,
-    xDomain: [d3.min(auctions, (a) => a.d), d3.max(auctions, (a) => a.d)],
-    label: 'Taux moyen pondéré des adjudications à 10 ans',
+    yFormat: (v) => `${f1(v)} %`, tipFormat: (v, p) => `${f2(v)} % · ${nomLigne(p.a.ligne)}`, dateFormat: fmtDay, dots: points, ratio: 0.45,
+    xDomain: xDom('adj', auctions), label: 'Taux moyen pondéré des adjudications à 10 ans',
   });
-  barChart(document.getElementById('chart-auction-cover'), auctions.map((a) => ({
-    key: a.date, tick: fmtMonth(a.d), v: a.cover, level: a.cover != null ? levelOf('adjudications', a.cover) : null,
-    title: `${fmtDay(a.d)} · ${nomLigne(a.ligne)}`,
-    lines: a.cover != null ? [['Couverture', f2(a.cover)], ['Demandé', `${f1(a.demande_mds)} Md€`], ['Servi', `${f1(a.adjuge_mds)} Md€`]] : [['Couverture', 'non communiquée']],
-  })), { bands: THRESHOLDS.adjudications.bands, yDomain: [0, 3], yFormat: (v) => f1(v), ratio: 0.45, label: 'Taux de couverture des adjudications à 10 ans' });
+  lineChart(document.getElementById('chart-auction-cover'), [{ name: 'Couverture', color: css('--series-1'), points: auctions.map((a) => ({ d: a.d, v: a.cover, a })) }], {
+    bands: THRESHOLDS.adjudications.bands, yDomain: [0, Math.max(3.5, d3.max(auctions, (a) => a.cover) + 0.2)],
+    yFormat: (v) => f1(v), dateFormat: fmtDay, dots: points, ratio: 0.45,
+    tipFormat: (v, p) => `${f2(v)} : ${f1(p.a.demande_mds)} Md€ demandés pour ${f1(p.a.adjuge_mds)} Md€ servis · ${nomLigne(p.a.ligne)}`,
+    xDomain: xDom('adj', auctions), label: 'Taux de couverture des adjudications à 10 ans',
+  });
 }
 
 // ---------- Courbe de l'Indice Vigie ----------
@@ -677,7 +681,7 @@ const SRC = {
 const DESCRIPTIONS = {
   indice: () => ({
     mesure: 'Une note de 0 à 100 qui résume la santé de la dette française à partir de cinq signaux publics.',
-    calcul: `Chaque signal est converti en score de 0 à 100 par interpolation entre ses seuils de risque (25 = vigilance, 50 = tension, 75 = crise), détaillés dans chaque carte. L’indice est la moyenne de deux sous-indices : la tension sur la dette (spread et couverture des adjudications) et la vulnérabilité de fond (non-résidents, note la plus basse, TARGET2). Sous 25 : calme ; de 25 à 50 : vigilance ; de 50 à 75 : tension ; 75 et plus : crise. Une donnée trop ancienne sort du calcul et la page le signale. Méthode ${METHODE_VERSION}.`,
+    calcul: `Chaque signal est converti en score de 0 à 100 par interpolation entre ses seuils de risque (25 = vigilance, 50 = tension, 75 = crise), détaillés dans chaque carte. L’indice est la moyenne de deux sous-indices : la tension sur la dette (spread et couverture des adjudications) et la vulnérabilité de fond (non-résidents, note la plus basse, TARGET2). Sous 25 : calme ; de 25 à 50 : vigilance ; de 50 à 75 : tension ; 75 et plus : crise. La composition ne change jamais : si un signal manque ou est trop ancien, l’indice n’est pas calculé plutôt que d’être calculé sans lui. Toute la courbe depuis mai 2008 utilise les cinq signaux. Méthode ${METHODE_VERSION}.`,
     sources: [SRC.bdfTec, SRC.bund, SRC.aft, SRC.bdfNr, SRC.notes, SRC.target, SRC.code],
   }),
 };
@@ -717,9 +721,9 @@ function repere(data, etat) {
   return { texte, detail };
 }
 
-// Indice Vigie masqué le 21/10/2026 : un quart de son calcul (la couverture des adjudications) n'existe que depuis
-// novembre 2025, sa composition change donc le long de la courbe. À rallumer une fois la couverture reconstituée.
-const INDICE_VISIBLE = false;
+// Interrupteur de l'Indice Vigie. Masqué du 21/10/2026 jusqu'à la méthode 2.0 (couverture reconstituée depuis 2004,
+// composition constante le long de la courbe).
+const INDICE_VISIBLE = true;
 
 function renderHeader(data, etat) {
   text('#donnees', `Données du ${fmtDay(parseDay(etat.cartes.spread.jour))}`);
@@ -743,11 +747,6 @@ function renderHeader(data, etat) {
   const r = repere(data, etat);
   document.getElementById('repere').hidden = !r;
   if (r) { text('#repere-texte', r.texte); document.getElementById('repere-info').dataset.tip = r.detail; }
-  // Signal trop ancien ou absent : dit sous l'indice, puisque le chiffre est calculé sans lui
-  const sans = [...etat.tension.sans, ...etat.fond.sans];
-  const is = document.getElementById('indice-sans');
-  is.hidden = !sans.length;
-  is.textContent = sans.length ? `Calculé sans ${liste(sans.map((n) => NOMS_LONGS[n]))} (donnée trop ancienne ou absente).` : '';
 }
 
 function renderSources(data) {

@@ -406,7 +406,8 @@ def controle_forme(nom, payload, ancien, aujourd_hui):
 
 def alerte_couverture(adj, aujourd_hui):
     """« couverture à saisir » quand la dernière couverture connue a plus de 2 mois (D10)."""
-    avec = [l for l in adj["lignes"] if l.get("adjuge_mds") and l.get("demande_mds") is not None]
+    # Mêmes séances que le calcul (score.mjs) : août et décembre écartés
+    avec = [l for l in adj["lignes"] if l.get("adjuge_mds") and l.get("demande_mds") is not None and l["date"][5:7] not in ("08", "12")]
     if not avec:
         return "aucune couverture saisie"
     a, m = map(int, avec[-1]["date"][:7].split("-"))
