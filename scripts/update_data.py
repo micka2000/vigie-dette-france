@@ -1,8 +1,11 @@
 """Récupère les séries publiques (BCE, Banque de France, Bundesbank, Eurostat) et écrit les fichiers JSON du dashboard.
 
 Lancé chaque jour par la GitHub Action `update-data.yml`.
-Les adjudications et les notations sont tenues à la main dans data/adjudications.json
-et data/notations.json (l'AFT ne publie pas d'API ouverte).
+L'AFT bloque les robots et les agences de notation n'ont pas d'API gratuite :
+- les adjudications viennent des dépêches Reuters « Détails de l'adjudication d'OAT » publiées par Boursorama,
+  trouvées par son plan de site (news.rss, environ 36 heures, et les archives d'environ 3 mois) ;
+- un changement de note n'est appliqué que si Wikipédia et countryeconomy.com le donnent tous deux,
+  sinon il est signalé dans `echecs` pour vérification.
 
 Chaque série est collectée à part : une panne garde l'ancien fichier et s'inscrit dans
 data/meta.json (`echecs`). Le script se termine en erreur s'il y a des échecs, après
@@ -13,12 +16,14 @@ import calendar
 import csv
 import io
 import json
+import html
 import os
+import re
 import sys
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 DATA = Path(__file__).resolve().parent.parent / "data"
@@ -34,6 +39,11 @@ BUND10 = "D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A"
 NONRES = "DET2.Q.N.FR.W1.S13111.S1.N.L.LE.F3.T._Z.PT._T.M.V.N._T"
 CLE_WEBSTAT = Path.home() / ".config" / "vigie" / "webstat_key"
 UA = {"User-Agent": "vigie-dette-france (github.com/micka2000/vigie-dette-france)"}
+BOURSORAMA = "https://www.boursorama.com"
+WIKIPEDIA = "https://en.wikipedia.org/w/api.php?action=parse&page=List_of_countries_by_credit_rating&prop=wikitext&format=json&formatversion=2"
+COUNTRYECONOMY = "https://countryeconomy.com/ratings/france"
+# countryeconomy.com refuse les clients sans en-tête de navigateur.
+NAVIGATEUR = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) vigie-dette-france (github.com/micka2000/vigie-dette-france)"}
 
 # Âge maximal de la dernière donnée, en jours depuis la fin de sa période (D3).
 # Chaque limite couvre le décalage de publication de la série, plus une marge.
@@ -177,6 +187,184 @@ SERIES = {
 }
 
 
+# ---------- Adjudications (dépêches Reuters sur Boursorama) ----------
+
+ARTICLE_ADJ = re.compile(r"https://www\.boursorama\.com/bourse/actualites/(?:tableau-)?details-de-l-adjudication-d-oat-[0-9a-f]+")
+# Un bloc par ligne d'OAT : on ne déborde jamais sur le bloc suivant (« OAT MATURITE »).
+BLOC_OAT = re.compile(
+    r"OAT\s+MATURITE\s+(\d{2})/(\d{2})/(\d{2})\s+COUPON\s+([\d,]+)\s*%\s+VOLUME ADJUGE\s+([\d,]+)\s+MDS?\s+EUROS\s+"
+    r"VOLUME DEMANDE\s+([\d,]+)\s+MDS?\s+EUROS(?:(?!OAT\s+MATURITE).)*?TAUX MOYEN PONDERE\s+([\d,]+)\s*%"
+)
+
+
+def texte_page(page):
+    """Texte brut d'une page : balises retirées, échappements JSON (\\n, \\t, \\/) et espaces réduits."""
+    t = html.unescape(re.sub(r"<[^>]+>", " ", page))
+    t = t.replace("\\n", " ").replace("\\t", " ").replace("\\/", "/")
+    return re.sub(r"\s+", " ", t)
+
+
+def lire_adjudication(page):
+    """Date de l'adjudication et lignes d'OAT d'une dépêche « Détails de l'adjudication d'OAT »."""
+    m = re.search(r'"datePublished"\s*:\s*"(\d{4}-\d{2}-\d{2})', page)
+    if not m:
+        raise ValueError("date de publication introuvable")
+    vu, lignes_oat = set(), []
+    for j, mo, a, coupon, adjuge, demande, taux in BLOC_OAT.findall(texte_page(page)):
+        ligne = {
+            "maturite": f"20{a}-{mo}-{j}", "coupon": coupon,
+            "adjuge_mds": float(adjuge.replace(",", ".")), "demande_mds": float(demande.replace(",", ".")),
+            "taux": float(taux.replace(",", ".")),
+        }
+        cle = (ligne["maturite"], ligne["adjuge_mds"])
+        if cle not in vu:  # le texte de la dépêche figure deux fois dans la page
+            vu.add(cle)
+            lignes_oat.append(ligne)
+    return m.group(1), lignes_oat
+
+
+def ligne_dix_ans(jour, lignes_oat):
+    """La ligne de référence à 10 ans : le plus gros volume adjugé parmi les échéances de 8,5 à 11,5 ans
+    (une petite ligne plus proche de 10 ans peut être émise le même jour). None pour une adjudication à moyen terme."""
+    j = date.fromisoformat(jour)
+    def ans(l):
+        return (date.fromisoformat(l["maturite"]) - j).days / 365.25
+    candidates = [l for l in lignes_oat if 8.5 <= ans(l) <= 11.5]
+    return max(candidates, key=lambda l: l["adjuge_mds"]) if candidates else None
+
+
+def verifier_adjudication(l):
+    if not (0 < l["adjuge_mds"] <= 20 and l["adjuge_mds"] <= l["demande_mds"] <= 10 * l["adjuge_mds"] and 0 < l["taux"] < 15):
+        raise ValueError(f"valeurs incohérentes pour l'adjudication du {l['date']} : {l}")
+
+
+def articles_adjudication():
+    """Adresses des dépêches d'adjudication dans le flux d'actualités et les archives du plan de site."""
+    index = get(f"{BOURSORAMA}/sitemaps.xml")
+    plans = [u for u in re.findall(r"<loc>([^<]+)</loc>", index) if "/sitemap/news.rss" in u or "/sitemap/news_long_" in u]
+    return sorted({a for p in plans for a in ARTICLE_ADJ.findall(get(p))})
+
+
+def maj_adjudications(adj):
+    """Ajoute les adjudications à 10 ans absentes du fichier (et complète une couverture manquante). Renvoie (fichier, alertes)."""
+    adj = json.loads(json.dumps(adj))
+    connues = {l.get("source") for l in adj["lignes"]}
+    par_date = {l["date"]: l for l in adj["lignes"]}
+    for url in articles_adjudication():
+        if url in connues:
+            continue
+        jour, lignes_oat = lire_adjudication(get(url))
+        l10 = ligne_dix_ans(jour, lignes_oat)
+        if not l10:
+            continue
+        a, mo, j = l10["maturite"].split("-")
+        nouvelle = {
+            "date": jour, "ligne": f"OAT {l10['coupon']} % {j}/{mo}/{a}", "adjuge_mds": l10["adjuge_mds"],
+            "demande_mds": l10["demande_mds"], "taux": l10["taux"], "source": url,
+        }
+        verifier_adjudication(nouvelle)
+        existante = par_date.get(jour)
+        if existante is None:
+            adj["lignes"].append(nouvelle)
+            par_date[jour] = nouvelle
+        elif existante.get("demande_mds") is None:
+            existante.update({k: v for k, v in nouvelle.items() if k != "date"})
+    adj["lignes"].sort(key=lambda l: l["date"])
+    return adj, []
+
+
+# ---------- Notes (Wikipédia et countryeconomy.com, recoupés) ----------
+
+AGENCES = {"S&P": "Standard & Poor's", "Fitch": "Fitch", "Moody's": "Moody's"}
+PERSPECTIVES = {"stable": "stable", "negative": "négative", "positive": "positive", "developing": "en développement"}
+MOIS_EN = {m: i for i, m in enumerate(calendar.month_name) if m}
+
+
+def perspective(texte):
+    m = re.search(r"stable|negative|positive|developing", texte, re.I)
+    return PERSPECTIVES[m.group(0).lower()] if m else None
+
+
+def notes_wikipedia(wikitext):
+    """{agence: (note, perspective, date)} lus dans les tableaux par agence de « List of countries by credit rating »."""
+    titres = list(re.finditer(r"^(=+)\s*(.*?)\s*\1\s*$", wikitext, re.M))
+    out = {}
+    for i, t in enumerate(titres):
+        agence = next((a for a, titre in AGENCES.items() if t.group(2) == titre), None)
+        if not agence:
+            continue
+        section = wikitext[t.end(): titres[i + 1].start() if i + 1 < len(titres) else None]
+        ligne = re.search(r"\{\{flag\|France\}\}(.*?)(?=\n\|-|\n\|\})", section, re.S)
+        if not ligne:
+            continue
+        cellules = ligne.group(1).split("||")
+        note = re.search(r"\{\{Percentage bar\|[^|]*\|[^|]*\|([^|}]+)\|", cellules[1])
+        d = re.search(r"(\d{1,2}) ([A-Z][a-z]+) (\d{4})", cellules[3]) if len(cellules) > 3 else None
+        if note and d and d.group(2) in MOIS_EN:
+            out[agence] = (note.group(1).replace("−", "-").strip(), perspective(cellules[2]),
+                           date(int(d.group(3)), MOIS_EN[d.group(2)], int(d.group(1))).isoformat())
+    return out
+
+
+def notes_countryeconomy(page):
+    """{agence: (note, perspective, date)} : dernière ligne datée de la note long terme en devises, par agence."""
+    out = {}
+    for m in re.finditer(r"<table.*?</table>", page, re.S):
+        avant = texte_page(page[max(0, m.start() - 600): m.start()])
+        agence = max(AGENCES, key=lambda a: avant.rfind(a))
+        if avant.rfind(agence) < 0 or agence in out:
+            continue
+        note = None
+        for tr in re.findall(r"<tr.*?</tr>", m.group(0), re.S):
+            c = [texte_page(x).strip() for x in re.findall(r"<td[^>]*>(.*?)</td>", tr, re.S)]
+            if len(c) < 2 or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", c[0]):
+                continue
+            n = re.match(r"([A-Za-z]{1,4}[0-9+\-]?)\s*\(", c[1])
+            if agence not in out:
+                out[agence] = [n.group(1) if n else None, perspective(c[1]), c[0]]
+            if n and out[agence][0] is None:  # changement de perspective seul : la note vient de la ligne précédente
+                out[agence][0] = n.group(1)
+            if out[agence][0]:
+                break
+        if agence in out:
+            out[agence] = tuple(out[agence]) if out[agence][0] else None
+    return {a: v for a, v in out.items() if v}
+
+
+def maj_notations(ratings, sources=None):
+    """Applique un changement de note ou de perspective plus récent que le fichier quand les deux sources concordent
+    (même note, même perspective, dates à 7 jours près). Sinon, une alerte par source. Renvoie (fichier, alertes)."""
+    if sources is None:
+        sources = {
+            "Wikipédia": (notes_wikipedia(json.loads(get(WIKIPEDIA))["parse"]["wikitext"]),
+                          "https://en.wikipedia.org/wiki/List_of_countries_by_credit_rating"),
+            "countryeconomy.com": (notes_countryeconomy(get(COUNTRYECONOMY, NAVIGATEUR)), COUNTRYECONOMY),
+        }
+    ratings = json.loads(json.dumps(ratings))
+    alertes = []
+    for a in ratings["agences"]:
+        connue = max([h["date"] for h in a["historique"]] + [a.get("derniere") or ""])
+        nouveaux = {
+            nom: v for nom, (notes, _) in sources.items()
+            if (v := notes.get(a["agence"])) and v[2] > connue and (v[0] != a["note"] or v[1] != a.get("perspective"))
+        }
+        valeurs = list(nouveaux.values())
+        if len(valeurs) == len(sources) and len({v[:2] for v in valeurs}) == 1 \
+                and (date.fromisoformat(max(v[2] for v in valeurs)) - date.fromisoformat(min(v[2] for v in valeurs))) <= timedelta(days=7):
+            note, persp, jour = valeurs[0][0], valeurs[0][1], min(v[2] for v in valeurs)
+            url = sources["Wikipédia"][1] if "Wikipédia" in sources else next(iter(sources.values()))[1]
+            if note != a["note"]:
+                a["historique"].append({"date": jour, "note": note, "source": url})
+            a.update({"note": note, "perspective": persp, "derniere": jour, "source_derniere": url})
+            continue
+        for nom, (note, persp, jour) in nouveaux.items():
+            alertes.append(f"note à vérifier : {a['agence']} {note} ({persp}) le {jour} selon {nom}")
+    return ratings, alertes
+
+
+SAISIES = {"adjudications.json": maj_adjudications, "notations.json": maj_notations}
+
+
 # ---------- Contrôle de forme ----------
 
 
@@ -260,6 +448,18 @@ def main(dossier=DATA, maintenant=None):
             echec(nom, raison)
         else:
             write(dossier, nom, payload)
+
+    for nom, mise_a_jour in SAISIES.items():
+        ancien = lire(dossier, nom)
+        try:
+            nouveau, alertes = mise_a_jour(ancien)
+        except (*ERREURS, TypeError, IndexError) as e:
+            echec(nom, f"{type(e).__name__} : {e}")
+            continue
+        for alerte in alertes:
+            echec(nom, alerte)
+        if nouveau != ancien:
+            write(dossier, nom, nouveau)
 
     try:
         raison = alerte_couverture(lire(dossier, "adjudications.json"), aujourd_hui)

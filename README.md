@@ -5,9 +5,9 @@ Tableau de bord des cinq signaux de santé de la dette publique française, avec
 | Signal | Source | Mise à jour |
 |---|---|---|
 | Spread OAT-Bund 10 ans | Banque de France (TEC 10, clé `WEBSTAT_API_KEY`) et Bundesbank (rendement à 10 ans), clôture quotidienne | chaque matin dans `data/` |
-| Adjudications AFT (ligne 10 ans) | Résultats AFT repris par Reuters/Boursorama | à la main, `data/adjudications.json` |
+| Adjudications AFT (ligne 10 ans) | Dépêches Reuters « Détails de l'adjudication d'OAT » publiées par Boursorama (le site de l'AFT bloque les robots) | chaque matin dans `data/adjudications.json` |
 | Part des non-résidents | Banque de France (Webstat, série `DET2`), Eurostat `gov_10dd_ggd` | chaque matin dans `data/` |
-| Notes des agences | AFT, page « Notation de la France » | à la main, `data/notations.json` |
+| Notes des agences | Wikipédia (« List of countries by credit rating ») et countryeconomy.com, recoupés ; aucune agence ni l'ESMA n'offre d'API gratuite | chaque matin quand les deux sources concordent, sinon alerte dans `data/meta.json` |
 | Solde TARGET2 de la Banque de France | BCE, série `TGB.M.FR` | en direct et chaque jour |
 
 ## Seuils de risque

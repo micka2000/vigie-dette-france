@@ -1,0 +1,22 @@
+==Standard & Poor's==
+{| class="wikitable"
+|-
+| {{flag|Finland}} || data-sort-value=211 | {{Percentage bar|100|c=#009900;|AA+|color=white|width=50}} || data-sort-value=2 | Stable&nbsp;{{Steady}} || 10 October 2014 || <ref>{{Cite web |url=https://countryeconomy.com/ratings/finland |title=Rating: Finland Credit Rating |website=countryeconomy.com}}</ref>
+|-
+| {{flag|France}} || data-sort-value=181 | {{Percentage bar|100|c=#99ff33;|A+|color=black|width=50}}|| data-sort-value=2 | Stable&nbsp;{{Steady}} || 17 October 2025 || <ref>{{Cite web |url=https://www.spglobal.com/ratings/en/regulatory/article/-/view/sourceId/101651950 |title=France Ratings Lowered To 'A+/A-1' From 'AA-/A-1+' On Heightened Risks To Budgetary Consolidation; Outlook Stable |website=www.spglobal.com |access-date=9 January 2026 |language=en-us |date=17 October 2025}}</ref>
+|}
+==Fitch==
+{| class="wikitable"
+|-
+| {{flag|Finland}} || data-sort-value=191 | {{Percentage bar|100|c=#00cc00;|AA|color=white|width=50}} || data-sort-value=2 | Stable&nbsp;{{Steady}}|| 25 July 2025 || <ref>{{cite web |author=Fitch Ratings |url=https://www.fitchratings.com/research/sovereigns/fitch-downgrades-finland-to-aa-outlook-stable-25-07-2025|title=Fitch Downgrades Finland to 'AA'; Outlook Stable}}</ref>
+|-
+| {{flag|France}} || data-sort-value=171 | {{Percentage bar|100|c=#99ff33;|A+|color=black|width=50}} || data-sort-value=2 | Stable&nbsp;{{Steady}} || 6 March 2026 || <ref>{{cite web |author=Fitch Ratings |url=https://www.fitchratings.com/research/sovereigns/fitch-affirms-france-at-a-outlook-stable-06-03-2026 |title=Fitch Affirms France at 'A+'; Outlook Stable}}</ref>
+|}
+==Moody's==
+{| class="wikitable"
+|-
+| {{flag|Finland}} || data-sort-value=201 | {{Percentage bar|100|c=#009900;|Aa1|color=white|width=50}} || data-sort-value=2 | Stable&nbsp;{{Steady}} || 29 July 2022 || <ref>{{Cite web |author=Moody's Investors Service |url=https://www.moodys.com/research/Moodys-affirms-Finlands-Aa1-ratings-outlook-remains-stable--PR_467964?cy=emea&lang=en |title=Moody's affirms Finland's Aa1 ratings; outlook remains stable}}</ref>
+|-
+| {{flag|France}} || data-sort-value=181 | {{Percentage bar|100|c=#00ff00;|Aa3|color=black|width=50}}|| data-sort-value="2" | Stable&nbsp;{{Steady}} || 14 December 2024 || <ref>{{Cite web |author=Politico |title=France's credit rating cut by Moody's just hours after new prime minister appointed |date=14 December 2024 |url=https://www.politico.eu/article/frances-credit-rating-lowered-by-moodys/}}</ref>
+|}
+== Others ==

@@ -14,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import update_data as u  # noqa: E402
 
 DATA = Path(__file__).resolve().parent.parent / "data"
+SAISIES = Path(__file__).resolve().parent.parent / "test" / "fixtures" / "saisies"
 LE_20_OCTOBRE = date(2026, 10, 20)
 
 
@@ -128,6 +129,9 @@ class Collecte(unittest.TestCase):
         for f in DATA.glob("*.json"):
             shutil.copy(f, self.dossier)
         self.addCleanup(shutil.rmtree, self.dossier)
+        sans_reseau = mock.patch.dict(u.SAISIES, {nom: (lambda f: (f, [])) for nom in u.SAISIES}, clear=True)
+        sans_reseau.start()
+        self.addCleanup(sans_reseau.stop)
 
     def series(self, **remplace):
         ok = {nom: (lambda nom=nom: json.loads((DATA / nom).read_text(encoding="utf-8"))) for nom in u.SERIES if (DATA / nom).exists()}
@@ -160,6 +164,91 @@ class Collecte(unittest.TestCase):
     def test_aucun_echec_avec_les_series_du_jour(self):
         with mock.patch.dict(u.SERIES, self.series(), clear=True):
             self.assertEqual(u.main(self.dossier, datetime(2026, 10, 20, 6, 30, tzinfo=timezone.utc)), [])
+
+
+class Adjudications(unittest.TestCase):
+    """Dépêche Reuters du 6 août 2026 sur Boursorama (extrait réel) : la saisie manuelle disait 6,34 / 14,791 / 3,90 %."""
+
+    def setUp(self):
+        self.page = (SAISIES / "adjudication-2026-08-06.html").read_text(encoding="utf-8")
+
+    def test_ligne_de_reference_et_non_la_plus_proche_de_10_ans(self):
+        jour, lignes_oat = u.lire_adjudication(self.page)
+        self.assertEqual(jour, "2026-08-06")
+        self.assertEqual([l["maturite"] for l in lignes_oat], ["2036-05-25", "2036-11-25", "2037-06-25", "2044-06-25"])
+        l = u.ligne_dix_ans(jour, lignes_oat)  # 25/05/36 (2 Md€) est plus proche de 10 ans que 25/11/36 (6,3 Md€)
+        self.assertEqual((l["maturite"], l["coupon"], l["adjuge_mds"], l["demande_mds"], l["taux"]), ("2036-11-25", "3,70", 6.34, 14.791, 3.9))
+
+    def test_adjudication_a_moyen_terme_ignoree(self):
+        lignes_oat = [{"maturite": "2031-02-25", "adjuge_mds": 2.0}, {"maturite": "2032-02-25", "adjuge_mds": 3.7}]
+        self.assertIsNone(u.ligne_dix_ans("2026-10-15", lignes_oat))
+
+    def maj(self, adj, pages):
+        with mock.patch.object(u, "articles_adjudication", lambda: sorted(pages)), mock.patch.object(u, "get", lambda url, headers=None: pages[url]):
+            return u.maj_adjudications(adj)
+
+    def test_ajoute_puis_ne_rajoute_pas(self):
+        url = "https://www.boursorama.com/bourse/actualites/details-de-l-adjudication-d-oat-d72247235c68"
+        adj = {"lignes": [{"date": "2026-07-02", "ligne": "OAT 25/11/2036", "adjuge_mds": 7.025, "demande_mds": 16.686, "taux": 3.73}]}
+        nouveau, alertes = self.maj(adj, {url: self.page})
+        self.assertEqual(alertes, [])
+        self.assertEqual(nouveau["lignes"][-1], {"date": "2026-08-06", "ligne": "OAT 3,70 % 25/11/2036", "adjuge_mds": 6.34,
+                                                 "demande_mds": 14.791, "taux": 3.9, "source": url})
+        self.assertEqual(len(adj["lignes"]), 1)  # le fichier d'origine n'est pas modifié
+        self.assertEqual(self.maj(nouveau, {url: self.page})[0], nouveau)
+
+    def test_complete_une_couverture_manquante(self):
+        url = "https://www.boursorama.com/bourse/actualites/details-de-l-adjudication-d-oat-d72247235c68"
+        adj = {"lignes": [{"date": "2026-08-06", "ligne": "OAT 10 ans", "taux": 3.9}]}
+        self.assertEqual(self.maj(adj, {url: self.page})[0]["lignes"][0]["demande_mds"], 14.791)
+
+    def test_valeurs_incoherentes_refusees(self):
+        page = self.page.replace("14,791", "147,91")
+        with self.assertRaises(ValueError):
+            self.maj({"lignes": []}, {"https://www.boursorama.com/bourse/actualites/details-de-l-adjudication-d-oat-0": page})
+
+
+class Notations(unittest.TestCase):
+    """Extraits réels de Wikipédia et countryeconomy.com au 21/10/2026 (tous deux en retard sur une agence)."""
+
+    def setUp(self):
+        self.wiki = u.notes_wikipedia((SAISIES / "wikipedia.txt").read_text(encoding="utf-8"))
+        self.ce = u.notes_countryeconomy((SAISIES / "countryeconomy.html").read_text(encoding="utf-8"))
+        self.ratings = json.loads((DATA / "notations.json").read_text(encoding="utf-8"))
+
+    def test_lecture_des_deux_sources(self):
+        self.assertEqual(self.wiki["S&P"], ("A+", "stable", "2025-10-17"))
+        self.assertEqual(self.wiki["Fitch"], ("A+", "stable", "2026-03-06"))
+        self.assertEqual(self.ce["Moody's"], ("Aa3", "négative", "2025-10-24"))  # changement de perspective seul
+        self.assertEqual(self.ce["S&P"], ("A+", "stable", "2025-10-17"))
+
+    def sources(self, wiki, ce):
+        return {"Wikipédia": (wiki, "https://en.wikipedia.org/wiki/x"), "countryeconomy.com": (ce, "https://countryeconomy.com/x")}
+
+    def test_sources_en_retard_sans_alerte(self):
+        self.assertEqual(u.maj_notations(self.ratings, self.sources(self.wiki, self.ce)), (self.ratings, []))
+
+    def test_degradation_confirmee_par_les_deux_sources(self):
+        wiki = {**self.wiki, "S&P": ("A", "stable", "2026-11-27")}
+        ce = {**self.ce, "S&P": ("A", "stable", "2026-11-28")}
+        nouveau, alertes = u.maj_notations(self.ratings, self.sources(wiki, ce))
+        self.assertEqual(alertes, [])
+        sp = next(a for a in nouveau["agences"] if a["agence"] == "S&P")
+        self.assertEqual((sp["note"], sp["perspective"], sp["derniere"]), ("A", "stable", "2026-11-27"))
+        self.assertEqual(sp["historique"][-1], {"date": "2026-11-27", "note": "A", "source": "https://en.wikipedia.org/wiki/x"})
+
+    def test_une_seule_source_alerte_sans_modifier(self):
+        wiki = {**self.wiki, "Fitch": ("A", "négative", "2026-11-20")}
+        nouveau, alertes = u.maj_notations(self.ratings, self.sources(wiki, self.ce))
+        self.assertEqual(nouveau, self.ratings)
+        self.assertEqual(alertes, ["note à vérifier : Fitch A (négative) le 2026-11-20 selon Wikipédia"])
+
+    def test_sources_en_desaccord(self):
+        wiki = {**self.wiki, "S&P": ("A", "stable", "2026-11-27")}
+        ce = {**self.ce, "S&P": ("A", "négative", "2026-11-27")}
+        nouveau, alertes = u.maj_notations(self.ratings, self.sources(wiki, ce))
+        self.assertEqual(nouveau, self.ratings)
+        self.assertEqual(len(alertes), 2)
 
 
 class CommitDeMeta(unittest.TestCase):

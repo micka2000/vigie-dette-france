@@ -109,7 +109,7 @@
         <div><p class="chart-title">Taux moyen pondéré à 10 ans</p><div class="chart" id="chart-auction-rate"></div></div>
         <div><p class="chart-title">Taux de couverture</p><div class="chart" id="chart-auction-cover"></div></div>
       </div>
-      <p class="source" id="auction-source">Sources : résultats publiés par l'<a href="https://www.aft.gouv.fr/fr" target="_blank" rel="noopener">Agence France Trésor</a>, repris par Reuters et Boursorama (<a id="auction-source-last" href="#" target="_blank" rel="noopener">dernière adjudication</a>). Saisie manuelle.</p>
+      <p class="source" id="auction-source">Sources : résultats publiés par l'<a href="https://www.aft.gouv.fr/fr" target="_blank" rel="noopener">Agence France Trésor</a>, repris par Reuters et Boursorama (<a id="auction-source-last" href="#" target="_blank" rel="noopener">dernière adjudication</a>). Collecte automatique chaque matin.</p>
       <ul class="thresholds" data-thresholds="adjudications"></ul>
       <p class="threshold-note">Le niveau de risque suit le taux de couverture : sous 2, la demande devient juste pour une ligne de référence ; sous 1,5, l'appétit des investisseurs faiblit nettement.</p>
     </article>
@@ -142,7 +142,7 @@
       <p class="signal-now"><span class="delta" data-delta="notations"></span></p>
       <div class="chart" id="chart-ratings"></div>
       <ul class="legend" id="legend-ratings"></ul>
-      <p class="source">Source : <a href="https://www.aft.gouv.fr/fr/notation-de-la-france" target="_blank" rel="noopener">Agence France Trésor, « Notation de la France »</a>, chaque changement de note recoupé dans la presse. Saisie manuelle.</p>
+      <p class="source">Source : <a href="https://www.aft.gouv.fr/fr/notation-de-la-france" target="_blank" rel="noopener">Agence France Trésor, « Notation de la France »</a>. Chaque matin, un changement de note n’est enregistré que si deux sources indépendantes le confirment ; sinon, il est vérifié à la main.</p>
       <div class="table-scroll">
         <table class="ratings-table" id="ratings-table">
           <thead><tr><th>Agence</th><th>Note</th><th>Perspective</th><th>Dernière décision</th><th>Prochaine revue</th></tr></thead>
@@ -174,7 +174,7 @@
 
 <footer>
   <div class="wrap">
-    <p>Le spread, les non-résidents et les séries Eurostat sont collectés chaque matin par une GitHub Action ; le solde TARGET2 et le CISS sont aussi lus en direct à la BCE à chaque visite. Les adjudications et les notes sont saisies à la main à partir des publications officielles.</p>
+    <p>Le spread, les non-résidents et les séries Eurostat sont collectés chaque matin par une GitHub Action ; le solde TARGET2 et le CISS sont aussi lus en direct à la BCE à chaque visite. Les adjudications sont lues chaque matin dans les dépêches Reuters ; un changement de note n’est enregistré que si deux sources indépendantes le confirment.</p>
     <p><span id="sources-detail"></span> <span id="updated"></span></p>
     <p>Les seuils de risque sont des repères tirés de l'historique de chaque série, pas des prévisions.</p>
   </div>
