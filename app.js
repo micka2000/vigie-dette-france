@@ -458,6 +458,7 @@ function renderCharts(data) {
 function renderAuctionSource(adj) {
   const last = adj.lignes.filter((a) => a.source).at(-1);
   const a = document.getElementById('auction-source-last');
+  if (!a) return; // index.html plus ancien que ce script (cache de GitHub Pages pendant un déploiement)
   if (last) { a.href = last.source; a.textContent = `dernière adjudication, ${fmtDay(parseDay(last.date))}`; } else a.remove();
 }
 
