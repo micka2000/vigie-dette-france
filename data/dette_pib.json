@@ -245,7 +245,7 @@
  },
  {
   "trimestre": "2015-Q2",
-  "dette_pib": 98.4
+  "dette_pib": 98.3
  },
  {
   "trimestre": "2015-Q3",
@@ -417,6 +417,10 @@
  },
  {
   "trimestre": "2026-Q1",
-  "dette_pib": 117.6
+  "dette_pib": 117.7
+ },
+ {
+  "trimestre": "2026-Q2",
+  "dette_pib": 119.1
  }
 ]
