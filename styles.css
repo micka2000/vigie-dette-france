@@ -332,7 +332,9 @@ footer p { margin: 0; max-width: 80ch; }
   :is(.signal, .masthead) .desc-corps { display: block; columns: 2; column-gap: var(--space-8); }
   :is(.signal, .masthead) .desc-corps > p { break-inside: avoid; margin-bottom: var(--space-3); }
 }
-.desc-corps p { margin: 0; line-height: 1.55; text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+/* Une puce par rubrique, lignes suivantes alignées sous le texte (retrait suspendu), justifié sans coupure de mots */
+.desc-corps p { margin: 0; line-height: 1.55; text-align: justify; hyphens: manual; position: relative; padding-left: 1.4em; }
+.desc-corps p::before { content: '•'; position: absolute; left: 0.35em; top: 0; }
 .desc-corps b { font-family: var(--font-display); font-weight: 600; color: var(--fg-1); }
 .desc-corps a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .masthead .desc, .masthead .desc-corps b { color: var(--fg-inverse); }

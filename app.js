@@ -750,9 +750,9 @@ const DESCRIPTIONS = {
   indice: () => ({
     quoi: L('Une note de 0 à 100 qui résume en un chiffre l’état de la dette française, à partir des cinq signaux ci-dessous.',
       'A score from 0 to 100 that sums up the state of French debt in a single figure, from the five signals below.'),
-    pourquoi: L('Plus elle est haute, plus la situation est tendue. « Plus haut depuis » dit si l’on n’a pas vu pire depuis longtemps : il compare le chiffre du jour à chaque journée depuis 2008.',
+    pourquoi: L('Plus elle est haute, plus la situation est tendue. « Plus haut depuis » dit si l’on n’a pas vu pire depuis longtemps : il compare le chiffre du jour à chaque journée depuis 2008.',
       'The higher it is, the more strained the situation. “Highest since” tells whether things have not been this bad for a long time: it compares today’s figure with every day since 2008.'),
-    lire: L('De 0 à 25 : calme. De 25 à 50 : vigilance. De 50 à 75 : tension. Au-delà de 75 : crise. L’indice est la moyenne de deux parties : ce que les marchés exigent pour prêter à la France (écart de taux avec l’Allemagne, demande lors des emprunts) et ses fragilités de fond (part détenue par l’étranger, notes des agences, solde TARGET2). Il n’est affiché que si les cinq signaux sont disponibles.',
+    lire: L('De 0 à 25 : calme. De 25 à 50 : vigilance. De 50 à 75 : tension. Au-delà de 75 : crise. L’indice est la moyenne de deux parties : ce que les marchés exigent pour prêter à la France (écart de taux avec l’Allemagne, demande lors des emprunts) et ses fragilités de fond (part détenue par l’étranger, notes des agences, solde TARGET2). Il n’est affiché que si les cinq signaux sont disponibles.',
       'From 0 to 25: calm. From 25 to 50: watch. From 50 to 75: stress. Above 75: crisis. The index is the average of two parts: what markets demand to lend to France (rate gap with Germany, demand at auctions) and its underlying weaknesses (share held abroad, agency ratings, TARGET2 balance). It is shown only when all five signals are available.'),
     qui: L('Vigie Dette France, recalculé chaque matin à partir des sources de chaque signal',
       'Vigie Dette France, recalculated every morning from the sources of each signal'),
