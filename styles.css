@@ -387,6 +387,8 @@ footer p { margin: 0; max-width: 80ch; }
 /* Jauges : la description s'ouvre en panneau flottant sous la carte, sans agrandir la rangée ni pousser la suite */
 .gauges { align-items: start; }
 .gauge { position: relative; }
+/* La jauge ouverte passe au-dessus des cartes voisines, même quand l'une d'elles est survolée (elle se soulève) */
+.gauge:has(details[open]) { z-index: 30; }
 .gauge .desc-corps {
   position: absolute; z-index: 20; left: 0; right: 0; top: calc(100% + var(--space-2)); margin-top: 0;
   padding: var(--space-4); background: var(--bg-surface); border: 1px solid var(--border-subtle);
