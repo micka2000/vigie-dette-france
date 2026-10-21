@@ -127,6 +127,27 @@ Calculées avec la méthode ci-dessus, TARGET2 classé dans le fond :
 
 Ces valeurs sont cohérentes avec la page actuelle : 4 signaux sur 5 en tension, la couverture en vigilance. L'indice dira donc « tension » aujourd'hui. Ce n'est pas un défaut : la moyenne de septembre du spread (96,7 pb) est la plus haute depuis 2012 [measured: data/spread.json], et la note la plus basse a perdu un cran depuis 2024, de AA- à A+ [data/notations.json, historique à vérifier sur source]. Le risque d'alarmisme vient de la façon de le dire. La phrase de verdict sépare donc toujours la tension sur la dette du stress financier global.
 
+### Réflexion sur les repères (2026-10-21), sans changement de méthode
+
+Question de l'utilisateur : pourquoi 120 pb comme seuil de crise du spread ? Décision : **on garde la méthode 2.1 telle quelle** (« restons simple »). Ce qui a été établi :
+
+**Origine des repères.** Les repères 50 / 80 / 120 / 200 pb ont été fixés au lancement, à la main ; seuls 50 et 80 sont justifiés par des centiles dans ce document. Justification a posteriori sur 5 576 séances depuis 2004 : 50 pb = 69e centile, 80 pb = 95e, 120 pb = 98,7e (dépassé seulement en 2011-2012, 57 jours, et en 2026, 15 jours), 200 pb ≈ record (214 pb le 17/11/2011). Les années 2004-2007, à 0-10 pb, tirent les centiles vers le bas.
+
+**Pas de règle commune entre signaux.** Part des mois dans chaque niveau depuis 2008 (calme / vigilance / tension / crise) : spread 64 / 30 / 5 / 1 %, TARGET2 (2.1) 42 / 32 / 18 / 8 %, couverture 13 / 34 / 51 / 2 %, non-résidents 11 / 30 / 16 / 43 %. Les non-résidents sont « en crise » 43 % du temps parce que le seuil de 60 % tombe dans la période 2008-2016, où la part était normalement haute. Piste écartée pour l'instant : une règle unique (vigilance = médiane depuis 2008, tension = dépassé 10 % du temps, crise = atteint seulement pendant les crises de 2008 et 2011-2012, 100 = pire niveau).
+
+**Comparaison avec la crise de l'euro** (écart à 10 ans avec l'Allemagne, moyennes mensuelles BCE `IRS.M.xx.L.L40.CI.0000.EUR.N.Z`) :
+
+| Pays | Juin 2007 | Premiers doutes | Demande d'aide ou sauvetage BCE | Maximum |
+|---|---|---|---|---|
+| Grèce | 24 pb | 136 (oct. 2009), 235 (déc. 2009) | 477 (avr. 2010) | 2 739 |
+| Irlande | 6 | 152 (déc. 2008) | 569 (nov. 2010) | 971 |
+| Portugal | 19 | 121 (mars 2010) | 585 (avr. 2011) | 1 203 |
+| Italie | 21 | 165 (nov. 2010) | 519 (nov. 2011) | 519 |
+| Espagne | 6 | 135 (mai 2010) | 555 (juil. 2012) | 555 |
+| France | 6 | 66 (juil. 2011) | jamais | 154 (nov. 2011) |
+
+Les cinq pays ont basculé entre 470 et 590 pb. Un barème calé sur ces bascules (25 ≈ 100 pb, 50 ≈ 250, 75 ≈ 500, 100 ≈ 900) mesurerait la distance au scénario de 2010-2012 ; il ramènerait le spread du 21/10/2026 (155 pb) d'environ 86 à 34 et l'indice d'environ 64 à 52 (estimation). Arguments pour : repères observés cinq fois, point de départ identique en 2007, dette grecque de 2009 (~127 % du PIB) proche de la française d'aujourd'hui (~115 %). Argument contre principal : le cadre a changé (OMT en 2012, TPI en 2022, MES trop petit pour la France), la bascule française pourrait venir bien plus bas que 500 pb, et personne ne l'a observée. Le barème actuel répond à « est-ce anormal pour la France ? », celui de la crise de l'euro à « la France approche-t-elle du point où d'autres ont dû être secourus ? ». Si on l'adopte un jour, il faudra recaler les cinq signaux sur la même crise, pas le seul spread.
+
 ### Méthode 2.1 (2026-10-21) : TARGET2 rapporté au bilan de l'Eurosystème
 
 Constat de l'utilisateur : le solde en milliards faisait d'octobre 2025 (-240 Md€) un pire moment que novembre 2008 (-119 Md€), alors que 2008 était une vraie fuite des capitaux. Trois corrections comparées sur 2008-2026 :
