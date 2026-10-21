@@ -80,7 +80,8 @@ class Collecte(unittest.TestCase):
 
     def series(self, **remplace):
         ok = {nom: (lambda nom=nom: json.loads((DATA / nom).read_text(encoding="utf-8"))) for nom in u.SERIES if (DATA / nom).exists()}
-        ok["ciss.json"] = lambda: {"mensuel": [{"mois": "2026-09", "max": 0.1}] * 20, "quotidien": [{"jour": "2026-10-19", "valeur": 0.044}]}
+        if "ciss.json" not in ok:  # avant le premier passage de la collecte du CISS
+            ok["ciss.json"] = lambda: {"mensuel": [{"mois": "2026-09", "max": 0.1}] * 20, "quotidien": [{"jour": "2026-10-19", "valeur": 0.044}]}
         ok.update(remplace)
         return ok
 
