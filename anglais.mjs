@@ -77,7 +77,7 @@ export const EN = {
 
   'target.titre': 'Banque de France TARGET2 balance',
   'target.quoi': '<b>What it is.</b> The balance between the Banque de France and the other central banks of the euro area, in billions of euros.',
-  'target.pourquoi': '<b>Why it matters.</b> A sharp fall can signal that money is leaving France for other countries in the area. It is a slow signal, which also depends on ECB purchases. Landmarks: -€118bn at the height of the 2008 crisis, a record -€240bn in October 2025.',
+  'target.pourquoi': '<b>Why it matters.</b> When savers, companies or investors move their money from France to a bank in another euro area country, the balance falls. A sharp, fast drop signals capital flight: -€119bn in November 2008, -€114bn in January 2012, at the height of the euro crisis. But the balance also falls without any panic, when the Banque de France buys French debt from foreign investors on behalf of the ECB. So look at the trend over several months, not at a single figure. Record: -€240bn in October 2025.',
   'target.lire': '<b>How to read the chart.</b> The line shows the balance at the end of each month. The lower it goes, the more capital is leaving France. Coloured backgrounds show the risk thresholds.',
   'target.qui': '<b>Who measures it, and when.</b> The <a href="https://data.ecb.europa.eu/data/datasets/TGB/TGB.M.FR.N.A094T.U2.EUR.E" target="_blank" rel="noopener">European Central Bank</a>, which publishes the Banque de France balance at the end of each month, since 2008; read directly from it.',
 
