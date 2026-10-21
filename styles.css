@@ -135,6 +135,21 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 @keyframes pulse { 50% { opacity: 0.35; } }
 @media (prefers-reduced-motion: reduce) { .live::before { animation: none !important; } }
 
+/* Indice Vigie dans l'en-tête */
+.indice { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
+.indice[hidden] { display: none; }
+.indice-score {
+  margin: 0; font-family: var(--font-display); font-weight: 800; font-size: clamp(56px, 8vw, 88px);
+  line-height: 0.9; letter-spacing: -0.04em; font-variant-numeric: tabular-nums;
+}
+.indice-sur { font-size: 0.35em; font-weight: 600; letter-spacing: 0; opacity: 0.8; margin-left: 4px; }
+.indice-side { display: grid; gap: var(--space-2); justify-items: start; }
+.indice-nom { font-family: var(--font-display); font-weight: 700; font-size: var(--text-h3); }
+/* Sur le bleu de l'en-tête, les couleurs de niveau ne contrastent pas : pastille sur fond de carte */
+.masthead .pill { background: var(--bg-surface); font-size: var(--text-sm); padding: 4px 12px; }
+.repere { margin: 0; max-width: 70ch; font-size: var(--text-body); }
+.repere[hidden] { display: none; }
+
 .btn-ghost {
   font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm);
   background: transparent; color: inherit; border: 1.5px solid currentColor;
@@ -144,8 +159,18 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 .btn-ghost:hover { transform: translateY(-2px); }
 .btn-ghost:active { transform: scale(0.97); }
 
-/* Synthèse */
-.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: var(--space-3); margin-top: calc(-1 * var(--space-6)); }
+/* Synthèse : sous-indices et CISS, puis les cinq signaux */
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: var(--space-3); }
+.gauges { grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); margin-top: calc(-1 * var(--space-6)); }
+.signals-summary { margin-top: var(--space-6); }
+.tile-unit { font-size: 0.45em; font-weight: 600; color: var(--fg-3); margin-left: 2px; letter-spacing: 0; }
+.tile-value.tile-na { font-size: var(--text-h3); color: var(--fg-3); }
+.ecart {
+  margin: var(--space-4) 0 0; font-size: var(--text-sm); color: var(--fg-2); max-width: 90ch;
+  background: var(--bg-inset); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4);
+}
+.ecart[hidden] { display: none; }
+.ecart b { font-family: var(--font-display); font-weight: 700; color: var(--fg-1); }
 .tile {
   background: var(--bg-surface); border-radius: var(--radius-md); box-shadow: var(--shadow-md);
   padding: var(--space-4); display: grid; gap: var(--space-2); align-content: start;

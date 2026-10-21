@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vigie Dette France</title>
 <meta name="description" content="Les cinq signaux de santé de la dette publique française, mis à jour chaque jour, avec leurs seuils de risque historiques.">
-<link rel="stylesheet" href="styles.css?v=4f330f3b">
+<link rel="stylesheet" href="styles.css?v=b712cbbb">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
@@ -19,15 +19,26 @@
       <button class="btn-ghost" id="theme-toggle" type="button">Thème</button>
     </div>
     <p class="verdict" id="verdict">Chargement des signaux…</p>
+    <div class="indice" id="indice" hidden>
+      <p class="indice-score"><span id="indice-num"></span><span class="indice-sur">/100</span></p>
+      <div class="indice-side">
+        <span class="indice-nom">Indice Vigie</span>
+        <span class="pill" id="indice-niveau"></span>
+      </div>
+    </div>
+    <p class="repere" id="repere" hidden></p>
     <p class="stamp">
       <span class="live" id="live" data-on="false">Données enregistrées</span>
-      <span id="updated"></span>
+      <span id="donnees"></span>
     </p>
   </div>
 </header>
 
 <main class="wrap">
-  <section class="summary" id="summary" aria-label="Synthèse des signaux"></section>
+  <section class="summary gauges" id="gauges" aria-label="Sous-indices de l'Indice Vigie et stress financier de la BCE"></section>
+  <p class="ecart" id="ecart" hidden></p>
+
+  <section class="summary signals-summary" id="summary" aria-label="Synthèse des cinq signaux"></section>
 
   <div class="toolbar">
     <span class="toolbar-label" id="range-label">Période</span>
@@ -141,12 +152,21 @@
 
 <footer>
   <div class="wrap">
-    <p>Le spread, les non-résidents et les séries Eurostat sont collectés chaque matin par une GitHub Action ; le solde TARGET2 est lu en direct à la BCE à chaque visite. Les adjudications et les notes sont saisies à la main à partir des publications officielles.</p>
+    <p>Le spread, les non-résidents et les séries Eurostat sont collectés chaque matin par une GitHub Action ; le solde TARGET2 et le CISS sont aussi lus en direct à la BCE à chaque visite. Les adjudications et les notes sont saisies à la main à partir des publications officielles.</p>
+    <p><span id="sources-detail"></span> <span id="updated"></span></p>
     <p>Les seuils de risque sont des repères tirés de l'historique de chaque série, pas des prévisions.</p>
   </div>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="app.js?v=7aefb052"></script>
+<script>
+  // Secours : si app.js n'a pas démarré après 10 s (fichier absent, erreur, module non chargé), on le dit.
+  setTimeout(function () {
+    if (window.vigieDemarre) return;
+    var v = document.getElementById('verdict');
+    if (v) v.textContent = 'La page n’a pas pu se charger. Recharge-la dans un instant.';
+  }, 10000);
+</script>
+<script type="module" src="app.js?v=bee47312"></script>
 </body>
 </html>

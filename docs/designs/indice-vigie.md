@@ -701,7 +701,7 @@ Fichiers touchés : aucun diagramme ASCII dans `app.js`, `index.html`, `update_d
 Tâches tirées des constats de la revue. À exécuter avec Claude Code ; cocher au fil de la livraison. Hypothèse d'effort : fonctionnalités environ ×30, tests environ ×50.
 
 **Version 1** (réécrite après la revue d'ingénierie, D3 à D10 ; cette liste fait foi)
-- [ ] **T0 (P1, humain : ~1h, avant T1 pour la capture, avant T5a pour le test)** : base de comparaison. Prendre la capture « avant » de la page actuelle (390 px et bureau, deux thèmes), puis montrer cette page à 3 proches non économistes et noter leurs réponses mot pour mot (The Assignment). _(captures prises le 2026-10-21 : `docs/designs/assets/avant-v1-*.png` ; test auprès de 3 proches à faire)_
+- [x] **T0 (P1, humain : ~1h, avant T1 pour la capture, avant T5a pour le test)** : base de comparaison. Prendre la capture « avant » de la page actuelle (390 px et bureau, deux thèmes), puis montrer cette page à 3 proches non économistes et noter leurs réponses mot pour mot (The Assignment). _(captures prises le 2026-10-21 : `docs/designs/assets/avant-v1-*.png` ; test fait le 2026-10-21 : les 3 proches ont aimé la page, réponses mot pour mot non consignées)_
   - Constat : avis extérieur n°11 et n°12 (D6, D8).
   - Fichiers : `docs/designs/assets/avant-v1-*.png`, ce document.
   - Vérification : 4 captures et 3 réponses consignées.
@@ -721,7 +721,7 @@ Tâches tirées des constats de la revue. À exécuter avec Claude Code ; cocher
   - Constat : CEO-R1, CEO-L1, O13, avis extérieur n°1, n°14 et n°17.
   - Fichiers : `scripts/update_data.py`, `scripts/test_update_data.py`, `data/ciss.json`.
   - Vérification : `python3 -m unittest`, dont un test sur les vrais fichiers de `data/` au 20/10/2026 qui attend zéro échec.
-- [ ] **T5a (P1, humain : ~1j / CC : ~20min)** : en-tête. `app.js` en module, import `./score.mjs?v=…`, script de secours « La page n'a pas pu se charger » à 10 s, affichage des fichiers d'abord, lecture BCE avec délai de 8 s, phrase de verdict, Indice Vigie, dates par partie, sous-indices, jauge CISS (valeur du jour), encadré d'écart (I contre C). La phrase « Sur cinq signaux : … » (`app.js:385`) est retirée.
+- [x] **T5a (P1, humain : ~1j / CC : ~20min)** : en-tête. `app.js` en module, import `./score.mjs?v=…`, script de secours « La page n'a pas pu se charger » à 10 s, affichage des fichiers d'abord, lecture BCE avec délai de 8 s, phrase de verdict, Indice Vigie, dates par partie, sous-indices, jauge CISS (valeur du jour), encadré d'écart (I contre C). La phrase « Sur cinq signaux : … » (`app.js:385`) est retirée. _(fait le 2026-10-21 sur la branche `v1-en-tete`, non publié avant T8 : vérifié en local à 390 px et 1 280 px, deux thèmes, console vide, TARGET2 lu en direct, message de secours affiché sans `score.mjs`. Ajouts : repère « plus haut depuis » avec mention « calculé sans … », masqué si la séance de comparaison a moins d'un an ; seuils des cartes tirés de `SEUILS` (section 5) ; empreinte de `score.mjs` dans `app.js`.)_
   - Constat : sections 4, 5 et 11, D25, D27, avis extérieur n°6 et n°13 (D6, D9).
   - Fichiers : `app.js`, `index.html`, `styles.css`.
   - Vérification : `python3 -m http.server`, console vide, `score.mjs` renommé à la main → message d'erreur, 390 px, deux thèmes, capture.
