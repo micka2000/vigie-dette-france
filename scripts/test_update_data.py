@@ -54,10 +54,44 @@ class ControleForme(unittest.TestCase):
         ciss = {"mensuel": [{"mois": "2026-09", "max": 0.1}] * 20, "quotidien": [{"jour": "2026-10-05", "valeur": 0.04}]}
         self.assertIn("15 jours", u.controle_forme("ciss.json", ciss, ciss, LE_20_OCTOBRE))
 
+    def test_spread_quotidien_7_jours_accepte_mais_pas_8(self):
+        serie = [{"jour": "2026-10-13", "spread_pb": 120.0}] * 20
+        self.assertIsNone(u.controle_forme("spread.json", serie, serie, LE_20_OCTOBRE))
+        self.assertIn("8 jours", u.controle_forme("spread.json", serie, serie, date(2026, 10, 21)))
+
     def test_fin_de_periode(self):
+        self.assertEqual(u.fin_de_periode([{"jour": "2026-10-20"}]), date(2026, 10, 20))
         self.assertEqual(u.fin_de_periode([{"trimestre": "2026-Q1"}]), date(2026, 3, 31))
         self.assertEqual(u.fin_de_periode([{"annee": 2025}]), date(2025, 12, 31))
         self.assertEqual(u.fin_de_periode([{"mois": "2026-02"}]), date(2026, 2, 28))
+
+
+class Spread(unittest.TestCase):
+    WEBSTAT = "\ufefftime_period;obs_value\r\n2026-10-16;4.794\r\n2026-10-17;\r\n2026-10-19;4.853\r\n2026-10-20;4.928\r\n"
+    BUNDESBANK = (
+        '"";BBSIS.D.I.ZAR;BBSIS.D.I.ZAR_FLAGS\n"";Renditen / RLZ 10 Jahre;\nDezimalstellen;2;\n'
+        "2026-10-16;3,45;\n2026-10-17;.;Kein Wert vorhanden\n2026-10-19;3,46;\n"
+    )
+
+    def get(self, url, headers=None):
+        if url.startswith(u.WEBSTAT):
+            self.assertEqual(headers, {"Authorization": "Apikey cle-de-test"})
+            return self.WEBSTAT.lstrip("\ufeff")
+        return self.BUNDESBANK
+
+    def test_seances_communes_aux_deux_taux_sans_moyenne(self):
+        with mock.patch.dict(u.os.environ, {"WEBSTAT_API_KEY": "cle-de-test"}), mock.patch.object(u, "get", self.get):
+            serie = u.serie_spread()
+        # Le 20 octobre manque encore à la Bundesbank : la dernière séance commune est le 19.
+        self.assertEqual(serie, [
+            {"jour": "2026-10-16", "fr10": 4.794, "de10": 3.45, "spread_pb": 134.4},
+            {"jour": "2026-10-19", "fr10": 4.853, "de10": 3.46, "spread_pb": 139.3},
+        ])
+
+    def test_cle_webstat_absente(self):
+        with mock.patch.dict(u.os.environ, {"WEBSTAT_API_KEY": ""}), mock.patch.object(u, "CLE_WEBSTAT", Path("/nexiste/pas")):
+            with self.assertRaisesRegex(ValueError, "clé Webstat absente"):
+                u.serie_spread()
 
 
 class Couverture(unittest.TestCase):

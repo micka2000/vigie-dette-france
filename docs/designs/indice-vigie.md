@@ -1035,7 +1035,9 @@ Constat de l'utilisateur : la moyenne mensuelle de la BCE (96,7 pb pour septembr
 - Graphique du spread : sélecteur Jour / Semaine / Mois (clôture de chaque séance, du dernier jour de cotation de la semaine, du mois), en plus de la période. Vue par défaut : Jour.
 - Péremption du spread : 7 jours (au lieu de 2 mois). Les ancrages 50/80/120/200 pb restent ; le texte des centiles est recalculé sur les données quotidiennes.
 - ENG-R1 amendé pour le seul spread : la carte passe d'environ 97 pb (tension) à la dernière clôture ; les quatre autres cartes ne changent pas.
-- En attente : clé Webstat de l'utilisateur.
+- Fait le 2026-10-21 : TEC 10 de la Banque de France (`FM.D.FR.EUR.FR2.BB.FRMOYTEC10.HSTA`, quotidien depuis le 3 novembre 2004 seulement) et rendement Bund au pair de la Bundesbank (`BBSIS D.I.ZAR.ZI…R10XX`, comparable au TEC 10, plutôt que le zéro-coupon `ZST`, 3 pb plus haut). 147,8 pb le 20/10/2026 (4,928 − 3,45). L'historique du spread commence donc en novembre 2004 ; l'Indice Vigie, qui démarre en mai 2008, n'y perd rien.
+- Centiles sur 5 575 séances : 50 pb = 69e, 80 pb = 95e ; record 214,1 pb le 17/11/2011.
+- Effet à surveiller : la courbe mensuelle prend la dernière séance du mois, qui peut manquer un pic (novembre 2011 : 214 pb le 17, 108 pb le 30 ; indice 43 au lieu de 53 avec la moyenne).
 
 ## Decision ledger
 

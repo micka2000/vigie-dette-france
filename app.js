@@ -57,6 +57,8 @@ d3.timeFormatDefaultLocale({
 });
 const fmtMonth = (d) => `${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 const fmtDay = (d) => `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+const DAYS = ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'];
+const fmtWeekday = (d) => `${DAYS[d.getUTCDay()]} ${fmtDay(d)}`;
 const parseMonth = (s) => new Date(`${s.slice(0, 7)}-01T00:00:00Z`);
 const parseDay = (s) => new Date(`${s}T00:00:00Z`);
 const parseQuarter = (s) => new Date(Date.UTC(+s.slice(0, 4), (+s.slice(-1) - 1) * 3 + 2, 28));
@@ -64,7 +66,7 @@ const parseQuarter = (s) => new Date(Date.UTC(+s.slice(0, 4), (+s.slice(-1) - 1)
 const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 const levelOf = (key, v) => THRESHOLDS[key].bands.find((b) => v >= b.from && v < b.to)?.level;
 
-const state = { years: 15, data: null };
+const state = { years: 15, spreadStep: 'jour', data: null };
 
 // ---------- Données ----------
 
@@ -81,16 +83,10 @@ async function ecbLive(key, start) {
   return new Map(rows.filter((x) => x.OBS_VALUE !== '').map((x) => [x.TIME_PERIOD, +x.OBS_VALUE]));
 }
 
+// Le spread vient du fichier quotidien écrit par l'Action (Banque de France et Bundesbank) : seul TARGET2 est lu en direct.
 async function loadLiveEcb() {
-  const [frS, deS, tg] = await Promise.all([
-    ecbLive('IRS/M.FR.L.L40.CI.0000.EUR.N.Z', '1999-01'),
-    ecbLive('IRS/M.DE.L.L40.CI.0000.EUR.N.Z', '1999-01'),
-    ecbLive('TGB/M.FR.N.A094T.U2.EUR.E', '2008-01'),
-  ]);
-  const spread = [...frS.keys()].filter((m) => deS.has(m)).sort()
-    .map((m) => ({ mois: m, fr10: frS.get(m), de10: deS.get(m), spread_pb: Math.round((frS.get(m) - deS.get(m)) * 1000) / 10 }));
-  const target = [...tg.keys()].sort().map((m) => ({ mois: m, solde_mds: Math.round(tg.get(m) / 100) / 10 }));
-  return { spread, target };
+  const tg = await ecbLive('TGB/M.FR.N.A094T.U2.EUR.E', '2008-01');
+  return { target: [...tg.keys()].sort().map((m) => ({ mois: m, solde_mds: Math.round(tg.get(m) / 100) / 10 })) };
 }
 
 async function loadAll() {
@@ -102,8 +98,7 @@ async function loadAll() {
   let live = false;
   try {
     const l = await loadLiveEcb();
-    if (l.spread.length >= spread.length) { spread.splice(0, spread.length, ...l.spread); live = true; }
-    if (l.target.length >= target.length) target.splice(0, target.length, ...l.target);
+    if (l.target.length >= target.length) { target.splice(0, target.length, ...l.target); live = true; }
   } catch (e) { /* on garde les fichiers enregistrés */ }
   return { spread, target, adj, ratings, nrAft, nrEs, meta, live };
 }
@@ -306,16 +301,28 @@ function since() {
   const d = new Date(); d.setUTCFullYear(d.getUTCFullYear() - state.years); return d;
 }
 
+// Dernière séance de chaque semaine (lundi à dimanche) ou de chaque mois : une vraie clôture, jamais une moyenne.
+function lastOfPeriod(rows, step) {
+  if (step === 'jour') return rows;
+  const key = (r) => {
+    if (step === 'mois') return r.jour.slice(0, 7);
+    const d = parseDay(r.jour); d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7)); return d.getTime();
+  };
+  return rows.filter((r, i) => i === rows.length - 1 || key(rows[i + 1]) !== key(r));
+}
+
 function compute(data) {
   const out = {};
 
   const sp = data.spread.at(-1);
-  const sp12 = data.spread.at(-13);
+  const oneYear = `${+sp.jour.slice(0, 4) - 1}${sp.jour.slice(4)}`;
+  const sp12 = data.spread.filter((r) => r.jour <= oneYear).at(-1);
+  const yearText = sp12 ? ` · ${fSigned1(sp.spread_pb - sp12.spread_pb)} pb sur un an` : '';
   out.spread = {
     level: levelOf('spread', sp.spread_pb), name: 'Spread OAT-Bund 10 ans',
     value: `${f0(sp.spread_pb)} pb`,
-    sub: `${fmtMonth(parseMonth(sp.mois))} · ${fSigned1(sp.spread_pb - sp12.spread_pb)} pb sur un an`,
-    delta: `OAT ${f2(sp.fr10)} % contre Bund ${f2(sp.de10)} % en ${fmtMonth(parseMonth(sp.mois))} · ${fSigned1(sp.spread_pb - sp12.spread_pb)} pb sur un an`,
+    sub: `Clôture du ${fmtDay(parseDay(sp.jour))}${yearText}`,
+    delta: `OAT ${f2(sp.fr10)} % contre Bund ${f2(sp.de10)} % à la clôture du ${fmtWeekday(parseDay(sp.jour))}${yearText}`,
   };
 
   const auctions = data.adj.lignes.map((a) => ({ ...a, cover: a.adjuge_mds ? a.demande_mds / a.adjuge_mds : null }));
@@ -390,12 +397,12 @@ function renderCharts(data) {
   const clip = (pts) => (from ? pts.filter((p) => p.d >= from) : pts);
   const xDom = (pts) => [from && pts[0] && from > pts[0].d ? from : pts[0]?.d, new Date()];
 
-  const spread = clip(data.spread.map((r) => ({ d: parseMonth(r.mois), v: r.spread_pb, r })));
+  const spread = clip(lastOfPeriod(data.spread, state.spreadStep).map((r) => ({ d: parseDay(r.jour), v: r.spread_pb, r })));
   const spMax = Math.max(130, d3.max(spread, (p) => p.v) + 10);
   lineChart(document.getElementById('chart-spread'), [{ name: 'Spread', color: css('--series-1'), points: spread }], {
     bands: THRESHOLDS.spread.bands, yDomain: [Math.min(0, d3.min(spread, (p) => p.v)), spMax],
     yFormat: (v) => `${f0(v)}`, tipFormat: (v, p) => `${f0(v)} pb (OAT ${f2(p.r.fr10)} %, Bund ${f2(p.r.de10)} %)`,
-    xDomain: xDom(spread), label: 'Spread OAT-Bund à 10 ans en points de base',
+    dateFormat: fmtWeekday, xDomain: xDom(spread), label: 'Spread OAT-Bund à 10 ans en points de base, à la clôture',
   });
 
   const target = clip(data.target.map((r) => ({ d: parseMonth(r.mois), v: r.solde_mds })));
@@ -475,6 +482,13 @@ document.getElementById('range').addEventListener('click', (e) => {
   render();
 });
 
+document.getElementById('spread-step').addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-step]'); if (!btn) return;
+  state.spreadStep = btn.dataset.step;
+  for (const b of e.currentTarget.querySelectorAll('button')) b.setAttribute('aria-pressed', String(b === btn));
+  render();
+});
+
 document.getElementById('theme-toggle').addEventListener('click', () => {
   const root = document.documentElement;
   const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
@@ -496,7 +510,7 @@ loadAll().then((data) => {
   render();
   const live = document.getElementById('live');
   live.dataset.on = String(data.live);
-  live.textContent = data.live ? 'BCE en direct' : 'Données enregistrées';
+  live.textContent = data.live ? 'TARGET2 en direct (BCE)' : 'Données enregistrées';
   text('#updated', `Fichiers mis à jour le ${new Date(data.meta.mis_a_jour).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' })}`);
 }).catch((err) => {
   text('#verdict', 'Oups, les données n’ont pas pu être chargées. Recharge la page dans un instant.');

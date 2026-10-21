@@ -172,6 +172,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 /* Filtre de période */
 .toolbar { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; padding-block: var(--space-8) var(--space-4); }
 .toolbar-label { font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm); color: var(--fg-2); }
+.chart-tools { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 4px 0 8px; }
 .seg { display: inline-flex; background: var(--bg-inset); border-radius: var(--radius-pill); padding: 3px; }
 .seg button {
   font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm);

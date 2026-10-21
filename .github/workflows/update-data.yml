@@ -22,6 +22,8 @@ jobs:
           python-version: "3.12"
       # Les tests tournent dans tests.yml, à chaque push : un test cassé ne bloque jamais la collecte.
       - name: Collecte (chaque série à part)
+        env:
+          WEBSTAT_API_KEY: ${{ secrets.WEBSTAT_API_KEY }}
         run: python scripts/update_data.py || echo "ECHECS=1" >> "$GITHUB_ENV"
       - name: Commit si les séries ou les échecs ont changé
         run: |

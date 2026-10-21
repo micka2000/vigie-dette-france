@@ -26,7 +26,9 @@ export const SEUILS = {
 };
 
 // Âge maximal d'une donnée, en mois (mois du calcul − mois de la donnée), avant de sortir du calcul.
-export const PEREMPTION_MOIS = { spread: 2, couverture: 3, nonResidents: 15, notes: Infinity, target: 3 };
+export const PEREMPTION_MOIS = { couverture: 3, nonResidents: 15, notes: Infinity, target: 3 };
+// Séries quotidiennes : âge maximal en jours de calendrier (la donnée du 20 compte encore le 27, plus le 28).
+export const PEREMPTION_JOURS = { spread: 7 };
 export const PEREMPTION_CISS_JOURS = 10;
 
 export const NOMS = {
@@ -80,6 +82,8 @@ export function moisEcart(dateDonnee, dateCalcul) {
   return (dateCalcul.getUTCFullYear() - a) * 12 + (dateCalcul.getUTCMonth() + 1 - m);
 }
 
+export const joursEcart = (jour, dateCalcul) => (dateCalcul - new Date(`${jour}T00:00:00Z`)) / 86400000;
+
 export function moisMoins(mois, n) {
   const [a, m] = mois.split('-').map(Number);
   const t = a * 12 + (m - 1) - n;
@@ -91,6 +95,14 @@ export function variationUnAn(serie, cle, champ) {
   const dernier = serie.at(-1);
   const avant = serie.find((r) => r[cle] === moisMoins(dernier[cle], 12));
   return avant ? dernier[champ] - avant[champ] : null;
+}
+
+// Variation sur un an d'une série quotidienne : contre la dernière séance au plus tard le même jour un an plus tôt.
+export function variationUnAnJour(serie, champ) {
+  const dernier = serie.at(-1);
+  const borne = `${+dernier.jour.slice(0, 4) - 1}${dernier.jour.slice(4)}`;
+  const avant = serie.filter((r) => r.jour <= borne).at(-1);
+  return avant && joursEcart(avant.jour, new Date(`${borne}T00:00:00Z`)) <= PEREMPTION_JOURS.spread ? dernier[champ] - avant[champ] : null;
 }
 
 // La lecture BCE en direct remplace le fichier seulement si elle est plus récente, ou aussi récente et plus longue.
@@ -129,11 +141,8 @@ export function noteLaPlusBasse(ratings, jusquA = null) {
 function signal(nom, valeur, date, dateCalcul, niveau) {
   if (valeur == null) return { nom, valeur: null, perime: true, manquant: true };
   const age = date ? moisEcart(date, dateCalcul) : 0;
-  return {
-    nom, valeur, date, age, niveau,
-    score: interpoler(valeur, ANCRAGES[nom]),
-    perime: age > PEREMPTION_MOIS[nom],
-  };
+  const perime = nom in PEREMPTION_JOURS ? Math.floor(joursEcart(date, dateCalcul)) > PEREMPTION_JOURS[nom] : age > PEREMPTION_MOIS[nom];
+  return { nom, valeur, date, age, niveau, score: interpoler(valeur, ANCRAGES[nom]), perime };
 }
 
 // Les notes sont valables sans limite de date : seules, elles ne suffisent pas à rendre le fond calculable.
@@ -155,8 +164,7 @@ function sousIndice(signaux, noms) {
 export function cissDuJour(ciss, dateCalcul) {
   const q = ciss?.quotidien?.at(-1);
   if (!q) return null;
-  const jours = (dateCalcul - new Date(`${q.jour}T00:00:00Z`)) / 86400000;
-  if (jours > PEREMPTION_CISS_JOURS) return null;
+  if (joursEcart(q.jour, dateCalcul) > PEREMPTION_CISS_JOURS) return null;
   const score = interpoler(q.valeur, ANCRAGES.ciss);
   return { valeur: q.valeur, jour: q.jour, score, niveau: niveauScore(score) };
 }
@@ -172,7 +180,7 @@ export function etatDuJour(fichiers, dateCalcul) {
   const pire = noteLaPlusBasse(ratings);
 
   const s = {
-    spread: signal('spread', valeurSpread(sp), sp.mois, dateCalcul, niveauBrut('spread', valeurSpread(sp))),
+    spread: signal('spread', valeurSpread(sp), sp.jour, dateCalcul, niveauBrut('spread', valeurSpread(sp))),
     couverture: dc ? signal('couverture', dc.couverture, dc.date, dateCalcul, niveauBrut('couverture', dc.couverture)) : signal('couverture', null),
     nonResidents: signal('nonResidents', nr.part, nr.date, dateCalcul, niveauBrut('nonResidents', nr.part)),
     notes: { ...signal('notes', pire.crans, null, dateCalcul, niveauBrut('notes', 20 - pire.crans)), note: pire.note, agences: pire.agences },
@@ -186,8 +194,8 @@ export function etatDuJour(fichiers, dateCalcul) {
 
   const cartes = {
     spread: {
-      valeur: s.spread.valeur, niveau: s.spread.niveau, mois: sp.mois, fr10: sp.fr10, de10: sp.de10,
-      variationUnAn: variationUnAn(spread.map((r) => ({ mois: r.mois, v: valeurSpread(r) })), 'mois', 'v'),
+      valeur: s.spread.valeur, niveau: s.spread.niveau, jour: sp.jour, fr10: sp.fr10, de10: sp.de10,
+      variationUnAn: variationUnAnJour(spread.map((r) => ({ jour: r.jour, v: valeurSpread(r) })), 'v'),
     },
     adjudications: {
       taux: adj.lignes.at(-1).taux, dateTaux: adj.lignes.at(-1).date, niveau: s.couverture.niveau,
@@ -251,21 +259,24 @@ export function phraseVerdict({ indice, tension, fond, ciss }) {
 
 /**
  * Un point par mois, calculé avec les seules données valables à ce mois (ancrages fixes).
+ * Le spread du mois est celui de sa dernière séance, jamais une moyenne.
+ * Le mois en cours est calculé à dateCalcul plutôt qu'au dernier jour du mois, qui n'est pas encore arrivé.
  * Renvoie [{ mois, tension, fond, indice, sans: [...] }] ; indice vaut null tant qu'un sous-indice est vide.
  */
-export function courbe(fichiers, jusquA) {
+export function courbe(fichiers, jusquA, dateCalcul = null) {
   const { spread, target, adj, ratings, nrAft } = fichiers;
   const couv = couvertures(adj);
-  const debut = spread[0].mois;
+  const debut = spread[0].jour.slice(0, 7);
   const points = [];
   for (let mois = debut; mois <= jusquA; mois = moisMoins(mois, -1)) {
     const fin = new Date(`${moisMoins(mois, -1)}-01T00:00:00Z`);
-    const calcul = new Date(fin - 86400000); // dernier jour du mois
+    const finMois = new Date(fin - 86400000); // dernier jour du mois
+    const calcul = dateCalcul && dateCalcul < finMois ? dateCalcul : finMois;
     const avant = (serie, cle) => serie.filter((r) => r[cle].slice(0, 7) <= mois).at(-1);
-    const sp = avant(spread, 'mois'), tg = avant(target, 'mois'), nr = avant(nrAft.points, 'date'), dc = avant(couv, 'date');
+    const sp = avant(spread, 'jour'), tg = avant(target, 'mois'), nr = avant(nrAft.points, 'date'), dc = avant(couv, 'date');
     const pire = noteLaPlusBasse(ratings, `${mois}-31`);
     const s = {
-      spread: sp ? signal('spread', valeurSpread(sp), sp.mois, calcul) : null,
+      spread: sp ? signal('spread', valeurSpread(sp), sp.jour, calcul) : null,
       couverture: dc ? signal('couverture', dc.couverture, dc.date, calcul) : null,
       nonResidents: nr ? signal('nonResidents', nr.part, nr.date, calcul) : null,
       notes: pire ? signal('notes', pire.crans, null, calcul) : null,

@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   ANCRAGES, NIVEAUX, interpoler, niveauBrut, niveauScore, crans, notch, moisEcart, moisMoins,
-  variationUnAn, fusionnerSeries, spreadPb, etatDuJour, phraseVerdict, partieDette, partieBCE,
+  variationUnAn, variationUnAnJour, fusionnerSeries, spreadPb, etatDuJour, phraseVerdict, partieDette, partieBCE,
   phraseIncomplete, cissDuJour, courbe,
 } from './score.mjs';
 
@@ -74,21 +74,22 @@ test('mois en UTC et soustraction de mois', () => {
   assert.equal(moisMoins('2025-12', -1), '2026-01');
 });
 
-test('péremption : spread 2 mois gardé, 3 exclu ; TARGET2 3 gardé, 4 exclu', () => {
-  const garde = etatDuJour(FIGE, new Date('2026-11-15T00:00:00Z')); // spread de septembre : 2 mois
+test('péremption : spread 7 jours gardé, 8 exclu ; TARGET2 3 mois gardé, 4 exclu', () => {
+  const garde = etatDuJour(FIGE, new Date('2026-10-27T23:00:00Z')); // séance du 20 octobre : 7 jours
   assert.equal(garde.signaux.spread.perime, false);
-  const exclu = etatDuJour(FIGE, new Date('2026-12-15T00:00:00Z')); // 3 mois
+  const exclu = etatDuJour(FIGE, new Date('2026-10-28T00:00:01Z')); // 8 jours
   assert.equal(exclu.signaux.spread.perime, true);
-  assert.deepEqual(exclu.tension.sans, ['spread']); // couverture du 1er octobre : 2 mois, gardée
+  assert.deepEqual(exclu.tension.sans, ['spread']); // couverture du 1er octobre, gardée
   assert.equal(etatDuJour(FIGE, new Date('2026-11-15T00:00:00Z')).signaux.target.perime, false); // août : 3 mois
   assert.equal(etatDuJour(FIGE, new Date('2026-12-15T00:00:00Z')).signaux.target.perime, true); // 4 mois
 });
 
-test('copie figée du 20/10/2026 : les cinq cartes ne changent pas (ENG-R1)', () => {
+test('copie figée du 20/10/2026 : les cinq cartes (ENG-R1, spread à la clôture du jour)', () => {
   const { cartes } = etatDuJour(FIGE, LE_20_OCTOBRE);
-  assert.equal(Math.round(cartes.spread.valeur), 97);
-  assert.equal(cartes.spread.niveau, 'tension');
-  assert.equal(cartes.spread.variationUnAn.toFixed(1), '15.0');
+  assert.equal(cartes.spread.valeur, 147.8);
+  assert.equal(cartes.spread.jour, '2026-10-20');
+  assert.equal(cartes.spread.niveau, 'crise');
+  assert.equal(cartes.spread.variationUnAn.toFixed(1), '71.8'); // contre 76 pb le 20/10/2025
   assert.equal(cartes.adjudications.taux.toFixed(2), '4.93');
   assert.equal(cartes.adjudications.derniere.couverture.toFixed(2), '2.00');
   assert.equal(cartes.adjudications.niveau, 'vigilance');
@@ -103,11 +104,11 @@ test('copie figée du 20/10/2026 : les cinq cartes ne changent pas (ENG-R1)', ()
 
 test('copie figée : sous-indices et Indice Vigie du jour', () => {
   const e = etatDuJour(FIGE, LE_20_OCTOBRE);
-  proche(e.tension.score, 55.1);
+  proche(e.tension.score, 66.8);
   proche(e.fond.score, 60.6);
-  proche(e.indice.score, 57.8);
+  proche(e.indice.score, 63.7);
   assert.equal(e.indice.niveau, 'tension');
-  assert.equal(Math.round(e.indice.score), 58);
+  assert.equal(Math.round(e.indice.score), 64);
 });
 
 test('sous-indice vide : indice absent et phrase « incomplet »', () => {
@@ -123,11 +124,17 @@ test('variation sur un an : cherchée par date, null si le mois manque', () => {
   assert.equal(variationUnAn(avecTrou, 'mois', 'v'), 4);
 });
 
-test('fichier et lecture en direct donnent la même valeur et le même niveau', () => {
+test('variation sur un an d\'une série quotidienne : dernière séance au plus tard un an avant', () => {
+  const serie = [{ jour: '2025-10-17', v: 70 }, { jour: '2025-10-20', v: 76 }, { jour: '2026-10-19', v: 140 }];
+  assert.equal(variationUnAnJour(serie, 'v'), 70); // le 19/10/2025 est un dimanche : séance du vendredi 17
+  assert.equal(variationUnAnJour([{ jour: '2025-09-01', v: 1 }, { jour: '2026-10-19', v: 2 }], 'v'), null);
+});
+
+test('le spread vient des taux, pas de l\'arrondi du fichier', () => {
   assert.equal(spreadPb(3.8, 3.0), 80);
   assert.equal(niveauBrut('spread', spreadPb(3.8, 3.0)), 'tension');
-  const fichier = { ...FIGE, spread: [...FIGE.spread.slice(0, -1), { mois: '2026-09', fr10: 4.44, de10: 3.473, spread_pb: 96.7 }] };
-  const direct = { ...FIGE, spread: [...FIGE.spread.slice(0, -1), { mois: '2026-09', fr10: 4.44, de10: 3.473, spread_pb: 96.69999 }] };
+  const fichier = { ...FIGE, spread: [...FIGE.spread.slice(0, -1), { jour: '2026-10-20', fr10: 4.44, de10: 3.473, spread_pb: 96.7 }] };
+  const direct = { ...FIGE, spread: [...FIGE.spread.slice(0, -1), { jour: '2026-10-20', fr10: 4.44, de10: 3.473, spread_pb: 96.69999 }] };
   assert.equal(etatDuJour(fichier, LE_20_OCTOBRE).cartes.spread.valeur, etatDuJour(direct, LE_20_OCTOBRE).cartes.spread.valeur);
   const tgDirect = { ...FIGE, target: [...FIGE.target.slice(0, -1), { mois: '2026-08', solde_mds: -120.0, solde_meur: -120000 }] };
   assert.equal(etatDuJour(tgDirect, LE_20_OCTOBRE).cartes.target.niveau, 'vigilance');
@@ -187,12 +194,19 @@ test('phrase incomplète', () => {
 test('courbe : l\'Indice Vigie commence en mai 2008, repères historiques', () => {
   const c = courbe(FIGE, '2026-09');
   assert.equal(c.find((p) => p.indice != null).mois, '2008-05');
-  assert.equal(c[0].mois, '1999-01');
+  assert.equal(c[0].mois, '2004-11'); // premier taux quotidien de la Banque de France
   assert.ok(c[0].tension != null);
-  const nov2011 = c.find((p) => p.mois === '2011-11');
-  assert.equal(Math.round(nov2011.indice), 53);
-  assert.equal(Math.round(nov2011.tension), 86);
+  const nov2011 = c.find((p) => p.mois === '2011-11'); // séance du 30 novembre : 108,1 pb
+  assert.equal(Math.round(nov2011.indice), 43);
+  assert.equal(Math.round(nov2011.tension), 68);
   assert.equal(Math.round(nov2011.fond), 19);
   assert.deepEqual(nov2011.sans, ['couverture', 'nonResidents']);
-  assert.equal(Math.round(c.find((p) => p.mois === '2024-07').indice), 42);
+  assert.equal(Math.round(c.find((p) => p.mois === '2024-07').indice), 41);
+});
+
+test('courbe : le mois en cours garde le spread de la dernière séance', () => {
+  const c = courbe(FIGE, '2026-10', LE_20_OCTOBRE);
+  assert.deepEqual(c.at(-1).sans, []);
+  proche(c.at(-1).indice, etatDuJour(FIGE, LE_20_OCTOBRE).indice.score);
+  assert.deepEqual(courbe(FIGE, '2026-10').at(-1).sans, ['spread']); // calculé au 31 octobre : séance du 20 périmée
 });

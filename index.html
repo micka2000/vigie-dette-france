@@ -50,10 +50,18 @@
         <div class="signal-now"><span class="big" data-now="spread">—</span><span class="pill" data-pill="spread"></span></div>
       </div>
       <p class="signal-now"><span class="delta" data-delta="spread"></span></p>
+      <div class="chart-tools">
+        <span class="toolbar-label" id="step-label">Un point par</span>
+        <div class="seg" role="group" aria-labelledby="step-label" id="spread-step">
+          <button type="button" data-step="jour" aria-pressed="true">Jour</button>
+          <button type="button" data-step="semaine">Semaine</button>
+          <button type="button" data-step="mois">Mois</button>
+        </div>
+      </div>
       <div class="chart" id="chart-spread"></div>
       <ul class="thresholds" data-thresholds="spread"></ul>
-      <p class="threshold-note">Seuils tirés de l'historique mensuel depuis 1999 : 50 pb correspond au 75<sup>e</sup> centile, 80 pb au 90<sup>e</sup>. Le pic de la crise des dettes souveraines a atteint 154 pb en novembre 2011.</p>
-      <p class="source">Source : BCE, taux à long terme harmonisés (moyenne mensuelle, séries IRS FR et DE). Le spread intrajournalier peut s'écarter de la moyenne du mois.</p>
+      <p class="threshold-note">Seuils tirés des séances depuis novembre 2004 : le spread est resté sous 50 pb 69 % du temps et sous 80 pb 95 % du temps. Le record date de la crise des dettes souveraines : 214 pb le 17 novembre 2011.</p>
+      <p class="source">Source : Banque de France (taux de l'échéance constante à 10 ans, TEC 10) et Bundesbank (rendement à 10 ans des titres fédéraux, tiré de la courbe des taux). Clôture de chaque séance, sans moyenne : en vue Semaine ou Mois, chaque point est la dernière séance de la période.</p>
     </article>
 
     <article class="signal" id="adjudications">
