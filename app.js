@@ -717,7 +717,18 @@ function repere(data, etat) {
   return { texte, detail };
 }
 
+// Indice Vigie masqué le 21/10/2026 : un quart de son calcul (la couverture des adjudications) n'existe que depuis
+// novembre 2025, sa composition change donc le long de la courbe. À rallumer une fois la couverture reconstituée.
+const INDICE_VISIBLE = false;
+
 function renderHeader(data, etat) {
+  text('#donnees', `Données du ${fmtDay(parseDay(etat.cartes.spread.jour))}`);
+  if (!INDICE_VISIBLE) {
+    text('#verdict', 'L’Indice Vigie est en cours de révision. Les cinq signaux ci-dessous restent à jour chaque jour.');
+    for (const id of ['indice', 'indice-desc', 'courbe']) document.getElementById(id).hidden = true;
+    document.querySelector('.reperes').hidden = true;
+    return;
+  }
   text('#verdict', etat.phrase);
   const { score, niveau } = etat.indice;
   const box = document.getElementById('indice');
@@ -732,7 +743,6 @@ function renderHeader(data, etat) {
   const r = repere(data, etat);
   document.getElementById('repere').hidden = !r;
   if (r) { text('#repere-texte', r.texte); document.getElementById('repere-info').dataset.tip = r.detail; }
-  text('#donnees', `Données du ${fmtDay(parseDay(etat.cartes.spread.jour))}`);
   // Signal trop ancien ou absent : dit sous l'indice, puisque le chiffre est calculé sans lui
   const sans = [...etat.tension.sans, ...etat.fond.sans];
   const is = document.getElementById('indice-sans');
@@ -756,7 +766,7 @@ function renderSources(data) {
 
 function render() {
   if (!state.data) return;
-  if (state.courbe) renderCourbe(state.courbe);
+  if (state.courbe && INDICE_VISIBLE) renderCourbe(state.courbe);
   renderCharts(state.data);
 }
 
@@ -833,7 +843,7 @@ function renderAll() {
   renderHeader(data, etat);
   renderSummary(compute(data, etat));
   renderSources(data);
-  state.courbe = courbeMensuelle(data);
+  if (INDICE_VISIBLE) state.courbe = courbeMensuelle(data);
   render();
 }
 
