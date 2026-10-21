@@ -158,14 +158,16 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 .reperes:not(:has(> :not([hidden]))) { display: none; }
 .repere[hidden] { display: none; }
 
-.btn-ghost {
-  font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm);
-  background: transparent; color: inherit; border: 1.5px solid currentColor;
-  border-radius: var(--radius-pill); padding: 6px 14px; cursor: pointer;
-  transition: transform 150ms var(--ease-standard);
+/* Bouton-icône Material 3 (icône « light_mode ») : 40 px, voile d'état au survol */
+.btn-icone {
+  display: inline-grid; place-items: center; width: 40px; height: 40px; flex: none;
+  background: transparent; color: inherit; border: 0; border-radius: 50%; cursor: pointer;
+  transition: background-color 150ms var(--ease-standard), transform 150ms var(--ease-standard);
 }
-.btn-ghost:hover { transform: translateY(-2px); }
-.btn-ghost:active { transform: scale(0.97); }
+.btn-icone svg { width: 24px; height: 24px; fill: currentColor; }
+.btn-icone:hover { background: color-mix(in srgb, currentColor 8%, transparent); }
+.btn-icone:active { transform: scale(0.94); background: color-mix(in srgb, currentColor 12%, transparent); }
+.btn-icone:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 
 /* Synthèse : sous-indices et CISS, puis les cinq signaux */
 .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: var(--space-3); }
