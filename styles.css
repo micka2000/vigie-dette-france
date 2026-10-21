@@ -330,7 +330,7 @@ footer p { margin: 0; max-width: 80ch; }
    une rubrique peut passer d'une colonne à l'autre : la gauche est pleine, la droite finit plus haut ou au même niveau */
 @media (min-width: 700px) {
   :is(.signal, .masthead) .desc-corps { display: block; columns: 2; column-gap: var(--space-8); }
-  :is(.signal, .masthead) .desc-corps > p { margin-bottom: var(--space-3); }
+  :is(.signal, .masthead) .desc-corps > p { margin-bottom: var(--space-3); orphans: 1; widows: 1; }
 }
 /* Justifié, sans coupure de mots */
 .desc-corps p { margin: 0; line-height: 1.55; text-align: justify; hyphens: manual; }

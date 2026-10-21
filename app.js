@@ -844,6 +844,7 @@ function renderSources(data) {
 }
 
 function render() {
+  equilibrerColonnes();
   if (!state.data) return;
   if (state.courbe && INDICE_VISIBLE) renderCourbe(state.courbe);
   renderCharts(state.data);
@@ -889,6 +890,35 @@ document.addEventListener('click', (e) => { if (cibleDe(e)) montrerBulle(cibleDe
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cacherBulle(); });
 addEventListener('scroll', cacherBulle, { passive: true });
 
+// ---------- Colonnes des descriptions ----------
+// Deux colonnes de journal à partir de 700 px. L'équilibrage du navigateur laisse parfois une ligne de plus à droite :
+// on fixe alors la hauteur à celle de la colonne droite, remplie d'abord à gauche (gauche plus longue ou égale).
+
+function colonnes(corps) {
+  corps.style.height = ''; corps.style.columnFill = '';
+  if (!corps.offsetParent || getComputedStyle(corps).columnCount !== '2') return;
+  const mesure = () => {
+    const r = corps.getBoundingClientRect(), milieu = r.left + r.width / 2;
+    let gauche = 0, droite = 0;
+    for (const p of corps.children) {
+      for (const q of p.getClientRects()) {
+        if (q.left < milieu) gauche = Math.max(gauche, q.bottom - r.top); else droite = Math.max(droite, q.bottom - r.top);
+      }
+    }
+    return { gauche, droite };
+  };
+  let { gauche, droite } = mesure();
+  if (droite <= gauche + 1) return;
+  // Hauteur fixe, remplie d'abord à gauche, agrandie par pas de 4 px jusqu'à ce que la gauche l'emporte
+  corps.style.columnFill = 'auto';
+  for (let h = Math.ceil(droite), n = 0; droite > gauche + 1 && n < 30; h += 4, n++) {
+    corps.style.height = `${h}px`;
+    ({ gauche, droite } = mesure());
+  }
+}
+const equilibrerColonnes = () => document.querySelectorAll('details.desc[open] > .desc-corps').forEach(colonnes);
+document.addEventListener('toggle', (e) => { if (e.target.matches?.('details.desc')) equilibrerColonnes(); }, true);
+
 // ---------- Langue : bouton FR / EN ----------
 // Textes fixes d'index.html (data-i18n, data-i18n-attr) : le français est lu une fois dans la page, l'anglais vient
 // d'anglais.mjs. Les textes calculés (chiffres, dates, infobulles, phrase du jour) passent par L() et sont redessinés.
@@ -923,6 +953,7 @@ function changerLangue() {
   renderAuctionSource(state.data.adj); // le lien « dernière vente » vient d'être réécrit avec sa description
   renderAuctionsTable(state.data.adj);
   renderAll();
+  equilibrerColonnes();
 }
 
 // ---------- Démarrage ----------
