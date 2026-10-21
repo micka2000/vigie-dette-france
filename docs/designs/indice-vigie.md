@@ -550,3 +550,267 @@ Ordre de lecture : (1) phrase de verdict, (2) Indice Vigie, son niveau et sa dat
 - Accessibilité : texte des jauges, résumé de la courbe, tableau des valeurs (déjà au plan).
 - Le détail qui fait dire « ils y ont pensé » : une explication d'une phrase au survol ou au toucher des mots spread, TARGET2 et CISS. Elle est déjà couverte par la contrainte « chaque notion technique a une explication en une phrase ».
 - Recommandation : lancer `/plan-design-review` avant l'implémentation pour l'en-tête et l'encadré d'écart, puis `/design-review` sur la page en ligne après livraison.
+
+### Avis extérieur (repli interne)
+
+Codex est indisponible : jeton expiré (`401 invalid_refresh_token`), à réparer avec `codex login`. Repli : un agent Claude « Plan » en lecture seule, qui a rendu un rapport complet en 2 min 18 dans la limite des 5 minutes. Couverture interne, et non extérieure. 16 constats :
+
+| # | Constat | Traitement |
+|---|---|---|
+| O1 | La courbe depuis 2008 montre ce que D14 a reporté | **CEO-O1, D26 « B) Garder depuis 2008 »** : courbe conservée, avec ses mentions « calculé sans … ». Tension avec D14 consignée, non rouverte. |
+| O2 | La partie dette est mensuelle, l'image affiche la date du CISS | **CEO-O2, D27 « A) Dates par partie »** |
+| O3 | La diffusion part avant le test de compréhension ; estimation trop optimiste | **CEO-O3, D28 « A) Deux versions »** |
+| O4 | TARGET2 commence en 2008-05 (vérifié : `data/target.json`, 220 points) | Correction : l'indice est calculable à partir de mai 2008 ; règle de départ explicite |
+| O5 | `meta.json` n'est pas commité un jour de panne totale | Correction de CEO-R1 : `meta.json` compte dans le contrôle avant commit quand `echecs` n'est pas vide |
+| O6 | TARGET2 pile à la limite de péremption | Couvert par D27 (limite à 3 mois) |
+| O7 | Couverture : 25 % sur 7 saisies manuelles | **CEO-O4, D29 « C) Garder »** : dernière adjudication, poids de 25 % |
+| O8 | Mise en forme des données dupliquée entre la page et l'Action | Correction de la section 5 : `score.js` exporte `etatDuJour(fichiersBruts, dateDuCalcul)`, sans d3, utilisé par `app.js` et `build_outputs.mjs` |
+| O9 | « Pas de contagion » est une affirmation causale | **CEO-O5, D30 « A) Formulations prudentes »** |
+| O10 | Tests de chargement de `app.js` impossibles sans DOM ni npm | Correction : fonction pure `fusionnerSeries(fichier, direct)` testée sous Node ; l'affichage est vérifié à la main |
+| O11 | `index.html` réécrit chaque jour par un robot | **CEO-O6, D31 « A) Balises fixes »** ; l'Action fait `git pull --rebase` avant `git push` (correction) |
+| O12 | Cache LinkedIn d'environ 7 jours | Correction du critère : « un lien partagé affiche une image datée et lisible » |
+| O13 | CISS en moyenne mensuelle sur la courbe ; limite de 7 jours d'un côté, 10 de l'autre | Correction : la courbe utilise le maximum mensuel du CISS ; limite unique de 10 jours |
+| O14 | Compteur du guid redondant | Gardé tel quel : inoffensif, protège des relances |
+| O15 | Bandeau d'écart déroutant | Couvert par D30 |
+| O16 | `index.html:55` affiche toujours « 75e / 90e » (vérifié) | Correction ajoutée à la réparation P4 |
+
+**Décisions appliquées :**
+- **CEO-O2 (D27).** L'en-tête et l'image affichent « dette : données de [mois] · BCE : [jour] ». La clé de l'image ne dépend que des données de l'indice (CISS exclu). La Méthode indique que la partie dette est mensuelle. La péremption de TARGET2 passe à 3 mois. Tests : dates affichées ; clé stable quand seul le CISS change ; TARGET2 gardé à 3 mois.
+- **CEO-O3 (D28).** Deux versions, sans changement de périmètre.
+  - **V1** : `score.js` et ses tests, `package.json`, le CISS, l'en-tête, les sous-indices, l'encadré d'écart, la courbe, la Méthode, ainsi que CEO-R1, CEO-S1 et CEO-L1.
+  - Entre les deux : le test auprès de 3 personnes sur la V1.
+  - **V2** : CEO-E1 (RSS), CEO-E2 (voisins), CEO-E3 (og.png) et CEO-E4 (journal de méthode).
+  - Estimation révisée : V1 environ 2 à 3 h avec CC, V2 environ 2 h.
+- **CEO-O5 (D30).** La partie BCE « C plus bas que I » devient : « Le stress financier global mesuré par la BCE reste [niveau de C] : la tension reste concentrée sur la dette. » Il n'y a pas de bandeau d'écart en haut de page : l'écart avec l'image ou le flux est indiqué dans le pied de page.
+- **CEO-O6 (D31).** `og:title` = « Indice Vigie : le thermomètre de la dette française ». `og:description` est fixe. `og:image` = `https://micka2000.github.io/vigie-dette-france/og.png`, sans `?v=`. `build_outputs.mjs` ne touche plus `index.html`. La règle README `git pull --rebase` est retirée, et `index.html` sort du contrôle avant commit de l'Action.
+
+Les sections antérieures du document qui disent le contraire (balises réécrites entre repères, « pas de contagion », bandeau d'écart, date des données CISS inclus, péremption de 2 mois pour TARGET2, départ de la courbe en janvier 2008) sont remplacées par ces décisions.
+
+### Registre des décisions (suite et état final)
+
+| ID | Contrat | Statut | Réponse |
+|---|---|---|---|
+| CEO-D1 | Repères historiques de l'en-tête | reporté | D14 |
+| CEO-E1 à E4 | RSS, voisins, og.png, journal de méthode | approuvés, livrés en V2 | D15 à D18, D28 |
+| CEO-E5 | Curseur « rejouer » | reporté | D19 |
+| CEO-T1 | TARGET2 dans le fond | approuvé | D20 |
+| CEO-T2 | og.png par SVG + rsvg-convert | approuvé | D21 |
+| CEO-R1 | Collecte isolée et signalée | approuvé, corrigé par O5 | D23 |
+| CEO-S1 | SRI d3 et actions par SHA | approuvé | D24 |
+| CEO-L1 | Fichiers d'abord, BCE ensuite | approuvé | D25 |
+| CEO-O1 | Courbe de l'indice depuis 2008 (mai 2008 d'après O4) | maintenu | D26 « B » |
+| CEO-O2 | Dates par partie, TARGET2 à 3 mois | approuvé | D27 |
+| CEO-O3 | Deux versions | approuvé | D28 |
+| CEO-O4 | Couverture : dernière adjudication, 25 % | maintenu | D29 « C » |
+| CEO-O5 | Formulations prudentes | approuvé | D30 |
+| CEO-O6 | Balises de partage fixes | approuvé | D31 |
+
+Approval readiness: PASS (OH-1 D8, OH-2 D12, OH-3 D6+D20, CEO-D1 D14, CEO-E1 D15, CEO-E2 D16, CEO-E3 D17, CEO-E4 D18, CEO-E5 D19, CEO-T1 D20, CEO-T2 D21, CEO-R1 D23, CEO-S1 D24, CEO-L1 D25, CEO-O1 D26, CEO-O2 D27, CEO-O3 D28, CEO-O4 D29, CEO-O5 D30, CEO-O6 D31, validation du périmètre D22). Les corrections factuelles (P4, P5, P6, P7, O4, O5, O8, O10, O12, O13, O16) découlent des hypothèses approuvées ou des décisions ci-dessus et ne changent aucun comportement approuvé.
+
+### Lignes de réalité
+
+REALITY: premise-table finding unverified=4, faux=2 (P4, P5) corrigés docs/designs/indice-vigie.md:58
+REALITY: already-done pass aucun code de l'indice sur origin/main app.js:77
+REALITY: surface-check pass séries BCE IRS, TGB, CISS, IRS IT/ES/PT/GR vérifiées .github/workflows/update-data.yml:5
+REALITY: binding-decisions pass OH-1 à CEO-O6 enregistrés docs/designs/indice-vigie.md:46
+REALITY: numbers pass valeurs du jour recalculées deux fois (séance et avis extérieur) docs/designs/indice-vigie.md:82
+REALITY: deferred-asks pass aucun ticket lié docs/designs/indice-vigie.md:1
+REALITY: pr-count pass deux livraisons sur main (V1, V2) décidées en D28 docs/designs/indice-vigie.md:150
+PLAN_REALITY: phase=ceo rows=7/7 missing=none unverified=4 verdict=complete
+
+### Hors périmètre
+
+- **Reporté (TODOS.md)** : repères historiques de l'en-tête (D14), curseur « rejouer une date » (D19). Les deux attendent la série trimestrielle des non-résidents de la Banque de France.
+- **Non retenu** : approche A, deux aiguilles sans score (D8) ; approche C, bulletin quotidien, sans son image (D8, D17).
+- **Écartés par l'avis extérieur** : lissage de la couverture (D29 « C »), courbe à partir de 2022 (D26 « B »).
+
+### Ce qui existe déjà
+
+`ecbLive()` (`app.js:77`), `ecb_series()` (`scripts/update_data.py`), `THRESHOLDS` (`app.js:7`, déplacé vers `score.js`), `notch()`, `lineChart()` et `drawBands()`, le workflow quotidien (`update-data.yml`), les données de `data/`. Tout est réutilisé ; rien n'est réécrit.
+
+### Écart avec la cible à 12 mois
+
+Après V1 et V2 : un indice transparent, versionné, suivi par flux et partageable. Il manque, pour la cible : les séries officielles complètes (BdF, et AFT sans saisie manuelle), qui rendront fiables les repères historiques et le curseur.
+
+### Registre des erreurs et secours
+
+| Codepath | Échec | Classe | Secours | Ce que voit le lecteur |
+|---|---|---|---|---|
+| `update_data.py` par série | BCE ou Eurostat en panne | `URLError`, `HTTPError` | ancien fichier gardé, `echecs`, job rouge | « Séries en retard : … » |
+| `update_data.py` par série | forme changée, série vide ou trop ancienne | `KeyError`, `ValueError`, contrôle de forme | idem | idem |
+| `build_outputs.mjs` | `indice.json` illisible | `SyntaxError` | sorties de la veille, `echecs` | flux et image de la veille |
+| `build_outputs.mjs` | `score.js` lève (saisie mal formée) | `TypeError`, erreur nommée | idem | idem |
+| `rsvg-convert` | absent ou échec | code de sortie ≠ 0 | ancien `og.png`, `echecs` | image de la veille |
+| `app.js` lecture en direct | BCE lente | `AbortError` après 8 s | données des fichiers | « Données enregistrées » |
+| `app.js` lecture en direct | HTTP ≠ 200 ou CSV vide | `Error` | données des fichiers | idem |
+| `app.js` chargement | `data/*.json` manquant | `Error` | message d'erreur (existant) | « Oups, les données n'ont pas pu être chargées… » |
+
+### Registre des modes de défaillance
+
+```
+  CODEPATH              | MODE                    | SECOURU ? | TEST ? | LECTEUR VOIT ?       | JOURNAL ?
+  ----------------------|-------------------------|-----------|--------|----------------------|----------
+  update_data série     | panne / forme           | O         | O (py) | séries en retard     | O
+  build_outputs         | indice.json / score     | O         | O      | veille               | O
+  rsvg-convert          | échec                   | O         | O      | image de la veille   | O
+  app.js live           | lent / erreur           | O         | O (fusionnerSeries) | badge         | console
+  feed.xml              | doublon                 | O         | O      | n/a                  | O
+  saisie manuelle       | note ou date invalide   | O         | O      | erreur, pas de faux chiffre | O
+```
+
+CRITICAL GAPS : 0.
+
+### Décisions de périmètre (expansion sélective)
+
+Voir le résumé CEO `~/.gstack/projects/micka2000-vigie-dette-france/ceo-plans/2026-10-20-indice-vigie.md`. Acceptés : CEO-E1, E2, E3, E4. Reportés : CEO-D1, E5. Rejetés : aucun.
+
+### Diagrammes
+
+**Machine à états d'un élément suivi (flux RSS)**
+
+```
+   (pas d'indice.json) ──► LANCEMENT ──► entrée « Lancement », dernier_niveau = niveau du jour
+                                  │
+                                  ▼
+   niveau du jour == dernier_niveau ──► rien
+   niveau du jour != dernier_niveau ──► entrée « passe de A à B », dernier_niveau = B
+   niveau du jour absent (null) ───────► rien, dernier_niveau conservé
+   METHODE_VERSION changée ────────────► entrée « Méthode passée en X.Y », niveaux réenregistrés sans entrée
+   Impossible : écrire une entrée sans dernier_niveau ni Lancement (le guid l'empêche) ;
+                deux entrées identiques le même jour (le compteur [n] l'empêche)
+```
+
+**Déploiement et retour arrière**
+
+```
+  V1 : score.js+tests → app.js module (test local) → update_data.py → workflow (SHA) → lancement manuel
+       → vérification (console, en-tête, job vert) ──► test 3 personnes ──► V2 : RSS, voisins, og.png, journal
+  Panne après push : git revert <commit> → Pages republie (1-2 min) → relancer l'Action si data/ touché
+```
+
+Les autres diagrammes (architecture, flux de données, erreurs) figurent dans les sections 1, 2 et 4.
+
+### Audit des diagrammes existants
+
+Fichiers touchés : aucun diagramme ASCII dans `app.js`, `index.html`, `update_data.py` ni le workflow. Le croquis `docs/designs/assets/indice-vigie-croquis.png` montre encore les repères historiques de l'en-tête et « X % du pic » : il est **périmé** sur ce point (D14). Il est à refaire lors de `/plan-design-review`.
+
+## Implementation Tasks
+
+Tâches tirées des constats de la revue. À exécuter avec Claude Code ; cocher au fil de la livraison. Hypothèse d'effort : fonctionnalités environ ×30, tests environ ×50.
+
+**Version 1**
+- [ ] **T1 (P1, humain : ~2h / CC : ~10min)** : données des notes. Vérifier sur source l'historique de `data/notations.json` et sourcer chaque point non-résidents.
+  - Constat : 0B, P6 et P7.
+  - Fichiers : `data/notations.json`, `data/non_residents_aft.json`.
+  - Vérification : chaque date a une URL de source.
+- [ ] **T2 (P1, humain : ~1j / CC : ~30min)** : `score.js`. Module ES pur avec `etatDuJour()`, ancrages, `niveauBrut()`, `phraseVerdict()` (formulations D30), péremption (TARGET2 à 3 mois) et `METHODE_VERSION`.
+  - Constat : méthode, section 5, O8, D27, D30.
+  - Fichiers : `score.js`, `package.json`.
+  - Vérification : `node --test`.
+- [ ] **T3 (P1, humain : ~1j / CC : ~20min)** : tests. Écrire `score.test.mjs` (bornes, triplets (I, T, V), 5 lignes de 48 caractères, version, `fusionnerSeries`).
+  - Constat : section 6, O10.
+  - Fichier : `score.test.mjs`.
+  - Vérification : `node --test` vert.
+- [ ] **T4 (P1, humain : ~1j / CC : ~20min)** : collecte. Ajouter le CISS (60 jours en quotidien, et maximum mensuel), isoler chaque série, alimenter `echecs` et faire le contrôle de forme.
+  - Constat : CEO-R1, CEO-L1, O13.
+  - Fichiers : `scripts/update_data.py`, `scripts/test_update_data.py`, `data/ciss.json`.
+  - Vérification : `python3 -m unittest`.
+- [ ] **T5 (P1, humain : ~1,5j / CC : ~40min)** : page. `app.js` en module : affichage des fichiers d'abord, lecture BCE avec délai de 8 s, en-tête avec dates par partie, sous-indices, jauge CISS, encadré d'écart (I contre C), courbe depuis mai 2008 avec « calculé sans », Méthode.
+  - Constat : sections 4, 5 et 11, D25, D26, D27.
+  - Fichiers : `app.js`, `index.html`, `styles.css`.
+  - Vérification : `python3 -m http.server`, console vide, 390 px, deux thèmes.
+- [ ] **T6 (P1, humain : ~1h / CC : ~5min)** : verrouillage. Ajouter le SRI sur d3, désigner les actions par SHA, ajouter `concurrency`, `git pull --rebase` avant le push, et `meta.json` commité si `echecs` n'est pas vide.
+  - Constat : CEO-S1, CEO-R1, O5, O11.
+  - Fichiers : `index.html`, `.github/workflows/update-data.yml`.
+  - Vérification : test des SHA, puis lancement manuel vert.
+- [ ] **T7 (P1, humain : ~15min / CC : ~2min)** : textes. Corriger `index.html:55` (69e et 95e centile) et « un cran depuis 2024 ».
+  - Constat : P4, P5, O16.
+  - Fichier : `index.html`.
+  - Vérification : relecture.
+
+**Entre V1 et V2**
+- [ ] **T8 (P1, humain : ~1h)** : test de compréhension. Montrer la V1 à 3 personnes nouvelles et noter leurs réponses.
+  - Constat : D28, critère de réussite n°1.
+  - Vérification : les 3 réponses sont consignées dans ce document.
+
+**Version 2**
+- [ ] **T9 (P2, humain : ~1j / CC : ~30min)** : `build_outputs.mjs`. Écrire `indice.json` (`dernier_niveau`, `cle_image`) et `feed.xml` (guid, 50 entrées, entrées de méthode et de lancement).
+  - Constat : CEO-E1.
+  - Fichiers : `scripts/build_outputs.mjs`, `feed.xml`, `data/indice.json`.
+  - Vérification : validateur W3C, test sur deux passages le même jour.
+- [ ] **T10 (P2, humain : ~1,5j / CC : ~40min)** : image de partage. `og.svg` (symboles dessinés, 5 lignes), polices installées par fontconfig, `rsvg-convert`, balises fixes.
+  - Constat : CEO-E3, CEO-T2, D31.
+  - Fichiers : `scripts/build_outputs.mjs`, `.github/workflows/update-data.yml`, `index.html`.
+  - Vérification : `og.png` regardée une fois, puis LinkedIn Post Inspector.
+- [ ] **T11 (P2, humain : ~1j / CC : ~20min)** : voisins. Ajouter IT, ES, PT et GR (`spreads_ze.json` et lecture en direct), avec étiquettes, mention « hors échelle » et phrase de comparaison.
+  - Constat : CEO-E2.
+  - Fichiers : `scripts/update_data.py`, `app.js`, `data/spreads_ze.json`.
+  - Vérification : la France reste lisible à 390 px.
+- [ ] **T12 (P2, humain : ~2h / CC : ~10min)** : journal de méthode. Créer `data/methode.json` (version 1.0) et l'afficher dans la section Méthode.
+  - Constat : CEO-E4.
+  - Fichiers : `data/methode.json`, `app.js`.
+  - Vérification : le test de version passe.
+
+_Artefact JSONL non écrit : `jq` n'est pas installé sur cette machine. Pour l'agrégation `/autoplan`, installer jq (`sudo apt install jq`)._
+
+### Completion Summary
+
+```
+  +====================================================================+
+  |            MEGA PLAN REVIEW — COMPLETION SUMMARY                   |
+  +====================================================================+
+  | Mode selected        | SELECTIVE EXPANSION                         |
+  | System Audit         | 1 commit ; AFT bloque les robots ; CORS BCE |
+  |                      | ouvert ; 2 faits faux (P4, P5), 4 non vérif.|
+  | Step 0               | approche B ; 4 ajouts acceptés, 2 reportés ;|
+  |                      | TARGET2 dans le fond ; og par rsvg-convert  |
+  | Section 1  (Arch)    | 1 issue found (robot sur index.html, D31)   |
+  | Section 2  (Errors)  | 8 error paths mapped, 5 GAPS (fermés D23/25)|
+  | Section 3  (Security)| 3 issues found, 0 High severity (impact     |
+  |                      | élevé, probabilité faible ; fermés D24)     |
+  | Section 4  (Data/UX) | 6 edge cases mapped, 2 unhandled (D25)      |
+  | Section 5  (Quality) | 3 issues found                              |
+  | Section 6  (Tests)   | Diagram produced, 1 gap (tests DOM, O10)    |
+  | Section 7  (Perf)    | 1 issue found (CISS 1 Mo, D25)              |
+  | Section 8  (Observ)  | 1 gap found (meta.json, O5)                 |
+  | Section 9  (Deploy)  | 2 risks flagged                             |
+  | Section 10 (Future)  | Reversibility: 4/5, debt items: 2           |
+  | Section 11 (Design)  | 1 issue (croquis périmé)                    |
+  +--------------------------------------------------------------------+
+  | NOT in scope         | written (6 items)                           |
+  | What already exists  | written                                     |
+  | Dream state delta    | written                                     |
+  | Error/rescue registry| 8 rows, 0 CRITICAL GAPS                     |
+  | Failure modes        | 6 total, 0 CRITICAL GAPS                    |
+  | TODOS.md updates     | 3 items (série BdF, repères, curseur)       |
+  | Scope proposals      | 6 proposed, 4 accepted (SEL)                |
+  | CEO plan             | written                                     |
+  | Outside voice        | codex unavailable (auth) ; native fallback  |
+  |                      | completed, 16 findings                      |
+  | Lake Score           | N/A (aucune option à 10/10 proposée)        |
+  | Diagrams produced    | 6 (archi, flux, erreurs, états, déploiement,|
+  |                      | retour arrière)                             |
+  | Stale diagrams found | 1 (croquis filaire)                         |
+  | Unresolved decisions | 0                                           |
+  | Reality rows         | 7/7 rows (PLAN_REALITY), 4 unverified       |
+  +====================================================================+
+```
+
+### Unresolved Decisions
+
+Aucune : chaque question posée a reçu une réponse.
+
+## GSTACK REVIEW REPORT
+
+| Review | Trigger | Why | Runs | Status | Findings |
+|--------|---------|-----|------|--------|----------|
+| CEO Review | `/plan-ceo-review` | Scope & strategy | 1 | CLEAR | 6 proposals, 4 accepted, 2 deferred |
+| Outside Review | codex (auto, plan-review) | Independent 2nd opinion | 1 | unavailable | codex auth failure, no completed external review ; native fallback (in-host) : 16 findings, 16 resolved, 0 unresolved |
+| Eng Review | `/plan-eng-review` | Architecture & tests (required) | 0 | — | — |
+| Design Review | `/plan-design-review` | UI/UX gaps | 0 | — | — |
+| DX Review | `/plan-devex-review` | Developer experience gaps | 0 | — | — |
+
+- **OUTSIDE COVERAGE:** codex, phase plan-review, unavailable (401 invalid_refresh_token, à réparer par `codex login`). Repli natif Claude « Plan » terminé en 2 min 18 : 16 constats, tous traités (7 par décision D26 à D31, 8 par correction factuelle, 1 conservé tel quel). Aucune couverture extérieure.
+- **VERDICT:** CEO CLEARED, eng review required.
+
+NO UNRESOLVED DECISIONS
