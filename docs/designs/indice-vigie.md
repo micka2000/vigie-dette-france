@@ -733,7 +733,7 @@ Tâches tirées des constats de la revue. À exécuter avec Claude Code ; cocher
   - Constat : section 11, D9.
   - Fichiers : `index.html`, `app.js`.
   - Vérification : chaque score du jour se recalcule à la main depuis cette section.
-- [ ] **T6 (P1, humain : ~2h / CC : ~10min)** : verrouillage et tests en continu. Ajouter le SRI sur d3, désigner les actions par SHA, ajouter `concurrency`, `git pull --rebase` avant le push, commiter `meta.json` dès que `echecs` diffère de la version commitée, et créer `.github/workflows/tests.yml` (`push` et `pull_request`, `actions/setup-node` en `node-version: 22`, `node --test`, `python3 -m unittest`), séparé de la collecte. _(en cours : SRI, SHA, `concurrency`, `tests.yml` et commit de `meta.json` faits le 2026-10-21 ; reste la vérification sur GitHub)_
+- [x] **T6 (P1, humain : ~2h / CC : ~10min)** : verrouillage et tests en continu. Ajouter le SRI sur d3, désigner les actions par SHA, ajouter `concurrency`, `git pull --rebase` avant le push, commiter `meta.json` dès que `echecs` diffère de la version commitée, et créer `.github/workflows/tests.yml` (`push` et `pull_request`, `actions/setup-node` en `node-version: 22`, `node --test`, `python3 -m unittest`), séparé de la collecte. _(fait le 2026-10-21 : `tests.yml` vert sur GitHub, `update-data.yml` lancé à la main en vert sans échec, `score.mjs` servi en `text/javascript` par Pages)_
   - Constat : CEO-S1, CEO-R1, O5, O11, avis extérieur n°2, n°3 et n°7 (D4, D6).
   - Fichiers : `index.html`, `.github/workflows/update-data.yml`, `.github/workflows/tests.yml`.
   - Vérification : test des SHA, un push qui déclenche `tests.yml` en vert, puis lancement manuel de `update-data.yml` en vert ; `curl -sI …/score.mjs` donne un type JavaScript.
