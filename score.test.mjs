@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import {
   ANCRAGES, NIVEAUX, interpoler, niveauBrut, niveauScore, crans, notch, moisEcart, moisMoins,
   variationUnAn, variationUnAnJour, fusionnerSeries, spreadPb, etatDuJour, phraseVerdict, partieDette, partieBCE,
-  phraseIncomplete, cissDuJour, courbe, PHRASE_BCE_INDISPONIBLE, serieQuotidienne, plusHautDepuis, picDuMois, picsMensuels,
+  phraseIncomplete, cissDuJour, courbe, PHRASE_BCE_INDISPONIBLE, serieQuotidienne, plusHautDepuis, plusBasDepuis, picDuMois, picsMensuels,
 } from './score.mjs';
 
 const lire = (dossier) => (f) => JSON.parse(readFileSync(new URL(`${dossier}/${f}`, import.meta.url)));
@@ -275,6 +275,18 @@ test('repères : pic de novembre 2011 et « plus haut depuis » (méthode 2.1)',
   const r = plusHautDepuis(q, 55, '2026-10-21');
   assert.ok(r.jour < '2026-10-21' && r.indice >= 55);
   assert.ok(q.every((p) => p.jour <= r.jour || p.jour >= '2026-10-21' || p.indice == null || p.indice < 55));
+});
+
+test('repère de l’OAT 10 ans : plus haut et plus bas depuis, sur les séances réelles', () => {
+  const s = FIGE_21.spread;
+  // 21 octobre 2026, 4,985 % : aucune séance plus haute depuis le début de la série (novembre 2004).
+  assert.equal(plusHautDepuis(s, s.at(-1).fr10, '2026-10-21', 'fr10'), null);
+  // 17 novembre 2011, 4,011 % : plus haut depuis le 11 juin 2009 (4,02 %).
+  assert.equal(plusHautDepuis(s, 4.011, '2011-11-17', 'fr10').jour, '2009-06-11');
+  // 28 août 2019, -0,417 % : plus bas de la série.
+  assert.equal(plusBasDepuis(s, -0.417, '2019-08-28', 'fr10'), null);
+  // 9 mars 2020, -0,362 % : plus bas depuis le 3 septembre 2019 (-0,414 %).
+  assert.equal(plusBasDepuis(s, -0.362, '2020-03-09', 'fr10').jour, '2019-09-03');
 });
 
 test('courbe affichée : pire séance de chaque mois, comme le repère « plus haut depuis »', () => {

@@ -2,15 +2,15 @@
 // Le calcul (scores, niveaux, phrase de verdict) vient tout entier de score.mjs.
 import {
   SEUILS, ANCRAGES, METHODE_VERSION, couvertures, niveauBrut, niveauScore, interpoler, notch, notchLabel, fusionnerSeries, etatDuJour,
-  serieQuotidienne, plusHautDepuis, picDuMois, picsMensuels, phraseVerdict, partsTarget,
-} from './score.mjs?v=8b8453e3';
-import { EN } from './anglais.mjs?v=4246210c';
+  serieQuotidienne, plusHautDepuis, plusBasDepuis, picDuMois, picsMensuels, phraseVerdict, partsTarget,
+} from './score.mjs?v=d11cea8f';
+import { EN } from './anglais.mjs?v=1edf9c86';
 
 window.vigieDemarre = true; // lu par le script de secours d'index.html
 
 // Langue de la page : « fr » ou « en » (bouton FR / EN, choix gardé dans le navigateur). index.html la fixe avant l'affichage.
 const state = {
-  periodes: { indice: 15, spread: 15, adj: 15, nonres: 15, notes: 15, target: 15 }, spreadStep: 'jour', data: null, masquees: {},
+  periodes: { indice: 15, spread: 15, adj: 15, nonres: 15, notes: 15, target: 15 }, spreadStep: 'jour', spreadVue: 'ecart', data: null, masquees: {},
   lang: document.documentElement.lang === 'en' ? 'en' : 'fr',
 };
 const L = (fr, en) => (state.lang === 'en' ? en : fr);
@@ -352,7 +352,7 @@ const visibles = (chart, series) => series.filter((s) => !state.masquees[chart]?
 
 // Légende ; avec `chart`, chaque entrée est un bouton œil qui masque ou réaffiche sa courbe (jamais la dernière visible).
 function legend(id, series, chart = null) {
-  document.getElementById(id).replaceChildren(...series.map((s) => {
+  document.getElementById(id)?.replaceChildren(...series.map((s) => {
     const li = document.createElement('li');
     const sw = document.createElement('span'); sw.className = s.dash ? 'sw sw-dash' : 'sw'; sw.style.color = s.color; sw.style.background = s.dash ? '' : s.color;
     if (!chart) { li.append(sw, document.createTextNode(s.name)); return li; }
@@ -413,6 +413,21 @@ function nomLigne(ligne) {
   return L(`OAT échéance ${m[2]}`, `OAT maturing ${m[2]}`) + (coupon ? ` (coupon ${coupon})` : '');
 }
 
+// Repère de l'OAT 10 ans, au format de repere() : rien si la séance de comparaison a moins d'un an.
+function repereOat(spread) {
+  const p = spread.at(-1);
+  const unAn = `${+p.jour.slice(0, 4) - 1}${p.jour.slice(4)}`;
+  const debut = fmtMonthLong(parseDay(spread[0].jour));
+  const cas = [[plusHautDepuis(spread, p.fr10, p.jour, 'fr10'), 'Plus haut', 'Highest'], [plusBasDepuis(spread, p.fr10, p.jour, 'fr10'), 'Plus bas', 'Lowest']];
+  for (const [depuis, fr, en] of cas) {
+    if (!depuis) return L(`${fr} depuis le début de la série (${debut}).`, `${en} since the series began (${debut}).`);
+    if (depuis.jour > unAn) continue;
+    const d = parseDay(depuis.jour);
+    return L(`${fr} depuis ${fmtMonthLong(d)} (${pc(f2(depuis.fr10))} le ${fmtDayLong(d)}).`, `${en} since ${fmtMonthLong(d)} (${pc(f2(depuis.fr10))} on ${fmtDayLong(d)}).`);
+  }
+  return '';
+}
+
 // Textes des cartes ; les niveaux viennent de l'état calculé par score.mjs.
 function compute(data, etat) {
   const out = {};
@@ -422,12 +437,16 @@ function compute(data, etat) {
   const oneYear = `${+sp.jour.slice(0, 4) - 1}${sp.jour.slice(4)}`;
   const sp12 = data.spread.filter((r) => r.jour <= oneYear).at(-1);
   const yearText = sp12 ? ` · ${pb(fSigned1(sp.spread_pb - sp12.spread_pb))} ${L('sur un an', 'over a year')}` : '';
+  // Les deux taux sont affichés sur la carte ; l'infobulle donne leur source, la clôture et le repère de l'OAT.
+  const taux = Number.isFinite(sp.fr10) && Number.isFinite(sp.de10);
+  const marque = taux ? repereOat(data.spread) : '';
   out.spread = {
     level: niv.spread.niveau, name: L('Spread OAT-Bund 10 ans', '10-year OAT-Bund spread'),
     value: pb(f0(sp.spread_pb)),
+    taux: taux ? L(`OAT 10 ans ${pc(f2(sp.fr10))} · Bund ${pc(f2(sp.de10))}`, `10-year OAT ${pc(f2(sp.fr10))} · Bund ${pc(f2(sp.de10))}`) : '',
     sub: `${L('Clôture du', 'Close on')} ${fmtDay(parseDay(sp.jour))}${yearText}`,
-    delta: L(`OAT ${pc(f2(sp.fr10))} contre Bund ${pc(f2(sp.de10))} à la clôture du ${fmtWeekday(parseDay(sp.jour))}${yearText}`,
-      `OAT ${pc(f2(sp.fr10))} against Bund ${pc(f2(sp.de10))} at the close of ${fmtWeekday(parseDay(sp.jour))}${yearText}`),
+    delta: L(`OAT 10 ans : taux à échéance constante (TEC 10) de la Banque de France. Clôture du ${fmtWeekday(parseDay(sp.jour))}${yearText}.`,
+      `10-year OAT: Banque de France constant-maturity rate (TEC 10). Close of ${fmtWeekday(parseDay(sp.jour))}${yearText}.`) + (marque ? ` ${marque}` : ''),
   };
 
   // Séances du calcul (score.mjs) : août et décembre écartés, comme pour le niveau
@@ -496,6 +515,8 @@ function renderSummary(signals) {
     text(`[data-now="${key}"]`, signals[key].nowText ?? signals[key].value);
     const d = document.querySelector(`[data-delta="${key}"]`);
     if (d) d.dataset.tip = signals[key].delta;
+    const t = document.querySelector(`[data-taux="${key}"]`); // absent d'un ancien index.html encore en cache
+    if (t) { t.textContent = signals[key].taux ?? ''; t.hidden = !signals[key].taux; }
   }
 }
 
@@ -509,13 +530,30 @@ function renderCharts(data) {
 
   let clip = clipDe('spread');
   const spread = clip(lastOfPeriod(data.spread, state.spreadStep).map((r) => ({ d: parseDay(r.jour), v: r.spread_pb, r })));
-  const spMax = Math.max(130, d3.max(spread, (p) => p.v) + 10);
-  lineChart(document.getElementById('chart-spread'), [{ name: 'Spread', color: css('--series-1'), points: spread }], {
-    bands: THRESHOLDS.spread.bands, yDomain: [Math.min(0, d3.min(spread, (p) => p.v)), spMax],
-    yFormat: (v) => `${f0(v)}`, tipFormat: (v, p) => `${pb(f0(v))} (OAT ${pc(f2(p.r.fr10))}, Bund ${pc(f2(p.r.de10))})`,
-    dateFormat: fmtWeekday, xDomain: xDom('spread', spread),
-    label: L('Spread OAT-Bund à 10 ans en points de base, à la clôture', '10-year OAT-Bund spread in basis points, at the close'),
-  });
+  // Vue « Taux » : les deux taux en %, sans fonds de seuils (la méthode n'en fixe que pour l'écart).
+  const legendeTaux = document.getElementById('legend-spread'); // absente d'un ancien index.html encore en cache
+  if (state.spreadVue === 'taux') {
+    const serieTaux = (champ) => spread.filter((p) => Number.isFinite(p.r[champ])).map((p) => ({ d: p.d, v: p.r[champ] }));
+    const tauxSeries = [
+      { id: 'oat', name: L('OAT 10 ans (France)', '10-year OAT (France)'), endText: 'OAT', color: css('--series-1'), points: serieTaux('fr10') },
+      { id: 'bund', name: L('Bund 10 ans (Allemagne)', '10-year Bund (Germany)'), endText: 'Bund', color: css('--series-2'), points: serieTaux('de10') },
+    ];
+    lineChart(document.getElementById('chart-spread'), visibles('spread', tauxSeries), {
+      yFormat: (v) => pc(f1(v)), tipFormat: (v) => pc(f2(v)), dateFormat: fmtWeekday, xDomain: xDom('spread', spread), endLabels: true,
+      label: L('Taux de l’OAT et du Bund à 10 ans, en %, à la clôture', '10-year OAT and Bund yields, in %, at the close'),
+    });
+    legend('legend-spread', tauxSeries, 'spread');
+    if (legendeTaux) legendeTaux.hidden = false;
+  } else {
+    const spMax = Math.max(130, d3.max(spread, (p) => p.v) + 10);
+    lineChart(document.getElementById('chart-spread'), [{ name: 'Spread', color: css('--series-1'), points: spread }], {
+      bands: THRESHOLDS.spread.bands, yDomain: [Math.min(0, d3.min(spread, (p) => p.v)), spMax],
+      yFormat: (v) => `${f0(v)}`, tipFormat: (v, p) => `${pb(f0(v))} (OAT ${pc(f2(p.r.fr10))}, Bund ${pc(f2(p.r.de10))})`,
+      dateFormat: fmtWeekday, xDomain: xDom('spread', spread),
+      label: L('Spread OAT-Bund à 10 ans en points de base, à la clôture', '10-year OAT-Bund spread in basis points, at the close'),
+    });
+    if (legendeTaux) legendeTaux.hidden = true;
+  }
 
   clip = clipDe('target');
   const target = clip(partsTarget(data.target, data.bilan).map((r) => ({ d: parseMonth(r.mois), v: r.part, r })));
@@ -961,6 +999,14 @@ function changerLangue() {
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-periode] button[data-years]'); if (!btn) return;
   state.periodes[btn.parentElement.dataset.periode] = +btn.dataset.years;
+  render();
+});
+
+// Écart ou Taux : écouté sur document, pour qu'un ancien index.html en cache, sans ces boutons, ne casse rien.
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-spread-vue]'); if (!btn) return;
+  state.spreadVue = btn.dataset.spreadVue;
+  for (const b of btn.parentElement.querySelectorAll('button')) b.setAttribute('aria-pressed', String(b === btn));
   render();
 });
 

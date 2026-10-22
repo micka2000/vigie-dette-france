@@ -383,13 +383,22 @@ export function serieQuotidienne(fichiers, jusquA = null) {
 }
 
 /**
- * Repère « plus haut depuis » : la dernière séance avant `jour` dont l'indice atteint au moins `score`.
- * null si aucune : le score est alors le plus haut de la série.
+ * Repère « plus haut depuis » : la dernière séance avant `jour` dont `champ` (l'indice, ou `fr10` pour l'OAT)
+ * atteint au moins `valeur`. null si aucune : la valeur est alors le plus haut de la série.
  */
-export function plusHautDepuis(serie, score, jour) {
+export function plusHautDepuis(serie, valeur, jour, champ = 'indice') {
   for (let i = serie.length - 1; i >= 0; i--) {
     const p = serie[i];
-    if (p.jour < jour && p.indice != null && p.indice >= score) return p;
+    if (p.jour < jour && p[champ] != null && p[champ] >= valeur) return p;
+  }
+  return null;
+}
+
+// Pendant de plusHautDepuis : la dernière séance avant `jour` où `champ` descend au plus à `valeur`.
+export function plusBasDepuis(serie, valeur, jour, champ = 'indice') {
+  for (let i = serie.length - 1; i >= 0; i--) {
+    const p = serie[i];
+    if (p.jour < jour && p[champ] != null && p[champ] <= valeur) return p;
   }
   return null;
 }

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title data-i18n="titre">Vigie Dette France</title>
 <meta name="description" data-i18n-attr="content:meta.description" content="Les cinq signaux de santé de la dette publique française, mis à jour chaque jour, avec leurs seuils de risque historiques.">
-<link rel="stylesheet" href="styles.css?v=1d6f4477">
+<link rel="stylesheet" href="styles.css?v=bef780fb">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   try { const l = localStorage.getItem('langue'); if (l === 'en' || (!l && !/^fr\b/i.test(navigator.language || 'fr'))) document.documentElement.lang = 'en'; } catch (e) {}
@@ -81,27 +81,39 @@
         <div>
           <h2 data-i18n="spread.titre">Spread France-Allemagne</h2>
         </div>
-        <div class="signal-now"><span class="big" data-now="spread">—</span><span class="pill" data-pill="spread"></span><button type="button" class="info" data-delta="spread" data-tip="" aria-label="Détail du chiffre" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
+        <div class="signal-mesure">
+          <div class="signal-now"><span class="big" data-now="spread">—</span><span class="pill" data-pill="spread"></span><button type="button" class="info" data-delta="spread" data-tip="" aria-label="Détail du chiffre" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
+          <p class="signal-taux" data-taux="spread" hidden></p>
+        </div>
       </div>
       <details class="desc">
         <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Afficher la description</span><span class="desc-fermer" data-i18n="desc.fermer">Masquer la description</span></summary>
         <div class="desc-corps">
           <p data-i18n="spread.quoi"><b>Ce que c’est.</b> L’écart entre le taux auquel la France emprunte sur 10 ans et celui de l’Allemagne, le pays jugé le plus sûr de la zone euro.</p>
           <p data-i18n="spread.pourquoi"><b>Pourquoi ça compte.</b> Plus l’écart grandit, plus les investisseurs jugent risqué de prêter à la France. Depuis 2004, il est resté sous 50 points 7 jours sur 10 ; son record, 214 points, date du 17 novembre 2011.</p>
-          <p data-i18n="spread.lire"><b>Comment lire le graphique.</b> L’écart est donné en points de base : 100 points valent 1 %. À 150, la France paie chaque année 1,5 % de plus que l’Allemagne pour emprunter. Les fonds colorés montrent les seuils de risque.</p>
+          <p data-i18n="spread.lire"><b>Comment lire le graphique.</b> L’écart est donné en points de base : 100 points valent 1 %. À 150, la France paie chaque année 1,5 % de plus que l’Allemagne pour emprunter. En vue Écart, les fonds colorés montrent les seuils de risque ; le bouton Taux montre les deux taux eux-mêmes, en %, sans seuils.</p>
           <p data-i18n="spread.qui"><b>Qui le mesure, et quand.</b> La <a href="https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.FR.EUR.FR2.BB.FRMOYTEC10.HSTA" target="_blank" rel="noopener">Banque de France</a> pour le taux français et la <a href="https://www.bundesbank.de/dynamic/action/de/statistiken/zeitreihen-datenbanken/zeitreihen-datenbank/759778/759778?tsId=BBSIS.D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A" target="_blank" rel="noopener">Bundesbank</a> pour le taux allemand, chaque jour à la fermeture des marchés depuis 2004 ; relevé chaque matin.</p>
         </div>
       </details>
       <div class="chart-tools">
-        <span class="toolbar-label" id="step-label" data-i18n="spread.pas">Un point par</span>
-        <div class="seg" role="group" aria-labelledby="step-label" id="spread-step">
-          <button type="button" data-step="jour" aria-pressed="true" data-i18n="spread.jour">Jour</button>
-          <button type="button" data-step="semaine" data-i18n="spread.semaine">Semaine</button>
-          <button type="button" data-step="mois" data-i18n="spread.mois">Mois</button>
+        <div class="outil outil-vue">
+          <div class="seg" role="group" aria-label="Courbe affichée" data-i18n-attr="aria-label:spread.vue.aria">
+            <button type="button" data-spread-vue="ecart" aria-pressed="true" data-i18n="spread.vue.ecart">Écart</button>
+            <button type="button" data-spread-vue="taux" aria-pressed="false" data-i18n="spread.vue.taux">Taux</button>
+          </div>
+        </div>
+        <div class="outil">
+          <span class="toolbar-label" id="step-label" data-i18n="spread.pas">Un point par</span>
+          <div class="seg" role="group" aria-labelledby="step-label" id="spread-step">
+            <button type="button" data-step="jour" aria-pressed="true" data-i18n="spread.jour">Jour</button>
+            <button type="button" data-step="semaine" data-i18n="spread.semaine">Semaine</button>
+            <button type="button" data-step="mois" data-i18n="spread.mois">Mois</button>
+          </div>
         </div>
         <div class="periode" hidden><span class="toolbar-label" id="periode-spread" data-i18n="periode">Période</span><div class="seg" role="group" aria-labelledby="periode-spread" data-periode="spread"></div></div>
       </div>
       <div class="chart" id="chart-spread"></div>
+      <ul class="legend" id="legend-spread" hidden></ul>
       <p class="seuils-titre" data-i18n="seuils">Seuils de risque</p>
       <ul class="thresholds" data-thresholds="spread"></ul>
     </article>
@@ -235,6 +247,6 @@
     if (v) v.textContent = document.documentElement.lang === 'en' ? 'The page could not load. Please reload it in a moment.' : 'La page n’a pas pu se charger. Recharge-la dans un instant.';
   }, 10000);
 </script>
-<script type="module" src="app.js?v=8d6ff8a3"></script>
+<script type="module" src="app.js?v=99207f4a"></script>
 </body>
 </html>

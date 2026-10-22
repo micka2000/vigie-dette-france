@@ -202,6 +202,10 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
   border: 0; background: transparent; color: var(--fg-2); padding: 5px 14px; border-radius: var(--radius-pill); cursor: pointer;
 }
 .seg button[aria-pressed="true"] { background: var(--bg-surface); color: var(--fg-1); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); }
+/* Au doigt : 44px de haut au moins, sans rien changer à la souris */
+@media (pointer: coarse) { .seg button { min-height: 44px; } }
+/* Une étiquette et ses boutons ne se séparent jamais */
+.outil { display: inline-flex; align-items: center; gap: 12px; flex-wrap: nowrap; }
 
 /* Cartes des signaux */
 .signals { display: grid; gap: var(--space-6); padding-block: var(--space-6) var(--space-16); }
@@ -216,6 +220,10 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 .signal-now { display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; }
 .signal-now .big { font-family: var(--font-display); font-weight: 800; font-size: 40px; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .signal-now .delta { font-size: var(--text-sm); color: var(--fg-3); }
+/* Chiffre du signal, puis une ligne discrète dessous (taux de l'OAT et du Bund), alignée sur lui */
+.signal-mesure { display: grid; gap: var(--space-1); justify-items: end; }
+.signal-taux { margin: 0; font-size: var(--text-sm); color: var(--fg-3); font-variant-numeric: tabular-nums; }
+.signal-taux[hidden] { display: none; }
 
 .chart { position: relative; min-height: 220px; min-width: 0; }
 .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
@@ -240,6 +248,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 
 .legend { display: flex; gap: var(--space-4); flex-wrap: wrap; font-size: var(--text-sm); color: var(--fg-2); margin: 0; padding: 0; list-style: none; }
 .legend li { display: inline-flex; align-items: center; gap: 6px; }
+.legend[hidden] { display: none; }
 .legend .sw { width: 14px; height: 3px; border-radius: 2px; flex: none; }
 
 .thresholds { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
@@ -353,6 +362,9 @@ footer p { margin: 0; max-width: 80ch; }
   .signal { padding: var(--space-4); }
   .signal-now .big { font-size: 32px; }
   .signal h2 { font-size: 22px; }
+  .signal-mesure { justify-items: start; }
+  /* Le choix de la courbe d'abord, seul sur sa ligne ; le pas et la période dessous */
+  .chart-tools .outil-vue { flex-basis: 100%; }
 }
 
 /* Grand écran : l'indice à droite de la phrase, la description en pleine largeur dessous */
