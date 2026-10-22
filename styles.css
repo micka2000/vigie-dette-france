@@ -389,3 +389,6 @@ html[lang="en"] [data-langue="fr"], html:not([lang="en"]) [data-langue="en"] { d
 @media (max-width: 600px) { .formule { font-size: 12px; padding: var(--space-3); } }
 .retour { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 footer a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+/* Méthode : justification des repères, repliée sous le barème */
+.methode .approfondir summary { font-size: var(--text-body); }
+.approfondir-corps { margin-top: var(--space-3); display: grid; gap: var(--space-3); color: var(--fg-1); font-size: var(--text-body); }
