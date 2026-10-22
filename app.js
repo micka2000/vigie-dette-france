@@ -4,7 +4,7 @@ import {
   SEUILS, ANCRAGES, METHODE_VERSION, couvertures, niveauBrut, niveauScore, interpoler, notch, notchLabel, fusionnerSeries, etatDuJour,
   serieQuotidienne, plusHautDepuis, picDuMois, picsMensuels, phraseVerdict, partsTarget,
 } from './score.mjs?v=8b8453e3';
-import { EN } from './anglais.mjs?v=f5d3152c';
+import { EN } from './anglais.mjs?v=4246210c';
 
 window.vigieDemarre = true; // lu par le script de secours d'index.html
 
@@ -756,7 +756,7 @@ const DESCRIPTIONS = {
       'From 0 to 25: calm. From 25 to 50: watch. From 50 to 75: stress. Above 75: crisis. The index is the average of two parts: what markets demand to lend to France (rate gap with Germany, demand at auctions) and its underlying weaknesses (share held abroad, agency ratings, TARGET2 balance). It is shown only when all five signals are available.'),
     qui: L('Vigie Dette France, recalculé chaque matin à partir des sources de chaque signal',
       'Vigie Dette France, recalculated every morning from the sources of each signal'),
-    sources: [[L('les cinq signaux', 'the five signals'), '#spread'], [L('formule ouverte', 'open formula'), 'https://github.com/micka2000/vigie-dette-france/blob/main/score.mjs']],
+    sources: [[L('les cinq signaux', 'the five signals'), '#spread'], [L('la méthode de calcul, avec un exemple complet', 'how it is calculated, with a full example'), 'methode.html'], [L('formule ouverte', 'open formula'), 'https://github.com/micka2000/vigie-dette-france/blob/main/score.mjs']],
   }),
 };
 

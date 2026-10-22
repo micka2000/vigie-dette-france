@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title data-i18n="titre">Vigie Dette France</title>
 <meta name="description" data-i18n-attr="content:meta.description" content="Les cinq signaux de santé de la dette publique française, mis à jour chaque jour, avec leurs seuils de risque historiques.">
-<link rel="stylesheet" href="styles.css?v=e871fbd4">
+<link rel="stylesheet" href="styles.css?v=1d6f4477">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   try { const l = localStorage.getItem('langue'); if (l === 'en' || (!l && !/^fr\b/i.test(navigator.language || 'fr'))) document.documentElement.lang = 'en'; } catch (e) {}
@@ -58,7 +58,7 @@
           <p data-i18n="courbe.quoi"><b>Ce que c’est.</b> Une note de 0 à 100 qui résume l’état de la dette française, mois par mois.</p>
           <p data-i18n="courbe.pourquoi"><b>Pourquoi ça compte.</b> Pour situer aujourd’hui par rapport aux crises passées : 2008, la crise de l’euro en 2011, le Covid en 2020. Quand l’indice monte sans que le reste des marchés ne bouge, c’est la dette française elle-même qui inquiète.</p>
           <p data-i18n="courbe.lire"><b>Comment lire le graphique.</b> En bleu, l’Indice Vigie. En vert, sa partie « marchés » : ce que les investisseurs exigent pour prêter à la France. En pointillés gris, le stress de l’ensemble des marchés financiers en France, qui sert de comparaison. Chaque mois montre sa journée la plus tendue. Les fonds colorés donnent le niveau, l’œil de la légende masque ou affiche une courbe.</p>
-          <p data-i18n="courbe.qui"><b>Qui le mesure, et quand.</b> Vigie Dette France, à partir des cinq signaux de la page (<a href="https://github.com/micka2000/vigie-dette-france/blob/main/score.mjs" target="_blank" rel="noopener">formule</a>, <a href="https://github.com/micka2000/vigie-dette-france/tree/main/data" target="_blank" rel="noopener">données</a>) ; le stress des marchés vient de la <a href="https://data.ecb.europa.eu/data/datasets/CISS/CISS.D.FR.Z0Z.4F.EC.SS_CIN.IDX" target="_blank" rel="noopener">Banque centrale européenne</a>. Depuis mai 2008, recalculé chaque matin avec les seules informations connues chaque jour.</p>
+          <p data-i18n="courbe.qui"><b>Qui le mesure, et quand.</b> Vigie Dette France, à partir des cinq signaux de la page (<a href="methode.html">méthode de calcul</a>, <a href="https://github.com/micka2000/vigie-dette-france/blob/main/score.mjs" target="_blank" rel="noopener">formule</a>, <a href="https://github.com/micka2000/vigie-dette-france/tree/main/data" target="_blank" rel="noopener">données</a>) ; le stress des marchés vient de la <a href="https://data.ecb.europa.eu/data/datasets/CISS/CISS.D.FR.Z0Z.4F.EC.SS_CIN.IDX" target="_blank" rel="noopener">Banque centrale européenne</a>. Depuis mai 2008, recalculé chaque matin avec les seules informations connues chaque jour.</p>
         </div>
       </details>
       <p class="sr-only" id="courbe-resume"></p>
@@ -235,6 +235,6 @@
     if (v) v.textContent = document.documentElement.lang === 'en' ? 'The page could not load. Please reload it in a moment.' : 'La page n’a pas pu se charger. Recharge-la dans un instant.';
   }, 10000);
 </script>
-<script type="module" src="app.js?v=4f2ddd19"></script>
+<script type="module" src="app.js?v=8d6ff8a3"></script>
 </body>
 </html>
