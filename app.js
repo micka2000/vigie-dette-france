@@ -444,6 +444,7 @@ function compute(data, etat) {
     level: niv.spread.niveau, name: L('Spread OAT-Bund 10 ans', '10-year OAT-Bund spread'),
     value: pb(f0(sp.spread_pb)),
     taux: taux ? L(`OAT 10 ans ${pc(f2(sp.fr10))} · Bund ${pc(f2(sp.de10))}`, `10-year OAT ${pc(f2(sp.fr10))} · Bund ${pc(f2(sp.de10))}`) : '',
+    tuile: taux ? L(`OAT 10 ans ${pc(f2(sp.fr10))}`, `10-year OAT ${pc(f2(sp.fr10))}`) : '', // repris sur la tuile de synthèse
     sub: `${L('Clôture du', 'Close on')} ${fmtDay(parseDay(sp.jour))}${yearText}`,
     delta: L(`OAT 10 ans : taux à échéance constante (TEC 10) de la Banque de France. Clôture du ${fmtWeekday(parseDay(sp.jour))}${yearText}.`,
       `10-year OAT: Banque de France constant-maturity rate (TEC 10). Close of ${fmtWeekday(parseDay(sp.jour))}${yearText}.`) + (marque ? ` ${marque}` : ''),
@@ -508,7 +509,9 @@ function renderSummary(signals) {
     const value = document.createElement('span'); value.className = 'tile-value'; value.textContent = s.value;
     const pill = document.createElement('span'); pill.className = 'pill'; pill.dataset.level = s.level; pill.textContent = niveauTexte(s.level);
     a.dataset.tip = s.sub; // le détail (date, variation) en infobulle : le chiffre se lit sans lui
-    a.append(name, value, pill); return a;
+    a.append(name, value, pill);
+    if (s.tuile) { const sub = document.createElement('span'); sub.className = 'tile-sub'; sub.textContent = s.tuile; a.append(sub); }
+    return a;
   }));
   for (const key of order) {
     setLevel(key, signals[key].level);

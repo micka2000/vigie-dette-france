@@ -178,7 +178,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 .tile:hover { transform: translateY(-2px); }
 .tile-name { font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm); color: var(--fg-2); }
 .tile-value { font-family: var(--font-display); font-weight: 800; font-size: 34px; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-.tile-sub { font-size: var(--text-xs); color: var(--fg-3); }
+.tile-sub { font-size: var(--text-sm); font-weight: 600; color: var(--fg-2); font-variant-numeric: tabular-nums; }
 
 .pill {
   font-family: var(--font-display); font-weight: 600; font-size: var(--text-xs);
@@ -222,7 +222,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
 .signal-now .delta { font-size: var(--text-sm); color: var(--fg-3); }
 /* Chiffre du signal, puis une ligne discrète dessous (taux de l'OAT et du Bund), alignée sur lui */
 .signal-mesure { display: grid; gap: var(--space-1); justify-items: end; }
-.signal-taux { margin: 0; font-size: var(--text-sm); color: var(--fg-3); font-variant-numeric: tabular-nums; }
+.signal-taux { margin: 0; font-size: var(--text-sm); font-weight: 600; color: var(--fg-2); font-variant-numeric: tabular-nums; }
 .signal-taux[hidden] { display: none; }
 
 .chart { position: relative; min-height: 220px; min-width: 0; }
