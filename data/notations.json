@@ -42,8 +42,8 @@
    "agence": "Moody's",
    "note": "Aa3",
    "perspective": "négative",
-   "derniere": "2026-04-10",
-   "prochaine": "2026-10-23",
+   "derniere": "2026-10-23",
+   "prochaine": null,
    "historique": [
     {
      "date": "2000-01-01",
@@ -67,7 +67,7 @@
      "source": "https://www.leconomistemaghrebin.com/2024/12/14/moodys-abaisse-la-note-de-la-france-a-aa3-un-signal-alarmant-pour-les-finances-publiques/"
     }
    ],
-   "source_derniere": "https://www.franceinfo.fr/economie/budget/l-agence-moody-s-maintient-la-note-souveraine-de-la-france-a-aa3-avec-une-perspective-negative_7929542.html"
+   "source_derniere": "https://www.franceinfo.fr/economie/l-agence-moody-s-maintient-la-note-souveraine-de-la-france-a-aa3-avec-perspective-negative_8251510.html"
   },
   {
    "agence": "Fitch",
@@ -109,5 +109,5 @@
    "source_alerte": "https://lenergeek.com/2026/10/13/dette-france-fitch-energie-transition/"
   }
  ],
- "verification": "Dates et notes vérifiées sur des articles de presse le 20/10/2026. Depuis le 21/10/2026, un changement de note ou de perspective plus récent que ce fichier est appliqué automatiquement s'il est confirmé par Wikipédia et countryeconomy.com, sinon signalé dans data/meta.json. Les dates de prochaine revue restent saisies à la main (calendrier annuel des agences)."
+ "verification": "Dates et notes vérifiées sur des articles de presse le 20/10/2026 (maintien de Moody's du 23/10/2026 ajouté le 26/10/2026). Depuis le 21/10/2026, un changement de note ou de perspective plus récent que ce fichier est appliqué automatiquement s'il est confirmé par Wikipédia et countryeconomy.com, sinon signalé dans data/meta.json. Les dates de prochaine revue restent saisies à la main (calendrier annuel des agences)."
 }
