@@ -20,6 +20,7 @@ import html
 import os
 import re
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -62,9 +63,16 @@ ERREURS = (urllib.error.URLError, TimeoutError, KeyError, ValueError, ZeroDivisi
 
 
 def get(url, headers=None):
+    """Un second essai après une panne passagère (délai dépassé, coupure, erreur 5xx), jamais après une erreur 4xx."""
     req = urllib.request.Request(url, headers={**UA, **(headers or {})})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        return r.read().decode("utf-8-sig")
+    for essai in (1, 2):
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                return r.read().decode("utf-8-sig")
+        except (TimeoutError, urllib.error.URLError) as e:
+            if essai == 2 or (isinstance(e, urllib.error.HTTPError) and e.code < 500):
+                raise
+            time.sleep(10)
 
 
 def ecb_series(key, start="1999-01"):

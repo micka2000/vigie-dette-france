@@ -270,5 +270,40 @@ class CommitDeMeta(unittest.TestCase):
         self.assertFalse(u.echecs_changes(None, {"echecs": []}))
 
 
+class Reseau(unittest.TestCase):
+    """Le 26/10/2026, la BCE n'a pas répondu en 60 s à la requête TARGET2, puis répondait en moins d'une seconde."""
+
+    def reponse(self, texte):
+        r = mock.MagicMock()
+        r.__enter__.return_value.read.return_value = texte.encode()
+        return r
+
+    def appels(self, *effets):
+        urlopen = mock.Mock(side_effect=list(effets))
+        with mock.patch.object(u.urllib.request, "urlopen", urlopen), mock.patch.object(u.time, "sleep") as pause:
+            try:
+                return u.get("https://exemple.test/serie"), urlopen.call_count, pause.call_count
+            except Exception as e:
+                return e, urlopen.call_count, pause.call_count
+
+    def test_un_timeout_puis_reponse(self):
+        self.assertEqual(self.appels(TimeoutError("The read operation timed out"), self.reponse("ok")), ("ok", 2, 1))
+
+    def test_erreur_serveur_puis_reponse(self):
+        erreur = urllib.error.HTTPError("https://exemple.test/serie", 503, "Service Unavailable", {}, None)
+        self.assertEqual(self.appels(erreur, self.reponse("ok")), ("ok", 2, 1))
+
+    def test_deux_timeouts_remontent_l_erreur(self):
+        resultat, n, _ = self.appels(TimeoutError("1"), TimeoutError("2"))
+        self.assertIsInstance(resultat, TimeoutError)
+        self.assertEqual(n, 2)
+
+    def test_erreur_client_sans_nouvel_essai(self):
+        erreur = urllib.error.HTTPError("https://exemple.test/serie", 404, "Not Found", {}, None)
+        resultat, n, pause = self.appels(erreur, self.reponse("ok"))
+        self.assertIs(resultat, erreur)
+        self.assertEqual((n, pause), (1, 0))
+
+
 if __name__ == "__main__":
     unittest.main()
