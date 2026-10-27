@@ -2,7 +2,7 @@
 
 python scripts/image_partage.py            images de partage partage-fr.png et partage-en.png (1200 x 630),
                                            à partir de data/instantane.json (écrit par scripts/pages.mjs --instantane)
-python scripts/image_partage.py --icones   favicon-48.png, apple-touch-icon.png et logo.png, d'après favicon.svg
+python scripts/image_partage.py --icones   favicon.ico, favicon-48.png, apple-touch-icon.png et logo.png, d'après favicon.svg
 
 Une image n'est réécrite que si son contenu change : le dépôt ne grossit pas d'une image par jour.
 """
@@ -130,6 +130,9 @@ def main(args):
     if '--icones' in args:
         for nom, taille in (('favicon-48.png', 48), ('apple-touch-icon.png', 180), ('logo.png', 512)):
             print(nom, 'écrit' if enregistrer(icone(taille), nom) else 'inchangé')
+        # favicon.ico, lu par défaut à la racine par certains robots et navigateurs : 16, 32 et 48 px
+        icone(48).save(RACINE / 'favicon.ico', sizes=[(16, 16), (32, 32), (48, 48)])
+        print('favicon.ico écrit')
         return
     inst = json.loads((RACINE / 'data' / 'instantane.json').read_text(encoding='utf-8'))
     for lang in ('fr', 'en'):
