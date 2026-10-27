@@ -44,6 +44,11 @@
   --risk-vigilance: #A08A1E;
   --risk-tension: #C96A12;
   --risk-crise: #B3261E;
+  /* Texte des pastilles : mêmes teintes, assez foncées pour 4,5:1 sur blanc et sur --bg-inset (le rouge l'est déjà) */
+  --risk-calme-texte: #296F7D;
+  --risk-vigilance-texte: #756516;
+  --risk-tension-texte: #9D530E;
+  --risk-crise-texte: var(--risk-crise);
   --band-opacity: 0.10;
 
   --chart-grid: #E6E3DC;
@@ -79,6 +84,7 @@
     --shadow-md: 0 2px 20px rgba(0, 0, 0, 0.5);
     --series-1: #4F86E0; --series-2: #8F8F35; --series-3: #6893E0;
     --risk-calme: #4FB0C0; --risk-vigilance: #D0B640; --risk-tension: #F08A3A; --risk-crise: #F0645A;
+    --risk-calme-texte: var(--risk-calme); --risk-vigilance-texte: var(--risk-vigilance); --risk-tension-texte: var(--risk-tension); --risk-crise-texte: var(--risk-crise);
     --band-opacity: 0.14;
     --chart-grid: #2A2A2A; --chart-axis: #606060;
     --bulle-bg: #FFFFFF; --bulle-fg: #0F0F0F;
@@ -93,6 +99,7 @@
   --shadow-md: 0 2px 20px rgba(0, 0, 0, 0.5);
   --series-1: #4F86E0; --series-2: #8F8F35; --series-3: #6893E0;
   --risk-calme: #4FB0C0; --risk-vigilance: #D0B640; --risk-tension: #F08A3A; --risk-crise: #F0645A;
+  --risk-calme-texte: var(--risk-calme); --risk-vigilance-texte: var(--risk-vigilance); --risk-tension-texte: var(--risk-tension); --risk-crise-texte: var(--risk-crise);
   --band-opacity: 0.14;
   --chart-grid: #2A2A2A; --chart-axis: #606060;
   --bulle-bg: #FFFFFF; --bulle-fg: #0F0F0F;
@@ -185,13 +192,13 @@ a.btn-icone { text-decoration: none; }
   font-family: var(--font-display); font-weight: 600; font-size: var(--text-xs);
   display: inline-flex; align-items: center; gap: 6px; width: fit-content;
   padding: 3px 10px; border-radius: var(--radius-pill);
-  color: var(--level-color); border: 1.5px solid var(--level-color);
+  color: var(--level-texte, var(--level-color)); border: 1.5px solid var(--level-color);
 }
 .pill::before { content: var(--level-glyph); font-size: 10px; }
-[data-level="calme"] { --level-color: var(--risk-calme); --level-glyph: '●'; }
-[data-level="vigilance"] { --level-color: var(--risk-vigilance); --level-glyph: '▲'; }
-[data-level="tension"] { --level-color: var(--risk-tension); --level-glyph: '◆'; }
-[data-level="crise"] { --level-color: var(--risk-crise); --level-glyph: '■'; }
+[data-level="calme"] { --level-color: var(--risk-calme); --level-texte: var(--risk-calme-texte); --level-glyph: '●'; }
+[data-level="vigilance"] { --level-color: var(--risk-vigilance); --level-texte: var(--risk-vigilance-texte); --level-glyph: '▲'; }
+[data-level="tension"] { --level-color: var(--risk-tension); --level-texte: var(--risk-tension-texte); --level-glyph: '◆'; }
+[data-level="crise"] { --level-color: var(--risk-crise); --level-texte: var(--risk-crise-texte); --level-glyph: '■'; }
 
 /* Filtre de période */
 .toolbar { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; padding-block: var(--space-8) var(--space-4); }

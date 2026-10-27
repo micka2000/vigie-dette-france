@@ -21,9 +21,15 @@
 Fait le 27/10/2026 : version anglaise `/en/`, instantané du jour lisible sans JavaScript, canonique et hreflang, Open Graph et images de partage, favicon, `robots.txt`, `sitemap.xml`, JSON-LD (Organization, WebSite, WebPage, Dataset, BreadcrumbList), Search Console vérifiée (TXT chez OVH), GoatCounter. GA4 écarté : aucun effet sur le classement Google, et bandeau de consentement obligatoire (CNIL).
 
 - [x] **Vitesse de chargement.** _(fait le 27/10/2026, Lighthouse 12.8 sur le site en ligne : mobile 79 → 91 à 97, ordinateur 95 → 100 ; poids 768 → 385 Ko ; premier affichage mobile 2,3 → 1,1 s ; blocage 680 → 150 à 290 ms ; SEO et bonnes pratiques 100.)_ Polices WOFF2 allégées (`scripts/polices.py`), d3 en `defer`, série quotidienne calculée une fois, graphiques hors écran dessinés à leur approche, tuiles et description dans l'instantané pour que la page ne saute pas.
-- [ ] **Contraste des pastilles de niveau** (accessibilité 96/100, sans effet sur Google) : `--risk-vigilance` #A08A1E, `--risk-tension` #C96A12 et `--risk-calme` #2E7D8C sont sous le seuil de 4,5:1 en texte de 12-14 px, sur fond blanc et surtout sur `--bg-inset`. Décision de design : foncer le texte des pastilles seulement, ou les couleurs de risque partout (graphiques compris, validées daltonisme).
+- [x] **Contraste des pastilles de niveau.** _(fait le 27/10/2026 : seul le texte des pastilles est foncé en mode clair, `--risk-*-texte` dans `styles.css` (calme #296F7D, vigilance #756516, tension #9D530E, au moins 4,6:1 sur blanc et sur `--bg-inset`) ; bordures, graphiques et mode sombre inchangés.)_
 - [x] **Une page par signal, en français et en anglais** (10 pages). _(fait le 27/10/2026 : générées par `scripts/pages.mjs` à partir des cartes du tableau de bord, chiffre du jour et phrase en tête, liens entre signaux, fil d'Ariane, mises à jour chaque matin. Adresses : `/spread-france-allemagne/`, `/adjudications-oat/`, `/dette-detenue-non-residents/`, `/notation-france/`, `/target2-banque-de-france/` et `/en/france-germany-spread/`, `/en/oat-auctions/`, `/en/foreign-holdings/`, `/en/france-credit-rating/`, `/en/target2-balance/`.)_
-- [ ] **Fiche data.gouv.fr** : jeu de données « Signaux de risque de la dette publique française », qui pointe vers `data/*.json` et le site. Texte prêt dans `docs/data-gouv-fiche.md` (27/10/2026) ; reste la publication par Mickaël (compte data.gouv.fr). Licence choisie le 27/10/2026 : Licence Ouverte 2.0 (Etalab).
-- [ ] **Liens depuis d'autres sites** (Mickaël) : lien `vigiedette.com` dans les posts LinkedIn sur la dette ; proposer le site à des économistes, blogs finance et newsletters qui suivent la dette.
-- [ ] **Search Console** (Mickaël) : soumettre `sitemap.xml`, demander l'indexation de `/` et `/en/`.
-- [ ] **Bilan Search Console vers le 24/11/2026** : requêtes réelles, positions, clics ; ajuster titres et descriptions en conséquence.
+- [ ] **Vérifier la collecte du 28/10/2026** (Claude) : première régénération automatique des 14 pages et des images de partage par l'Action ; étape « Pages et images de partage » verte, commit « Données du 2026-10-28 » avec les pages.
+- [ ] **Après la fiche data.gouv.fr** (Claude) : lien vers la fiche dans le pied de page et dans `sameAs` de l'organisation (JSON-LD).
+- [ ] **Bilan Search Console vers le 24/11/2026** (Claude, avec les chiffres de Mickaël) : requêtes réelles, positions, clics ; ajuster titres et descriptions en conséquence.
+
+### À faire par Mickaël
+
+- [ ] **Search Console** : soumettre à nouveau `sitemap.xml` (14 adresses depuis le 27/10/2026, dont les 10 pages par signal) ; demander l'indexation de `/` et `/en/`.
+- [ ] **Publier la fiche data.gouv.fr** à partir de `docs/data-gouv-fiche.md` (compte data.gouv.fr), puis envoyer son lien à Claude.
+- [ ] **Liens depuis d'autres sites** : dans les posts LinkedIn, lien vers la page du signal concerné plutôt que l'accueil ; proposer le site à des économistes, blogs finance et newsletters qui suivent la dette.
+- [ ] **LinkedIn Post Inspector** (https://www.linkedin.com/post-inspector/) : passer `https://vigiedette.com/` pour rafraîchir l'aperçu (nouvelle image de partage).
