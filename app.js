@@ -178,11 +178,28 @@ function drawBands(g, bands, y, width) {
 // Hauteur selon la largeur : un graphique large n'est plus une bande plate, un graphique étroit reste lisible.
 const hauteurGraphique = (largeur, ratio = 0.34) => Math.round(Math.min(460, Math.max(220, largeur * ratio)));
 
+// Graphiques hors de l'écran : dessinés à leur approche (600 px avant), pas tous au chargement. Leur place est
+// réservée par .chart:empty dans styles.css. Un nouveau rendu (période, thème, taille) remplace le dessin en attente.
+const dejaVus = new WeakSet(), enAttente = new Map();
+const guetteur = 'IntersectionObserver' in window ? new IntersectionObserver((entrees) => {
+  for (const e of entrees) {
+    if (!e.isIntersecting) continue;
+    dejaVus.add(e.target); guetteur.unobserve(e.target);
+    const dessiner = enAttente.get(e.target); enAttente.delete(e.target); dessiner?.();
+  }
+}, { rootMargin: '600px 0px' }) : null;
+
 /**
  * series : [{ name, color, points: [{ d: Date, v: number }], step? }]
  * opts : { bands, yDomain, yTicks, yFormat, tipFormat, xDomain, dateFormat, height, endLabels, dots }
  */
 function lineChart(el, series, opts) {
+  if (!guetteur || dejaVus.has(el)) return dessinerLignes(el, series, opts);
+  enAttente.set(el, () => dessinerLignes(el, series, opts));
+  guetteur.observe(el);
+}
+
+function dessinerLignes(el, series, opts) {
   el.replaceChildren();
   const width = Math.max(280, el.clientWidth);
   const height = opts.height ?? hauteurGraphique(width, opts.ratio);
