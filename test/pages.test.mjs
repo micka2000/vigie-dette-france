@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { construire, instantane, jourTexte, resume, appliquerInstantane, anglaise } from '../scripts/pages.mjs';
+import { construire, instantane, jourTexte, resume, appliquerInstantane, anglaise, SIGNAUX } from '../scripts/pages.mjs';
 
 const lire = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 const inst = JSON.parse(lire('data/instantane.json'));
@@ -54,9 +54,11 @@ test('une traduction manquante arrête la génération', () => {
 
 test('chaque page déclare sa canonique et ses deux langues, qui se répondent', () => {
   const pages = { 'index.html': '', 'en/index.html': 'en/', 'methode.html': 'methode.html', 'en/methode.html': 'en/methode.html' };
+  for (const sig of SIGNAUX) for (const l of ['fr', 'en']) pages[`${sig[l].chemin}index.html`] = sig[l].chemin;
   for (const [f, chemin] of Object.entries(pages)) {
     const html = lire(f);
-    assert.ok(html.includes(`<link rel="canonical" href="https://vigiedette.com/${chemin}"`), `${f} : canonique`);
+    const canonique = html.match(/<link rel="canonical"[^>]*\shref="([^"]*)"/)?.[1];
+    assert.equal(canonique, `https://vigiedette.com/${chemin}`, `${f} : canonique`);
     for (const l of ['fr', 'en', 'x-default']) assert.match(html, new RegExp(`hreflang="${l}"`), `${f} : ${l}`);
     assert.ok(html.includes(`hreflang="${f.startsWith('en/') ? 'en' : 'fr'}" href="https://vigiedette.com/${chemin}"`), `${f} : se cite lui-même`);
     for (const m of html.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)) JSON.parse(m[1]);
@@ -69,4 +71,24 @@ test('les deux pages Méthode ont la même structure et les mêmes liens externe
   for (const re of [/<article/g, /<h2/g, /<table/g, /<tr/g, /<pre/g, /<li/g]) assert.equal(compte(en, re), compte(fr, re), String(re));
   const liens = (s) => [...s.matchAll(/href="(https:\/\/(?!vigiedette)[^"]*)"/g)].map((m) => m[1]);
   assert.deepEqual(liens(en), liens(fr));
+});
+
+test('chaque page de signal porte sa carte, ses liens et le chiffre du jour', () => {
+  const sitemap = lire('sitemap.xml');
+  for (const sig of SIGNAUX) {
+    for (const l of ['fr', 'en']) {
+      const f = `${sig[l].chemin}index.html`, html = lire(f);
+      assert.equal([...html.matchAll(/<article class="signal" id="/g)].length, 1, `${f} : une seule carte`);
+      assert.ok(html.includes(`<article class="signal" id="${sig.carte}">`), `${f} : sa carte`);
+      assert.ok(!html.includes('class="page-signal"'), `${f} : pas de lien vers elle-même`);
+      assert.ok(html.includes(`<h1>${sig[l].h1.replace(/&/g, '&amp;')}</h1>`), `${f} : titre`);
+      const t = inst.tuiles[l].find((x) => x.cle === sig.carte);
+      assert.ok(html.includes(`data-now="${sig.carte}">${t.valeur}<`), `${f} : chiffre du jour`);
+      assert.ok(html.includes(`href="/${sig[l === 'fr' ? 'en' : 'fr'].chemin}"`), `${f} : lien vers l’autre langue`);
+      for (const autre of SIGNAUX.filter((x) => x !== sig)) assert.ok(html.includes(`href="/${autre[l].chemin}"`), `${f} : lien vers ${autre.carte}`);
+      assert.ok(sitemap.includes(`<loc>https://vigiedette.com/${sig[l].chemin}</loc>`), `sitemap : ${sig[l].chemin}`);
+      // Le tableau de bord de la même langue renvoie vers la page du signal
+      assert.ok(lire(l === 'fr' ? 'index.html' : 'en/index.html').includes(`href="/${sig[l].chemin}"`), `tableau ${l} : lien vers ${sig.carte}`);
+    }
+  }
 });

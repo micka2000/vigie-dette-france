@@ -194,6 +194,7 @@ const guetteur = 'IntersectionObserver' in window ? new IntersectionObserver((en
  * opts : { bands, yDomain, yTicks, yFormat, tipFormat, xDomain, dateFormat, height, endLabels, dots }
  */
 function lineChart(el, series, opts) {
+  if (!el) return; // page d'un seul signal : les autres graphiques n'y sont pas
   if (!guetteur || dejaVus.has(el)) return dessinerLignes(el, series, opts);
   enAttente.set(el, () => dessinerLignes(el, series, opts));
   guetteur.observe(el);
@@ -391,6 +392,7 @@ const PERIODES = [[2, '2 ans', '2 yrs'], [5, '5 ans', '5 yrs'], [15, '15 ans', '
 
 function periodes(chart, debut) {
   const box = document.querySelector(`[data-periode="${chart}"]`);
+  if (!box) return;
   const ans = (Date.now() - debut) / (365.25 * 86400000);
   const offertes = PERIODES.filter(([y]) => y === 0 || y < ans);
   if (!offertes.some(([y]) => y === state.periodes[chart])) state.periodes[chart] = 0;
@@ -515,7 +517,7 @@ function compute(data, etat) {
 
 function renderSummary(signals) {
   const order = ['spread', 'adjudications', 'non-residents', 'notations', 'target'];
-  document.getElementById('summary').replaceChildren(...order.map((key) => {
+  document.getElementById('summary')?.replaceChildren(...order.map((key) => {
     const s = signals[key];
     const a = document.createElement('a'); a.className = 'tile'; a.href = `#${key}`; a.dataset.level = s.level;
     const name = document.createElement('span'); name.className = 'tile-name'; name.textContent = s.name;
@@ -745,7 +747,7 @@ function renderAuctionSource(adj) {
 // Toutes les ventes du fichier, du plus récent au plus ancien ; celles d'août et de décembre sont signalées hors calcul.
 function renderAuctionsTable(adj) {
   const calcul = new Set(couvertures(adj).map((a) => a.date));
-  document.querySelector('#auctions-table tbody').replaceChildren(...[...adj.lignes].reverse().map((a) => {
+  document.querySelector('#auctions-table tbody')?.replaceChildren(...[...adj.lignes].reverse().map((a) => {
     const tr = document.createElement('tr');
     const cover = a.adjuge_mds && a.demande_mds != null ? f2(a.demande_mds / a.adjuge_mds) : nc();
     for (const v of [fmtDay(parseDay(a.date)), nomLigne(a.ligne), a.taux != null ? pc(f2(a.taux)) : nc(),
@@ -760,7 +762,7 @@ function renderAuctionsTable(adj) {
 const PERSPECTIVES = { stable: 'stable', négative: 'negative', positive: 'positive', 'en surveillance': 'under review' };
 
 function renderRatingsTable(r) {
-  document.querySelector('#ratings-table tbody').replaceChildren(...r.agences.map((a) => {
+  document.querySelector('#ratings-table tbody')?.replaceChildren(...r.agences.map((a) => {
     const tr = document.createElement('tr');
     for (const v of [a.agence, a.note, L(a.perspective, PERSPECTIVES[a.perspective] ?? a.perspective), a.derniere ? fmtDay(parseDay(a.derniere)) : nc(),
       a.prochaine ? fmtDay(parseDay(a.prochaine)) : L('non fixée', 'not set')]) {
@@ -770,6 +772,7 @@ function renderRatingsTable(r) {
   }));
   const alerts = r.agences.filter((a) => a.alerte).map((a) => `${a.agence}${L(' : ', ': ')}${L(a.alerte, a.alerte_en ?? a.alerte)}`);
   const box = document.getElementById('ratings-alert');
+  if (!box) return;
   box.hidden = !alerts.length; box.textContent = alerts.join(' ');
 }
 
@@ -871,6 +874,7 @@ const INDICE_VISIBLE = true;
 
 function renderHeader(data, etat) {
   text('#donnees', `${L('Données du', 'Data as of')} ${fmtDay(parseDay(etat.cartes.spread.jour))}`);
+  if (!document.getElementById('indice')) return; // page d'un seul signal : pas d'indice en tête
   if (!INDICE_VISIBLE) {
     text('#verdict', L('L’Indice Vigie est en cours de révision. Les cinq signaux ci-dessous restent à jour chaque jour.',
       'The Vigie Index is under review. The five signals below are still updated every day.'));
@@ -902,6 +906,7 @@ function renderHeader(data, etat) {
 function renderSources(data) {
   const retard = [...new Set((data.meta.echecs ?? []).map((e) => e.serie ?? String(e)))];
   const r = document.getElementById('retard');
+  if (!r) return;
   r.hidden = !retard.length;
   r.textContent = retard.length ? L(`Séries en retard : ${liste(retard)}.`, `Series running late: ${liste(retard)}.`) : '';
 }
@@ -998,7 +1003,7 @@ document.addEventListener('click', (e) => {
   render();
 });
 
-document.getElementById('spread-step').addEventListener('click', (e) => {
+document.getElementById('spread-step')?.addEventListener('click', (e) => {
   const btn = e.target.closest('button[data-step]'); if (!btn) return;
   state.spreadStep = btn.dataset.step;
   for (const b of e.currentTarget.querySelectorAll('button')) b.setAttribute('aria-pressed', String(b === btn));
@@ -1027,7 +1032,7 @@ function renderAll() {
   // Les graphiques dans une tâche à part : l'en-tête s'affiche sans les attendre et la page reste réactive.
   clearTimeout(suiteRendu);
   suiteRendu = setTimeout(() => {
-    if (INDICE_VISIBLE) state.courbe = courbeMensuelle(data);
+    if (INDICE_VISIBLE && document.getElementById('chart-indice')) state.courbe = courbeMensuelle(data);
     render();
   });
 }

@@ -405,6 +405,10 @@ footer p { margin: 0; max-width: 80ch; }
 }
 @media (max-width: 600px) { .formule { font-size: 12px; padding: var(--space-3); } }
 .retour { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+/* Lien de chaque carte vers la page du signal, et liste des autres signaux sur ces pages */
+.page-signal { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm); color: var(--fg-accent); }
+.autres-signaux ul { margin: 0; padding-left: 1.2em; display: grid; gap: var(--space-2); }
+.autres-signaux a { color: var(--fg-accent); text-underline-offset: 2px; }
 footer a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 /* Méthode : justification des repères, repliée sous le barème */
 .methode .approfondir summary { font-size: var(--text-body); }

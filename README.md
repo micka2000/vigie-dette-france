@@ -10,13 +10,17 @@ Tableau de bord des cinq signaux de santé de la dette publique française, avec
 | Notes des agences | Wikipédia (« List of countries by credit rating ») et countryeconomy.com, recoupés ; aucune agence ni l'ESMA n'offre d'API gratuite | chaque matin quand les deux sources concordent, sinon alerte dans `data/meta.json` |
 | Solde TARGET2 de la Banque de France | BCE, série `TGB.M.FR` | en direct et chaque jour |
 
+## Licence des données
+
+Les fichiers de `data/` sont publiés sous [Licence Ouverte 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence/) (Etalab) : réutilisation libre, en citant Vigie Dette France et les sources d'origine (Banque de France, Bundesbank, BCE, Eurostat, Agence France Trésor, agences de notation).
+
 ## Seuils de risque
 
 Quatre niveaux par signal : calme, vigilance, tension, crise. Ils sont définis dans `app.js` (constante `THRESHOLDS`) et expliqués sous chaque graphique.
 
 ## Pages et référencement
 
-- `index.html` est la page française et la source de `en/index.html`, générée avec les textes d'`anglais.mjs` par `scripts/pages.mjs`. Les pages Méthode existent en deux fichiers écrits à la main : `methode.html` et `en/methode.html`.
+- `index.html` est la page française et la source de `en/index.html`, générée avec les textes d'`anglais.mjs` par `scripts/pages.mjs`. Le même script tire de chaque carte une page par signal et par langue (`SIGNAUX` dans `scripts/pages.mjs` : `/spread-france-allemagne/`, `/en/france-germany-spread/`, etc.) ; ces adresses sont définitives. Les pages Méthode existent en deux fichiers écrits à la main : `methode.html` et `en/methode.html`.
 - Chaque matin, après la collecte, `node scripts/pages.mjs --instantane` écrit dans les deux pages l'instantané du jour (verdict, Indice Vigie, date), lisible sans JavaScript, puis `sitemap.xml`. `scripts/image_partage.py` (Pillow) dessine les images des aperçus de liens, `partage-fr.png` et `partage-en.png`.
 - Après une modification d'`index.html`, d'`anglais.mjs`, d'`app.js`, de `score.mjs` ou de `styles.css` : `node scripts/empreintes.mjs` (empreintes et version anglaise). Les tests échouent sinon.
 

@@ -28,7 +28,8 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
-      # Instantané du jour dans index.html et en/index.html, sitemap, images de partage. Un échec ici ne bloque pas les données.
+      # Instantané du jour dans le tableau de bord et les pages par signal (FR et EN), sitemap, images de partage.
+      # Un échec ici ne bloque pas les données.
       - name: Pages et images de partage
         run: |
           node scripts/pages.mjs --instantane && pip install --quiet pillow==11.3.0 && python scripts/image_partage.py \
@@ -38,7 +39,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git show HEAD:data/meta.json > "$RUNNER_TEMP/meta.json" 2>/dev/null || : > "$RUNNER_TEMP/meta.json"
-          git add data index.html en sitemap.xml partage-*.png
+          git add data sitemap.xml 'partage-*.png' '*.html'  # tableau, pages par signal, en/
           if ! python scripts/update_data.py --echecs-changes "$RUNNER_TEMP/meta.json" \
              && git diff --cached --quiet -- . ':(exclude)data/meta.json'; then
             echo "Aucune nouvelle donnée."

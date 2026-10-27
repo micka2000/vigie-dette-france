@@ -88,6 +88,17 @@ export const EN = {
   'target.lire': '<b>How to read the chart.</b> The line shows the balance at the end of each month, as a % of the Eurosystem balance sheet; the amount in billions appears on hover. The lower it goes, the more capital is leaving France. Coloured backgrounds show the risk thresholds: below -4%, only 2008-2009 and the euro crisis.',
   'target.qui': '<b>Who measures it, and when.</b> The European Central Bank, which publishes the <a href="https://data.ecb.europa.eu/data/datasets/TGB/TGB.M.FR.N.A094T.U2.EUR.E" target="_blank" rel="noopener">Banque de France balance</a> at the end of each month and the <a href="https://data.ecb.europa.eu/data/datasets/ILM/ILM.W.U2.C.T000000.Z5.Z01" target="_blank" rel="noopener">Eurosystem balance sheet</a> every week, since 2008; read directly from it every morning.',
 
+  'page.spread': 'All about the France-Germany spread',
+  'page.spread.url': '/en/france-germany-spread/',
+  'page.adjudications': 'All about 10-year OAT auctions',
+  'page.adjudications.url': '/en/oat-auctions/',
+  'page.non-residents': 'All about French debt held by non-residents',
+  'page.non-residents.url': '/en/foreign-holdings/',
+  'page.notations': 'All about France’s credit rating',
+  'page.notations.url': '/en/france-credit-rating/',
+  'page.target': 'All about the TARGET2 balance',
+  'page.target.url': '/en/target2-balance/',
+
   'pied.methode': 'How the Vigie Index is calculated, with a full example',
   'pied.collecte': 'Collected every morning (ECB, Banque de France, Bundesbank, Eurostat, Reuters dispatches); TARGET2 and the CISS are also read live. The thresholds are landmarks drawn from each series’ history, not forecasts.',
 };

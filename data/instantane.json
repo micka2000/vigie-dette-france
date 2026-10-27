@@ -17,7 +17,8 @@
         "niveau": "crise",
         "nom": "Spread OAT-Bund 10 ans",
         "valeur": "155 pb",
-        "sous": "OAT 10 ans 4,94 %"
+        "sous": "OAT 10 ans 4,94 %",
+        "taux": "OAT 10 ans 4,94 % · Bund 3,39 %"
       },
       {
         "cle": "adjudications",
@@ -50,7 +51,8 @@
         "niveau": "crise",
         "nom": "10-year OAT-Bund spread",
         "valeur": "155 bp",
-        "sous": "10-year OAT 4.94%"
+        "sous": "10-year OAT 4.94%",
+        "taux": "10-year OAT 4.94% · Bund 3.39%"
       },
       {
         "cle": "adjudications",

@@ -77,7 +77,7 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="../styles.css?v=7817e76d">
+<link rel="stylesheet" href="../styles.css?v=6f4dcce1">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   // Langue choisie avec le bouton FR / EN : on renvoie vers sa page. Jamais d'après la langue du navigateur,
@@ -164,8 +164,8 @@
           <h2 data-i18n="spread.titre">France-Germany spread</h2>
         </div>
         <div class="signal-mesure">
-          <div class="signal-now"><span class="big" data-now="spread">—</span><span class="pill" data-pill="spread"></span><button type="button" class="info" data-delta="spread" data-tip="" aria-label="Details of the figure" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
-          <p class="signal-taux" data-taux="spread" hidden></p>
+          <div class="signal-now"><span class="big" data-now="spread">155 bp</span><span class="pill" data-pill="spread" data-level="crise">Crisis</span><button type="button" class="info" data-delta="spread" data-tip="" aria-label="Details of the figure" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
+          <p class="signal-taux" data-taux="spread">10-year OAT 4.94% · Bund 3.39%</p>
         </div>
       </div>
       <details class="desc">
@@ -198,6 +198,7 @@
       <ul class="legend" id="legend-spread" hidden></ul>
       <p class="seuils-titre" data-i18n="seuils">Risk thresholds</p>
       <ul class="thresholds" data-thresholds="spread"></ul>
+      <p class="page-signal"><a class="retour" href="/en/france-germany-spread/" data-i18n="page.spread" data-i18n-attr="href:page.spread.url">All about the France-Germany spread</a></p>
     </article>
 
     <article class="signal" id="adjudications">
@@ -205,7 +206,7 @@
         <div>
           <h2 data-i18n="adj.titre">Agence France Trésor auctions</h2>
         </div>
-        <div class="signal-now"><span class="big" data-now="adjudications">—</span><span class="pill" data-pill="adjudications"></span><button type="button" class="info" data-delta="adjudications" data-tip="" aria-label="Details of the figure" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
+        <div class="signal-now"><span class="big" data-now="adjudications">2.00</span><span class="pill" data-pill="adjudications" data-level="vigilance">Watch</span><button type="button" class="info" data-delta="adjudications" data-tip="" aria-label="Details of the figure" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
       </div>
       <details class="desc">
         <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Show the description</span><span class="desc-fermer" data-i18n="desc.fermer">Hide the description</span></summary>
@@ -229,6 +230,7 @@
       </details>
       <p class="seuils-titre" data-i18n="seuils">Risk thresholds</p>
       <ul class="thresholds" data-thresholds="adjudications"></ul>
+      <p class="page-signal"><a class="retour" href="/en/oat-auctions/" data-i18n="page.adjudications" data-i18n-attr="href:page.adjudications.url">All about 10-year OAT auctions</a></p>
     </article>
 
     <article class="signal" id="non-residents">
@@ -236,7 +238,7 @@
         <div>
           <h2 data-i18n="nonres.titre">Share held by non-residents</h2>
         </div>
-        <div class="signal-now"><span class="big" data-now="non-residents">—</span><span class="pill" data-pill="non-residents"></span><button type="button" class="info" data-delta="non-residents" data-tip="" aria-label="Details of the figure" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
+        <div class="signal-now"><span class="big" data-now="non-residents">59.7%</span><span class="pill" data-pill="non-residents" data-level="tension">Stress</span><button type="button" class="info" data-delta="non-residents" data-tip="" aria-label="Details of the figure" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
       </div>
       <details class="desc">
         <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Show the description</span><span class="desc-fermer" data-i18n="desc.fermer">Hide the description</span></summary>
@@ -252,6 +254,7 @@
       <div class="legend-row"><ul class="legend" id="legend-nonres"></ul></div>
       <p class="seuils-titre" data-i18n="seuils">Risk thresholds</p>
       <ul class="thresholds" data-thresholds="non-residents"></ul>
+      <p class="page-signal"><a class="retour" href="/en/foreign-holdings/" data-i18n="page.non-residents" data-i18n-attr="href:page.non-residents.url">All about French debt held by non-residents</a></p>
     </article>
 
     <article class="signal" id="notations">
@@ -259,7 +262,7 @@
         <div>
           <h2 data-i18n="notes.titre">Credit ratings</h2>
         </div>
-        <div class="signal-now"><span class="big" data-now="notations">—</span><span class="pill" data-pill="notations"></span><button type="button" class="info" data-delta="notations" data-tip="" aria-label="Details of the figure" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
+        <div class="signal-now"><span class="big" data-now="notations">A+</span><span class="pill" data-pill="notations" data-level="tension">Stress</span><button type="button" class="info" data-delta="notations" data-tip="" aria-label="Details of the figure" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
       </div>
       <details class="desc">
         <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Show the description</span><span class="desc-fermer" data-i18n="desc.fermer">Hide the description</span></summary>
@@ -285,6 +288,7 @@
       <p class="alert" id="ratings-alert" hidden></p>
       <p class="seuils-titre" data-i18n="seuils">Risk thresholds</p>
       <ul class="thresholds" data-thresholds="notations"></ul>
+      <p class="page-signal"><a class="retour" href="/en/france-credit-rating/" data-i18n="page.notations" data-i18n-attr="href:page.notations.url">All about France’s credit rating</a></p>
     </article>
 
     <article class="signal" id="target">
@@ -292,7 +296,7 @@
         <div>
           <h2 data-i18n="target.titre">Banque de France TARGET2 balance</h2>
         </div>
-        <div class="signal-now"><span class="big" data-now="target">—</span><span class="pill" data-pill="target"></span><button type="button" class="info" data-delta="target" data-tip="" aria-label="Details of the figure" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
+        <div class="signal-now"><span class="big" data-now="target">-3.1%</span><span class="pill" data-pill="target" data-level="tension">Stress</span><button type="button" class="info" data-delta="target" data-tip="" aria-label="Details of the figure" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
       </div>
       <details class="desc">
         <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Show the description</span><span class="desc-fermer" data-i18n="desc.fermer">Hide the description</span></summary>
@@ -307,6 +311,7 @@
       <div class="chart" id="chart-target"></div>
       <p class="seuils-titre" data-i18n="seuils">Risk thresholds</p>
       <ul class="thresholds" data-thresholds="target"></ul>
+      <p class="page-signal"><a class="retour" href="/en/target2-balance/" data-i18n="page.target" data-i18n-attr="href:page.target.url">All about the TARGET2 balance</a></p>
     </article>
 
   </div>
@@ -329,7 +334,7 @@
     if (v) v.textContent = document.documentElement.lang === 'en' ? 'The page could not load. Please reload it in a moment.' : 'La page n’a pas pu se charger. Recharge-la dans un instant.';
   }, 10000);
 </script>
-<script type="module" src="../app.js?v=a02553df"></script>
+<script type="module" src="../app.js?v=43f28dfd"></script>
 <!-- Mesure d'audience sans cookie : https://vigiedette.goatcounter.com -->
 <script data-goatcounter="https://vigiedette.goatcounter.com/count" async src="https://gc.zgo.at/count.v4.js" crossorigin="anonymous" integrity="sha384-nRw6qfbWyJha9LhsOtSb2YJDyZdKvvCFh0fJYlkquSFjUxp9FVNugbfy8q1jdxI+"></script>
 </body>
