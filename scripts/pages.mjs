@@ -1,0 +1,207 @@
+// Pages statiques, pour les moteurs de recherche et les aperçus de liens (LinkedIn, messageries) :
+//   - l'instantané du jour (verdict, Indice Vigie, date des données) écrit dans le HTML, lisible sans JavaScript ;
+//   - en/index.html, la version anglaise d'index.html, avec les textes d'anglais.mjs ;
+//   - sitemap.xml et les données structurées (JSON-LD).
+// node scripts/pages.mjs               régénère les pages à partir de data/instantane.json
+// node scripts/pages.mjs --instantane  recalcule d'abord data/instantane.json à partir de data/ (collecte du matin)
+// test/pages.test.mjs échoue si index.html, en/index.html ou sitemap.xml ne sont pas à jour.
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { etatDuJour, phraseVerdict, NIVEAUX_TEXTE } from '../score.mjs';
+import { EN } from '../anglais.mjs';
+
+export const SITE = 'https://vigiedette.com/';
+// Dernière modification des pages Méthode, pour le sitemap : à changer quand on les modifie.
+const METHODE_MAJ = '2026-10-27';
+
+const racine = new URL('../', import.meta.url);
+const lire = (f) => readFileSync(new URL(f, racine), 'utf8');
+const ecrire = (f, contenu) => writeFileSync(new URL(f, racine), contenu);
+const lireJson = (f) => JSON.parse(lire(`data/${f}`));
+
+const echapper = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+// ---------- Instantané ----------
+
+// Mêmes fichiers que loadFiles() dans app.js.
+export function lireFichiers() {
+  return {
+    spread: lireJson('spread.json'), target: lireJson('target.json'), adj: lireJson('adjudications.json'),
+    ratings: lireJson('notations.json'), nrAft: lireJson('non_residents_bdf.json'), nrEs: lireJson('non_residents_eurostat.json'),
+    meta: lireJson('meta.json'), ciss: existsSync(new URL('data/ciss.json', racine)) ? lireJson('ciss.json') : null,
+    bilan: lireJson('bilan_bce.json'), live: [],
+  };
+}
+
+// Ce que la page affiche en tête, dans les deux langues. Sans date de calcul : le fichier ne change qu'avec les données.
+export function instantane(fichiers, dateCalcul) {
+  const etat = etatDuJour(fichiers, dateCalcul);
+  const { score, niveau } = etat.indice;
+  return {
+    jour: etat.cartes.spread.jour,
+    indice: score == null ? null : Math.round(score),
+    niveau: niveau ?? null,
+    niveauTexte: niveau ? { fr: NIVEAUX_TEXTE.fr[niveau], en: NIVEAUX_TEXTE.en[niveau] } : null,
+    verdict: { fr: phraseVerdict(etat, 'fr'), en: phraseVerdict(etat, 'en') },
+  };
+}
+
+const MOIS = {
+  fr: ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
+  en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+};
+// « 1er oct. 2026 » ou « 1 Oct 2026 », comme fmtDay() dans app.js.
+export function jourTexte(jour, lang) {
+  const [a, m, j] = jour.split('-').map(Number);
+  return `${j === 1 && lang === 'fr' ? '1er' : j} ${MOIS[lang][m - 1]} ${a}`;
+}
+
+// Phrase des aperçus de liens : « Indice Vigie 64/100, tension. La dette française est sous tension. … »
+export function resume(inst, lang) {
+  if (inst.indice == null) return inst.verdict[lang];
+  const nom = lang === 'en' ? 'Vigie Index' : 'Indice Vigie';
+  return `${nom} ${inst.indice}/100, ${inst.niveauTexte[lang].toLowerCase()}. ${inst.verdict[lang]}`;
+}
+
+// ---------- Réécriture du HTML ----------
+
+// Contenu d'un élément repéré par son id (sans élément de même nom imbriqué).
+function contenu(html, id, nouveau) {
+  const re = new RegExp(`(<(\\w+)\\b[^>]*\\sid="${id}"[^>]*>)[\\s\\S]*?(</\\2>)`);
+  if (!re.test(html)) throw new Error(`#${id} introuvable`);
+  return html.replace(re, (_, ouvre, tag, ferme) => `${ouvre}${nouveau}${ferme}`);
+}
+
+// Attribut d'une balise ouvrante repérée par un motif (id="…" ou data-instantane="…") ; null retire l'attribut.
+function attribut(html, repere, nom, valeur) {
+  const re = new RegExp(`<[^>]*\\s${repere}[^>]*>`);
+  const balise = html.match(re)?.[0];
+  if (!balise) throw new Error(`${repere} introuvable`);
+  const sans = balise.replace(new RegExp(`\\s${nom}(="[^"]*")?(?=[\\s>/])`), '');
+  const avec = valeur == null ? sans : sans.replace(/\s*\/?>$/, (fin) => ` ${nom}="${echapper(valeur)}"${fin.trim() === '/>' ? ' />' : '>'}`);
+  return html.replace(balise, avec);
+}
+
+export function appliquerInstantane(html, inst, lang) {
+  html = contenu(html, 'verdict', echapper(inst.verdict[lang]));
+  html = contenu(html, 'donnees', `${lang === 'en' ? 'Data as of' : 'Données du'} ${jourTexte(inst.jour, lang)}`);
+  if (inst.indice != null) {
+    html = attribut(html, 'id="indice"', 'hidden', null);
+    html = contenu(html, 'indice-num', String(inst.indice));
+    html = attribut(html, 'id="indice-niveau"', 'data-level', inst.niveau);
+    html = contenu(html, 'indice-niveau', echapper(inst.niveauTexte[lang]));
+  } else {
+    html = attribut(html, 'id="indice"', 'hidden', '');
+  }
+  html = attribut(html, 'data-instantane="resume"', 'content', resume(inst, lang));
+  html = attribut(html, 'data-instantane="image"', 'content', `${SITE}partage-${lang}.png?v=${inst.jour}`);
+  html = contenu(html, 'donnees-structurees', `\n${JSON.stringify(donneesStructurees(inst, lang), null, 2).replace(/</g, '\\u003c')}\n`);
+  return html;
+}
+
+// Version anglaise : textes d'anglais.mjs (data-i18n, data-i18n-attr), chemins vers la racine depuis /en/.
+export function anglaise(html) {
+  html = html.replace(/<(\w+)(\b[^>]*\sdata-i18n="([^"]+)"[^>]*)>[\s\S]*?<\/\1>/g, (_, tag, attrs, cle) => {
+    if (!(cle in EN)) throw new Error(`traduction manquante : ${cle}`);
+    return `<${tag}${attrs}>${EN[cle]}</${tag}>`;
+  });
+  html = html.replace(/<[^>]*\sdata-i18n-attr="([^"]+)"[^>]*>/g, (balise, liste) => {
+    for (const [nom, cle] of liste.split(';').filter(Boolean).map((x) => x.split(':'))) {
+      if (!(cle in EN)) throw new Error(`traduction manquante : ${cle}`);
+      balise = balise.replace(new RegExp(`(\\s${nom}=")[^"]*"`), (_, debut) => `${debut}${echapper(EN[cle])}"`);
+    }
+    return balise;
+  });
+  return html
+    .replace('<html lang="fr">', '<html lang="en">')
+    .replace(/(href|src)="(styles\.css|app\.js)/g, '$1="../$2')
+    .replace(/<!-- Source[^>]*-->\n/, '<!-- Fichier généré par scripts/pages.mjs à partir d’index.html et d’anglais.mjs : ne pas le modifier à la main. -->\n');
+}
+
+// ---------- Données structurées ----------
+
+const ORGANISATION = `${SITE}#organisation`;
+
+export function donneesStructurees(inst, lang) {
+  const en = lang === 'en';
+  const url = en ? `${SITE}en/` : SITE;
+  const graphe = [
+    {
+      '@type': 'Organization', '@id': ORGANISATION, name: 'Vigie Dette France', url: SITE,
+      logo: { '@type': 'ImageObject', url: `${SITE}logo.png`, width: 512, height: 512 },
+      sameAs: ['https://github.com/micka2000/vigie-dette-france'],
+    },
+    {
+      '@type': 'WebSite', '@id': `${SITE}#site`, url: SITE, name: 'Vigie Dette France', inLanguage: ['fr', 'en'],
+      publisher: { '@id': ORGANISATION },
+    },
+    {
+      '@type': 'WebPage', '@id': `${url}#page`, url, inLanguage: lang, name: en ? EN.titre : TITRE_FR,
+      description: resume(inst, lang), dateModified: inst.jour, isPartOf: { '@id': `${SITE}#site` },
+      about: { '@id': `${SITE}#donnees` }, primaryImageOfPage: `${SITE}partage-${lang}.png`,
+    },
+  ];
+  // Le jeu de données est décrit une fois, sur la page française, pour Google Dataset Search.
+  if (!en) graphe.push(DATASET(inst));
+  return { '@context': 'https://schema.org', '@graph': graphe };
+}
+
+const TITRE_FR = 'Vigie Dette France · Le risque de la dette publique, chaque jour';
+
+const DATASET = (inst) => ({
+  '@type': 'Dataset', '@id': `${SITE}#donnees`, url: SITE, name: 'Vigie Dette France, signaux de risque de la dette publique française',
+  description: 'Cinq séries quotidiennes et mensuelles sur le risque de la dette publique française, collectées chaque matin '
+    + 'auprès de la Banque de France, de la Bundesbank, de la Banque centrale européenne, d’Eurostat et des agences de notation : '
+    + 'spread OAT-Bund à 10 ans depuis 2004, taux de couverture des adjudications de l’Agence France Trésor, part de la dette '
+    + 'de l’État détenue par les non-résidents, notes de S&P, Moody’s et Fitch, solde TARGET2 de la Banque de France. '
+    + 'L’Indice Vigie les résume en une note de 0 à 100.',
+  keywords: ['dette publique', 'France', 'spread OAT-Bund', 'OAT 10 ans', 'adjudications AFT', 'non-résidents', 'notation souveraine', 'TARGET2'],
+  inLanguage: 'fr', isAccessibleForFree: true, creator: { '@id': ORGANISATION }, publisher: { '@id': ORGANISATION },
+  spatialCoverage: { '@type': 'Place', name: 'France' }, temporalCoverage: `2004-11-03/${inst.jour}`, dateModified: inst.jour,
+  variableMeasured: ['Spread OAT-Bund à 10 ans (points de base)', 'Taux de couverture des adjudications à 10 ans',
+    'Part de la dette de l’État détenue par les non-résidents (%)', 'Notes des agences de notation',
+    'Solde TARGET2 de la Banque de France (% du bilan de l’Eurosystème)', 'Indice Vigie (0 à 100)'],
+  distribution: [
+    ['spread.json', 'Taux à 10 ans France et Allemagne, spread'], ['adjudications.json', 'Adjudications de l’Agence France Trésor'],
+    ['non_residents_bdf.json', 'Part des non-résidents (Banque de France)'], ['notations.json', 'Notes des agences'],
+    ['target.json', 'Solde TARGET2 de la Banque de France'],
+  ].map(([f, name]) => ({ '@type': 'DataDownload', name, encodingFormat: 'application/json', contentUrl: `${SITE}data/${f}` })),
+});
+
+// ---------- Sitemap ----------
+
+export function sitemap(inst) {
+  const paires = [['', 'en/', inst.jour], ['methode.html', 'en/methode.html', METHODE_MAJ]];
+  const urls = paires.flatMap(([fr, en, maj]) => [fr, en].map((chemin) => [
+    '  <url>',
+    `    <loc>${SITE}${chemin}</loc>`,
+    `    <lastmod>${maj}</lastmod>`,
+    `    <xhtml:link rel="alternate" hreflang="fr" href="${SITE}${fr}"/>`,
+    `    <xhtml:link rel="alternate" hreflang="en" href="${SITE}${en}"/>`,
+    `    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}${fr}"/>`,
+    '  </url>',
+  ].join('\n')));
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${urls.join('\n')}
+</urlset>
+`;
+}
+
+// ---------- Construction ----------
+
+export function construire(indexHtml, inst) {
+  return {
+    'index.html': appliquerInstantane(indexHtml, inst, 'fr'),
+    'en/index.html': appliquerInstantane(anglaise(indexHtml), inst, 'en'),
+    'sitemap.xml': sitemap(inst),
+  };
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  if (process.argv.includes('--instantane')) {
+    ecrire('data/instantane.json', `${JSON.stringify(instantane(lireFichiers(), new Date()), null, 2)}\n`);
+  }
+  const inst = JSON.parse(lire('data/instantane.json'));
+  for (const [f, html] of Object.entries(construire(lire('index.html'), inst))) ecrire(f, html);
+}

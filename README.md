@@ -14,6 +14,12 @@ Tableau de bord des cinq signaux de santé de la dette publique française, avec
 
 Quatre niveaux par signal : calme, vigilance, tension, crise. Ils sont définis dans `app.js` (constante `THRESHOLDS`) et expliqués sous chaque graphique.
 
+## Pages et référencement
+
+- `index.html` est la page française et la source de `en/index.html`, générée avec les textes d'`anglais.mjs` par `scripts/pages.mjs`. Les pages Méthode existent en deux fichiers écrits à la main : `methode.html` et `en/methode.html`.
+- Chaque matin, après la collecte, `node scripts/pages.mjs --instantane` écrit dans les deux pages l'instantané du jour (verdict, Indice Vigie, date), lisible sans JavaScript, puis `sitemap.xml`. `scripts/image_partage.py` (Pillow) dessine les images des aperçus de liens, `partage-fr.png` et `partage-en.png`.
+- Après une modification d'`index.html`, d'`anglais.mjs`, d'`app.js`, de `score.mjs` ou de `styles.css` : `node scripts/empreintes.mjs` (empreintes et version anglaise). Les tests échouent sinon.
+
 ## Lancer en local
 
 ```sh

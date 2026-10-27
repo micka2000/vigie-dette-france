@@ -18,14 +18,16 @@ test('index.html porte l’empreinte à jour de app.js et styles.css', () => {
   }
 });
 
-test('app.js importe score.mjs et anglais.mjs avec leur empreinte à jour', () => {
-  for (const f of ['score.mjs', 'anglais.mjs']) {
+test('app.js importe score.mjs avec son empreinte à jour', () => {
+  for (const f of ['score.mjs']) {
     const attendu = `'./${f}?v=${empreinte(f)}'`;
     assert.ok(lire('app.js').includes(attendu), `app.js doit importer ${attendu} (lancer : node scripts/empreintes.mjs)`);
   }
 });
 
-test('methode.html porte l’empreinte à jour de styles.css', () => {
-  const attendu = `styles.css?v=${empreinte('styles.css')}`;
-  assert.ok(lire('methode.html').includes(`"${attendu}"`), `methode.html doit appeler ${attendu} (lancer : node scripts/empreintes.mjs)`);
+test('les pages Méthode portent l’empreinte à jour de styles.css', () => {
+  for (const [page, chemin] of [['methode.html', ''], ['en/methode.html', '../']]) {
+    const attendu = `${chemin}styles.css?v=${empreinte('styles.css')}`;
+    assert.ok(lire(page).includes(`"${attendu}"`), `${page} doit appeler ${attendu} (lancer : node scripts/empreintes.mjs)`);
+  }
 });

@@ -1,0 +1,333 @@
+<!doctype html>
+<!-- Fichier généré par scripts/pages.mjs à partir d’index.html et d’anglais.mjs : ne pas le modifier à la main. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title data-i18n="titre">Vigie Dette France · French public debt risk, every day</title>
+<meta name="description" data-i18n-attr="content:meta.description" content="France-Germany spread, debt auctions, foreign holdings, credit ratings and TARGET2. The five risk signals of French public debt, updated every day.">
+<meta name="searchvoro-site-verification" content="36b0e444adb6900495ddd1ea84d69911">
+<link rel="canonical" href="https://vigiedette.com/en/" data-i18n-attr="href:url">
+<link rel="alternate" hreflang="fr" href="https://vigiedette.com/">
+<link rel="alternate" hreflang="en" href="https://vigiedette.com/en/">
+<link rel="alternate" hreflang="x-default" href="https://vigiedette.com/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Vigie Dette France">
+<meta property="og:locale" content="en_GB" data-i18n-attr="content:og.locale">
+<meta property="og:url" content="https://vigiedette.com/en/" data-i18n-attr="content:url">
+<meta property="og:title" content="Vigie Dette France · French public debt risk, every day" data-i18n-attr="content:titre">
+<meta property="og:description" data-instantane="resume" content="Vigie Index 64/100, stress. French debt is under stress. The rest of the financial markets remain calm.">
+<meta property="og:image" data-instantane="image" content="https://vigiedette.com/partage-en.png?v=2026-10-27">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Today’s Vigie Index and the verdict on French debt" data-i18n-attr="content:image.alt">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json" id="donnees-structurees">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://vigiedette.com/#organisation",
+      "name": "Vigie Dette France",
+      "url": "https://vigiedette.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://vigiedette.com/logo.png",
+        "width": 512,
+        "height": 512
+      },
+      "sameAs": [
+        "https://github.com/micka2000/vigie-dette-france"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://vigiedette.com/#site",
+      "url": "https://vigiedette.com/",
+      "name": "Vigie Dette France",
+      "inLanguage": [
+        "fr",
+        "en"
+      ],
+      "publisher": {
+        "@id": "https://vigiedette.com/#organisation"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://vigiedette.com/en/#page",
+      "url": "https://vigiedette.com/en/",
+      "inLanguage": "en",
+      "name": "Vigie Dette France · French public debt risk, every day",
+      "description": "Vigie Index 64/100, stress. French debt is under stress. The rest of the financial markets remain calm.",
+      "dateModified": "2026-10-27",
+      "isPartOf": {
+        "@id": "https://vigiedette.com/#site"
+      },
+      "about": {
+        "@id": "https://vigiedette.com/#donnees"
+      },
+      "primaryImageOfPage": "https://vigiedette.com/partage-en.png"
+    }
+  ]
+}
+</script>
+<link rel="stylesheet" href="../styles.css?v=fa348e25">
+<script>
+  try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  // Langue choisie avec le bouton FR / EN : on renvoie vers sa page. Jamais d'après la langue du navigateur,
+  // pour que Google, qui lit en anglais, indexe aussi la page française.
+  try {
+    const l = localStorage.getItem('langue'), alt = document.querySelector(`link[rel="alternate"][hreflang="${l}"]`);
+    if (l && l !== document.documentElement.lang && alt) location.replace(new URL(alt.href).pathname + location.hash);
+  } catch (e) {}
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest && e.target.closest('a[hreflang]');
+    if (a) try { localStorage.setItem('langue', a.hreflang.toLowerCase()); } catch (x) {}
+  });
+</script>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="masthead-top">
+      <h1>Vigie Dette France</h1>
+      <div class="masthead-actions">
+        <a class="btn-icone btn-langue" id="langue-toggle" href="../" hreflang="FR" lang="FR" aria-label="Lire la page en français" data-tip="Version française" data-i18n-attr="href:langue.href;hreflang:langue.code;aria-label:langue.aria;data-tip:langue.tip;lang:langue.code"><span data-i18n="langue.code">FR</span></a>
+        <button class="btn-icone" id="theme-toggle" type="button" aria-label="Switch between light and dark theme" data-tip="Light or dark theme" data-i18n-attr="aria-label:theme.aria;data-tip:theme.tip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg></button>
+      </div>
+    </div>
+    <p class="verdict" id="verdict">French debt is under stress. The rest of the financial markets remain calm.</p>
+    <div class="indice" id="indice">
+      <p class="indice-score"><span id="indice-num">64</span><span class="indice-sur">/100</span></p>
+      <div class="indice-side">
+        <span class="indice-nom" data-i18n="indice.nom">Vigie Index</span>
+        <span class="pill" id="indice-niveau" data-level="tension">Stress</span>
+      </div>
+    </div>
+    <div class="reperes">
+            <p class="repere" id="repere" hidden><span id="repere-texte"></span> <button type="button" class="info" id="repere-info" data-tip="" aria-label="Details of this landmark" data-i18n-attr="aria-label:repere.aria">i</button></p>
+    </div>
+    <p class="stamp">
+      <span id="donnees">Data as of 27 Oct 2026</span>
+      <a class="retour" href="methode.html" data-i18n="entete.methode">How it is calculated</a>
+    </p>
+    <div id="indice-desc"></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="summary signals-summary" id="summary" aria-label="Summary of the five signals" data-i18n-attr="aria-label:synthese.aria"></section>
+
+  <div class="signals">
+
+    <article class="signal" id="courbe">
+      <div class="signal-head">
+        <div>
+          <h2 data-i18n="courbe.titre">The Vigie Index over time</h2>
+        </div>
+      </div>
+      <details class="desc">
+        <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Show the description</span><span class="desc-fermer" data-i18n="desc.fermer">Hide the description</span></summary>
+        <div class="desc-corps">
+          <p data-i18n="courbe.quoi"><b>What it is.</b> A score from 0 to 100 that sums up the state of French debt, month by month.</p>
+          <p data-i18n="courbe.pourquoi"><b>Why it matters.</b> To compare today with past crises: 2008, the euro crisis in 2011, Covid in 2020. When the index rises while the rest of the markets stay quiet, French debt itself is the worry.</p>
+          <p data-i18n="courbe.lire"><b>How to read the chart.</b> In blue, the Vigie Index. In green, its “markets” part: what investors demand to lend to France. In dotted grey, stress across all financial markets in France, used as a benchmark. Each month shows its most strained day. Coloured backgrounds give the level; the eye in the legend hides or shows a line.</p>
+          <p data-i18n="courbe.qui"><b>Who measures it, and when.</b> Vigie Dette France, from the five signals on this page (<a href="methode.html">calculation method</a>, <a href="https://github.com/micka2000/vigie-dette-france/blob/main/score.mjs" target="_blank" rel="noopener">formula</a>, <a href="https://github.com/micka2000/vigie-dette-france/tree/main/data" target="_blank" rel="noopener">data</a>); market stress comes from the <a href="https://data.ecb.europa.eu/data/datasets/CISS/CISS.D.FR.Z0Z.4F.EC.SS_CIN.IDX" target="_blank" rel="noopener">European Central Bank</a>. Since May 2008, recalculated every morning using only the information known on each day.</p>
+        </div>
+      </details>
+      <p class="sr-only" id="courbe-resume"></p>
+      <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-indice" data-i18n="periode">Period</span><div class="seg" role="group" aria-labelledby="periode-indice" data-periode="indice"></div></div></div>
+      <div class="chart" id="chart-indice"></div>
+      <div class="legend-row"><ul class="legend" id="legend-indice"></ul><button type="button" class="info" id="courbe-sans" data-tip="" aria-label="Periods calculated with fewer signals" data-i18n-attr="aria-label:courbe.sans.aria" hidden>i</button></div>
+      <details class="desc detail-table">
+        <summary><span class="desc-ouvrir" data-i18n="courbe.table.ouvrir">Show month-by-month values</span><span class="desc-fermer" data-i18n="courbe.table.fermer">Hide month-by-month values</span></summary>
+        <div class="table-scroll" id="courbe-table-wrap">
+  <table class="ratings-table" id="courbe-table">
+          <thead><tr><th data-i18n="courbe.th.mois">Month</th><th data-i18n="courbe.th.indice">Vigie Index</th><th data-i18n="courbe.th.marches">Markets part</th><th data-i18n="courbe.th.bce">Market stress (ECB)</th><th data-i18n="courbe.th.sans">Calculated without</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        </div>
+      </details>
+    </article>
+
+    <article class="signal" id="spread">
+      <div class="signal-head">
+        <div>
+          <h2 data-i18n="spread.titre">France-Germany spread</h2>
+        </div>
+        <div class="signal-mesure">
+          <div class="signal-now"><span class="big" data-now="spread">—</span><span class="pill" data-pill="spread"></span><button type="button" class="info" data-delta="spread" data-tip="" aria-label="Details of the figure" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
+          <p class="signal-taux" data-taux="spread" hidden></p>
+        </div>
+      </div>
+      <details class="desc">
+        <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Show the description</span><span class="desc-fermer" data-i18n="desc.fermer">Hide the description</span></summary>
+        <div class="desc-corps">
+          <p data-i18n="spread.quoi"><b>What it is.</b> The gap between the rate at which France borrows over 10 years and that of Germany, seen as the safest country in the euro area.</p>
+          <p data-i18n="spread.pourquoi"><b>Why it matters.</b> The wider the gap, the riskier investors judge lending to France. Since 2004, it has stayed below 50 points 7 days out of 10; its record, 214 points, dates from 17 November 2011.</p>
+          <p data-i18n="spread.lire"><b>How to read the chart.</b> The gap is given in basis points: 100 points equal 1%. At 150, France pays 1.5% more than Germany every year to borrow. In Spread view, coloured backgrounds show the risk thresholds; the Yields button shows the two rates themselves, in %, without thresholds.</p>
+          <p data-i18n="spread.qui"><b>Who measures it, and when.</b> The <a href="https://webstat.banque-france.fr/fr/catalogue/fm/FM.D.FR.EUR.FR2.BB.FRMOYTEC10.HSTA" target="_blank" rel="noopener">Banque de France</a> for the French rate and the <a href="https://www.bundesbank.de/dynamic/action/de/statistiken/zeitreihen-datenbanken/zeitreihen-datenbank/759778/759778?tsId=BBSIS.D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A" target="_blank" rel="noopener">Bundesbank</a> for the German rate, every day at market close since 2004; collected every morning.</p>
+        </div>
+      </details>
+      <div class="chart-tools">
+        <div class="outil outil-vue">
+          <div class="seg" role="group" aria-label="Line shown" data-i18n-attr="aria-label:spread.vue.aria">
+            <button type="button" data-spread-vue="ecart" aria-pressed="true" data-i18n="spread.vue.ecart">Spread</button>
+            <button type="button" data-spread-vue="taux" aria-pressed="false" data-i18n="spread.vue.taux">Yields</button>
+          </div>
+        </div>
+        <div class="outil">
+          <span class="toolbar-label" id="step-label" data-i18n="spread.pas">One point per</span>
+          <div class="seg" role="group" aria-labelledby="step-label" id="spread-step">
+            <button type="button" data-step="jour" aria-pressed="true" data-i18n="spread.jour">Day</button>
+            <button type="button" data-step="semaine" data-i18n="spread.semaine">Week</button>
+            <button type="button" data-step="mois" data-i18n="spread.mois">Month</button>
+          </div>
+        </div>
+        <div class="periode" hidden><span class="toolbar-label" id="periode-spread" data-i18n="periode">Period</span><div class="seg" role="group" aria-labelledby="periode-spread" data-periode="spread"></div></div>
+      </div>
+      <div class="chart" id="chart-spread"></div>
+      <ul class="legend" id="legend-spread" hidden></ul>
+      <p class="seuils-titre" data-i18n="seuils">Risk thresholds</p>
+      <ul class="thresholds" data-thresholds="spread"></ul>
+    </article>
+
+    <article class="signal" id="adjudications">
+      <div class="signal-head">
+        <div>
+          <h2 data-i18n="adj.titre">Agence France Trésor auctions</h2>
+        </div>
+        <div class="signal-now"><span class="big" data-now="adjudications">—</span><span class="pill" data-pill="adjudications"></span><button type="button" class="info" data-delta="adjudications" data-tip="" aria-label="Details of the figure" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
+      </div>
+      <details class="desc">
+        <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Show the description</span><span class="desc-fermer" data-i18n="desc.fermer">Hide the description</span></summary>
+        <div class="desc-corps">
+          <p data-i18n="adj.quoi"><b>What it is.</b> Investor demand when the State auctions its 10-year bonds to borrow.</p>
+          <p data-i18n="adj.pourquoi"><b>Why it matters.</b> Weakening demand means the State is finding it harder to attract lenders, and will have to pay them more. Below 2, demand is getting thin; below 1.5, it is clearly weakening.</p>
+          <p data-i18n="adj.lire"><b>How to read the chart.</b> Each point is an auction: amount bid divided by amount sold. At 2, buyers wanted twice as much as was sold. Coloured backgrounds show the risk thresholds; the rate paid at each auction is in the auction details.</p>
+          <p data-i18n="adj.qui"><b>Who measures it, and when.</b> The <a href="https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx" target="_blank" rel="noopener">Agence France Trésor</a>, which sells on behalf of the State, usually on the first Thursday of the month, since 2004; its results are reported by Reuters (<a id="auction-source-last" href="#" target="_blank" rel="noopener">latest auction</a>) and collected every morning. August and December auctions, which are special, are set aside.</p>
+        </div>
+      </details>
+      <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-adj" data-i18n="periode">Period</span><div class="seg" role="group" aria-labelledby="periode-adj" data-periode="adj"></div></div></div>
+      <div class="chart" id="chart-auction-cover"></div>
+      <details class="desc detail-table">
+        <summary><span class="desc-ouvrir" data-i18n="adj.table.ouvrir">Show auction details</span><span class="desc-fermer" data-i18n="adj.table.fermer">Hide auction details</span></summary>
+        <div class="table-scroll" id="auctions-table-wrap">
+          <table class="ratings-table" id="auctions-table">
+            <thead><tr><th data-i18n="adj.th.vente">Auction</th><th data-i18n="adj.th.obligation">Bond</th><th data-i18n="adj.th.taux">Rate paid</th><th data-i18n="adj.th.demande">Bid</th><th data-i18n="adj.th.vendu">Sold</th><th data-i18n="adj.th.couverture">Cover</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </details>
+      <p class="seuils-titre" data-i18n="seuils">Risk thresholds</p>
+      <ul class="thresholds" data-thresholds="adjudications"></ul>
+    </article>
+
+    <article class="signal" id="non-residents">
+      <div class="signal-head">
+        <div>
+          <h2 data-i18n="nonres.titre">Share held by non-residents</h2>
+        </div>
+        <div class="signal-now"><span class="big" data-now="non-residents">—</span><span class="pill" data-pill="non-residents"></span><button type="button" class="info" data-delta="non-residents" data-tip="" aria-label="Details of the figure" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
+      </div>
+      <details class="desc">
+        <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Show the description</span><span class="desc-fermer" data-i18n="desc.fermer">Hide the description</span></summary>
+        <div class="desc-corps">
+          <p data-i18n="nonres.quoi"><b>What it is.</b> The share of the State’s debt held by foreign investors.</p>
+          <p data-i18n="nonres.pourquoi"><b>Why it matters.</b> The higher this share, the more France depends on capital that can leave quickly in a crisis. Above 60%, it would be back to the dependence of 2008 to 2016.</p>
+          <p data-i18n="nonres.lire"><b>How to read the chart.</b> In blue, State debt, the one that counts in the index. In green, all public debt (State, local authorities, social security): it is lower because part of it is lent by French banks. Coloured backgrounds show the risk thresholds.</p>
+          <p data-i18n="nonres.qui"><b>Who measures it, and when.</b> The <a href="https://webstat.banque-france.fr/fr/catalogue/det2/DET2.Q.N.FR.W1.S13111.S1.N.L.LE.F3.T._Z.PT._T.M.V.N._T" target="_blank" rel="noopener">Banque de France</a> for State debt, every quarter since 2008; <a href="https://ec.europa.eu/eurostat/databrowser/view/gov_10dd_ggd/default/table" target="_blank" rel="noopener">Eurostat</a> for all public debt, once a year.</p>
+        </div>
+      </details>
+      <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-nonres" data-i18n="periode">Period</span><div class="seg" role="group" aria-labelledby="periode-nonres" data-periode="nonres"></div></div></div>
+      <div class="chart" id="chart-nonres"></div>
+      <div class="legend-row"><ul class="legend" id="legend-nonres"></ul></div>
+      <p class="seuils-titre" data-i18n="seuils">Risk thresholds</p>
+      <ul class="thresholds" data-thresholds="non-residents"></ul>
+    </article>
+
+    <article class="signal" id="notations">
+      <div class="signal-head">
+        <div>
+          <h2 data-i18n="notes.titre">Credit ratings</h2>
+        </div>
+        <div class="signal-now"><span class="big" data-now="notations">—</span><span class="pill" data-pill="notations"></span><button type="button" class="info" data-delta="notations" data-tip="" aria-label="Details of the figure" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
+      </div>
+      <details class="desc">
+        <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Show the description</span><span class="desc-fermer" data-i18n="desc.fermer">Hide the description</span></summary>
+        <div class="desc-corps">
+          <p data-i18n="notes.quoi"><b>What it is.</b> The ratings that judge France’s ability to repay its debt. AAA is the best rating.</p>
+          <p data-i18n="notes.pourquoi"><b>Why it matters.</b> A downgrade makes borrowing more expensive for France. Because review dates are known in advance, markets await each one nervously. Two steps really matter. Below A-, banks get less money from the European Central Bank when they pledge French debt as collateral (<a href="https://www.ecb.europa.eu/mopo/coll/risk/ecaf/html/index.en.html" target="_blank" rel="noopener">ECB rule</a>). Below BBB-, French debt would drop out of the “investment grade” category: many funds, which are not allowed to hold it, would have to sell, and the ECB would no longer accept it.</p>
+          <p data-i18n="notes.lire"><b>How to read the chart.</b> One line per agency: the higher it is, the better the rating. We keep the lowest of the three. Moody’s writes its ratings differently: Aa3 equals AA-.</p>
+          <p data-i18n="notes.qui"><b>Who measures it, and when.</b> S&amp;P, Moody’s and Fitch. EU rules require them to publish their review dates for the coming year every late December, always on a Friday, and to announce a rating only after markets close (<a href="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=CELEX:32013R0462" target="_blank" rel="noopener">credit rating agencies regulation, Article 8a</a>); they may depart from this calendar only with a justification. Ratings listed by the <a href="https://www.aft.gouv.fr/fr/notation-de-la-france" target="_blank" rel="noopener">Agence France Trésor</a>. Collected every morning, a change is recorded only if two independent sources confirm it (<a href="https://en.wikipedia.org/wiki/List_of_countries_by_credit_rating" target="_blank" rel="noopener">Wikipedia</a>, <a href="https://countryeconomy.com/ratings/france" target="_blank" rel="noopener">countryeconomy.com</a>).</p>
+        </div>
+      </details>
+      <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-notes" data-i18n="periode">Period</span><div class="seg" role="group" aria-labelledby="periode-notes" data-periode="notes"></div></div></div>
+      <div class="chart" id="chart-ratings"></div>
+      <ul class="legend" id="legend-ratings"></ul>
+      <details class="desc detail-table">
+        <summary><span class="desc-ouvrir" data-i18n="notes.table.ouvrir">Show agency details</span><span class="desc-fermer" data-i18n="notes.table.fermer">Hide agency details</span></summary>
+        <div class="table-scroll">
+          <table class="ratings-table" id="ratings-table">
+            <thead><tr><th data-i18n="notes.th.agence">Agency</th><th data-i18n="notes.th.note">Rating</th><th data-i18n="notes.th.perspective">Outlook</th><th data-i18n="notes.th.derniere">Last decision</th><th data-i18n="notes.th.prochaine">Next review</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </details>
+      <p class="alert" id="ratings-alert" hidden></p>
+      <p class="seuils-titre" data-i18n="seuils">Risk thresholds</p>
+      <ul class="thresholds" data-thresholds="notations"></ul>
+    </article>
+
+    <article class="signal" id="target">
+      <div class="signal-head">
+        <div>
+          <h2 data-i18n="target.titre">Banque de France TARGET2 balance</h2>
+        </div>
+        <div class="signal-now"><span class="big" data-now="target">—</span><span class="pill" data-pill="target"></span><button type="button" class="info" data-delta="target" data-tip="" aria-label="Details of the figure" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
+      </div>
+      <details class="desc">
+        <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Show the description</span><span class="desc-fermer" data-i18n="desc.fermer">Hide the description</span></summary>
+        <div class="desc-corps">
+          <p data-i18n="target.quoi"><b>What it is.</b> The balance of the Banque de France with the other central banks of the euro area, relative to the size of their combined balance sheet, that of the Eurosystem.</p>
+          <p data-i18n="target.pourquoi"><b>Why it matters.</b> When savers, companies or investors move their money from France to a bank in another euro area country, the balance falls. A sharp drop signals capital flight: -6.0% in November 2008, -4.2% in January 2012, at the height of the euro crisis. We divide it by the Eurosystem balance sheet because ECB debt purchases, which have tripled that balance sheet since 2008, also deepen the balance without any panic: in billions, October 2025 (-240) looked worse than 2008 (-119); relative to the balance sheet (-3.9%), it is not.</p>
+          <p data-i18n="target.lire"><b>How to read the chart.</b> The line shows the balance at the end of each month, as a % of the Eurosystem balance sheet; the amount in billions appears on hover. The lower it goes, the more capital is leaving France. Coloured backgrounds show the risk thresholds: below -4%, only 2008-2009 and the euro crisis.</p>
+          <p data-i18n="target.qui"><b>Who measures it, and when.</b> The European Central Bank, which publishes the <a href="https://data.ecb.europa.eu/data/datasets/TGB/TGB.M.FR.N.A094T.U2.EUR.E" target="_blank" rel="noopener">Banque de France balance</a> at the end of each month and the <a href="https://data.ecb.europa.eu/data/datasets/ILM/ILM.W.U2.C.T000000.Z5.Z01" target="_blank" rel="noopener">Eurosystem balance sheet</a> every week, since 2008; read directly from it every morning.</p>
+        </div>
+      </details>
+      <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-target" data-i18n="periode">Period</span><div class="seg" role="group" aria-labelledby="periode-target" data-periode="target"></div></div></div>
+      <div class="chart" id="chart-target"></div>
+      <p class="seuils-titre" data-i18n="seuils">Risk thresholds</p>
+      <ul class="thresholds" data-thresholds="target"></ul>
+    </article>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p data-i18n="pied.collecte">Collected every morning (ECB, Banque de France, Bundesbank, Eurostat, Reuters dispatches); TARGET2 and the CISS are also read live. The thresholds are landmarks drawn from each series’ history, not forecasts.</p>
+    <p class="retard" id="retard" hidden></p>
+    <p><a href="methode.html" data-i18n="pied.methode">How the Vigie Index is calculated, with a full example</a></p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+  // Secours : si app.js n'a pas démarré après 10 s (fichier absent, erreur, module non chargé), on le dit.
+  setTimeout(function () {
+    if (window.vigieDemarre) return;
+    var v = document.getElementById('verdict');
+    if (v) v.textContent = document.documentElement.lang === 'en' ? 'The page could not load. Please reload it in a moment.' : 'La page n’a pas pu se charger. Recharge-la dans un instant.';
+  }, 10000);
+</script>
+<script type="module" src="../app.js?v=ef4bbed6"></script>
+</body>
+</html>

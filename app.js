@@ -2,24 +2,19 @@
 // Le calcul (scores, niveaux, phrase de verdict) vient tout entier de score.mjs.
 import {
   SEUILS, ANCRAGES, METHODE_VERSION, couvertures, niveauBrut, niveauScore, interpoler, notch, notchLabel, fusionnerSeries, etatDuJour,
-  serieQuotidienne, plusHautDepuis, plusBasDepuis, picDuMois, picsMensuels, phraseVerdict, partsTarget,
-} from './score.mjs?v=d11cea8f';
-import { EN } from './anglais.mjs?v=1edf9c86';
+  serieQuotidienne, plusHautDepuis, plusBasDepuis, picDuMois, picsMensuels, phraseVerdict, partsTarget, NIVEAUX_TEXTE,
+} from './score.mjs?v=c3b33b7a';
 
 window.vigieDemarre = true; // lu par le script de secours d'index.html
 
-// Langue de la page : « fr » ou « en » (bouton FR / EN, choix gardé dans le navigateur). index.html la fixe avant l'affichage.
+// Langue de la page : « fr » sur /, « en » sur /en/ (en/index.html, généré par scripts/pages.mjs). Le bouton FR / EN est un lien.
 const state = {
   periodes: { indice: 15, spread: 15, adj: 15, nonres: 15, notes: 15, target: 15 }, spreadStep: 'jour', spreadVue: 'ecart', data: null, masquees: {},
   lang: document.documentElement.lang === 'en' ? 'en' : 'fr',
 };
 const L = (fr, en) => (state.lang === 'en' ? en : fr);
 
-const LEVEL_LABEL = {
-  fr: { calme: 'Calme', vigilance: 'Vigilance', tension: 'Tension', crise: 'Crise' },
-  en: { calme: 'Calm', vigilance: 'Watch', tension: 'Stress', crise: 'Crisis' },
-};
-const niveauTexte = (level) => LEVEL_LABEL[state.lang][level];
+const niveauTexte = (level) => NIVEAUX_TEXTE[state.lang][level];
 
 // Seuils par signal, tirés de score.mjs : bornes [min, max) de chaque niveau, dans l'unité affichée.
 const CLE_SCORE = { spread: 'spread', adjudications: 'couverture', 'non-residents': 'nonResidents', notations: 'notes', target: 'target' };
@@ -96,8 +91,9 @@ const levelOf = (key, v) => niveauBrut(CLE_SCORE[key], v);
 
 // ---------- Données ----------
 
+// Chemins lus depuis app.js, à la racine : les mêmes fichiers pour / et /en/.
 async function json(path) {
-  const r = await fetch(path, { cache: 'no-cache' });
+  const r = await fetch(new URL(path, import.meta.url), { cache: 'no-cache' });
   if (!r.ok) throw new Error(`${path} : ${r.status}`);
   return r.json();
 }
@@ -960,43 +956,6 @@ function colonnes(corps) {
 const equilibrerColonnes = () => document.querySelectorAll('details.desc[open] > .desc-corps').forEach(colonnes);
 document.addEventListener('toggle', (e) => { if (e.target.matches?.('details.desc')) equilibrerColonnes(); }, true);
 
-// ---------- Langue : bouton FR / EN ----------
-// Textes fixes d'index.html (data-i18n, data-i18n-attr) : le français est lu une fois dans la page, l'anglais vient
-// d'anglais.mjs. Les textes calculés (chiffres, dates, infobulles, phrase du jour) passent par L() et sont redessinés.
-
-const FRANCAIS = new WeakMap();
-
-function traduirePage() {
-  document.documentElement.lang = state.lang;
-  for (const e of document.querySelectorAll('[data-i18n], [data-i18n-attr]')) {
-    if (!FRANCAIS.has(e)) {
-      const attrs = Object.fromEntries((e.dataset.i18nAttr ?? '').split(';').filter(Boolean).map((x) => [x.split(':')[0], e.getAttribute(x.split(':')[0])]));
-      FRANCAIS.set(e, { html: e.innerHTML, attrs });
-    }
-    const fr = FRANCAIS.get(e);
-    if (e.dataset.i18n) e.innerHTML = state.lang === 'en' ? EN[e.dataset.i18n] ?? fr.html : fr.html;
-    for (const x of (e.dataset.i18nAttr ?? '').split(';').filter(Boolean)) {
-      const [attr, cle] = x.split(':');
-      e.setAttribute(attr, state.lang === 'en' ? EN[cle] ?? fr.attrs[attr] : fr.attrs[attr]);
-    }
-  }
-}
-
-function changerLangue() {
-  state.lang = state.lang === 'fr' ? 'en' : 'fr';
-  try { localStorage.setItem('langue', state.lang); } catch (e) {}
-  cacherBulle();
-  langueD3();
-  traduirePage();
-  fillThresholds();
-  if (!state.data) return;
-  renderRatingsTable(state.data.ratings);
-  renderAuctionSource(state.data.adj); // le lien « dernière vente » vient d'être réécrit avec sa description
-  renderAuctionsTable(state.data.adj);
-  renderAll();
-  equilibrerColonnes();
-}
-
 // ---------- Démarrage ----------
 
 document.addEventListener('click', (e) => {
@@ -1020,8 +979,6 @@ document.getElementById('spread-step').addEventListener('click', (e) => {
   render();
 });
 
-document.getElementById('langue-toggle').addEventListener('click', changerLangue);
-
 document.getElementById('theme-toggle').addEventListener('click', () => {
   const root = document.documentElement;
   const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
@@ -1044,7 +1001,6 @@ function renderAll() {
   render();
 }
 
-traduirePage();
 fillThresholds();
 loadFiles().then((data) => {
   state.data = data;

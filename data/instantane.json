@@ -1,0 +1,13 @@
+{
+  "jour": "2026-10-27",
+  "indice": 64,
+  "niveau": "tension",
+  "niveauTexte": {
+    "fr": "Tension",
+    "en": "Stress"
+  },
+  "verdict": {
+    "fr": "La dette française est sous tension. Le reste des marchés financiers reste calme.",
+    "en": "French debt is under stress. The rest of the financial markets remain calm."
+  }
+}

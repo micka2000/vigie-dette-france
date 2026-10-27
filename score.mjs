@@ -39,6 +39,11 @@ export const PEREMPTION_CISS_JOURS = 10;
 export const NOMS = {
   spread: 'spread', couverture: 'couverture', nonResidents: 'non-résidents', notes: 'notes', target: 'TARGET2',
 };
+// Libellés des niveaux, affichés sur la page, dans l'instantané du HTML et sur l'image de partage.
+export const NIVEAUX_TEXTE = {
+  fr: { calme: 'Calme', vigilance: 'Vigilance', tension: 'Tension', crise: 'Crise' },
+  en: { calme: 'Calm', vigilance: 'Watch', tension: 'Stress', crise: 'Crisis' },
+};
 export const SOUS_INDICES = { tension: ['spread', 'couverture'], fond: ['nonResidents', 'notes', 'target'] };
 
 const SP = ['AAA', 'AA+', 'AA', 'AA-', 'A+', 'A', 'A-', 'BBB+', 'BBB', 'BBB-'];

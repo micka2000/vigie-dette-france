@@ -1,15 +1,165 @@
 <!doctype html>
+<!-- Source de la page française. en/index.html en est généré par scripts/pages.mjs, avec les textes d’anglais.mjs. -->
 <html lang="fr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title data-i18n="titre">Vigie Dette France</title>
-<meta name="description" data-i18n-attr="content:meta.description" content="Les cinq signaux de santé de la dette publique française, mis à jour chaque jour, avec leurs seuils de risque historiques.">
+<title data-i18n="titre">Vigie Dette France · Le risque de la dette publique, chaque jour</title>
+<meta name="description" data-i18n-attr="content:meta.description" content="Spread France-Allemagne, adjudications, non-résidents, notes des agences et TARGET2. Les cinq signaux de risque de la dette française, mis à jour chaque jour.">
 <meta name="searchvoro-site-verification" content="36b0e444adb6900495ddd1ea84d69911">
-<link rel="stylesheet" href="styles.css?v=3d819e43">
+<link rel="canonical" href="https://vigiedette.com/" data-i18n-attr="href:url">
+<link rel="alternate" hreflang="fr" href="https://vigiedette.com/">
+<link rel="alternate" hreflang="en" href="https://vigiedette.com/en/">
+<link rel="alternate" hreflang="x-default" href="https://vigiedette.com/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Vigie Dette France">
+<meta property="og:locale" content="fr_FR" data-i18n-attr="content:og.locale">
+<meta property="og:url" content="https://vigiedette.com/" data-i18n-attr="content:url">
+<meta property="og:title" content="Vigie Dette France · Le risque de la dette publique, chaque jour" data-i18n-attr="content:titre">
+<meta property="og:description" data-instantane="resume" content="Indice Vigie 64/100, tension. La dette française est sous tension. Le reste des marchés financiers reste calme.">
+<meta property="og:image" data-instantane="image" content="https://vigiedette.com/partage-fr.png?v=2026-10-27">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="L’Indice Vigie du jour et le verdict sur la dette française" data-i18n-attr="content:image.alt">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json" id="donnees-structurees">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://vigiedette.com/#organisation",
+      "name": "Vigie Dette France",
+      "url": "https://vigiedette.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://vigiedette.com/logo.png",
+        "width": 512,
+        "height": 512
+      },
+      "sameAs": [
+        "https://github.com/micka2000/vigie-dette-france"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://vigiedette.com/#site",
+      "url": "https://vigiedette.com/",
+      "name": "Vigie Dette France",
+      "inLanguage": [
+        "fr",
+        "en"
+      ],
+      "publisher": {
+        "@id": "https://vigiedette.com/#organisation"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://vigiedette.com/#page",
+      "url": "https://vigiedette.com/",
+      "inLanguage": "fr",
+      "name": "Vigie Dette France · Le risque de la dette publique, chaque jour",
+      "description": "Indice Vigie 64/100, tension. La dette française est sous tension. Le reste des marchés financiers reste calme.",
+      "dateModified": "2026-10-27",
+      "isPartOf": {
+        "@id": "https://vigiedette.com/#site"
+      },
+      "about": {
+        "@id": "https://vigiedette.com/#donnees"
+      },
+      "primaryImageOfPage": "https://vigiedette.com/partage-fr.png"
+    },
+    {
+      "@type": "Dataset",
+      "@id": "https://vigiedette.com/#donnees",
+      "url": "https://vigiedette.com/",
+      "name": "Vigie Dette France, signaux de risque de la dette publique française",
+      "description": "Cinq séries quotidiennes et mensuelles sur le risque de la dette publique française, collectées chaque matin auprès de la Banque de France, de la Bundesbank, de la Banque centrale européenne, d’Eurostat et des agences de notation : spread OAT-Bund à 10 ans depuis 2004, taux de couverture des adjudications de l’Agence France Trésor, part de la dette de l’État détenue par les non-résidents, notes de S&P, Moody’s et Fitch, solde TARGET2 de la Banque de France. L’Indice Vigie les résume en une note de 0 à 100.",
+      "keywords": [
+        "dette publique",
+        "France",
+        "spread OAT-Bund",
+        "OAT 10 ans",
+        "adjudications AFT",
+        "non-résidents",
+        "notation souveraine",
+        "TARGET2"
+      ],
+      "inLanguage": "fr",
+      "isAccessibleForFree": true,
+      "creator": {
+        "@id": "https://vigiedette.com/#organisation"
+      },
+      "publisher": {
+        "@id": "https://vigiedette.com/#organisation"
+      },
+      "spatialCoverage": {
+        "@type": "Place",
+        "name": "France"
+      },
+      "temporalCoverage": "2004-11-03/2026-10-27",
+      "dateModified": "2026-10-27",
+      "variableMeasured": [
+        "Spread OAT-Bund à 10 ans (points de base)",
+        "Taux de couverture des adjudications à 10 ans",
+        "Part de la dette de l’État détenue par les non-résidents (%)",
+        "Notes des agences de notation",
+        "Solde TARGET2 de la Banque de France (% du bilan de l’Eurosystème)",
+        "Indice Vigie (0 à 100)"
+      ],
+      "distribution": [
+        {
+          "@type": "DataDownload",
+          "name": "Taux à 10 ans France et Allemagne, spread",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://vigiedette.com/data/spread.json"
+        },
+        {
+          "@type": "DataDownload",
+          "name": "Adjudications de l’Agence France Trésor",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://vigiedette.com/data/adjudications.json"
+        },
+        {
+          "@type": "DataDownload",
+          "name": "Part des non-résidents (Banque de France)",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://vigiedette.com/data/non_residents_bdf.json"
+        },
+        {
+          "@type": "DataDownload",
+          "name": "Notes des agences",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://vigiedette.com/data/notations.json"
+        },
+        {
+          "@type": "DataDownload",
+          "name": "Solde TARGET2 de la Banque de France",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://vigiedette.com/data/target.json"
+        }
+      ]
+    }
+  ]
+}
+</script>
+<link rel="stylesheet" href="styles.css?v=fa348e25">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-  try { const l = localStorage.getItem('langue'); if (l === 'en' || (!l && !/^fr\b/i.test(navigator.language || 'fr'))) document.documentElement.lang = 'en'; } catch (e) {}
+  // Langue choisie avec le bouton FR / EN : on renvoie vers sa page. Jamais d'après la langue du navigateur,
+  // pour que Google, qui lit en anglais, indexe aussi la page française.
+  try {
+    const l = localStorage.getItem('langue'), alt = document.querySelector(`link[rel="alternate"][hreflang="${l}"]`);
+    if (l && l !== document.documentElement.lang && alt) location.replace(new URL(alt.href).pathname + location.hash);
+  } catch (e) {}
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest && e.target.closest('a[hreflang]');
+    if (a) try { localStorage.setItem('langue', a.hreflang.toLowerCase()); } catch (x) {}
+  });
 </script>
 </head>
 <body>
@@ -19,23 +169,24 @@
     <div class="masthead-top">
       <h1>Vigie Dette France</h1>
       <div class="masthead-actions">
-        <button class="btn-icone btn-langue" id="langue-toggle" type="button" lang="en" aria-label="Read this page in English" data-tip="English version" data-i18n-attr="aria-label:langue.aria;data-tip:langue.tip;lang:langue.code"><span data-i18n="langue.code">EN</span></button>
+        <a class="btn-icone btn-langue" id="langue-toggle" href="en/" hreflang="en" lang="en" aria-label="Read this page in English" data-tip="English version" data-i18n-attr="href:langue.href;hreflang:langue.code;aria-label:langue.aria;data-tip:langue.tip;lang:langue.code"><span data-i18n="langue.code">EN</span></a>
         <button class="btn-icone" id="theme-toggle" type="button" aria-label="Changer de thème, clair ou sombre" data-tip="Thème clair ou sombre" data-i18n-attr="aria-label:theme.aria;data-tip:theme.tip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg></button>
       </div>
     </div>
-    <p class="verdict" id="verdict" data-i18n="chargement">Chargement des signaux…</p>
-    <div class="indice" id="indice" hidden>
-      <p class="indice-score"><span id="indice-num"></span><span class="indice-sur">/100</span></p>
+    <p class="verdict" id="verdict">La dette française est sous tension. Le reste des marchés financiers reste calme.</p>
+    <div class="indice" id="indice">
+      <p class="indice-score"><span id="indice-num">64</span><span class="indice-sur">/100</span></p>
       <div class="indice-side">
         <span class="indice-nom" data-i18n="indice.nom">Indice Vigie</span>
-        <span class="pill" id="indice-niveau"></span>
+        <span class="pill" id="indice-niveau" data-level="tension">Tension</span>
       </div>
     </div>
     <div class="reperes">
             <p class="repere" id="repere" hidden><span id="repere-texte"></span> <button type="button" class="info" id="repere-info" data-tip="" aria-label="Détail du repère" data-i18n-attr="aria-label:repere.aria">i</button></p>
     </div>
     <p class="stamp">
-      <span id="donnees"></span>
+      <span id="donnees">Données du 27 oct. 2026</span>
+      <a class="retour" href="methode.html" data-i18n="entete.methode">Méthode de calcul</a>
     </p>
     <div id="indice-desc"></div>
   </div>
@@ -248,6 +399,6 @@
     if (v) v.textContent = document.documentElement.lang === 'en' ? 'The page could not load. Please reload it in a moment.' : 'La page n’a pas pu se charger. Recharge-la dans un instant.';
   }, 10000);
 </script>
-<script type="module" src="app.js?v=fa4997ad"></script>
+<script type="module" src="app.js?v=ef4bbed6"></script>
 </body>
 </html>

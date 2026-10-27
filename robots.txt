@@ -1,0 +1,7 @@
+# Le tableau de bord, la méthode et les données sont ouverts. Les dossiers de travail du dépôt ne sont pas des pages.
+User-agent: *
+Disallow: /docs/
+Disallow: /test/
+Disallow: /scripts/
+
+Sitemap: https://vigiedette.com/sitemap.xml

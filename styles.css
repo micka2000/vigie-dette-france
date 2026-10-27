@@ -158,6 +158,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--fg-accent); out
   background: transparent; color: inherit; border: 1.5px solid currentColor; border-radius: 50%; cursor: pointer;
   transition: background-color 150ms var(--ease-standard), transform 150ms var(--ease-standard);
 }
+a.btn-icone { text-decoration: none; }
 .btn-icone svg { width: 22px; height: 22px; fill: currentColor; }
 .btn-icone:hover { background: color-mix(in srgb, currentColor 8%, transparent); }
 .btn-icone:active { transform: scale(0.94); background: color-mix(in srgb, currentColor 12%, transparent); }
@@ -387,8 +388,6 @@ footer p { margin: 0; max-width: 80ch; }
 #indice-desc[hidden], .reperes[hidden], .signal[hidden] { display: none; }
 .info[hidden] { display: none; }
 
-/* Page « Méthode de calcul » : une langue affichée à la fois, formules en bloc */
-html[lang="en"] [data-langue="fr"], html:not([lang="en"]) [data-langue="en"] { display: none !important; }
 /* Page de lecture : une seule largeur pour le texte, les tableaux et les formules, bords alignés */
 .methode .wrap { max-width: 860px; }
 .methode .signal td:first-child { white-space: nowrap; }

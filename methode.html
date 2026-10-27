@@ -3,12 +3,87 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Méthode de calcul · Vigie Dette France</title>
+<title>Méthode de calcul de l’Indice Vigie · Vigie Dette France</title>
 <meta name="description" content="Comment l’Indice Vigie est calculé : les cinq signaux, la conversion en score sur 100, les deux parties, les règles de rigueur et un exemple complet.">
-<link rel="stylesheet" href="styles.css?v=3d819e43">
+<link rel="canonical" href="https://vigiedette.com/methode.html">
+<link rel="alternate" hreflang="fr" href="https://vigiedette.com/methode.html">
+<link rel="alternate" hreflang="en" href="https://vigiedette.com/en/methode.html">
+<link rel="alternate" hreflang="x-default" href="https://vigiedette.com/methode.html">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Vigie Dette France">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:url" content="https://vigiedette.com/methode.html">
+<meta property="og:title" content="Méthode de calcul de l’Indice Vigie · Vigie Dette France">
+<meta property="og:description" content="Comment l’Indice Vigie est calculé : les cinq signaux, la conversion en score sur 100, les deux parties, les règles de rigueur et un exemple complet.">
+<meta property="og:image" content="https://vigiedette.com/partage-fr.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "TechArticle",
+      "@id": "https://vigiedette.com/methode.html#page",
+      "url": "https://vigiedette.com/methode.html",
+      "headline": "Méthode de calcul",
+      "name": "Méthode de calcul de l’Indice Vigie · Vigie Dette France",
+      "description": "Comment l’Indice Vigie est calculé : les cinq signaux, la conversion en score sur 100, les deux parties, les règles de rigueur et un exemple complet.",
+      "inLanguage": "fr",
+      "isPartOf": {
+        "@id": "https://vigiedette.com/#site"
+      },
+      "author": {
+        "@id": "https://vigiedette.com/#organisation"
+      },
+      "publisher": {
+        "@id": "https://vigiedette.com/#organisation"
+      },
+      "about": {
+        "@id": "https://vigiedette.com/#donnees"
+      },
+      "breadcrumb": {
+        "@id": "https://vigiedette.com/methode.html#fil"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://vigiedette.com/methode.html#fil",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Vigie Dette France",
+          "item": "https://vigiedette.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Méthode de calcul",
+          "item": "https://vigiedette.com/methode.html"
+        }
+      ]
+    }
+  ]
+}
+</script>
+<link rel="stylesheet" href="styles.css?v=fa348e25">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-  try { const l = localStorage.getItem('langue'); if (l === 'en' || (!l && !/^fr\b/i.test(navigator.language || 'fr'))) document.documentElement.lang = 'en'; } catch (e) {}
+  // Langue choisie avec le bouton FR / EN : on renvoie vers sa page. Jamais d'après la langue du navigateur,
+  // pour que Google, qui lit en anglais, indexe aussi la page française.
+  try {
+    const l = localStorage.getItem('langue'), alt = document.querySelector(`link[rel="alternate"][hreflang="${l}"]`);
+    if (l && l !== document.documentElement.lang && alt) location.replace(new URL(alt.href).pathname + location.hash);
+  } catch (e) {}
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest && e.target.closest('a[hreflang]');
+    if (a) try { localStorage.setItem('langue', a.hreflang.toLowerCase()); } catch (x) {}
+  });
 </script>
 </head>
 <body class="methode">
@@ -16,23 +91,21 @@
 <header class="masthead">
   <div class="wrap">
     <div class="masthead-top">
-      <h1><span data-langue="fr">Méthode de calcul</span><span data-langue="en">How it is calculated</span></h1>
+      <h1>Méthode de calcul</h1>
       <div class="masthead-actions">
-        <button class="btn-icone btn-langue" id="langue-toggle" type="button"><span data-langue="fr" lang="en">EN</span><span data-langue="en" lang="fr">FR</span></button>
-        <button class="btn-icone" id="theme-toggle" type="button" aria-label="Thème clair ou sombre / Light or dark theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg></button>
+        <a class="btn-icone btn-langue" id="langue-toggle" href="en/methode.html" hreflang="en" lang="en" aria-label="Read this page in English">EN</a>
+        <button class="btn-icone" id="theme-toggle" type="button" aria-label="Changer de thème, clair ou sombre"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg></button>
       </div>
     </div>
-    <p class="verdict" data-langue="fr">L’Indice Vigie résume en une note de 0 à 100 l’état de la dette française. Voici, étape par étape, comment il est calculé, avec l’exemple du 21 octobre 2026.</p>
-    <p class="verdict" data-langue="en">The Vigie Index sums up the state of French debt in a score from 0 to 100. Here is how it is calculated, step by step, with the example of 21 October 2026.</p>
-    <p class="stamp"><a class="retour" href="./"><span data-langue="fr">← Retour au tableau de bord</span><span data-langue="en">← Back to the dashboard</span></a> · <span data-langue="fr">Méthode 2.1, en vigueur depuis le 21 octobre 2026</span><span data-langue="en">Method 2.1, in force since 21 October 2026</span></p>
+    <p class="verdict">L’Indice Vigie résume en une note de 0 à 100 l’état de la dette française. Voici, étape par étape, comment il est calculé, avec l’exemple du 21 octobre 2026.</p>
+    <p class="stamp"><a class="retour" href="./">← Retour au tableau de bord</a> · Méthode 2.1, en vigueur depuis le 21 octobre 2026</p>
   </div>
 </header>
 
 <main class="wrap">
 <div class="signals">
 
-<!-- ===================== FRANÇAIS ===================== -->
-<div data-langue="fr" class="signals">
+<div class="signals">
 
 <article class="signal">
   <h2>En résumé</h2>
@@ -207,198 +280,18 @@ Plus haut depuis  = la dernière séance passée où l’indice
 
 </div>
 
-<!-- ===================== ENGLISH ===================== -->
-<div data-langue="en" class="signals">
-
-<article class="signal">
-  <h2>In short</h2>
-  <p>We track five signals. Each one gets a score out of 100 from a scale. We average the “markets” signals, then the “fundamentals” signals. The index is the average of these two parts.</p>
-  <pre class="formule">Index        = ( Markets + Fundamentals ) ÷ 2
-
-Markets      = ( Spread + Cover ) ÷ 2
-Fundamentals = ( Non-residents + Ratings + TARGET2 ) ÷ 3
-
-Index        = ¼·Spread + ¼·Cover + ⅙·Non-residents + ⅙·Ratings + ⅙·TARGET2</pre>
-  <p>Each market signal counts for a quarter of the index, each fundamental signal for a sixth.</p>
-</article>
-
-<article class="signal">
-  <h2>1. The five signals</h2>
-  <div class="table-scroll"><table class="ratings-table">
-    <thead><tr><th>Signal</th><th>What is measured</th><th>Source</th><th>Frequency</th></tr></thead>
-    <tbody>
-      <tr><td>Spread</td><td>France’s 10-year rate minus Germany’s, at the close, in basis points (100 bp = 1%)</td><td>Banque de France, Bundesbank</td><td>daily since 2004</td></tr>
-      <tr><td>Cover</td><td>Amount bid ÷ amount sold at the State’s 10-year bond auction (August and December auctions set aside)</td><td>Agence France Trésor, Reuters dispatches</td><td>monthly since 2004</td></tr>
-      <tr><td>Non-residents</td><td>Share of State securities held by foreign investors</td><td>Banque de France</td><td>quarterly since 2008</td></tr>
-      <tr><td>Ratings</td><td>Lowest rating from S&amp;P, Moody’s and Fitch, counted in notches lost from AAA</td><td>agencies, two matching sources</td><td>at each decision</td></tr>
-      <tr><td>TARGET2</td><td>Banque de France balance with the other euro area central banks, as a % of the Eurosystem balance sheet</td><td>ECB</td><td>monthly since 2008</td></tr>
-    </tbody>
-  </table></div>
-</article>
-
-<article class="signal">
-  <h2>2. Each signal becomes a score out of 100</h2>
-  <p>Each signal has five reference points. Points 25, 50 and 75 are the watch, stress and crisis thresholds shown on its card. Between two points, the score moves in a straight line.</p>
-  <pre class="formule">if the value x lies between point a (score A) and point b (score A + 25):
-
-score = A + 25 × (x − a) ÷ (b − a)
-
-below the first point: 0        beyond the last: 100</pre>
-  <div class="table-scroll"><table class="ratings-table">
-    <thead><tr><th>Score</th><th>0</th><th>25 watch</th><th>50 stress</th><th>75 crisis</th><th>100</th></tr></thead>
-    <tbody>
-      <tr><td>Spread</td><td>0 bp</td><td>50 bp</td><td>80 bp</td><td>120 bp</td><td>200 bp</td></tr>
-      <tr><td>Cover</td><td>3.5</td><td>2.5</td><td>2.0</td><td>1.5</td><td>1.0</td></tr>
-      <tr><td>Non-residents</td><td>40%</td><td>50%</td><td>55%</td><td>60%</td><td>70%</td></tr>
-      <tr><td>Ratings</td><td>AAA</td><td>AA-</td><td>A+</td><td>BBB+</td><td>BBB-</td></tr>
-      <tr><td>TARGET2</td><td>+1%</td><td>-1%</td><td>-2.5%</td><td>-4%</td><td>-6%</td></tr>
-    </tbody>
-  </table></div>
-  <p>For cover and TARGET2, a low value is bad: the scale goes down and the formula reads the other way. Ratings are counted in notches lost from AAA: AA+ = 1, AA = 2, AA- = 3, A+ = 4… down to BBB- = 9.</p>
-  <details class="desc approfondir">
-  <summary><span class="desc-ouvrir">Why these reference points? To dig deeper</span><span class="desc-fermer">Hide the details of the reference points</span></summary>
-  <div class="approfondir-corps">
-  <p>The reference points do not all come from the same reasoning. For each one, here is where it comes from and what it means in the history. They are ranked from the most solid (a public rule) to the most fragile (a choice made by hand).</p>
-  <h3>Ratings: public rules of the ECB and the markets</h3>
-  <ul>
-    <li><b>AAA (0)</b>: the best possible rating.</li>
-    <li><b>AA- (25)</b>: last notch of the “high grade” category. Below it, France moves into the A category.</li>
-    <li><b>A+ (50)</b>: entry into the A category, where France has been since autumn 2025 (Fitch in September, S&amp;P in October).</li>
-    <li><b>BBB+ (75)</b>: entry into the BBB category. The European Central Bank then applies a larger haircut to French debt that banks pledge as collateral (third step of its scale).</li>
-    <li><b>BBB- (100)</b>: last notch of the “investment grade” category. Below it, many funds are no longer allowed to hold these securities and must sell them, and the ECB no longer accepts them.</li>
-  </ul>
-  <h3>TARGET2: calibrated on past crises</h3>
-  <ul>
-    <li><b>-6% (100)</b>: the worst level observed, in November 2008 (-6.0%).</li>
-    <li><b>-4% (75)</b>: only months of 2008-2009 and of the euro crisis (2011-2012) went below it.</li>
-    <li><b>-2.5% (50) and -1% (25)</b>: chosen so that the level follows history. Since 2008, 42% of months are calm, 32% on watch, 18% under stress and 8% in crisis.</li>
-    <li><b>+1% (0)</b>: above the highest level observed (+0.9%).</li>
-  </ul>
-  <h3>Spread: chosen at launch, then checked against 5,576 sessions since 2004</h3>
-  <ul>
-    <li><b>0 bp (0)</b>: France borrows at the same rate as Germany.</li>
-    <li><b>50 bp (25)</b>: exceeded on 31% of days. Beyond it, things are no longer normal.</li>
-    <li><b>80 bp (50)</b>: exceeded on 5% of days: the euro crisis, the 2017 presidential election, then 2024-2026 after the snap election.</li>
-    <li><b>120 bp (75)</b>: exceeded on 1.3% of days, only in 2011-2012 and in 2026.</li>
-    <li><b>200 bp (100)</b>: close to the record, 214 bp on 17 November 2011.</li>
-  </ul>
-  <p>These values were set by hand when the site was launched, then checked against the data: they match notable moments, but no rule produced them. For comparison, five euro area countries had to be rescued between 2010 and 2012 with a spread of 470 to 590 bp.</p>
-  <h3>Cover: chosen at launch, to be reviewed</h3>
-  <ul>
-    <li><b>3.5 (0)</b>: exceptional demand, exceeded in 2% of auctions since 2004.</li>
-    <li><b>2.5 (25)</b>: the usual level before 2008 (median 2.42 from 2004 to 2007). 81% of auctions came in below it.</li>
-    <li><b>2.0 (50)</b>: the median since 2004 (2.02): one auction in two comes in below it.</li>
-    <li><b>1.5 (75)</b>: only 2% of auctions. The lowest: 1.39 in November 2014.</li>
-    <li><b>1.0 (100)</b>: absolute limit: buyers bid no more than the State sells.</li>
-  </ul>
-  <p>Known weakness: cover is “under stress” half the time, and its lows (2014, 2016, 2018) came in calm periods. It is a noisy signal, which matters mostly when it drops while the spread rises.</p>
-  <h3>Non-residents: chosen at launch, to be reviewed</h3>
-  <ul>
-    <li><b>70% (100)</b>: the record, 70.6% in June 2010.</li>
-    <li><b>60% (75)</b>: exceeded from 2008 to 2016, and close again today (59.7%).</li>
-    <li><b>55% (50) and 50% (25)</b>: intermediate steps. The lowest observed is 47.5%, at the end of 2021, when the ECB held a large share of French debt.</li>
-    <li><b>40% (0)</b>: never reached since 2008.</li>
-  </ul>
-  <p>Known weakness: 43% of quarters since 2008 are “in crisis”. The 60% threshold falls in a period when this share was normally high, before ECB purchases. This scale is the next one to recalibrate.</p>
-  <h3>Market stress (not in the index)</h3>
-  <p>0.10, 0.20 and 0.35 are exceeded by 41%, 22% and 10% of months since 1999 respectively. 0.80 is close to the record: 0.78 in December 2008. For reference: 0.62 in November 2011, 0.49 in March 2020, 0.58 in October 2022.</p>
-  </div>
-  </details>
-</article>
-
-<article class="signal">
-  <h2>3. The two parts and the index</h2>
-  <ul>
-    <li><b>Markets</b> (spread, cover): what investors demand today to lend to France. These signals react fast.</li>
-    <li><b>Fundamentals</b> (non-residents, ratings, TARGET2): weaknesses that move slowly.</li>
-  </ul>
-  <p>Both parts weigh the same: a passing market fever is not enough to make the index explode, and an underlying weakness does not go unnoticed.</p>
-  <div class="table-scroll"><table class="ratings-table">
-    <thead><tr><th>Index</th><th>0 to 25</th><th>25 to 50</th><th>50 to 75</th><th>75 and above</th></tr></thead>
-    <tbody><tr><td>Level</td><td>calm</td><td>watch</td><td>stress</td><td>crisis</td></tr></tbody>
-  </table></div>
-</article>
-
-<article class="signal">
-  <h2>4. Full example: 21 October 2026</h2>
-  <div class="table-scroll"><table class="ratings-table">
-    <thead><tr><th>Signal</th><th>Value</th><th>Between the points</th><th>Calculation</th><th>Score</th></tr></thead>
-    <tbody>
-      <tr><td>Spread</td><td>154.5 bp</td><td>120 (75) and 200 (100)</td><td>75 + 25 × 34.5 ÷ 80</td><td><b>85.8</b></td></tr>
-      <tr><td>Cover</td><td>12.564 ÷ 6.271 = 2.0035 (auction of 1 October)</td><td>2.5 (25) and 2.0 (50)</td><td>25 + 25 × 0.4965 ÷ 0.5</td><td><b>49.8</b></td></tr>
-      <tr><td>Non-residents</td><td>59.7% (end June 2026)</td><td>55 (50) and 60 (75)</td><td>50 + 25 × 4.7 ÷ 5</td><td><b>73.5</b></td></tr>
-      <tr><td>Ratings</td><td>A+ (S&amp;P, Fitch) = 4 notches</td><td>exactly 4 (50)</td><td>50 + 25 × 0 ÷ 3</td><td><b>50.0</b></td></tr>
-      <tr><td>TARGET2</td><td>-181.3 ÷ 5,915.3 €bn = -3.065% (end August 2026)</td><td>-2.5 (50) and -4 (75)</td><td>50 + 25 × 0.565 ÷ 1.5</td><td><b>59.4</b></td></tr>
-    </tbody>
-  </table></div>
-  <pre class="formule">Markets      = (85.8 + 49.8) ÷ 2         = 67.8
-Fundamentals = (73.5 + 50.0 + 59.4) ÷ 3  = 61.0
-Index        = (67.8 + 61.0) ÷ 2         = 64.4   →   64 out of 100, stress</pre>
-  <p>The spread pushes the index the most: it counts for a quarter and it is in the crisis zone. That day, the index had not been this high since 19 January 2012 (64.8), at the height of the euro crisis.</p>
-</article>
-
-<article class="signal">
-  <h2>5. The rules that keep the figure honest</h2>
-  <ul>
-    <li><b>Always all five signals.</b> If even one is missing or too old, its part is not calculated and the index is not shown. We never average the remaining signals: otherwise the curve would compare different formulas. The index therefore starts in May 2008, the first month when all five signals exist.</li>
-    <li><b>Data that is too old leaves the calculation.</b> The spread after 7 days, cover and TARGET2 after 3 months, non-residents after 15 months. Ratings stay valid until the next decision.</li>
-    <li><b>No information from the future.</b> Each past day is recalculated using only the data published on that day.</li>
-    <li><b>The same scope over time.</b> Cover always follows the most-sold 10-year bond of the auction; August and December auctions, which are of a different kind, are set aside. TARGET2 is divided by the Eurosystem balance sheet, which has tripled since 2008 with ECB debt purchases: in billions, 2025 looked worse than 2008; in proportion, it is not.</li>
-  </ul>
-</article>
-
-<article class="signal">
-  <h2>6. The curve and the “highest since” landmark</h2>
-  <pre class="formule">Monthly point  = the highest index value
-                 among the month’s sessions
-
-Highest since  = the last past session when the index
-                 was at least as high as today</pre>
-  <p>We keep the most strained day of each month, never an average nor the last day, so that crisis peaks stay visible.</p>
-</article>
-
-<article class="signal">
-  <h2>7. What is not in the index</h2>
-  <p>Stress across all financial markets in France, measured by the ECB (the CISS indicator), is only a benchmark, in the sentence of the day and as a dotted line on the curve. It is converted on the same kind of scale: 0.10 = 25, 0.20 = 50, 0.35 = 75, 0.80 = 100. On 21 October 2026 it stood at 0.044, or 11: calm. Hence the sentence: “French debt is under stress. The rest of the financial markets remain calm.”</p>
-</article>
-
-<article class="signal">
-  <h2>8. Known limits</h2>
-  <ul>
-    <li><b>Reference points chosen by hand.</b> Each signal’s thresholds come from its history, but without a common rule: non-residents are “in crisis” 43% of the time since 2008, cover “under stress” half the time. A single rule, or a scale based on the euro crisis (five countries had to be rescued with a spread of 470 to 590 bp), is under consideration.</li>
-    <li><b>If the State stopped borrowing at 10 years</b>, cover would become too old after 3 months and the index would disappear, at the worst moment. This is what happened to Greece in 2010.</li>
-    <li><b>It is not a forecast.</b> The index says where things stand compared with the past, not what will happen.</li>
-  </ul>
-</article>
-
-<article class="signal">
-  <h2>9. Versions</h2>
-  <ul>
-    <li><b>2.1</b> (21 October 2026): TARGET2 divided by the Eurosystem balance sheet, new points -1 / -2.5 / -4%.</li>
-    <li><b>2.0</b> (21 October 2026): cover rebuilt since 2004 from the Agence France Trésor official history; always all five signals; August and December auctions set aside.</li>
-    <li><b>1.0</b> (20 October 2026): first version.</li>
-  </ul>
-  <p>The calculation is public: <a href="https://github.com/micka2000/vigie-dette-france/blob/main/score.mjs" target="_blank" rel="noopener">formula</a>, <a href="https://github.com/micka2000/vigie-dette-france/tree/main/data" target="_blank" rel="noopener">data</a>, <a href="https://github.com/micka2000/vigie-dette-france/blob/main/docs/designs/indice-vigie.md" target="_blank" rel="noopener">log of method choices</a>.</p>
-</article>
-
-</div>
 
 </div>
 </main>
 
 <footer>
   <div class="wrap">
-    <p><a class="retour" href="./"><span data-langue="fr">← Retour au tableau de bord</span><span data-langue="en">← Back to the dashboard</span></a></p>
+    <p><a class="retour" href="./">← Retour au tableau de bord</a></p>
   </div>
 </footer>
 
 <script>
-  // Langue et thème, mêmes choix gardés que sur le tableau de bord
-  document.getElementById('langue-toggle').addEventListener('click', function () {
-    var l = document.documentElement.lang === 'en' ? 'fr' : 'en';
-    document.documentElement.lang = l;
-    try { localStorage.setItem('langue', l); } catch (e) {}
-  });
+  // Thème, même choix gardé que sur le tableau de bord
   document.getElementById('theme-toggle').addEventListener('click', function () {
     var root = document.documentElement;
     var dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;

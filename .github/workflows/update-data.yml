@@ -25,22 +25,35 @@ jobs:
         env:
           WEBSTAT_API_KEY: ${{ secrets.WEBSTAT_API_KEY }}
         run: python scripts/update_data.py || echo "ECHECS=1" >> "$GITHUB_ENV"
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+      # Instantané du jour dans index.html et en/index.html, sitemap, images de partage. Un échec ici ne bloque pas les données.
+      - name: Pages et images de partage
+        run: |
+          node scripts/pages.mjs --instantane && pip install --quiet pillow==11.3.0 && python scripts/image_partage.py \
+            || echo "PAGES=1" >> "$GITHUB_ENV"
       - name: Commit si les séries ou les échecs ont changé
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git show HEAD:data/meta.json > "$RUNNER_TEMP/meta.json" 2>/dev/null || : > "$RUNNER_TEMP/meta.json"
-          git add data
+          git add data index.html en sitemap.xml partage-*.png
           if ! python scripts/update_data.py --echecs-changes "$RUNNER_TEMP/meta.json" \
-             && git diff --cached --quiet -- data ':(exclude)data/meta.json'; then
+             && git diff --cached --quiet -- . ':(exclude)data/meta.json'; then
             echo "Aucune nouvelle donnée."
           else
             git commit -m "Données du $(date -u +%F)"
             git pull --rebase
             git push
           fi
+      - name: Signaler l'échec des pages
+        if: env.PAGES == '1'
+        run: |
+          echo "::error::Pages ou images de partage non régénérées (voir l'étape « Pages et images de partage »)"
+          exit 1
       - name: Signaler les séries en échec
-        if: env.ECHECS == '1'
+        if: always() && env.ECHECS == '1'
         run: |
           python -c "import json; [print('::error::' + e['serie'] + ' : ' + e['erreur']) for e in json.load(open('data/meta.json'))['echecs']]"
           exit 1

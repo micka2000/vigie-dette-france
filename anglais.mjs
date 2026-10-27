@@ -1,14 +1,18 @@
 // Version anglaise des textes fixes d'index.html, par clé (attributs data-i18n et data-i18n-attr).
-// Le français reste dans index.html ; test/anglais.test.mjs vérifie que chaque clé a sa traduction.
+// Le français reste dans index.html ; scripts/pages.mjs en tire en/index.html. test/anglais.test.mjs vérifie que chaque clé a sa traduction.
 export const EN = {
-  'titre': 'Vigie Dette France',
-  'meta.description': 'The five health signals of French public debt, updated every day, with risk thresholds drawn from their history.',
+  'titre': 'Vigie Dette France · French public debt risk, every day',
+  'meta.description': 'France-Germany spread, debt auctions, foreign holdings, credit ratings and TARGET2. The five risk signals of French public debt, updated every day.',
+  'url': 'https://vigiedette.com/en/',
+  'og.locale': 'en_GB',
+  'image.alt': 'Today’s Vigie Index and the verdict on French debt',
+  'entete.methode': 'How it is calculated',
+  'langue.href': '../',
   'theme.aria': 'Switch between light and dark theme',
   'theme.tip': 'Light or dark theme',
   'langue.code': 'FR',
   'langue.aria': 'Lire la page en français',
   'langue.tip': 'Version française',
-  'chargement': 'Loading the signals…',
   'indice.nom': 'Vigie Index',
   'repere.aria': 'Details of this landmark',
   'synthese.aria': 'Summary of the five signals',

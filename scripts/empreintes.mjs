@@ -1,18 +1,22 @@
-// Réécrit l'empreinte (?v=...) de score.mjs et anglais.mjs dans app.js, puis celle de app.js et styles.css dans index.html :
-// node scripts/empreintes.mjs. À lancer après chaque modification de l'un d'eux ; test/assets.test.mjs échoue sinon.
+// Réécrit l'empreinte (?v=...) de score.mjs dans app.js, puis celle de app.js et styles.css dans index.html et les pages
+// Méthode, et régénère en/index.html : node scripts/empreintes.mjs. À lancer après chaque modification de l'un d'eux,
+// d'index.html ou d'anglais.mjs ; test/assets.test.mjs et test/pages.test.mjs échouent sinon.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 
 const racine = new URL('../', import.meta.url);
 const empreinte = (f) => createHash('sha256').update(readFileSync(new URL(f, racine))).digest('hex').slice(0, 8);
 
-// Dans cet ordre : l'empreinte d'app.js dépend de celles de score.mjs et anglais.mjs qu'il contient.
-const appels = [['app.js', ['score.mjs', 'anglais.mjs']], ['index.html', ['app.js', 'styles.css']], ['methode.html', ['styles.css']]];
+// Dans cet ordre : l'empreinte d'app.js dépend de celle de score.mjs qu'il contient.
+const appels = [['app.js', ['score.mjs']], ['index.html', ['app.js', 'styles.css']], ['methode.html', ['styles.css']], ['en/methode.html', ['styles.css']]];
 for (const [fichier, cibles] of appels) {
   const chemin = new URL(fichier, racine);
   let contenu = readFileSync(chemin, 'utf8');
   for (const f of cibles) {
-    contenu = contenu.replace(new RegExp(`(["'])(\\./)?${f.replace('.', '\\.')}(\\?v=[0-9a-f]*)?\\1`), (_, q, p = '') => `${q}${p}${f}?v=${empreinte(f)}${q}`);
+    contenu = contenu.replace(new RegExp(`(["'])(\\.{1,2}/)?${f.replace('.', '\\.')}(\\?v=[0-9a-f]*)?\\1`), (_, q, p = '') => `${q}${p}${f}?v=${empreinte(f)}${q}`);
   }
   writeFileSync(chemin, contenu);
 }
+
+execFileSync(process.execPath, [new URL('pages.mjs', import.meta.url).pathname], { stdio: 'inherit' });
