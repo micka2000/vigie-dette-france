@@ -7,7 +7,7 @@
 // test/pages.test.mjs échoue si index.html, en/index.html ou sitemap.xml ne sont pas à jour.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { etatDuJour, phraseVerdict, NIVEAUX_TEXTE } from '../score.mjs';
+import { etatDuJour, phraseVerdict, NIVEAUX_TEXTE, couvertures, partsTarget, notch, notchLabel } from '../score.mjs';
 import { EN } from '../anglais.mjs';
 
 export const SITE = 'https://vigiedette.com/';
@@ -43,8 +43,56 @@ export function instantane(fichiers, dateCalcul) {
     niveau: niveau ?? null,
     niveauTexte: niveau ? { fr: NIVEAUX_TEXTE.fr[niveau], en: NIVEAUX_TEXTE.en[niveau] } : null,
     verdict: { fr: phraseVerdict(etat, 'fr'), en: phraseVerdict(etat, 'en') },
+    tuiles: tuiles(fichiers, etat),
   };
 }
+
+// Les cinq tuiles de synthèse, mêmes textes que compute() et renderSummary() dans app.js : la page ne bouge pas
+// quand le JavaScript les redessine, et les chiffres du jour sont dans le HTML.
+const nombre = (v, decimales, lang) => {
+  const t = v.toFixed(decimales);
+  return lang === 'fr' ? t.replace('.', ',') : t;
+};
+const pc = (t, lang) => (lang === 'fr' ? `${t}\u202f%` : `${t}%`); // espace fine insécable, comme pc() dans app.js
+const NOMS_TUILES = {
+  spread: ['Spread OAT-Bund 10 ans', '10-year OAT-Bund spread'], adjudications: ['Couverture des adjudications', 'Auction cover'],
+  'non-residents': ['Part des non-résidents', 'Non-resident share'], notations: ['Note la plus basse', 'Lowest rating'],
+  target: ['Solde TARGET2', 'TARGET2 balance'],
+};
+
+export function tuiles(fichiers, etat) {
+  const sp = fichiers.spread.at(-1);
+  const couv = couvertures(fichiers.adj).at(-1);
+  const nr = fichiers.nrAft.points.at(-1);
+  const pire = Math.min(...fichiers.ratings.agences.map((a) => notch(a.note)));
+  const tg = partsTarget(fichiers.target, fichiers.bilan).at(-1);
+  const niv = etat.signaux;
+  const brut = {
+    spread: { niveau: niv.spread.niveau, valeur: (l) => `${nombre(sp.spread_pb, 0, l)} ${l === 'fr' ? 'pb' : 'bp'}`,
+      sous: Number.isFinite(sp.fr10) && Number.isFinite(sp.de10)
+        ? (l) => `${l === 'fr' ? 'OAT 10 ans' : '10-year OAT'} ${pc(nombre(sp.fr10, 2, l), l)}` : null },
+    adjudications: { niveau: niv.couverture.niveau, valeur: (l) => nombre(couv.couverture, 2, l) },
+    'non-residents': { niveau: niv.nonResidents.niveau, valeur: (l) => pc(nombre(nr.part, 1, l), l) },
+    notations: { niveau: niv.notes.niveau, valeur: () => notchLabel(pire) },
+    target: { niveau: niv.target.niveau, valeur: (l) => pc(nombre(tg.part, 1, l), l) },
+  };
+  return Object.fromEntries(['fr', 'en'].map((l, i) => [l, Object.entries(brut).map(([cle, t]) => ({
+    cle, niveau: t.niveau, nom: NOMS_TUILES[cle][i], valeur: t.valeur(l), ...(t.sous ? { sous: t.sous(l) } : {}),
+  }))]));
+}
+
+function htmlTuiles(inst, lang) {
+  return inst.tuiles[lang].map((t) => `<a class="tile" href="#${t.cle}" data-level="${t.niveau}">`
+    + `<span class="tile-name">${echapper(t.nom)}</span><span class="tile-value">${echapper(t.valeur)}</span>`
+    + `<span class="pill" data-level="${t.niveau}">${NIVEAUX_TEXTE[lang][t.niveau]}</span>`
+    + (t.sous ? `<span class="tile-sub">${echapper(t.sous)}</span>` : '') + '</a>').join('');
+}
+
+// Le lien « Afficher la description » de l'indice, que app.js remplace par la description complète, de même hauteur.
+const DESCRIPTION_FERMEE = {
+  fr: '<details class="desc"><summary><span class="desc-ouvrir">Afficher la description</span><span class="desc-fermer">Masquer la description</span></summary></details>',
+  en: '<details class="desc"><summary><span class="desc-ouvrir">Show the description</span><span class="desc-fermer">Hide the description</span></summary></details>',
+};
 
 const MOIS = {
   fr: ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
@@ -93,6 +141,8 @@ export function appliquerInstantane(html, inst, lang) {
   } else {
     html = attribut(html, 'id="indice"', 'hidden', '');
   }
+  html = contenu(html, 'summary', htmlTuiles(inst, lang));
+  html = contenu(html, 'indice-desc', inst.indice == null ? '' : DESCRIPTION_FERMEE[lang]);
   html = attribut(html, 'data-instantane="resume"', 'content', resume(inst, lang));
   html = attribut(html, 'data-instantane="image"', 'content', `${SITE}partage-${lang}.png?v=${inst.jour}`);
   html = contenu(html, 'donnees-structurees', `\n${JSON.stringify(donneesStructurees(inst, lang), null, 2).replace(/</g, '\\u003c')}\n`);

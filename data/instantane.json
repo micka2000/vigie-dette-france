@@ -9,5 +9,73 @@
   "verdict": {
     "fr": "La dette française est sous tension. Le reste des marchés financiers reste calme.",
     "en": "French debt is under stress. The rest of the financial markets remain calm."
+  },
+  "tuiles": {
+    "fr": [
+      {
+        "cle": "spread",
+        "niveau": "crise",
+        "nom": "Spread OAT-Bund 10 ans",
+        "valeur": "155 pb",
+        "sous": "OAT 10 ans 4,94 %"
+      },
+      {
+        "cle": "adjudications",
+        "niveau": "vigilance",
+        "nom": "Couverture des adjudications",
+        "valeur": "2,00"
+      },
+      {
+        "cle": "non-residents",
+        "niveau": "tension",
+        "nom": "Part des non-résidents",
+        "valeur": "59,7 %"
+      },
+      {
+        "cle": "notations",
+        "niveau": "tension",
+        "nom": "Note la plus basse",
+        "valeur": "A+"
+      },
+      {
+        "cle": "target",
+        "niveau": "tension",
+        "nom": "Solde TARGET2",
+        "valeur": "-3,1 %"
+      }
+    ],
+    "en": [
+      {
+        "cle": "spread",
+        "niveau": "crise",
+        "nom": "10-year OAT-Bund spread",
+        "valeur": "155 bp",
+        "sous": "10-year OAT 4.94%"
+      },
+      {
+        "cle": "adjudications",
+        "niveau": "vigilance",
+        "nom": "Auction cover",
+        "valeur": "2.00"
+      },
+      {
+        "cle": "non-residents",
+        "niveau": "tension",
+        "nom": "Non-resident share",
+        "valeur": "59.7%"
+      },
+      {
+        "cle": "notations",
+        "niveau": "tension",
+        "nom": "Lowest rating",
+        "valeur": "A+"
+      },
+      {
+        "cle": "target",
+        "niveau": "tension",
+        "nom": "TARGET2 balance",
+        "valeur": "-3.1%"
+      }
+    ]
   }
 }

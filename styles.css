@@ -227,6 +227,9 @@ a.btn-icone { text-decoration: none; }
 .signal-taux[hidden] { display: none; }
 
 .chart { position: relative; min-height: 220px; min-width: 0; }
+/* Graphique pas encore dessiné : sa hauteur finale (hauteurGraphique() dans app.js), pour que la page ne saute pas */
+.signal { container-type: inline-size; }
+.chart:empty { min-height: clamp(220px, calc((100cqi - 2 * var(--space-6)) * 0.34), 460px); }
 .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
 .chart text { fill: var(--fg-3); font-family: var(--font-body); font-size: 12px; }
 .chart .grid line { stroke: var(--chart-grid); }
