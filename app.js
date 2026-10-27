@@ -619,8 +619,17 @@ const EVENEMENTS = [
 const NIVEAUX_SCORE = ['calme', 'vigilance', 'tension', 'crise'].map((level, i) => ({ level, from: i * 25, to: i === 3 ? Infinity : (i + 1) * 25 }));
 
 // Séries mensuelles de la courbe ; recalculées seulement quand les données changent (renderAll).
+// Une séance par jour depuis 2004, pour le repère de l'en-tête et la courbe : calculée une fois, refaite seulement
+// si une série qui y entre change (TARGET2 lu en direct, par exemple ; pas le CISS, qui n'y entre pas).
+let memoSerie = null;
+function serieDe(data) {
+  const sources = [data.spread, data.target, data.bilan, data.adj, data.ratings, data.nrAft];
+  if (!memoSerie || memoSerie.sources.some((x, i) => x !== sources[i])) memoSerie = { sources, serie: serieQuotidienne(data) };
+  return memoSerie.serie;
+}
+
 function courbeMensuelle(data) {
-  const serie = serieQuotidienne(data);
+  const serie = serieDe(data);
   const ciss = (data.ciss?.mensuel ?? []).map((m) => ({ mois: m.mois, max: m.max }));
   // Mois en cours : le maximum du fichier complété par les valeurs quotidiennes lues en direct
   for (const q of data.ciss?.quotidien ?? []) {
@@ -809,7 +818,7 @@ function repere(data, etat) {
   const score = etat.indice.score;
   if (score == null) return null;
   const jour = data.spread.at(-1).jour;
-  const serie = serieQuotidienne(data, jour);
+  const serie = serieDe(data); // s'arrête au dernier jour du spread, donc à `jour`
   const depuis = plusHautDepuis(serie, score, jour);
   if (depuis && depuis.jour > `${+jour.slice(0, 4) - 1}${jour.slice(4)}`) return null;
   const sansAujourdhui = [...etat.tension.sans, ...etat.fond.sans];
@@ -991,14 +1000,19 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
 let resizeTimer;
 window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(render, 150); });
 
+let suiteRendu;
 function renderAll() {
   const data = state.data;
   const etat = etatDuJour(data, new Date());
   renderHeader(data, etat);
   renderSummary(compute(data, etat));
   renderSources(data);
-  if (INDICE_VISIBLE) state.courbe = courbeMensuelle(data);
-  render();
+  // Les graphiques dans une tâche à part : l'en-tête s'affiche sans les attendre et la page reste réactive.
+  clearTimeout(suiteRendu);
+  suiteRendu = setTimeout(() => {
+    if (INDICE_VISIBLE) state.courbe = courbeMensuelle(data);
+    render();
+  });
 }
 
 fillThresholds();

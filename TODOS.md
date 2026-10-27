@@ -15,3 +15,14 @@
   2. `wsl --shutdown` dans PowerShell, rouvrir WSL.
   3. `/cso --doctor` pour vérifier, puis `/cso --infra` : Gitleaks sur tout l'historique, zizmor sur les workflows.
   4. Arrêter Docker après l'audit : `sudo systemctl stop docker docker.socket containerd`.
+
+## Référencement
+
+Fait le 27/10/2026 : version anglaise `/en/`, instantané du jour lisible sans JavaScript, canonique et hreflang, Open Graph et images de partage, favicon, `robots.txt`, `sitemap.xml`, JSON-LD (Organization, WebSite, WebPage, Dataset, BreadcrumbList), Search Console vérifiée (TXT chez OVH), GoatCounter. GA4 écarté : aucun effet sur le classement Google, et bandeau de consentement obligatoire (CNIL).
+
+- [ ] **Vitesse de chargement.** Audit PageSpeed Insights (mobile et ordinateur) du site en ligne, puis corriger ce qui ralentit (d3, polices, ordre des scripts). Noter les scores avant et après.
+- [ ] **Une page par signal, en français et en anglais** (10 pages) : spread France-Allemagne, adjudications de l'AFT, part des non-résidents, notes des agences, solde TARGET2. Chacune avec le chiffre du jour, le graphique et l'explication, mise à jour chaque matin par la collecte. Cibles : « spread France Allemagne aujourd'hui », « note de la France S&P Moody's Fitch », « TARGET2 Banque de France », « adjudication OAT 10 ans », « dette française détenue par les étrangers ».
+- [ ] **Fiche data.gouv.fr** : jeu de données « Signaux de risque de la dette publique française », qui pointe vers `data/*.json` et le site. Texte à préparer par Claude, publication par Mickaël (compte data.gouv.fr). Choisir une licence pour les données avant (aucune déclarée aujourd'hui ; à vérifier avec les licences des sources).
+- [ ] **Liens depuis d'autres sites** (Mickaël) : lien `vigiedette.com` dans les posts LinkedIn sur la dette ; proposer le site à des économistes, blogs finance et newsletters qui suivent la dette.
+- [ ] **Search Console** (Mickaël) : soumettre `sitemap.xml`, demander l'indexation de `/` et `/en/`.
+- [ ] **Bilan Search Console vers le 24/11/2026** : requêtes réelles, positions, clics ; ajuster titres et descriptions en conséquence.
