@@ -1,8 +1,12 @@
 name: Mise à jour des données
 
 on:
+  # Trois passages par jour : GitHub retarde souvent le cron de plusieurs heures, et la Banque de France
+  # comme la Bundesbank publient la séance du jour à une heure variable. Sans nouvelle série, rien n'est commité.
   schedule:
     - cron: "30 6 * * *"
+    - cron: "0 16 * * *"
+    - cron: "0 21 * * *"
   workflow_dispatch:
 
 permissions:

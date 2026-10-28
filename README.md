@@ -31,7 +31,7 @@ python3 scripts/update_data.py   # rafraîchit data/
 python3 -m http.server 8000      # puis http://localhost:8000
 ```
 
-La GitHub Action `update-data.yml` relance la collecte chaque matin et commite les fichiers qui ont changé.
+La GitHub Action `update-data.yml` relance la collecte trois fois par jour (6 h 30, 16 h et 21 h UTC, souvent retardées par GitHub) et commite les fichiers qui ont changé.
 
 ## Design
 

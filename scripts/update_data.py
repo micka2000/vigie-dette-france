@@ -1,6 +1,6 @@
 """Récupère les séries publiques (BCE, Banque de France, Bundesbank, Eurostat) et écrit les fichiers JSON du dashboard.
 
-Lancé chaque jour par la GitHub Action `update-data.yml`.
+Lancé trois fois par jour par la GitHub Action `update-data.yml`.
 L'AFT bloque les robots et les agences de notation n'ont pas d'API gratuite :
 - les adjudications viennent des dépêches Reuters « Détails de l'adjudication d'OAT » publiées par Boursorama,
   trouvées par son plan de site (news.rss, environ 36 heures, et les archives d'environ 3 mois) ;
