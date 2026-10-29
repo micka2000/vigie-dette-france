@@ -42,7 +42,8 @@
         "height": 512
       },
       "sameAs": [
-        "https://github.com/micka2000/vigie-dette-france"
+        "https://github.com/micka2000/vigie-dette-france",
+        "https://www.data.gouv.fr/datasets/signaux-de-risque-de-la-dette-publique-francaise-vigie-dette-france"
       ]
     },
     {
@@ -90,6 +91,7 @@
         "notation souveraine",
         "TARGET2"
       ],
+      "sameAs": "https://www.data.gouv.fr/datasets/signaux-de-risque-de-la-dette-publique-francaise-vigie-dette-france",
       "inLanguage": "fr",
       "isAccessibleForFree": true,
       "license": "https://www.etalab.gouv.fr/licence-ouverte-open-licence/",
@@ -143,6 +145,12 @@
           "name": "Solde TARGET2 de la Banque de France",
           "encodingFormat": "application/json",
           "contentUrl": "https://vigiedette.com/data/target.json"
+        },
+        {
+          "@type": "DataDownload",
+          "name": "Indice Vigie, série quotidienne (CSV)",
+          "encodingFormat": "text/csv",
+          "contentUrl": "https://vigiedette.com/data/csv/indice_vigie.csv"
         }
       ]
     }
@@ -394,6 +402,7 @@
     <p data-i18n="pied.collecte">Collecte chaque matin (BCE, Banque de France, Bundesbank, Eurostat, dépêches Reuters) ; TARGET2 et le CISS sont aussi lus en direct. Les seuils sont des repères tirés de l’historique de chaque série, pas des prévisions.</p>
     <p class="retard" id="retard" hidden></p>
     <p><a href="methode.html" data-i18n="pied.methode">Méthode de calcul de l’Indice Vigie, avec un exemple complet</a></p>
+    <p><a href="https://www.data.gouv.fr/datasets/signaux-de-risque-de-la-dette-publique-francaise-vigie-dette-france" target="_blank" rel="noopener" data-i18n="pied.donnees">Toutes les séries en données ouvertes sur data.gouv.fr (CSV, Licence Ouverte)</a></p>
   </div>
 </footer>
 

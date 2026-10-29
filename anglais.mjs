@@ -100,5 +100,6 @@ export const EN = {
   'page.target.url': '/en/target2-balance/',
 
   'pied.methode': 'How the Vigie Index is calculated, with a full example',
+  'pied.donnees': 'All series as open data on data.gouv.fr (CSV, Licence Ouverte)',
   'pied.collecte': 'Collected every morning (ECB, Banque de France, Bundesbank, Eurostat, Reuters dispatches); TARGET2 and the CISS are also read live. The thresholds are landmarks drawn from each series’ history, not forecasts.',
 };

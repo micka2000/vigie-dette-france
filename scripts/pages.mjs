@@ -340,6 +340,7 @@ function donneesSignal(sig, inst, lang, phrase) {
 // ---------- Données structurées ----------
 
 const ORGANISATION = `${SITE}#organisation`;
+export const DATA_GOUV = 'https://www.data.gouv.fr/datasets/signaux-de-risque-de-la-dette-publique-francaise-vigie-dette-france';
 
 export function donneesStructurees(inst, lang) {
   const en = lang === 'en';
@@ -348,7 +349,7 @@ export function donneesStructurees(inst, lang) {
     {
       '@type': 'Organization', '@id': ORGANISATION, name: 'Vigie Dette France', url: SITE,
       logo: { '@type': 'ImageObject', url: `${SITE}logo.png`, width: 512, height: 512 },
-      sameAs: ['https://github.com/micka2000/vigie-dette-france'],
+      sameAs: ['https://github.com/micka2000/vigie-dette-france', DATA_GOUV],
     },
     {
       '@type': 'WebSite', '@id': `${SITE}#site`, url: SITE, name: 'Vigie Dette France', inLanguage: ['fr', 'en'],
@@ -375,7 +376,7 @@ const DATASET = (inst) => ({
     + 'de l’État détenue par les non-résidents, notes de S&P, Moody’s et Fitch, solde TARGET2 de la Banque de France. '
     + 'L’Indice Vigie les résume en une note de 0 à 100.',
   keywords: ['dette publique', 'France', 'spread OAT-Bund', 'OAT 10 ans', 'adjudications AFT', 'non-résidents', 'notation souveraine', 'TARGET2'],
-  inLanguage: 'fr', isAccessibleForFree: true, license: 'https://www.etalab.gouv.fr/licence-ouverte-open-licence/', creator: { '@id': ORGANISATION }, publisher: { '@id': ORGANISATION },
+  sameAs: DATA_GOUV, inLanguage: 'fr', isAccessibleForFree: true, license: 'https://www.etalab.gouv.fr/licence-ouverte-open-licence/', creator: { '@id': ORGANISATION }, publisher: { '@id': ORGANISATION },
   spatialCoverage: { '@type': 'Place', name: 'France' }, temporalCoverage: `2004-11-03/${inst.jour}`, dateModified: inst.jour,
   variableMeasured: ['Spread OAT-Bund à 10 ans (points de base)', 'Taux de couverture des adjudications à 10 ans',
     'Part de la dette de l’État détenue par les non-résidents (%)', 'Notes des agences de notation',
@@ -384,7 +385,8 @@ const DATASET = (inst) => ({
     ['spread.json', 'Taux à 10 ans France et Allemagne, spread'], ['adjudications.json', 'Adjudications de l’Agence France Trésor'],
     ['non_residents_bdf.json', 'Part des non-résidents (Banque de France)'], ['notations.json', 'Notes des agences'],
     ['target.json', 'Solde TARGET2 de la Banque de France'],
-  ].map(([f, name]) => ({ '@type': 'DataDownload', name, encodingFormat: 'application/json', contentUrl: `${SITE}data/${f}` })),
+  ].map(([f, name]) => ({ '@type': 'DataDownload', name, encodingFormat: 'application/json', contentUrl: `${SITE}data/${f}` }))
+    .concat({ '@type': 'DataDownload', name: 'Indice Vigie, série quotidienne (CSV)', encodingFormat: 'text/csv', contentUrl: `${SITE}data/csv/indice_vigie.csv` }),
 });
 
 // ---------- Sitemap ----------

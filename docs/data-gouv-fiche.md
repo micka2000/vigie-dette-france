@@ -14,7 +14,7 @@ Chaque ressource est un lien distant vers un fichier du site : data.gouv.fr suit
 - **Couverture spatiale** : France
 - **Granularité spatiale** : Pays
 - **Mots-clés** : dette-publique, finances-publiques, oat, spread, bund, taux-d-interet, adjudications, agence-france-tresor, non-residents, notation-souveraine, target2, banque-de-france, indicateur
-- **Brouillon** : oui
+- **Brouillon** : non
 
 ## Description
 
