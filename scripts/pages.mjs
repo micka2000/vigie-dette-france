@@ -8,6 +8,7 @@
 // test/pages.test.mjs échoue si une page générée ou sitemap.xml n'est pas à jour.
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 import { etatDuJour, phraseVerdict, NIVEAUX_TEXTE, couvertures, partsTarget, notch, notchLabel } from '../score.mjs';
 import { EN } from '../anglais.mjs';
 
@@ -16,6 +17,8 @@ export const SITE = 'https://vigiedette.com/';
 const METHODE_MAJ = '2026-10-27';
 
 const racine = new URL('../', import.meta.url);
+// Empreinte de l'image de partage : son adresse change avec son contenu, et LinkedIn ne garde pas l'ancienne en cache.
+const empreinteImage = (lang) => createHash('sha256').update(readFileSync(new URL(`partage-${lang}.png`, racine))).digest('hex').slice(0, 8);
 const lire = (f) => readFileSync(new URL(f, racine), 'utf8');
 const ecrire = (f, contenu) => { mkdirSync(new URL('.', new URL(f, racine)), { recursive: true }); writeFileSync(new URL(f, racine), contenu); };
 const lireJson = (f) => JSON.parse(lire(`data/${f}`));
@@ -165,7 +168,7 @@ export function appliquerInstantane(html, inst, lang) {
   html = appliquerCartes(html, inst, lang);
   html = contenu(html, 'indice-desc', inst.indice == null ? '' : DESCRIPTION_FERMEE[lang]);
   html = attribut(html, 'data-instantane="resume"', 'content', resume(inst, lang));
-  html = attribut(html, 'data-instantane="image"', 'content', `${SITE}partage-${lang}.png?v=${inst.jour}`);
+  html = attribut(html, 'data-instantane="image"', 'content', `${SITE}partage-${lang}.png?v=${empreinteImage(lang)}`);
   html = contenu(html, 'donnees-structurees', `\n${JSON.stringify(donneesStructurees(inst, lang), null, 2).replace(/</g, '\\u003c')}\n`);
   return html;
 }

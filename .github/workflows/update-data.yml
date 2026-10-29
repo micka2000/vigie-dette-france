@@ -36,7 +36,8 @@ jobs:
       # Un échec ici ne bloque pas les données.
       - name: Pages et images de partage
         run: |
-          node scripts/pages.mjs --instantane && pip install --quiet pillow==11.3.0 && python scripts/image_partage.py \
+          # L'image d'abord : pages.mjs met son empreinte dans l'adresse og:image.
+          pip install --quiet pillow==11.3.0 && python scripts/image_partage.py && node scripts/pages.mjs --instantane \
             || echo "PAGES=1" >> "$GITHUB_ENV"
       - name: Commit si les séries ou les échecs ont changé
         run: |

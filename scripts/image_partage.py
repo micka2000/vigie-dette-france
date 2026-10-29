@@ -118,21 +118,22 @@ def partage(serie, lang):
         d.line([(x0, y), (x1, y)], fill=(255, 255, 255, 18), width=s(1))
     d.polygon(pts + [(x1, yb), (x0, yb)], fill=(*CIEL, 40))
     lueur = Image.new('RGBA', img.size, (0, 0, 0, 0))
-    ImageDraw.Draw(lueur).line(pts, fill=(140, 180, 255, 160), width=s(8), joint='curve')
+    ImageDraw.Draw(lueur).line(pts, fill=(140, 180, 255, 170), width=s(12), joint='curve')
     calque = Image.alpha_composite(calque, lueur.filter(ImageFilter.GaussianBlur(s(6))))
     d = ImageDraw.Draw(calque)
-    d.line(pts, fill=(235, 242, 255, 255), width=s(2.5), joint='curve')
+    d.line(pts, fill=(235, 242, 255, 255), width=s(4), joint='curve')
 
     # Pic de 2011 et point du jour
     px, py = pts[max(range(len(serie)), key=lambda i: serie[i])]
-    d.line([(px + s(8), py), (px + s(30), py)], fill=(255, 255, 255, 140), width=s(1.5))
-    d.text((px + s(38), py), t['pic'], font=texte(s(17), 500), fill=CIEL, anchor='lm')
+    d.line([(px + s(10), py), (px + s(34), py)], fill=(255, 255, 255, 170), width=s(2))
+    d.text((px + s(42), py), t['pic'], font=texte(s(26), 600), fill=CIEL, anchor='lm')
     ex, ey = pts[-1]
     for r, a in ((s(16), 50), (s(10), 90)):
         d.ellipse([ex - r, ey - r, ex + r, ey + r], fill=(240, 138, 58, a))
     d.ellipse([ex - s(5.5), ey - s(5.5), ex + s(5.5), ey + s(5.5)], fill=BLANC)
-    d.text((ex - s(18), ey - s(18)), t['auj'], font=texte(s(17), 600), fill=BLANC, anchor='rs')
-    d.text((x0, yb + s(28)), t['courbe'], font=texte(s(16), 400), fill=(*CIEL, 200), anchor='ls')
+    d.text((ex - s(20), ey - s(20)), t['auj'], font=texte(s(26), 700), fill=BLANC, anchor='rs')
+    d.text((x0 + s(24), yb + s(34)), t['courbe'], font=texte(s(22), 500), fill=CIEL, anchor='ls')
+    d.text((W - s(64), yb + s(34)), t['signaux'], font=texte(s(22), 600), fill=CIEL, anchor='rs')
 
     img = Image.alpha_composite(img, calque)
     d = ImageDraw.Draw(img)
@@ -140,8 +141,8 @@ def partage(serie, lang):
     # En-tête : logo et nom
     d.rounded_rectangle([s(62), s(50), s(122), s(110)], radius=s(14), outline=(255, 255, 255, 90), width=s(2))
     img.alpha_composite(icone(s(56)), (s(64), s(52)))
-    d.text((s(136), s(80)), 'Vigie Dette France', font=titre(s(34), 700), fill=BLANC, anchor='lm')
-    d.text((W - s(64), s(80)), 'vigiedette.com', font=texte(s(22), 500), fill=CIEL, anchor='rm')
+    d.text((s(136), s(80)), 'Vigie Dette France', font=titre(s(38), 700), fill=BLANC, anchor='lm')
+    d.text((W - s(64), s(80)), 'vigiedette.com', font=texte(s(28), 600), fill=CIEL, anchor='rm')
 
     # Accroche
     f = titre(s(46), 800)
@@ -149,18 +150,17 @@ def partage(serie, lang):
     for ligne in lignes(d, t['titre'], f, s(860)):
         d.text((s(64), y), ligne, font=f, fill=BLANC)
         y += s(54)
-    d.text((s(64), y + s(10)), t['sous'], font=texte(s(22), 400), fill=CIEL)
+    d.text((s(64), y + s(8)), t['sous'], font=texte(s(28), 500), fill=CIEL)
 
     # Échelle des niveaux
-    y, x = s(560), s(64)
-    fn = titre(s(20), 700)
+    y, x = s(566), s(64)
+    fn = titre(s(27), 700)
     for (couleur, nom_forme), nom in zip(NIVEAUX, t['niveaux']):
-        larg = s(18) + s(16) + s(10) + d.textlength(nom, font=fn) + s(18)
-        d.rounded_rectangle([x, y - s(20), x + larg, y + s(20)], radius=s(20), fill=BLANC)
-        forme(d, nom_forme, x + s(18) + s(8), y, s(8), couleur)
-        d.text((x + s(44), y), nom, font=fn, fill=tuple(round(c * 0.72) for c in couleur), anchor='lm')
-        x += larg + s(12)
-    d.text((W - s(64), y), t['signaux'], font=texte(s(17), 500), fill=CIEL, anchor='rm')
+        larg = s(22) + s(22) + s(12) + d.textlength(nom, font=fn) + s(22)
+        d.rounded_rectangle([x, y - s(26), x + larg, y + s(26)], radius=s(26), fill=BLANC)
+        forme(d, nom_forme, x + s(22) + s(11), y, s(11), couleur)
+        d.text((x + s(56), y), nom, font=fn, fill=tuple(round(c * 0.72) for c in couleur), anchor='lm')
+        x += larg + s(16)
 
     return img.convert('RGB').resize((LARGEUR, HAUTEUR), Image.LANCZOS)
 
