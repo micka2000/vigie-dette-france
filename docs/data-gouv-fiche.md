@@ -1,180 +1,271 @@
 # Fiche data.gouv.fr
 
-Texte à reprendre dans le formulaire « Publier un jeu de données » de data.gouv.fr (compte de Mickaël).
-Chaque ressource est un lien distant vers le fichier du site : data.gouv.fr suit ainsi les mises à jour quotidiennes sans nouveau dépôt.
+Source de vérité de la fiche data.gouv.fr de Vigie Dette (compte de Mickaël). `python scripts/publier_data_gouv.py` affiche ce qui serait envoyé ; `--envoyer` met la fiche à jour par l'API (brouillon tant que « Brouillon » vaut oui).
+Chaque ressource est un lien distant vers un fichier du site : data.gouv.fr suit ainsi les mises à jour quotidiennes sans nouveau dépôt. Les CSV (data/csv/) sont régénérés à chaque collecte par `scripts/exporter_csv.mjs`.
 
 ## Champs du formulaire
 
 - **Titre** : Signaux de risque de la dette publique française (Vigie Dette France)
 - **Acronyme** : Vigie Dette
+- **Description courte** : Indice quotidien du risque de la dette publique française depuis 2004 et ses 5 signaux officiels (spread OAT-Bund, adjudications, non-résidents, notes, TARGET2), en CSV.
 - **Licence** : Licence Ouverte / Open Licence version 2.0
 - **Fréquence de mise à jour** : Quotidienne
 - **Couverture temporelle** : du 03/11/2004 à aujourd'hui
-- **Mode brouillon** : enregistrer d'abord en brouillon, relire l'aperçu, puis publier
 - **Couverture spatiale** : France
 - **Granularité spatiale** : Pays
-- **Mots-clés** : dette-publique, oat, spread, bund, adjudications, agence-france-tresor, non-residents, notation-souveraine, target2, banque-de-france, finances-publiques
+- **Mots-clés** : dette-publique, finances-publiques, oat, spread, bund, taux-d-interet, adjudications, agence-france-tresor, non-residents, notation-souveraine, target2, banque-de-france, indicateur
+- **Brouillon** : oui
 
 ## Description
 
-À coller dans le champ « Description » (Markdown). Plan du guide data.gouv.fr « Bien documenter un jeu de données » : description générale, mode de production, modèle de données, schéma, lexique, changements majeurs, point de contact.
-
 ````markdown
-Cinq séries qui suivent la santé de la dette publique française, collectées automatiquement auprès des sources officielles et réunies dans des fichiers JSON simples. Elles alimentent le tableau de bord [Vigie Dette France](https://vigiedette.com/), qui les résume dans l'Indice Vigie, une note de 0 à 100 ([méthode](https://vigiedette.com/methode.html), [code source](https://github.com/micka2000/vigie-dette-france)).
+**Vigie Dette France mesure chaque jour le risque qui pèse sur la dette publique française.** Ce jeu de données réunit l'**Indice Vigie**, une note de 0 à 100 calculée chaque séance depuis 2004, et les **cinq signaux officiels** qui la composent. Toutes les séries sont issues de sources publiques (Banque de France, Bundesbank, BCE, Eurostat, Agence France Trésor, agences de notation) et mises à jour automatiquement chaque jour.
 
-## Description générale
+Elles alimentent le tableau de bord [vigiedette.com](https://vigiedette.com/), où chaque signal est expliqué et mis en graphique.
 
-**Fichiers mis à disposition** (8 fichiers JSON, encodage UTF-8, servis depuis vigiedette.com)
+### Par où commencer
 
-| Fichier | Contenu | Pas de temps | Depuis |
-|---|---|---|---|
-| spread.json | Taux à 10 ans France et Allemagne, écart | séance | 03/11/2004 |
-| adjudications.json | Adjudications d'OAT à 10 ans | adjudication (env. mensuelle) | 08/01/2004 |
-| non_residents_bdf.json | Part des titres de l'État détenue par des non-résidents | trimestre | 2008-T1 |
-| non_residents_eurostat.json | Part de toute la dette publique détenue par des non-résidents et par la banque centrale, dette en % du PIB | année | 2020 |
-| notations.json | Notes de S&P, Moody's et Fitch, historique | décision | 2000 |
-| target.json | Solde TARGET2 de la Banque de France | mois | 05/2008 |
-| bilan_bce.json | Total du bilan de l'Eurosystème | mois | 01/2008 |
-| meta.json | Date de la dernière collecte, séries en retard | collecte | – |
+- **Pour suivre le risque global** : ouvrez `indice_vigie.csv`, une ligne par séance avec l'indice, son niveau (calme, vigilance, tension, crise) et ses deux sous-indices.
+- **Pour un signal précis** : chaque signal a son propre fichier CSV, avec des colonnes nommées en clair et leur unité (`_pct` pour un pourcentage, `_pb` pour des points de base, `_mds` pour des milliards d'euros).
+- **Dans un tableur** : les CSV s'ouvrent directement (séparateur virgule, point décimal, UTF-8). Dans Excel, passez par *Données > À partir d'un fichier texte/CSV* si les décimales s'affichent mal.
+- **En programmation** : chaque fichier a une adresse stable, par exemple `pandas.read_csv("https://vigiedette.com/data/csv/indice_vigie.csv")`.
 
-**Format** : JSON. Les dates suivent la norme ISO 8601 (AAAA-MM-JJ, ou AAAA-MM pour les séries mensuelles et trimestrielles). Les nombres utilisent le point décimal.
+### Les cinq signaux
 
-**Fréquence de mise à jour** : collecte automatique trois fois par jour (6 h 30, 16 h et 21 h UTC). Un fichier n'est modifié que si sa source a publié une nouvelle valeur.
+| Signal | Ce qu'il mesure | Lecture |
+|---|---|---|
+| **Spread OAT-Bund à 10 ans** | L'écart entre le taux auquel la France et l'Allemagne empruntent à 10 ans | Plus il monte, plus les marchés exigent une prime pour prêter à la France |
+| **Couverture des adjudications** | La demande des investisseurs lors des ventes d'OAT à 10 ans par l'Agence France Trésor | Une demande qui faiblit est un signe de moindre appétit pour la dette française |
+| **Part détenue par des non-résidents** | La part de la dette de l'État détenue par des investisseurs étrangers | Une dette très détenue à l'étranger est plus exposée à un retrait rapide |
+| **Notes des agences** | Les notes de S&P, Moody's et Fitch | La note la plus basse des trois est retenue |
+| **Solde TARGET2 de la Banque de France** | Les flux de capitaux entre la France et le reste de la zone euro | Un solde de plus en plus négatif signale des capitaux qui quittent la France |
 
-## Mode de production des données
+### Comment l'indice est calculé
 
-Les données sont collectées par un script ouvert ([scripts/update_data.py](https://github.com/micka2000/vigie-dette-france/blob/main/scripts/update_data.py)) exécuté par GitHub Actions. Aucune valeur n'est saisie à la main, sauf les adjudications anciennes reconstituées à partir des archives de l'Agence France Trésor.
+Chaque signal est converti en score de 0 à 100 à partir de repères historiques. Les scores se regroupent en deux sous-indices : la **tension** (spread et couverture, ce que disent les marchés au jour le jour) et le **fond** (non-résidents, notes et TARGET2, la solidité de long terme). L'**Indice Vigie** est la moyenne des deux. Niveaux : moins de 25 = calme, 25 à 50 = vigilance, 50 à 75 = tension, 75 et plus = crise.
 
-| Série | Producteur d'origine |
+Un sous-indice n'est calculé que si tous ses signaux sont disponibles et à jour ; sinon l'indice reste vide ce jour-là et la colonne `signaux_manquants` dit pourquoi. C'est le cas avant 2008, faute de séries sur les non-résidents et TARGET2. Méthode complète : [vigiedette.com/methode.html](https://vigiedette.com/methode.html).
+
+### Sources et mode de production
+
+Une collecte automatique (GitHub Actions) interroge les sources trois fois par jour et ne modifie un fichier que si une nouvelle valeur a été publiée. Le code est ouvert : [github.com/micka2000/vigie-dette-france](https://github.com/micka2000/vigie-dette-france).
+
+| Série | Source |
 |---|---|
 | Taux à 10 ans France | Banque de France (Webstat, TEC 10) |
 | Taux à 10 ans Allemagne | Deutsche Bundesbank |
-| Adjudications | Agence France Trésor, résultats repris par les dépêches de presse (lien de source sur chaque ligne) |
-| Non-résidents, titres de l'État | Banque de France (série DET2) |
-| Non-résidents, toute la dette publique | Eurostat |
-| Notes | S&P Global Ratings, Moody's, Fitch Ratings. Un changement n'est retenu que si Wikipédia et countryeconomy.com l'indiquent tous deux |
+| Adjudications | Agence France Trésor, résultats repris par la presse (lien sur chaque ligne) |
+| Non-résidents | Banque de France (série DET2, trimestrielle) et Eurostat (annuelle) |
+| Notes | S&P Global Ratings, Moody's, Fitch Ratings ; un changement n'est retenu que si deux sources indépendantes le confirment |
 | TARGET2 et bilan de l'Eurosystème | Banque centrale européenne (Data Portal) |
 
-**Limites connues et précautions d'usage**
+### Limites à connaître
 
-- Adjudications : cinq adjudications manquent (septembre 2025 ; janvier, mars, mai et juin 2026). Elles sont listées dans le champ `a_completer`.
-- Le spread n'est calculé qu'aux séances publiées par les deux sources. Aucune valeur n'est reportée d'un jour sur l'autre.
-- La série Eurostat ne commence qu'en 2020. Pour la période antérieure, utiliser la série trimestrielle de la Banque de France.
-- Notes : la première entrée de chaque historique (« amorce ») indique la note détenue avant 2000, sans date d'attribution sourcée.
-- Ces séries décrivent des marchés et des décisions publiques. Elles ne constituent pas un conseil en investissement.
+- Cinq adjudications récentes manquent (septembre 2025 ; janvier, mars, mai et juin 2026), faute de publication exploitable.
+- Les adjudications d'août et de décembre sont fournies mais écartées de l'indice : ce sont des séances mixtes à la couverture atypique.
+- La série Eurostat ne commence qu'en 2020 ; pour l'historique, utilisez la série trimestrielle de la Banque de France.
+- Ces données décrivent des marchés et des décisions publiques. Elles ne constituent pas un conseil en investissement.
 
-## Modèle de données
+### Contact et réutilisation
 
-Chaque fichier correspond à une entité indépendante, identifiée par sa date. Les séries mensuelles `target.json` et `bilan_bce.json` se joignent sur le champ `mois` : le solde TARGET2 se lit rapporté au bilan de l'Eurosystème. Le fichier `meta.json` décrit l'état de la collecte de l'ensemble.
-
-## Schéma des fichiers
-
-**spread.json** (liste d'objets, une ligne par séance)
-
-| Champ | Type | Description | Exemple |
-|---|---|---|---|
-| jour | date (AAAA-MM-JJ) | Séance | 2026-10-29 |
-| fr10 | nombre décimal | Taux à 10 ans de la France, en % | 4.894 |
-| de10 | nombre décimal | Taux à 10 ans de l'Allemagne, en % | 3.39 |
-| spread_pb | nombre décimal | Écart France-Allemagne, en points de base | 150.4 |
-
-**adjudications.json** (objet ; les adjudications sont dans `lignes`)
-
-| Champ | Type | Description | Exemple |
-|---|---|---|---|
-| date | date (AAAA-MM-JJ) | Date de l'adjudication | 2026-10-01 |
-| ligne | chaîne | Titre adjugé | OAT 3,70 % 25/11/2036 |
-| adjuge_mds | nombre décimal | Montant servi, en milliards d'euros | 6.271 |
-| demande_mds | nombre décimal | Montant demandé, en milliards d'euros | 12.564 |
-| taux | nombre décimal | Taux moyen pondéré, en % | 4.93 |
-| source | chaîne (URL) | Publication d'où provient le résultat | https://… |
-
-Le taux de couverture s'obtient par `demande_mds / adjuge_mds`. Champs annexes : `description` (texte) et `a_completer` (liste des mois manquants, AAAA-MM).
-
-**non_residents_bdf.json** (objet ; les valeurs sont dans `points`)
-
-| Champ | Type | Description | Exemple |
-|---|---|---|---|
-| date | date (AAAA-MM) | Fin de trimestre | 2026-06 |
-| part | nombre décimal | Part des titres de l'État détenue par des non-résidents, en % | 59.7 |
-
-**non_residents_eurostat.json** (liste d'objets, une ligne par année)
-
-| Champ | Type | Description | Exemple |
-|---|---|---|---|
-| annee | entier | Année | 2025 |
-| part_nonres | nombre décimal | Part de la dette publique détenue par des non-résidents, en % | 54.3 |
-| part_bdf | nombre décimal | Part détenue par la banque centrale, en % | 16.5 |
-| dette_pib | nombre décimal | Dette publique, en % du PIB | 115.6 |
-
-**notations.json** (objet ; une entrée par agence dans `agences`)
-
-| Champ | Type | Description | Exemple |
-|---|---|---|---|
-| agence | chaîne | Agence de notation | S&P |
-| note | chaîne | Note de long terme actuelle | A+ |
-| perspective | chaîne | Perspective (positive, stable, négative) | stable |
-| derniere | date (AAAA-MM-JJ) | Date de la dernière décision | 2026-05-29 |
-| prochaine | date ou null | Date de la prochaine revue prévue | 2026-11-27 |
-| historique | liste | Notes successives : `date`, `note`, `source` | – |
-| source_derniere | chaîne (URL) | Source de la dernière décision | https://… |
-
-Selon l'agence, une alerte peut aussi figurer (`alerte`, `alerte_en`).
-
-**target.json** (liste d'objets, une ligne par mois)
-
-| Champ | Type | Description | Exemple |
-|---|---|---|---|
-| mois | date (AAAA-MM) | Mois | 2026-08 |
-| solde_mds | nombre décimal | Solde TARGET2 de la Banque de France, en milliards d'euros (négatif = passif envers l'Eurosystème) | -181.3 |
-| solde_meur | nombre décimal | Même solde, en millions d'euros | -181336.52 |
-
-**bilan_bce.json** (liste d'objets, une ligne par mois)
-
-| Champ | Type | Description | Exemple |
-|---|---|---|---|
-| mois | date (AAAA-MM) | Mois | 2026-10 |
-| semaine | date (AAAA-MM-JJ) | Date de l'état hebdomadaire retenu pour le mois | 2026-10-23 |
-| bilan_mds | nombre décimal | Total du bilan de l'Eurosystème, en milliards d'euros | 5935.0 |
-
-**meta.json** (objet)
-
-| Champ | Type | Description | Exemple |
-|---|---|---|---|
-| mis_a_jour | date-heure (ISO 8601, UTC) | Dernière collecte | 2026-10-29T13:28+00:00 |
-| echecs | liste | Séries en retard ou en échec, vide si tout va bien | [] |
-
-## Lexique
-
-- **OAT** : obligation assimilable du Trésor, titre de dette à moyen et long terme de l'État français.
-- **Spread OAT-Bund** : écart entre le taux à 10 ans de la France et celui de l'Allemagne. Il mesure ce que le marché exige en plus pour prêter à la France.
-- **Point de base (pb)** : un centième de point de pourcentage (100 pb = 1 %).
-- **Taux de couverture** : montant demandé par les investisseurs divisé par le montant servi lors d'une adjudication.
-- **Non-résident** : investisseur dont la résidence est hors de France.
-- **TARGET2** : système de paiement entre banques centrales de la zone euro. Un solde négatif signifie que la Banque de France doit des fonds au reste de l'Eurosystème.
-- **Note de long terme** : appréciation par une agence de la capacité de l'État à rembourser sa dette. Échelle utilisée : AAA, AA+, AA, AA-, A+, A, A-, BBB+…
-
-## Changements majeurs
-
-L'historique complet des modifications des fichiers et du code de collecte est public sur [GitHub](https://github.com/micka2000/vigie-dette-france/commits/main). Tout changement de structure d'un fichier sera signalé ici, avec sa date.
-
-## Point de contact
-
-Questions et signalements dans l'onglet Discussions de ce jeu de données, ou sur [GitHub](https://github.com/micka2000/vigie-dette-france/issues). En cas de réutilisation, merci de citer Vigie Dette France et la source d'origine de chaque série.
+Questions et signalements dans l'onglet *Discussions* de ce jeu de données ou sur [GitHub](https://github.com/micka2000/vigie-dette-france/issues). En cas de réutilisation, merci de citer « Vigie Dette France » et la source d'origine de chaque série. Le détail des colonnes figure dans la description de chaque fichier.
 ````
 
-## Ressources (type « Lien vers un fichier distant », format JSON)
+## Ressources
 
-| Titre | URL | Description |
+Ordre d'affichage sur data.gouv.fr. Type `main` = fichier principal, `other` = autre format, `documentation`, `code`.
+
+### Indice Vigie, série quotidienne
+- **URL** : https://vigiedette.com/data/csv/indice_vigie.csv
+- **Format** : csv
+- **Type** : main
+
+````markdown
+L'Indice Vigie et ses deux sous-indices, une ligne par séance depuis le 3 novembre 2004. Mêmes calculs que le tableau de bord vigiedette.com.
+
+| Colonne | Description | Exemple |
 |---|---|---|
-| Spread OAT-Bund à 10 ans | https://vigiedette.com/data/spread.json | Une ligne par séance depuis le 03/11/2004 (jour, fr10, de10, spread_pb) |
-| Adjudications d'OAT à 10 ans | https://vigiedette.com/data/adjudications.json | Résultats des adjudications de l'Agence France Trésor depuis 2004 |
-| Non-résidents, titres de l'État (Banque de France) | https://vigiedette.com/data/non_residents_bdf.json | Part trimestrielle depuis 2008, série DET2 |
-| Non-résidents, toute la dette publique (Eurostat) | https://vigiedette.com/data/non_residents_eurostat.json | Part annuelle depuis 2020, avec la part de la banque centrale et la dette en % du PIB |
-| Notes des agences | https://vigiedette.com/data/notations.json | S&P, Moody's et Fitch, historique et prochaines revues |
-| Solde TARGET2 de la Banque de France | https://vigiedette.com/data/target.json | Solde mensuel depuis mai 2008, en milliards d'euros |
-| Bilan de l'Eurosystème | https://vigiedette.com/data/bilan_bce.json | Total du bilan, pour rapporter le solde TARGET2 |
-| Collecte | https://vigiedette.com/data/meta.json | Date de la dernière collecte et séries en retard |
+| date | Séance (AAAA-MM-JJ) | 2026-10-29 |
+| indice_vigie | Indice de 0 à 100, moyenne des deux sous-indices ; vide si un sous-indice manque | 64.1 |
+| niveau | calme (< 25), vigilance (25-50), tension (50-75), crise (≥ 75) | tension |
+| sous_indice_tension | Score des marchés : spread et couverture des adjudications | 67.2 |
+| sous_indice_fond | Score de long terme : non-résidents, notes et TARGET2 | 61 |
+| signaux_manquants | Signaux absents ou périmés ce jour-là, séparés par « ; » | non-residents ; target2 |
+````
+
+### Spread OAT-Bund à 10 ans
+- **URL** : https://vigiedette.com/data/csv/spread_oat_bund.csv
+- **Format** : csv
+- **Type** : main
+
+````markdown
+Taux d'emprunt à 10 ans de la France et de l'Allemagne, et leur écart, une ligne par séance depuis le 3 novembre 2004. L'écart n'est calculé que les jours où les deux sources publient.
+
+| Colonne | Description | Exemple |
+|---|---|---|
+| date | Séance (AAAA-MM-JJ) | 2026-10-29 |
+| taux_france_10ans_pct | Taux à 10 ans de la France (TEC 10, Banque de France), en % | 4.894 |
+| taux_allemagne_10ans_pct | Taux à 10 ans de l'Allemagne (Bundesbank), en % | 3.39 |
+| spread_pb | Écart France-Allemagne, en points de base (100 pb = 1 %) | 150.4 |
+````
+
+### Adjudications d'OAT à 10 ans
+- **URL** : https://vigiedette.com/data/csv/adjudications_oat_10ans.csv
+- **Format** : csv
+- **Type** : main
+
+````markdown
+Résultats des ventes d'OAT à 10 ans par l'Agence France Trésor depuis janvier 2004, environ une par mois.
+
+| Colonne | Description | Exemple |
+|---|---|---|
+| date | Date de l'adjudication (AAAA-MM-JJ) | 2026-10-01 |
+| ligne | Titre adjugé | OAT 3,70 % 25/11/2036 |
+| montant_demande_mds | Montant demandé par les investisseurs, en milliards d'euros | 12.564 |
+| montant_adjuge_mds | Montant vendu, en milliards d'euros | 6.271 |
+| taux_couverture | Demandé divisé par vendu ; plus il est haut, plus la demande est forte | 2.004 |
+| taux_pct | Taux moyen pondéré, en % | 4.93 |
+| retenue_dans_indice | « non » pour les séances mixtes d'août et de décembre, écartées de l'indice | oui |
+| source | Publication d'où provient le résultat | https://… |
+
+Cinq adjudications manquent : septembre 2025 ; janvier, mars, mai et juin 2026.
+````
+
+### Part de la dette de l'État détenue par des non-résidents
+- **URL** : https://vigiedette.com/data/csv/non_residents_titres_etat.csv
+- **Format** : csv
+- **Type** : main
+
+````markdown
+Part des titres de dette négociables de l'État détenue par des investisseurs non résidents, en fin de trimestre depuis 2008 (Banque de France, série DET2).
+
+| Colonne | Description | Exemple |
+|---|---|---|
+| trimestre | Mois de fin de trimestre (AAAA-MM) | 2026-06 |
+| part_non_residents_pct | Part détenue par des non-résidents, en % | 59.7 |
+````
+
+### Dette publique : non-résidents, banque centrale et dette en % du PIB
+- **URL** : https://vigiedette.com/data/csv/non_residents_dette_publique.csv
+- **Format** : csv
+- **Type** : main
+
+````markdown
+Pour l'ensemble de la dette publique (État, collectivités, sécurité sociale), chaque année depuis 2020 (Eurostat).
+
+| Colonne | Description | Exemple |
+|---|---|---|
+| annee | Année | 2025 |
+| part_non_residents_pct | Part détenue par des non-résidents, en % | 54.3 |
+| part_banque_centrale_pct | Part détenue par la banque centrale, en % | 16.5 |
+| dette_pib_pct | Dette publique, en % du PIB | 115.6 |
+````
+
+### Notes de la France, situation actuelle
+- **URL** : https://vigiedette.com/data/csv/notes_agences.csv
+- **Format** : csv
+- **Type** : main
+
+````markdown
+Note de long terme de la France chez S&P, Moody's et Fitch, une ligne par agence.
+
+| Colonne | Description | Exemple |
+|---|---|---|
+| agence | Agence de notation | Fitch |
+| note | Note actuelle (échelle propre à chaque agence ; Moody's écrit Aa3 ce que S&P et Fitch écrivent AA-) | A+ |
+| perspective | positive, stable ou négative | stable |
+| derniere_decision | Date de la dernière décision (AAAA-MM-JJ) | 2026-08-28 |
+| prochaine_revue | Date de la prochaine revue annoncée, si connue | 2026-11-27 |
+| alerte | Avertissement publié par l'agence, le cas échéant | … |
+| source | Article rapportant la dernière décision | https://… |
+````
+
+### Notes de la France, historique
+- **URL** : https://vigiedette.com/data/csv/notes_historique.csv
+- **Format** : csv
+- **Type** : main
+
+````markdown
+Toutes les notes successives de la France chez S&P, Moody's et Fitch depuis 2000.
+
+| Colonne | Description | Exemple |
+|---|---|---|
+| agence | Agence de notation | S&P |
+| date | Date de la décision (AAAA-MM-JJ) | 2012-01-13 |
+| note | Note attribuée | AA+ |
+| date_sourcee | « non » pour la première ligne de chaque agence : note détenue avant 2000, sans date d'attribution | oui |
+| source | Article rapportant la décision | https://… |
+````
+
+### Solde TARGET2 de la Banque de France
+- **URL** : https://vigiedette.com/data/csv/target2_banque_de_france.csv
+- **Format** : csv
+- **Type** : main
+
+````markdown
+Position de la Banque de France dans le système de paiement TARGET2, chaque mois depuis mai 2008 (BCE), rapportée à la taille du bilan de l'Eurosystème pour être comparable dans le temps.
+
+| Colonne | Description | Exemple |
+|---|---|---|
+| mois | Mois (AAAA-MM) | 2026-08 |
+| solde_target2_mds | Solde, en milliards d'euros ; négatif quand la Banque de France doit des fonds au reste de l'Eurosystème | -181.3 |
+| bilan_eurosysteme_mds | Total du bilan de l'Eurosystème, en milliards d'euros | 5915.3 |
+| solde_en_pct_du_bilan | Solde rapporté au bilan, en % : la valeur utilisée par l'indice | -3.07 |
+````
+
+### Méthode de calcul de l'Indice Vigie
+- **URL** : https://vigiedette.com/methode.html
+- **Format** : html
+- **Type** : documentation
+
+````markdown
+Page de méthode du tableau de bord : choix des signaux, repères qui convertissent chaque signal en score, règles de péremption et de calcul de l'indice.
+````
+
+### Code source de la collecte et des calculs
+- **URL** : https://github.com/micka2000/vigie-dette-france
+- **Format** : html
+- **Type** : code
+
+````markdown
+Dépôt ouvert : script de collecte (`scripts/update_data.py`), calcul de l'indice (`score.mjs`), export des CSV (`scripts/exporter_csv.mjs`) et historique de toutes les modifications.
+````
+
+### Spread, format JSON du site
+- **URL** : https://vigiedette.com/data/spread.json
+- **Format** : json
+- **Type** : other
+
+````markdown
+Format source lu par le tableau de bord. Mêmes données que `spread_oat_bund.csv`, champs `jour`, `fr10`, `de10`, `spread_pb`.
+````
+
+### Adjudications, format JSON du site
+- **URL** : https://vigiedette.com/data/adjudications.json
+- **Format** : json
+- **Type** : other
+
+````markdown
+Format source lu par le tableau de bord. Mêmes données que `adjudications_oat_10ans.csv` (dans `lignes`), plus la liste des adjudications manquantes (`a_completer`).
+````
+
+### Notes, format JSON du site
+- **URL** : https://vigiedette.com/data/notations.json
+- **Format** : json
+- **Type** : other
+
+````markdown
+Format source lu par le tableau de bord : notes actuelles, perspectives, prochaines revues et historique complet par agence.
+````
+
+### État de la collecte
+- **URL** : https://vigiedette.com/data/meta.json
+- **Format** : json
+- **Type** : other
+
+````markdown
+Date et heure (UTC) de la dernière collecte (`mis_a_jour`) et liste des séries en retard ou en échec (`echecs`, vide si toutes les sources ont répondu).
+````
 
 ## Après publication
 

@@ -32,6 +32,9 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
+      # Versions CSV des séries pour data.gouv.fr (aperçu et tableur), dans data/csv/.
+      - name: Fichiers CSV
+        run: node scripts/exporter_csv.mjs || echo "CSV=1" >> "$GITHUB_ENV"
       # Instantané du jour dans le tableau de bord et les pages par signal (FR et EN), sitemap, images de partage.
       # Un échec ici ne bloque pas les données.
       - name: Pages et images de partage
@@ -57,6 +60,11 @@ jobs:
         if: env.PAGES == '1'
         run: |
           echo "::error::Pages ou images de partage non régénérées (voir l'étape « Pages et images de partage »)"
+          exit 1
+      - name: Signaler l'échec des CSV
+        if: env.CSV == '1'
+        run: |
+          echo "::error::Fichiers CSV non régénérés (voir l'étape « Fichiers CSV »)"
           exit 1
       - name: Signaler les séries en échec
         if: always() && env.ECHECS == '1'
