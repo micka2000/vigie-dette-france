@@ -23,13 +23,14 @@ Fait le 27/10/2026 : version anglaise `/en/`, instantané du jour lisible sans J
 - [x] **Vitesse de chargement.** _(fait le 27/10/2026, Lighthouse 12.8 sur le site en ligne : mobile 79 → 91 à 97, ordinateur 95 → 100 ; poids 768 → 385 Ko ; premier affichage mobile 2,3 → 1,1 s ; blocage 680 → 150 à 290 ms ; SEO et bonnes pratiques 100.)_ Polices WOFF2 allégées (`scripts/polices.py`), d3 en `defer`, série quotidienne calculée une fois, graphiques hors écran dessinés à leur approche, tuiles et description dans l'instantané pour que la page ne saute pas.
 - [x] **Contraste des pastilles de niveau.** _(fait le 27/10/2026 : seul le texte des pastilles est foncé en mode clair, `--risk-*-texte` dans `styles.css` (calme #296F7D, vigilance #756516, tension #9D530E, au moins 4,6:1 sur blanc et sur `--bg-inset`) ; bordures, graphiques et mode sombre inchangés.)_
 - [x] **Une page par signal, en français et en anglais** (10 pages). _(fait le 27/10/2026 : générées par `scripts/pages.mjs` à partir des cartes du tableau de bord, chiffre du jour et phrase en tête, liens entre signaux, fil d'Ariane, mises à jour chaque matin. Adresses : `/spread-france-allemagne/`, `/adjudications-oat/`, `/dette-detenue-non-residents/`, `/notation-france/`, `/target2-banque-de-france/` et `/en/france-germany-spread/`, `/en/oat-auctions/`, `/en/foreign-holdings/`, `/en/france-credit-rating/`, `/en/target2-balance/`.)_
-- [ ] **Vérifier la collecte du 28/10/2026** (Claude) : première régénération automatique des 14 pages et des images de partage par l'Action ; étape « Pages et images de partage » verte, commit « Données du 2026-10-28 » avec les pages.
+- [x] **Vérifier la collecte du 28/10/2026** (Claude). _(fait le 29/10/2026 : commit `c5d709c` « Données du 2026-10-28 » avec les pages par signal et le sitemap ; passage de 21 h UTC du 29/10 réussi sans commit vide.)_
 - [ ] **Après la fiche data.gouv.fr** (Claude) : lien vers la fiche dans le pied de page et dans `sameAs` de l'organisation (JSON-LD).
 - [ ] **Bilan Search Console vers le 24/11/2026** (Claude, avec les chiffres de Mickaël) : requêtes réelles, positions, clics ; ajuster titres et descriptions en conséquence.
 
 ### À faire par Mickaël
 
-- [ ] **Search Console** : soumettre à nouveau `sitemap.xml` (14 adresses depuis le 27/10/2026, dont les 10 pages par signal) ; demander l'indexation de `/` et `/en/`.
+- [x] **Search Console, sitemap** : `sitemap.xml` soumis à nouveau le 29/10/2026 (14 adresses, dont les 10 pages par signal).
+- [x] **Search Console, indexation** : _(fait le 29/10/2026 par Mickaël : `/`, `/en/` et les 5 pages par signal françaises.)_ Suivi dans le rapport Indexation → Pages (objectif 14 pages indexées), à relire au bilan du 24/11.
 - [ ] **Publier la fiche data.gouv.fr** à partir de `docs/data-gouv-fiche.md` (compte data.gouv.fr), puis envoyer son lien à Claude.
 - [ ] **Liens depuis d'autres sites** : dans les posts LinkedIn, lien vers la page du signal concerné plutôt que l'accueil ; proposer le site à des économistes, blogs finance et newsletters qui suivent la dette.
 - [ ] **LinkedIn Post Inspector** (https://www.linkedin.com/post-inspector/) : passer `https://vigiedette.com/` pour rafraîchir l'aperçu (nouvelle image de partage).
