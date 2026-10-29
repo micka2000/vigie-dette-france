@@ -33,3 +33,11 @@ Fait le 27/10/2026 : version anglaise `/en/`, instantané du jour lisible sans J
 - [ ] **Publier la fiche data.gouv.fr** à partir de `docs/data-gouv-fiche.md` (compte data.gouv.fr), puis envoyer son lien à Claude.
 - [ ] **Liens depuis d'autres sites** : dans les posts LinkedIn, lien vers la page du signal concerné plutôt que l'accueil ; proposer le site à des économistes, blogs finance et newsletters qui suivent la dette.
 - [ ] **LinkedIn Post Inspector** (https://www.linkedin.com/post-inspector/) : passer `https://vigiedette.com/` pour rafraîchir l'aperçu (nouvelle image de partage).
+
+## Vigie Canada
+
+Plan : `docs/designs/vigie-canada.md` (revue CEO terminée le 29/10/2026, mode SCOPE REDUCTION).
+
+- [ ] **Pages par signal canadiennes** (D9.1, reporté) : après la livraison 3, sur le modèle des 10 pages françaises.
+- [ ] **Valider le 5e signal « pression sur le dollar canadien »** (D13, candidat) : données quotidiennes Valet depuis 2001, avance et fausses alertes mesurées (tâche T8 du plan) ; décider ensuite avec l'avis des spécialistes de l'Université de l'Épargne.
+- [ ] **Réparer Codex** (Mickaël) : `codex login`, jeton expiré (401 `invalid_refresh_token`), pour retrouver un avis extérieur d'un autre modèle.
