@@ -5,7 +5,7 @@ export const EN = {
   'meta.description': 'France-Germany spread, debt auctions, foreign holdings, credit ratings and TARGET2. The five risk signals of French public debt, updated every day.',
   'url': 'https://vigiedette.com/en/',
   'og.locale': 'en_GB',
-  'image.alt': 'Today’s Vigie Index and the verdict on French debt',
+  'image.alt': 'Vigie Dette France: the risk on French public debt, measured every day, with the France-Germany 10-year yield spread since 2004',
   'entete.methode': 'How it is calculated',
   'langue.href': '../',
   'theme.aria': 'Switch between light and dark theme',

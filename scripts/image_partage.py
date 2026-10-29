@@ -1,32 +1,44 @@
 """Images du site, dessinées avec Pillow et les polices du site (fonts/).
 
-python scripts/image_partage.py            images de partage partage-fr.png et partage-en.png (1200 x 630),
-                                           à partir de data/instantane.json (écrit par scripts/pages.mjs --instantane)
+python scripts/image_partage.py            images de partage partage-fr.png et partage-en.png (1200 x 630) :
+                                           accroche, spread France-Allemagne depuis 2004 et échelle des niveaux,
+                                           à partir de data/spread.json (moyennes des semaines complètes)
 python scripts/image_partage.py --icones   favicon.ico, favicon-48.png, apple-touch-icon.png et logo.png, d'après favicon.svg
 
-Une image n'est réécrite que si son contenu change : le dépôt ne grossit pas d'une image par jour.
+Une image n'est réécrite que si son contenu change : la courbe ne bouge qu'à chaque semaine complète,
+le dépôt grossit donc d'une image par semaine, pas par jour.
 """
 import io
 import json
 import sys
+from datetime import date
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 RACINE = Path(__file__).resolve().parent.parent
 BLEU = (0, 63, 163)  # --color-blue
 BLANC = (255, 255, 255)
-NIVEAUX = {  # --risk-* de styles.css, et la forme qui double la couleur sur la page
-    'calme': ((46, 125, 140), 'rond'),
-    'vigilance': ((160, 138, 30), 'triangle'),
-    'tension': ((201, 106, 18), 'losange'),
-    'crise': ((179, 38, 30), 'carre'),
-}
+CIEL = (177, 195, 230)
+NIVEAUX = [  # teintes de --risk-* éclaircies pour le fond bleu, et la forme qui double la couleur sur la page
+    ((79, 176, 192), 'rond'), ((208, 182, 64), 'triangle'), ((240, 138, 58), 'losange'), ((240, 100, 90), 'carre'),
+]
 TEXTES = {
-    'fr': {'indice': 'Indice Vigie', 'pied': 'vigiedette.com · mis à jour chaque jour'},
-    'en': {'indice': 'Vigie Index', 'pied': 'vigiedette.com · updated every day'},
+    'fr': dict(titre='Le risque de la dette publique française, mesuré chaque jour.',
+               sous='5 signaux officiels réunis dans un indice de 0 à 100',
+               courbe='Écart de taux France-Allemagne à 10 ans, depuis 2004',
+               pic='2011 · crise de la zone euro', auj="aujourd'hui",
+               niveaux=['Calme', 'Vigilance', 'Tension', 'Crise'],
+               signaux='Spread · AFT · non-résidents · notes · TARGET2'),
+    'en': dict(titre='The risk on French public debt, measured every day.',
+               sous='5 official signals combined into a 0 to 100 index',
+               courbe='France-Germany 10-year yield spread, since 2004',
+               pic='2011 · euro area crisis', auj='today',
+               niveaux=['Calm', 'Watch', 'Stress', 'Crisis'],
+               signaux='Spread · AFT · foreign holdings · ratings · TARGET2'),
 }
-LARGEUR, HAUTEUR, MARGE = 1200, 630, 72
+LARGEUR, HAUTEUR = 1200, 630
+K = 2  # dessin à 2x puis réduction
 
 
 def police(nom, taille, graisse):
@@ -66,37 +78,91 @@ def forme(d, nom, cx, cy, r, couleur):
         d.rectangle([cx - r * 0.8, cy - r * 0.8, cx + r * 0.8, cy + r * 0.8], fill=couleur)
 
 
-def partage(inst, lang):
-    t = TEXTES[lang]
-    img = Image.new('RGB', (LARGEUR, HAUTEUR), BLEU)
-    d = ImageDraw.Draw(img)
-    d.text((MARGE, 64), 'Vigie Dette France', font=titre(44, 700), fill=BLANC)
+def s(v):
+    return round(v * K)
 
-    y = 150
-    if inst.get('indice') is not None:
-        couleur, nom_forme = NIVEAUX[inst['niveau']]
-        f_num, f_sur = titre(200, 800), titre(56, 600)
-        d.text((MARGE - 8, y), str(inst['indice']), font=f_num, fill=BLANC)
-        x = MARGE + d.textlength(str(inst['indice']), font=f_num) + 4
-        d.text((x, y + 128), '/100', font=f_sur, fill=(214, 226, 247))
-        # Nom de l'indice et pastille du niveau, à droite du chiffre
-        x += d.textlength('/100', font=f_sur) + 48
-        d.text((x, y + 44), t['indice'], font=titre(36, 600), fill=(214, 226, 247))
-        f_niv = titre(38, 700)
-        libelle = inst['niveauTexte'][lang]
-        h, pad = 64, 26
-        larg = pad + 28 + 14 + d.textlength(libelle, font=f_niv) + pad
-        d.rounded_rectangle([x, y + 100, x + larg, y + 100 + h], radius=h // 2, fill=BLANC)
-        forme(d, nom_forme, x + pad + 13, y + 100 + h / 2, 13, couleur)
-        d.text((x + pad + 42, y + 100 + h / 2), libelle, font=f_niv, fill=couleur, anchor='lm')
-        y += 250
 
-    f_verdict = texte(38, 500)
-    for i, ligne in enumerate(lignes(d, inst['verdict'][lang], f_verdict, LARGEUR - 2 * MARGE)[:3]):
-        d.text((MARGE, y + i * 52), ligne, font=f_verdict, fill=BLANC)
+def semaines(spread):
+    """Moyenne du spread par semaine ISO, sans la semaine en cours : la courbe change une fois par semaine."""
+    groupes = {}
+    for r in spread:
+        groupes.setdefault(date.fromisoformat(r['jour']).isocalendar()[:2], []).append(r['spread_pb'])
+    return [sum(v) / len(v) for _, v in sorted(groupes.items())[:-1]]
 
-    d.text((MARGE, HAUTEUR - 64), t['pied'], font=texte(28, 400), fill=(214, 226, 247), anchor='ls')
+
+def fond(w, h):
+    """Dégradé du bleu nuit (en bas à gauche) au bleu du site (en haut à droite)."""
+    img = Image.new('RGB', (w, h))
+    px = img.load()
+    a, b = (0, 26, 84), BLEU
+    for y in range(h):
+        for x in range(w):
+            t = min(1, max(0, (x / w) * 0.55 + (1 - y / h) * 0.45))
+            px[x, y] = tuple(round(a[i] + (b[i] - a[i]) * t) for i in range(3))
     return img
+
+
+def partage(serie, lang):
+    t = TEXTES[lang]
+    W, H = LARGEUR * K, HAUTEUR * K
+    img = fond(W, H).convert('RGBA')
+    calque = Image.new('RGBA', img.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(calque)
+
+    # Courbe du spread, sur toute la largeur, en bas
+    x0, x1, yb, yh = s(40), s(1160), s(480), s(330)
+    vmax = 230
+    pts = [(x0 + (x1 - x0) * i / (len(serie) - 1), yb - (yb - yh) * max(v, 0) / vmax) for i, v in enumerate(serie)]
+    for g in range(0, vmax, 50):  # repères horizontaux discrets
+        y = yb - (yb - yh) * g / vmax
+        d.line([(x0, y), (x1, y)], fill=(255, 255, 255, 18), width=s(1))
+    d.polygon(pts + [(x1, yb), (x0, yb)], fill=(*CIEL, 40))
+    lueur = Image.new('RGBA', img.size, (0, 0, 0, 0))
+    ImageDraw.Draw(lueur).line(pts, fill=(140, 180, 255, 160), width=s(8), joint='curve')
+    calque = Image.alpha_composite(calque, lueur.filter(ImageFilter.GaussianBlur(s(6))))
+    d = ImageDraw.Draw(calque)
+    d.line(pts, fill=(235, 242, 255, 255), width=s(2.5), joint='curve')
+
+    # Pic de 2011 et point du jour
+    px, py = pts[max(range(len(serie)), key=lambda i: serie[i])]
+    d.line([(px + s(8), py), (px + s(30), py)], fill=(255, 255, 255, 140), width=s(1.5))
+    d.text((px + s(38), py), t['pic'], font=texte(s(17), 500), fill=CIEL, anchor='lm')
+    ex, ey = pts[-1]
+    for r, a in ((s(16), 50), (s(10), 90)):
+        d.ellipse([ex - r, ey - r, ex + r, ey + r], fill=(240, 138, 58, a))
+    d.ellipse([ex - s(5.5), ey - s(5.5), ex + s(5.5), ey + s(5.5)], fill=BLANC)
+    d.text((ex - s(18), ey - s(18)), t['auj'], font=texte(s(17), 600), fill=BLANC, anchor='rs')
+    d.text((x0, yb + s(28)), t['courbe'], font=texte(s(16), 400), fill=(*CIEL, 200), anchor='ls')
+
+    img = Image.alpha_composite(img, calque)
+    d = ImageDraw.Draw(img)
+
+    # En-tête : logo et nom
+    d.rounded_rectangle([s(62), s(50), s(122), s(110)], radius=s(14), outline=(255, 255, 255, 90), width=s(2))
+    img.alpha_composite(icone(s(56)), (s(64), s(52)))
+    d.text((s(136), s(80)), 'Vigie Dette France', font=titre(s(34), 700), fill=BLANC, anchor='lm')
+    d.text((W - s(64), s(80)), 'vigiedette.com', font=texte(s(22), 500), fill=CIEL, anchor='rm')
+
+    # Accroche
+    f = titre(s(46), 800)
+    y = s(140)
+    for ligne in lignes(d, t['titre'], f, s(860)):
+        d.text((s(64), y), ligne, font=f, fill=BLANC)
+        y += s(54)
+    d.text((s(64), y + s(10)), t['sous'], font=texte(s(22), 400), fill=CIEL)
+
+    # Échelle des niveaux
+    y, x = s(560), s(64)
+    fn = titre(s(20), 700)
+    for (couleur, nom_forme), nom in zip(NIVEAUX, t['niveaux']):
+        larg = s(18) + s(16) + s(10) + d.textlength(nom, font=fn) + s(18)
+        d.rounded_rectangle([x, y - s(20), x + larg, y + s(20)], radius=s(20), fill=BLANC)
+        forme(d, nom_forme, x + s(18) + s(8), y, s(8), couleur)
+        d.text((x + s(44), y), nom, font=fn, fill=tuple(round(c * 0.72) for c in couleur), anchor='lm')
+        x += larg + s(12)
+    d.text((W - s(64), y), t['signaux'], font=texte(s(17), 500), fill=CIEL, anchor='rm')
+
+    return img.convert('RGB').resize((LARGEUR, HAUTEUR), Image.LANCZOS)
 
 
 def icone(taille):
@@ -134,10 +200,10 @@ def main(args):
         icone(48).save(RACINE / 'favicon.ico', sizes=[(16, 16), (32, 32), (48, 48)])
         print('favicon.ico écrit')
         return
-    inst = json.loads((RACINE / 'data' / 'instantane.json').read_text(encoding='utf-8'))
+    serie = semaines(json.loads((RACINE / 'data' / 'spread.json').read_text(encoding='utf-8')))
     for lang in ('fr', 'en'):
         nom = f'partage-{lang}.png'
-        print(nom, 'écrit' if enregistrer(partage(inst, lang), nom) else 'inchangé')
+        print(nom, 'écrit' if enregistrer(partage(serie, lang), nom) else 'inchangé')
 
 
 if __name__ == '__main__':
