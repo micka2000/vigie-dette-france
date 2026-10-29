@@ -32,7 +32,7 @@ Objectif du projet : portfolio et projet personnel, montré sur LinkedIn à un r
 | Adjudications, couverture | Valet, groupe `AUC_BOND_RESULTS` et série `AUC_BOND_COVERAGE`, depuis 1998-10-28 | vérifié ; filtrage des obligations à 10 ans à préciser |
 | Indice de stress financier canadien | Valet `FVI_FSI_CAN`, mensuel depuis 1981, maximum 0,55 en février 2009, 0,02 en août 2026 | vérifié ; équivalent du CISS de la BCE |
 | Part détenue par des non-résidents | Statistique Canada 36-10-0475, vecteur v61913978 (obligations fédérales détenues par les non-résidents, toutes devises, valeur comptable, mensuel depuis 1991-01), rapporté à 10-10-0113, vecteur v37293 (titres négociables du gouvernement du Canada, mensuel depuis 1985) | vérifié le 2026-10-29 : 33,6 % en 1995, 14,8 % en 2008, 45,9 % en 2026-08 ; écart entre valeur comptable et valeur nominale à documenter |
-| Notes | S&P, Moody's, Fitch, DBRS Morningstar | saisie manuelle, notes actuelles à vérifier à la source |
+| Notes | S&P, Moody's, Fitch (DBRS Morningstar écarté, D14) | saisie manuelle, notes actuelles à vérifier à la source |
 | Écart Ontario ou Québec contre fédéral | aucune série quotidienne gratuite trouvée | non disponible |
 
 ## Premises
@@ -81,7 +81,7 @@ Approche B, choisie par Mickaël (D6). Le site apprend à lire une fiche par pay
 | Écart de taux Canada-États-Unis à 10 ans | tension | plus l'écart remonte vers zéro ou au-dessus, plus le marché exige du Canada par rapport aux États-Unis (voir la réserve ci-dessous) |
 | Couverture des adjudications d'obligations à 10 ans | tension | même lecture que la France |
 | Part de la dette fédérale détenue par des non-résidents | fond | même lecture que la France, sous réserve de la source |
-| Notes (S&P, Moody's, Fitch, DBRS) | fond | note la plus basse, comme pour la France |
+| Notes (S&P, Moody's, Fitch) | fond | note la plus basse, comme pour la France |
 
 Lecture officielle à côté de l'indice : l'indice de stress financier canadien de la Banque du Canada, à la place du CISS. Il est mensuel, alors que le CISS est quotidien : la péremption doit être propre au pays.
 
@@ -121,7 +121,7 @@ La collecte et la génération des pages traitent chaque pays séparément. Si u
 2. **Repères canadiens** : comment caler les repères 25, 50, 75 et 100 sur un spread surtout négatif ? Proposition à valider : centiles de l'historique canadien depuis 2001, comme pour la France, avec un « crise » au-dessus de zéro.
 3. **Comparabilité des indices** : un indice à quatre signaux se compare-t-il à l'indice français à cinq ? La page doit dire clairement que chaque indice se lit dans l'historique de son pays.
 4. **Adjudications** : comment isoler les obligations à 10 ans dans `AUC_BOND_RESULTS` (échéance, ou clé d'obligation) ?
-5. **Notes actuelles** : vérifier à la source chacune des quatre notes et leur date avant de les saisir.
+5. **Notes actuelles** : vérifier à la source chacune des trois notes et leur date avant de les saisir.
 6. **Sélecteur France | Canada** : place et libellé exacts dans l'en-tête (le comportement est fixé plus haut, section Navigation).
 7. **Écart Canada-États-Unis** : option (a), (b) ou (c) de la réserve ci-dessus.
 
@@ -262,9 +262,10 @@ Mode : SCOPE REDUCTION (D8). Ces décisions priment sur le texte ci-dessus quand
 | D9.2 | ~~Signal des non-résidents reporté jusqu'à validation de la source~~ Rouvert après l'avis extérieur : non-résidents dans la livraison 2, au fond avec les notes | Rouvrir |
 | D9.3 | Image de partage canadienne FR et EN gardée dans la livraison 2 | Garder |
 | D10 / CEO-S1 | ~~Écart Canada-États-Unis affiché hors indice (option c)~~ Rouvert le 2026-10-29 : objectif de parité avec la France (cinq signaux), écart dans l'indice (option a), réserve visible sur la carte et la page Méthode ; tension = moyenne de l'écart et de la couverture | A |
-| D11 / CEO-S2 | Notes canadiennes collectées automatiquement par `maj_notations` (Wikipédia, countryeconomy), échelle DBRS ajoutée. Correction : les notes françaises sont déjà collectées automatiquement, pas saisies à la main | A |
+| D11 / CEO-S2 | Notes canadiennes collectées automatiquement par `maj_notations` (Wikipédia, countryeconomy), trois agences comme la France (D14). Correction : les notes françaises sont déjà collectées automatiquement, pas saisies à la main | A |
 | D12 / CEO-S3 | `/canada/` publié d'abord sans lien depuis la France et hors sitemap ; 2 collectes réelles vérifiées ; puis sélecteur et sitemap dans un commit séparé | A |
-| D13 | 5e signal candidat, équivalent de TARGET2 : « pression sur le dollar canadien ». Chaque mois, baisse du CAD face à l'USD et creusement de l'écart Canada-États-Unis à 10 ans, sur 3 mois, chacun en écarts-types des 10 années précédentes ; pression = le plus faible des deux si les deux vont dans le sens d'une fuite, sinon 0 ; vigilance au p90 et alerte au p97 de 1981-2000, seuils figés ensuite. Prototype du 2026-10-29 (FRED DEXCAUS, IRLTLT01CAM156N, GS10) : sur 2001-2026, vigilance dès 2008-01 (pic de stress BdC en 2008-10), calme en 2015, un mois de vigilance en 2022-07, fausse alerte en 2002-09, aucune avance en 2020-03 ; corrélation 0,49 avec la variation de l'écart, 0,24 avec FVI_FSI_CAN. Non prouvé : aucune fuite propre au Canada hors période de réglage. En production : taux quotidiens Valet (depuis 2001 seulement). Avis des spécialistes demandé sur l'Université de l'Épargne | Candidat, à valider |
+| D13 | 5e signal candidat, équivalent de TARGET2 : « pression sur le dollar canadien ». Chaque mois, baisse du CAD face à l'USD et creusement de l'écart Canada-États-Unis à 10 ans, sur 3 mois, chacun en écarts-types des 10 années précédentes ; pression = le plus faible des deux si les deux vont dans le sens d'une fuite, sinon 0 ; vigilance au p90 et alerte au p97 de 1981-2000, seuils figés ensuite. Prototype du 2026-10-29 (FRED DEXCAUS, IRLTLT01CAM156N, GS10) : sur 2001-2026, vigilance dès 2008-01 (pic de stress BdC en 2008-10), calme en 2015, un mois de vigilance en 2022-07, fausse alerte en 2002-09, aucune avance en 2020-03 ; corrélation 0,49 avec la variation de l'écart, 0,24 avec FVI_FSI_CAN. Non prouvé : aucune fuite propre au Canada hors période de réglage. En production : taux quotidiens Valet (depuis 2001 seulement). Avis des spécialistes demandé sur l'Université de l'Épargne | En attente (décision de Mickaël le 2026-10-29 : rien ne bouge avant les avis de l'Université de l'Épargne) |
+| D14 | DBRS Morningstar abandonné : les trois agences S&P, Moody's et Fitch suffisent, comme pour la France ; `maj_notations` et sa règle de recoupement à deux sources restent inchangés | Trois agences |
 
 Livraisons :
 1. Refonte à l'identique : fiche par pays, fichiers français identiques octet pour octet.
@@ -284,7 +285,7 @@ Relecteur natif (agent Plan), Codex indisponible (jeton expiré, `codex login`).
 | Indice canadien quasi constant (couverture + note figée) | Critique | raisonnement sur D9.2 et D10 | tranché, D9.2 et D10 rouverts, D13 candidat |
 | `app.js` affiche tous les `meta.echecs` sur la page qui lit le fichier | High | `app.js:907` | `data/canada/meta.json` séparé, corrigé dans « Isolation des pays » |
 | Pathspec `'partage-*.png'` ne couvre pas `canada/` | Medium | `.github/workflows/update-data.yml:46` | T4 |
-| DBRS absent de countryeconomy.com, or une note n'est appliquée que si les deux sources concordent | High | `scripts/update_data.py:7`, Wikipédia a une section DBRS Morningstar, countryeconomy.com non | décision ouverte (voir plus bas) |
+| DBRS absent de countryeconomy.com, or une note n'est appliquée que si les deux sources concordent | High | `scripts/update_data.py:7`, Wikipédia a une section DBRS Morningstar, countryeconomy.com non | tranché par D14, DBRS abandonné |
 | Test d'identité de la livraison 1 à normaliser sur les `?v=` d'empreintes et la date d'instantané | High | `scripts/empreintes.mjs`, `scripts/pages.mjs:168` | T1 |
 | Mécanisme du gabarit canadien non spécifié (textes par pays) | Medium | plan | T2 |
 | Historique des notes canadiennes depuis 1998 à remplir | Medium | plan | T5 |
@@ -307,7 +308,7 @@ Rejeté :
 ## What already exists
 
 - `score.mjs` (`sousIndice`, `indiceDe`, péremption) : réutilisé, devient la fiche par pays.
-- `scripts/update_data.py` : collecteurs français, `maj_notations` réutilisable pour le Canada avec une règle DBRS à décider.
+- `scripts/update_data.py` : collecteurs français, `maj_notations` réutilisable tel quel pour le Canada (trois agences, D14).
 - `scripts/pages.mjs`, `scripts/empreintes.mjs`, `scripts/image_partage.py` : gabarit unique, à paramétrer par pays.
 - Workflow `update-data.yml` à 3 crons (commit `1b15566`) : réutilisé tel quel, pathspec à étendre.
 
@@ -323,12 +324,11 @@ Dans 12 mois : un moteur, plusieurs pays, chaque indice lu dans l'historique de 
   collecte Valet         | API en panne ou format changé    | Y        | prévu  | carte périmée datée   | meta CA
   collecte FRED          | CSV avec "." ou blocage Action   | Y (plan) | T3     | écart périmé          | meta CA
   collecte StatCan       | tableau révisé ou renuméroté     | Y        | prévu  | carte périmée datée   | meta CA
-  maj_notations DBRS     | une seule source, pas de recoupe | inconnu  | non    | note DBRS figée       | non
   pages.mjs par pays     | échec Canada bloque la France    | Y (plan) | prévu  | rien côté France      | oui
   pathspec partage       | image canadienne jamais commitée | N        | T4     | vieille image partagée| non
 ```
 
-Aucun CRITICAL GAP (aucune ligne à la fois non rattrapée, non testée et silencieuse). La ligne DBRS dépend de la décision ouverte.
+Aucun CRITICAL GAP (aucune ligne à la fois non rattrapée, non testée et silencieuse).
 
 ## Implementation Tasks
 
@@ -389,7 +389,7 @@ Estimations : refonte et tests ~20x à 50x plus rapides avec Claude Code.
   | Outside voice        | codex unavailable (401), repli natif        |
   | Lake Score           | N/A (décomptes du 28/10 non conservés)      |
   | Diagrams produced    | 1 (architecture, corps du plan)             |
-  | Unresolved decisions | 2 (listées ci-dessous)                      |
+  | Unresolved decisions | 1, D13 en attente (listée ci-dessous)       |
   +====================================================================+
 ```
 
@@ -400,10 +400,9 @@ Estimations : refonte et tests ~20x à 50x plus rapides avec Claude Code.
 | plan-ceo-review (SCOPE REDUCTION) | 1 | issues_open | 11 constats de l'avis extérieur intégrés, 8 tâches, 0 critical gap |
 | codex-plan-review | 0 réussi | unavailable | jeton Codex expiré (401), repli natif par agent Plan |
 
-VERDICT : plan prêt pour la livraison 1 (refonte à l'identique, T1 à T3). Livraison 2 conditionnée aux deux décisions ouvertes.
+VERDICT : plan prêt pour la livraison 1 (refonte à l'identique, T1 à T3). Livraison 2 à quatre signaux possible ; le 5e attend D13.
 
 OUTSIDE COVERAGE / CROSS-MODEL : aucune. L'avis extérieur est un agent Claude natif, pas un autre modèle.
 
 **UNRESOLVED DECISIONS:**
-- D13 : 5e signal « pression sur le dollar canadien » retenu, réservé hors indice ou abandonné, après T8 et l'avis des spécialistes de l'Université de l'Épargne.
-- DBRS : une seule source (Wikipédia) contre la règle de recoupement de `maj_notations` ; accepter une source unique pour DBRS, trouver une seconde source, ou garder trois agences.
+- D13 (en attente) : 5e signal « pression sur le dollar canadien » retenu, réservé hors indice ou abandonné ; aucune décision avant les avis des spécialistes de l'Université de l'Épargne, puis T8.
