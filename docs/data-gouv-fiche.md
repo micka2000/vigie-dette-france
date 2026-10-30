@@ -61,7 +61,6 @@ Une collecte automatique (GitHub Actions) interroge les sources trois fois par j
 
 ### Limites à connaître
 
-- Cinq adjudications récentes manquent (septembre 2025 ; janvier, mars, mai et juin 2026), faute de publication exploitable.
 - Les adjudications d'août et de décembre sont fournies mais écartées de l'indice : ce sont des séances mixtes à la couverture atypique.
 - La série Eurostat ne commence qu'en 2020 ; pour l'historique, utilisez la série trimestrielle de la Banque de France.
 - Ces données décrivent des marchés et des décisions publiques. Elles ne constituent pas un conseil en investissement.
@@ -128,7 +127,7 @@ Résultats des ventes d'OAT à 10 ans par l'Agence France Trésor depuis janvier
 | retenue_dans_indice | « non » pour les séances mixtes d'août et de décembre, écartées de l'indice | oui |
 | source | Publication d'où provient le résultat | https://… |
 
-Cinq adjudications manquent : septembre 2025 ; janvier, mars, mai et juin 2026.
+Aucune séance manquante depuis 2004 : historique officiel de l'AFT jusqu'à septembre 2026, puis dépêches Reuters.
 ````
 
 ### Part de la dette de l'État détenue par des non-résidents
@@ -246,7 +245,7 @@ Format source lu par le tableau de bord. Mêmes données que `spread_oat_bund.cs
 - **Type** : other
 
 ````markdown
-Format source lu par le tableau de bord. Mêmes données que `adjudications_oat_10ans.csv` (dans `lignes`), plus la liste des adjudications manquantes (`a_completer`).
+Format source lu par le tableau de bord. Mêmes données que `adjudications_oat_10ans.csv` (dans `lignes`), avec la description des sources.
 ````
 
 ### Notes, format JSON du site

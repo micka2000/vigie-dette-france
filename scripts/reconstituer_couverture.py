@@ -1,9 +1,9 @@
 """Reconstitue l'historique des adjudications à 10 ans depuis 2004 : python3 scripts/reconstituer_couverture.py
 
-Source : historique officiel des adjudications d'OAT à moyen et long terme de l'AFT, de janvier 1999 à juillet 2025
-(data/sources/aft_2025-07_hist_mlt.xlsx, copie archivée par archive.org, le site de l'AFT bloquant les robots),
-puis l'adjudication du 2 octobre 2025 (page de l'AFT archivée), puis data/adjudications.json pour les séances
-suivantes (dépêches Reuters, collecte quotidienne).
+Source : historique officiel des adjudications d'OAT à moyen et long terme de l'AFT, de janvier 1999 à septembre 2026
+(data/sources/aft_2026-10_hist_mlt.xlsx, téléchargé depuis un navigateur le 29/10/2026, le site de l'AFT bloquant
+les robots), puis data/adjudications.json pour les séances suivantes (dépêches Reuters, collecte quotidienne).
+Pour mettre à jour : télécharger le dernier AAAA-MM_hist_mlt.xlsx de l'AFT, changer SOURCE et URL_SOURCE, relancer.
 
 Même règle que la collecte quotidienne (update_data.ligne_dix_ans) : dans chaque séance d'OAT non indexées,
 la ligne de 8,5 à 11,5 ans au plus gros volume adjugé. Les séances d'août et de décembre sont gardées dans le
@@ -19,19 +19,13 @@ from datetime import date, timedelta
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
-SOURCE = RACINE / "data" / "sources" / "aft_2025-07_hist_mlt.xlsx"
-URL_SOURCE = ("https://web.archive.org/web/20250831211140/https://www.aft.gouv.fr/files/medias-aft/"
-              "3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2025-07_hist_mlt.xlsx")
+SOURCE = RACINE / "data" / "sources" / "aft_2026-10_hist_mlt.xlsx"
+URL_SOURCE = ("https://www.aft.gouv.fr/files/medias-aft/"
+              "3_Dette/3.2_OATMLT/3.2.1_OAT/Principaux%20chiffres/2026-10_hist_mlt.xlsx")
 DEBUT = date(2004, 1, 1)
 MOIS = {m: i + 1 for i, m in enumerate(["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août",
                                         "septembre", "octobre", "novembre", "décembre"])}
 NS = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
-
-# Page « Dernières adjudications » de l'AFT archivée le 9 octobre 2025 : séance du 2 octobre 2025, ligne 25/11/2035.
-OCTOBRE_2025 = {
-    "date": "2025-10-02", "ligne": "OAT 3,50 % 25/11/2035", "adjuge_mds": 5.49, "demande_mds": 13.906, "taux": 3.51,
-    "source": "https://web.archive.org/web/20251009042138/https://www.aft.gouv.fr/fr/dernieres-adjudications",
-}
 
 
 def lignes_xlsx(chemin):
@@ -104,20 +98,20 @@ def main():
     actuel = json.loads(chemin.read_text(encoding="utf-8"))
     hist = historique_aft(tec10)
     fin_aft = hist[-1]["date"]
-    apres = [l for l in actuel["lignes"] if l["date"] > OCTOBRE_2025["date"]]
-    lignes = hist + [OCTOBRE_2025] + apres
+    apres = [l for l in actuel["lignes"] if l["date"] > fin_aft]
+    lignes = hist + apres
     actuel["lignes"] = lignes
     actuel["description"] = (
         "Adjudications d'OAT : par séance, la ligne de 8,5 à 11,5 ans au plus gros volume adjugé. "
         "Couverture = volume demandé / volume adjugé (définition de l'AFT). "
-        f"De 2004 à {fin_aft} : historique officiel de l'AFT (data/sources/aft_2025-07_hist_mlt.xlsx, "
-        "reconstitué par scripts/reconstituer_couverture.py) ; 2 octobre 2025 : page de l'AFT archivée ; ensuite : "
+        f"De 2004 à {fin_aft} : historique officiel de l'AFT ({SOURCE.relative_to(RACINE)}, "
+        "reconstitué par scripts/reconstituer_couverture.py) ; ensuite : "
         "dépêches Reuters publiées par Boursorama, collectées chaque matin. Les séances d'août et de décembre "
         "(adjudications mixtes) sont gardées mais écartées du calcul."
     )
-    actuel["a_completer"] = ["2025-09", "2026-01", "2026-03", "2026-05", "2026-06"]
+    actuel.pop("a_completer", None)
     chemin.write_text(json.dumps(actuel, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    print(f"{len(hist)} séances AFT ({hist[0]['date']} à {fin_aft}), 1 page archivée, {len(apres)} séances Reuters")
+    print(f"{len(hist)} séances AFT ({hist[0]['date']} à {fin_aft}), {len(apres)} séances Reuters")
 
 
 if __name__ == "__main__":
