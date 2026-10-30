@@ -10,11 +10,8 @@
 
 ## Sécurité
 
-- [ ] **Installer Docker Engine dans WSL, puis compléter l'audit de sécurité.** Le premier `/cso` (21/10/2026, run `1792622323218-9c871cd831ad35e3`) n'a trouvé aucune faille, mais il est partiel : 28 des 45 commits n'ont pas été scannés pour les secrets, et aucun scanner n'a tourné, faute de Docker (`/cso --doctor`). Étapes :
-  1. Dans un terminal Ubuntu (sudo demande le mot de passe) : dépôt officiel Docker pour Ubuntu 24.04, installation de `docker-ce docker-ce-cli containerd.io`, `usermod -aG docker $USER`, puis `systemctl disable --now docker.service containerd.service` pour ne pas occuper la RAM au démarrage (WSL n'a que 7,7 Go). Commande complète : documentation Docker « Install Docker Engine on Ubuntu ».
-  2. `wsl --shutdown` dans PowerShell, rouvrir WSL.
-  3. `/cso --doctor` pour vérifier, puis `/cso --infra` : Gitleaks sur tout l'historique, zizmor sur les workflows.
-  4. Arrêter Docker après l'audit : `sudo systemctl stop docker docker.socket containerd`.
+- [x] **Installer Docker Engine dans WSL, puis compléter l'audit de sécurité.** _(fait le 30/10/2026 : Docker 29.9.2 installé, démarrage automatique coupé ; `/cso --infra`, run `1793396744952-58c9d0937cf3bf56`, aucune faille. Gitleaks 8.30.1 : aucun secret dans le dépôt actuel. zizmor 1.30.1 : actions figées par SHA, tests en lecture seule, collecte sans entrée extérieure ; deux alertes « artipacked » sans effet, aucun workflow ne publie d'artefact.)_ Démarrer Docker au besoin : `sudo systemctl start docker`, l'arrêter après : `sudo systemctl stop docker docker.socket containerd`.
+- [ ] **Compléter l'audit, à faible priorité** : les 66 commits les plus anciens (sur 92) n'ont pas été fouillés pour les secrets (limite d'historique de l'outil), et les dépendances n'ont pas été analysées (scanner OSV, image à télécharger ; seul Pillow, version figée).
 
 ## Référencement
 
