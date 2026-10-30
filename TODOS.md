@@ -32,6 +32,7 @@ Fait le 27/10/2026 : version anglaise `/en/`, instantané du jour lisible sans J
 - [x] **Search Console, sitemap** : `sitemap.xml` soumis à nouveau le 29/10/2026 (14 adresses, dont les 10 pages par signal).
 - [x] **Search Console, indexation** : _(fait le 29/10/2026 par Mickaël : `/`, `/en/` et les 5 pages par signal françaises.)_ Suivi dans le rapport Indexation → Pages (objectif 14 pages indexées), à relire au bilan du 24/11.
 - [x] **Publier la fiche data.gouv.fr**. _(fait le 29/10/2026 par l'API : https://www.data.gouv.fr/datasets/signaux-de-risque-de-la-dette-publique-francaise-vigie-dette-france ; séries en CSV dans `data/csv/`, régénérées à chaque collecte ; fiche modifiable via `docs/data-gouv-fiche.md` puis `python scripts/publier_data_gouv.py --envoyer`.)_
+- [x] **Réutilisation data.gouv.fr**. _(fait le 30/10/2026 : https://www.data.gouv.fr/reuses/vigie-dette-france, liée à la fiche Vigie Dette et à Webstat FM de la Banque de France.)_
 - [ ] **Liens depuis d'autres sites** : dans les posts LinkedIn, lien vers la page du signal concerné plutôt que l'accueil ; proposer le site à des économistes, blogs finance et newsletters qui suivent la dette.
 - [x] **LinkedIn Post Inspector**. _(fait le 29/10/2026 : nouvelle image de partage (vignette avec la courbe) vérifiée dans un brouillon de post, FR et EN.)_
 
