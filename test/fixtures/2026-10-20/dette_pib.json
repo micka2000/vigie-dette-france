@@ -1,0 +1,422 @@
+[
+ {
+  "trimestre": "2000-Q1",
+  "dette_pib": 60.4
+ },
+ {
+  "trimestre": "2000-Q2",
+  "dette_pib": 60.4
+ },
+ {
+  "trimestre": "2000-Q3",
+  "dette_pib": 59.9
+ },
+ {
+  "trimestre": "2000-Q4",
+  "dette_pib": 59.7
+ },
+ {
+  "trimestre": "2001-Q1",
+  "dette_pib": 58.7
+ },
+ {
+  "trimestre": "2001-Q2",
+  "dette_pib": 59.7
+ },
+ {
+  "trimestre": "2001-Q3",
+  "dette_pib": 59.8
+ },
+ {
+  "trimestre": "2001-Q4",
+  "dette_pib": 59.3
+ },
+ {
+  "trimestre": "2002-Q1",
+  "dette_pib": 59.7
+ },
+ {
+  "trimestre": "2002-Q2",
+  "dette_pib": 61.0
+ },
+ {
+  "trimestre": "2002-Q3",
+  "dette_pib": 60.7
+ },
+ {
+  "trimestre": "2002-Q4",
+  "dette_pib": 61.3
+ },
+ {
+  "trimestre": "2003-Q1",
+  "dette_pib": 62.8
+ },
+ {
+  "trimestre": "2003-Q2",
+  "dette_pib": 65.0
+ },
+ {
+  "trimestre": "2003-Q3",
+  "dette_pib": 65.5
+ },
+ {
+  "trimestre": "2003-Q4",
+  "dette_pib": 65.4
+ },
+ {
+  "trimestre": "2004-Q1",
+  "dette_pib": 66.0
+ },
+ {
+  "trimestre": "2004-Q2",
+  "dette_pib": 67.2
+ },
+ {
+  "trimestre": "2004-Q3",
+  "dette_pib": 66.8
+ },
+ {
+  "trimestre": "2004-Q4",
+  "dette_pib": 66.9
+ },
+ {
+  "trimestre": "2005-Q1",
+  "dette_pib": 67.7
+ },
+ {
+  "trimestre": "2005-Q2",
+  "dette_pib": 68.1
+ },
+ {
+  "trimestre": "2005-Q3",
+  "dette_pib": 67.8
+ },
+ {
+  "trimestre": "2005-Q4",
+  "dette_pib": 68.2
+ },
+ {
+  "trimestre": "2006-Q1",
+  "dette_pib": 68.1
+ },
+ {
+  "trimestre": "2006-Q2",
+  "dette_pib": 67.1
+ },
+ {
+  "trimestre": "2006-Q3",
+  "dette_pib": 67.1
+ },
+ {
+  "trimestre": "2006-Q4",
+  "dette_pib": 65.4
+ },
+ {
+  "trimestre": "2007-Q1",
+  "dette_pib": 66.6
+ },
+ {
+  "trimestre": "2007-Q2",
+  "dette_pib": 67.5
+ },
+ {
+  "trimestre": "2007-Q3",
+  "dette_pib": 66.9
+ },
+ {
+  "trimestre": "2007-Q4",
+  "dette_pib": 65.5
+ },
+ {
+  "trimestre": "2008-Q1",
+  "dette_pib": 67.0
+ },
+ {
+  "trimestre": "2008-Q2",
+  "dette_pib": 67.3
+ },
+ {
+  "trimestre": "2008-Q3",
+  "dette_pib": 67.8
+ },
+ {
+  "trimestre": "2008-Q4",
+  "dette_pib": 69.8
+ },
+ {
+  "trimestre": "2009-Q1",
+  "dette_pib": 74.7
+ },
+ {
+  "trimestre": "2009-Q2",
+  "dette_pib": 80.0
+ },
+ {
+  "trimestre": "2009-Q3",
+  "dette_pib": 82.6
+ },
+ {
+  "trimestre": "2009-Q4",
+  "dette_pib": 84.1
+ },
+ {
+  "trimestre": "2010-Q1",
+  "dette_pib": 86.0
+ },
+ {
+  "trimestre": "2010-Q2",
+  "dette_pib": 88.1
+ },
+ {
+  "trimestre": "2010-Q3",
+  "dette_pib": 86.2
+ },
+ {
+  "trimestre": "2010-Q4",
+  "dette_pib": 86.3
+ },
+ {
+  "trimestre": "2011-Q1",
+  "dette_pib": 87.5
+ },
+ {
+  "trimestre": "2011-Q2",
+  "dette_pib": 89.0
+ },
+ {
+  "trimestre": "2011-Q3",
+  "dette_pib": 88.3
+ },
+ {
+  "trimestre": "2011-Q4",
+  "dette_pib": 88.7
+ },
+ {
+  "trimestre": "2012-Q1",
+  "dette_pib": 91.1
+ },
+ {
+  "trimestre": "2012-Q2",
+  "dette_pib": 92.6
+ },
+ {
+  "trimestre": "2012-Q3",
+  "dette_pib": 91.3
+ },
+ {
+  "trimestre": "2012-Q4",
+  "dette_pib": 91.7
+ },
+ {
+  "trimestre": "2013-Q1",
+  "dette_pib": 93.4
+ },
+ {
+  "trimestre": "2013-Q2",
+  "dette_pib": 95.0
+ },
+ {
+  "trimestre": "2013-Q3",
+  "dette_pib": 94.0
+ },
+ {
+  "trimestre": "2013-Q4",
+  "dette_pib": 94.6
+ },
+ {
+  "trimestre": "2014-Q1",
+  "dette_pib": 96.2
+ },
+ {
+  "trimestre": "2014-Q2",
+  "dette_pib": 96.9
+ },
+ {
+  "trimestre": "2014-Q3",
+  "dette_pib": 96.8
+ },
+ {
+  "trimestre": "2014-Q4",
+  "dette_pib": 96.2
+ },
+ {
+  "trimestre": "2015-Q1",
+  "dette_pib": 98.1
+ },
+ {
+  "trimestre": "2015-Q2",
+  "dette_pib": 98.4
+ },
+ {
+  "trimestre": "2015-Q3",
+  "dette_pib": 97.8
+ },
+ {
+  "trimestre": "2015-Q4",
+  "dette_pib": 97.0
+ },
+ {
+  "trimestre": "2016-Q1",
+  "dette_pib": 98.9
+ },
+ {
+  "trimestre": "2016-Q2",
+  "dette_pib": 99.7
+ },
+ {
+  "trimestre": "2016-Q3",
+  "dette_pib": 99.1
+ },
+ {
+  "trimestre": "2016-Q4",
+  "dette_pib": 98.1
+ },
+ {
+  "trimestre": "2017-Q1",
+  "dette_pib": 100.5
+ },
+ {
+  "trimestre": "2017-Q2",
+  "dette_pib": 101.2
+ },
+ {
+  "trimestre": "2017-Q3",
+  "dette_pib": 100.3
+ },
+ {
+  "trimestre": "2017-Q4",
+  "dette_pib": 98.8
+ },
+ {
+  "trimestre": "2018-Q1",
+  "dette_pib": 99.4
+ },
+ {
+  "trimestre": "2018-Q2",
+  "dette_pib": 99.4
+ },
+ {
+  "trimestre": "2018-Q3",
+  "dette_pib": 99.6
+ },
+ {
+  "trimestre": "2018-Q4",
+  "dette_pib": 98.5
+ },
+ {
+  "trimestre": "2019-Q1",
+  "dette_pib": 99.5
+ },
+ {
+  "trimestre": "2019-Q2",
+  "dette_pib": 99.2
+ },
+ {
+  "trimestre": "2019-Q3",
+  "dette_pib": 100.0
+ },
+ {
+  "trimestre": "2019-Q4",
+  "dette_pib": 98.2
+ },
+ {
+  "trimestre": "2020-Q1",
+  "dette_pib": 101.2
+ },
+ {
+  "trimestre": "2020-Q2",
+  "dette_pib": 113.0
+ },
+ {
+  "trimestre": "2020-Q3",
+  "dette_pib": 115.3
+ },
+ {
+  "trimestre": "2020-Q4",
+  "dette_pib": 114.9
+ },
+ {
+  "trimestre": "2021-Q1",
+  "dette_pib": 117.7
+ },
+ {
+  "trimestre": "2021-Q2",
+  "dette_pib": 114.3
+ },
+ {
+  "trimestre": "2021-Q3",
+  "dette_pib": 115.3
+ },
+ {
+  "trimestre": "2021-Q4",
+  "dette_pib": 112.8
+ },
+ {
+  "trimestre": "2022-Q1",
+  "dette_pib": 114.4
+ },
+ {
+  "trimestre": "2022-Q2",
+  "dette_pib": 112.9
+ },
+ {
+  "trimestre": "2022-Q3",
+  "dette_pib": 113.1
+ },
+ {
+  "trimestre": "2022-Q4",
+  "dette_pib": 111.4
+ },
+ {
+  "trimestre": "2023-Q1",
+  "dette_pib": 111.9
+ },
+ {
+  "trimestre": "2023-Q2",
+  "dette_pib": 111.3
+ },
+ {
+  "trimestre": "2023-Q3",
+  "dette_pib": 111.1
+ },
+ {
+  "trimestre": "2023-Q4",
+  "dette_pib": 109.5
+ },
+ {
+  "trimestre": "2024-Q1",
+  "dette_pib": 110.2
+ },
+ {
+  "trimestre": "2024-Q2",
+  "dette_pib": 111.8
+ },
+ {
+  "trimestre": "2024-Q3",
+  "dette_pib": 113.1
+ },
+ {
+  "trimestre": "2024-Q4",
+  "dette_pib": 112.6
+ },
+ {
+  "trimestre": "2025-Q1",
+  "dette_pib": 113.6
+ },
+ {
+  "trimestre": "2025-Q2",
+  "dette_pib": 115.4
+ },
+ {
+  "trimestre": "2025-Q3",
+  "dette_pib": 117.3
+ },
+ {
+  "trimestre": "2025-Q4",
+  "dette_pib": 115.7
+ },
+ {
+  "trimestre": "2026-Q1",
+  "dette_pib": 117.6
+ }
+]
