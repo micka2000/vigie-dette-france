@@ -72,11 +72,10 @@
   {
    "agence": "Fitch",
    "note": "A+",
-   "perspective": "stable",
-   "derniere": "2026-08-28",
+   "perspective": "négative",
+   "derniere": "2026-10-30",
    "prochaine": null,
-   "alerte": "Avertissement publié le 12 octobre 2026 : dégradation possible si la dette continue de croître.",
-   "alerte_en": "Warning issued on 12 October 2026: possible downgrade if debt keeps rising.",
+   "alerte": null,
    "historique": [
     {
      "date": "2000-01-01",
@@ -105,9 +104,8 @@
      "source": "https://www.lafinancepourtous.com/2025/09/17/agences-de-notation-la-degradation-de-la-note-de-la-france-par-fitch-a-t-elle-un-impact/"
     }
    ],
-   "source_derniere": "https://www.boursorama.com/actualite-economique/actualites/fitch-maintient-la-note-de-la-france-a-a-perspective-stable-4a15ac85bff35c77292c8f6d592e348d",
-   "source_alerte": "https://lenergeek.com/2026/10/13/dette-france-fitch-energie-transition/"
+   "source_derniere": "https://www.boursorama.com/actualite-economique/actualites/fitch-maintient-la-note-a-de-la-france-mais-abaisse-sa-perspective-47ade4a2068a8dce45a9e55ee341d690"
   }
  ],
- "verification": "Dates et notes vérifiées sur des articles de presse le 20/10/2026 (maintien de Moody's du 23/10/2026 ajouté le 26/10/2026). Depuis le 21/10/2026, un changement de note ou de perspective plus récent que ce fichier est appliqué automatiquement s'il est confirmé par Wikipédia et countryeconomy.com, sinon signalé dans data/meta.json. Les dates de prochaine revue restent saisies à la main (calendrier annuel des agences)."
+ "verification": "Dates et notes vérifiées sur des articles de presse le 20/10/2026 (maintien de Moody's du 23/10/2026 ajouté le 26/10/2026 ; perspective négative de Fitch du 30/10/2026 ajoutée le 01/11/2026 d'après Boursorama et Wikipédia, countryeconomy.com pas encore à jour). Depuis le 21/10/2026, un changement de note ou de perspective plus récent que ce fichier est appliqué automatiquement s'il est confirmé par Wikipédia et countryeconomy.com, sinon signalé dans data/meta.json. Les dates de prochaine revue restent saisies à la main (calendrier annuel des agences)."
 }
