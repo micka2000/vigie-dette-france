@@ -27,6 +27,15 @@ Générés, ne jamais modifier à la main, ne pas lire pour comprendre le code :
 
 Pour chercher dans le code, exclure `data/`, `en/`, les pages par signal et `test/fixtures/` : ces fichiers sont gros et générés.
 
+## Langues (décision du 01/11/2026)
+
+Une adresse = un fichier sur GitHub Pages : les 7 adresses anglaises (`/en/`, Méthode, 5 signaux) ont chacune leur fichier, dont 6 générés. Traduire dans le navigateur ferait un seul fichier, mais Google et LinkedIn ne verraient que le français : écarté.
+
+- Accueil et pages par signal : le français dans `index.html`, l'anglais dans `anglais.mjs` (clés `data-i18n`), `scripts/pages.mjs` génère le reste ; `test/anglais.test.mjs` bloque si une clé manque.
+- Textes calculés : `L(fr, en)` dans `app.js`, gardés là où ils servent (phrases avec des chiffres insérés).
+- Page Méthode : deux fichiers écrits à la main, modifiés ensemble ; `test/pages.test.mjs` vérifie la même structure et les mêmes liens. La générer a été étudié puis écarté : environ 150 blocs à déplacer dans `anglais.mjs` (105 lignes à environ 400, du HTML dans du JavaScript), pour le même nombre de fichiers. À reconsidérer seulement si les deux versions venaient à diverger.
+- Données : quelques textes ont leur version anglaise dans le JSON (`alerte_en` dans `notations.json`).
+
 ## Commandes
 
 - Tests : `node --test` et `python3 -m unittest scripts/test_update_data.py`
