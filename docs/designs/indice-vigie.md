@@ -51,7 +51,7 @@ Amendement de l'hypothèse 2 (revue CEO, CEO-T1, réponse D20 « A) Dans le fond
 
 ## Recommended Approach
 
-Approche B, choisie par l'utilisateur. Chaque signal reçoit un score de 0 à 100. Ces scores forment deux sous-indices, puis l'Indice Vigie. Une section Méthode explique le calcul, et le CISS de la BCE sert de lecture officielle à côté. Croquis filaire validé : `docs/designs/assets/indice-vigie-croquis.png` (source `indice-vigie-croquis.html`, chiffres d'illustration ; les chiffres réels sont plus bas).
+Approche B, choisie par l'utilisateur. Chaque signal reçoit un score de 0 à 100. Ces scores forment deux sous-indices, puis l'Indice Vigie. Une section Méthode explique le calcul, et le CISS de la BCE sert de lecture officielle à côté. Croquis filaire validé : `docs/archive/assets/indice-vigie-croquis.png` (source `indice-vigie-croquis.html`, chiffres d'illustration ; les chiffres réels sont plus bas).
 
 ### Méthode de score (une seule règle pour tous les signaux)
 
@@ -745,16 +745,16 @@ Les autres diagrammes (architecture, flux de données, erreurs) figurent dans le
 
 ### Audit des diagrammes existants
 
-Fichiers touchés : aucun diagramme ASCII dans `app.js`, `index.html`, `update_data.py` ni le workflow. Le croquis `docs/designs/assets/indice-vigie-croquis.png` montre encore les repères historiques de l'en-tête et « X % du pic » : il est **périmé** sur ce point (D14). Il est à refaire lors de `/plan-design-review`.
+Fichiers touchés : aucun diagramme ASCII dans `app.js`, `index.html`, `update_data.py` ni le workflow. Le croquis `docs/archive/assets/indice-vigie-croquis.png` montre encore les repères historiques de l'en-tête et « X % du pic » : il est **périmé** sur ce point (D14). Il est à refaire lors de `/plan-design-review`.
 
 ## Implementation Tasks
 
 Tâches tirées des constats de la revue. À exécuter avec Claude Code ; cocher au fil de la livraison. Hypothèse d'effort : fonctionnalités environ ×30, tests environ ×50.
 
 **Version 1** (réécrite après la revue d'ingénierie, D3 à D10 ; cette liste fait foi)
-- [x] **T0 (P1, humain : ~1h, avant T1 pour la capture, avant T5a pour le test)** : base de comparaison. Prendre la capture « avant » de la page actuelle (390 px et bureau, deux thèmes), puis montrer cette page à 3 proches non économistes et noter leurs réponses mot pour mot (The Assignment). _(captures prises le 2026-10-21 : `docs/designs/assets/avant-v1-*.png` ; test fait le 2026-10-21 : les 3 proches ont aimé la page, réponses mot pour mot non consignées)_
+- [x] **T0 (P1, humain : ~1h, avant T1 pour la capture, avant T5a pour le test)** : base de comparaison. Prendre la capture « avant » de la page actuelle (390 px et bureau, deux thèmes), puis montrer cette page à 3 proches non économistes et noter leurs réponses mot pour mot (The Assignment). _(captures prises le 2026-10-21 : `docs/archive/assets/avant-v1-*.png` ; test fait le 2026-10-21 : les 3 proches ont aimé la page, réponses mot pour mot non consignées)_
   - Constat : avis extérieur n°11 et n°12 (D6, D8).
-  - Fichiers : `docs/designs/assets/avant-v1-*.png`, ce document.
+  - Fichiers : `docs/archive/assets/avant-v1-*.png`, ce document.
   - Vérification : 4 captures et 3 réponses consignées.
 - [x] **T1 (P1, humain : ~2h / CC : ~10min)** : données des notes. Vérifier sur source l'historique de `data/notations.json` et sourcer chaque point non-résidents. _(fait le 2026-10-21 : 12 changements de note et les 3 dernières décisions sourcés ; Moody's corrigé (dernière revue le 10/04/2026) ; 4 points non-résidents (mars 2022 à mars 2025) restent `a_verifier`)_
   - Constat : 0B, P6 et P7.
