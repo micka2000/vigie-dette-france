@@ -1,10 +1,4 @@
 {
- "mis_a_jour": "2026-10-31T12:54+00:00",
- "echecs": [
-  {
-   "serie": "notations.json",
-   "date": "2026-10-31",
-   "erreur": "note à vérifier : Fitch A+ (négative) le 2026-10-30 selon Wikipédia"
-  }
- ]
+ "mis_a_jour": "2026-11-01T17:37+00:00",
+ "echecs": []
 }
