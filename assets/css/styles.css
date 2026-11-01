@@ -3,13 +3,13 @@
 
 @font-face {
   font-family: 'Bricolage Grotesque';
-  src: url('fonts/BricolageGrotesque-Variable.woff2') format('woff2');
+  src: url('../fonts/BricolageGrotesque-Variable.woff2') format('woff2');
   font-weight: 400 800;
   font-display: swap;
 }
 @font-face {
   font-family: 'Roboto';
-  src: url('fonts/Roboto-Variable.woff2') format('woff2');
+  src: url('../fonts/Roboto-Variable.woff2') format('woff2');
   font-weight: 400 700;
   font-display: swap;
 }

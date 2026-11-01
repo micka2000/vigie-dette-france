@@ -47,7 +47,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git show HEAD:data/meta.json > "$RUNNER_TEMP/meta.json" 2>/dev/null || : > "$RUNNER_TEMP/meta.json"
-          git add data sitemap.xml 'partage-*.png' '*.html'  # tableau, pages par signal, en/
+          git add data sitemap.xml 'assets/images/partage-*.png' '*.html'  # tableau, pages par signal, en/
           if ! python scripts/update_data.py --echecs-changes "$RUNNER_TEMP/meta.json" \
              && git diff --cached --quiet -- . ':(exclude)data/meta.json'; then
             echo "Aucune nouvelle donnée."

@@ -91,9 +91,9 @@ const levelOf = (key, v) => niveauBrut(CLE_SCORE[key], v);
 
 // ---------- Données ----------
 
-// Chemins lus depuis app.js, à la racine : les mêmes fichiers pour / et /en/.
+// Chemins depuis la racine du site (app.js est dans assets/js/) : les mêmes fichiers pour / et /en/.
 async function json(path) {
-  const r = await fetch(new URL(path, import.meta.url), { cache: 'no-cache' });
+  const r = await fetch(new URL(`../../${path}`, import.meta.url), { cache: 'no-cache' });
   if (!r.ok) throw new Error(`${path} : ${r.status}`);
   return r.json();
 }
@@ -822,7 +822,7 @@ const DESCRIPTIONS = {
       'From 0 to 25: calm. From 25 to 50: watch. From 50 to 75: stress. Above 75: crisis. The index is the average of two parts: what markets demand to lend to France (rate gap with Germany, demand at auctions) and its underlying weaknesses (share held abroad, agency ratings, TARGET2 balance). It is shown only when all five signals are available.'),
     qui: L('Vigie Dette France, recalculé chaque matin à partir des sources de chaque signal',
       'Vigie Dette France, recalculated every morning from the sources of each signal'),
-    sources: [[L('les cinq signaux', 'the five signals'), '#spread'], [L('la méthode de calcul, avec un exemple complet', 'how it is calculated, with a full example'), 'methode.html'], [L('formule ouverte', 'open formula'), 'https://github.com/micka2000/vigie-dette-france/blob/main/score.mjs']],
+    sources: [[L('les cinq signaux', 'the five signals'), '#spread'], [L('la méthode de calcul, avec un exemple complet', 'how it is calculated, with a full example'), 'methode.html'], [L('formule ouverte', 'open formula'), 'https://github.com/micka2000/vigie-dette-france/blob/main/assets/js/score.mjs']],
   }),
 };
 

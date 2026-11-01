@@ -227,7 +227,7 @@ Page de méthode du tableau de bord : choix des signaux, repères qui convertiss
 - **Type** : code
 
 ````markdown
-Dépôt ouvert : script de collecte (`scripts/update_data.py`), calcul de l'indice (`score.mjs`), export des CSV (`scripts/exporter_csv.mjs`) et historique de toutes les modifications.
+Dépôt ouvert : script de collecte (`scripts/update_data.py`), calcul de l'indice (`assets/js/score.mjs`), export des CSV (`scripts/exporter_csv.mjs`) et historique de toutes les modifications.
 ````
 
 ### Spread, format JSON du site

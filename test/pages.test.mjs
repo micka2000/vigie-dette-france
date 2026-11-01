@@ -17,8 +17,8 @@ test('l’instantané est lisible sans JavaScript, dans chaque langue', () => {
   assert.ok(en.includes(`id="verdict">${inst.verdict.en.replace(/&/g, '&amp;')}<`));
   assert.match(en, /<html lang="en">/);
   assert.match(en, /<title[^>]*>Vigie Dette France · French public debt risk/);
-  assert.ok(en.includes('src="../app.js?v='));
-  assert.ok(en.includes('href="../styles.css?v='));
+  assert.ok(en.includes('src="../assets/js/app.js?v='));
+  assert.ok(en.includes('href="../assets/css/styles.css?v='));
 });
 
 test('appliquer l’instantané deux fois ne change rien', () => {

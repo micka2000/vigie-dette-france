@@ -1,9 +1,10 @@
-"""Images du site, dessinées avec Pillow et les polices du site (fonts/).
+"""Images du site, dessinées avec Pillow et les polices du site (assets/fonts/).
 
-python scripts/image_partage.py            images de partage partage-fr.png et partage-en.png (1200 x 630) :
+python scripts/image_partage.py            images de partage assets/images/partage-fr.png et partage-en.png (1200 x 630) :
                                            accroche, spread France-Allemagne depuis 2004 et échelle des niveaux,
                                            à partir de data/spread.json (moyennes des semaines complètes)
-python scripts/image_partage.py --icones   favicon.ico, favicon-48.png, apple-touch-icon.png et logo.png, d'après favicon.svg
+python scripts/image_partage.py --icones   favicon.ico (racine), assets/images/favicon-48.png, apple-touch-icon.png et logo.png,
+                                           d'après assets/images/favicon.svg
 
 Une image n'est réécrite que si son contenu change : la courbe ne bouge qu'à chaque semaine complète,
 le dépôt grossit donc d'une image par semaine, pas par jour.
@@ -42,7 +43,7 @@ K = 2  # dessin à 2x puis réduction
 
 
 def police(nom, taille, graisse):
-    f = ImageFont.truetype(str(RACINE / 'fonts' / nom), taille)
+    f = ImageFont.truetype(str(RACINE / 'assets' / 'fonts' / nom), taille)
     f.set_variation_by_axes([graisse if a['name'] == b'Weight' else a['default'] for a in f.get_variation_axes()])
     return f
 
@@ -180,8 +181,8 @@ def icone(taille):
 
 
 def enregistrer(img, nom):
-    """Écrit l'image seulement si ses pixels changent ; renvoie True si le fichier a été (ré)écrit."""
-    chemin = RACINE / nom
+    """Écrit l'image dans assets/images/ seulement si ses pixels changent ; renvoie True si le fichier a été (ré)écrit."""
+    chemin = RACINE / 'assets' / 'images' / nom
     if chemin.exists():
         with Image.open(chemin) as ancienne:
             if ancienne.mode == img.mode and ancienne.size == img.size and ancienne.tobytes() == img.tobytes():
@@ -196,7 +197,7 @@ def main(args):
     if '--icones' in args:
         for nom, taille in (('favicon-48.png', 48), ('apple-touch-icon.png', 180), ('logo.png', 512)):
             print(nom, 'écrit' if enregistrer(icone(taille), nom) else 'inchangé')
-        # favicon.ico, lu par défaut à la racine par certains robots et navigateurs : 16, 32 et 48 px
+        # favicon.ico reste à la racine, où navigateurs et robots le cherchent d'office : 16, 32 et 48 px
         icone(48).save(RACINE / 'favicon.ico', sizes=[(16, 16), (32, 32), (48, 48)])
         print('favicon.ico écrit')
         return

@@ -12,16 +12,16 @@
 <link rel="alternate" hreflang="en" href="https://vigiedette.com/en/">
 <link rel="alternate" hreflang="x-default" href="https://vigiedette.com/">
 <link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/assets/images/favicon-48.png" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Vigie Dette France">
 <meta property="og:locale" content="en_GB" data-i18n-attr="content:og.locale">
 <meta property="og:url" content="https://vigiedette.com/en/" data-i18n-attr="content:url">
 <meta property="og:title" content="Vigie Dette France · French public debt risk, every day" data-i18n-attr="content:titre">
 <meta property="og:description" data-instantane="resume" content="Vigie Index 64/100, stress. French debt is under stress. The rest of the financial markets remain calm.">
-<meta property="og:image" data-instantane="image" content="https://vigiedette.com/partage-en.png?v=63ec7e9d">
+<meta property="og:image" data-instantane="image" content="https://vigiedette.com/assets/images/partage-en.png?v=63ec7e9d">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Vigie Dette France: the risk on French public debt, measured every day, with the France-Germany 10-year yield spread since 2004" data-i18n-attr="content:image.alt">
@@ -37,7 +37,7 @@
       "url": "https://vigiedette.com/",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://vigiedette.com/logo.png",
+        "url": "https://vigiedette.com/assets/images/logo.png",
         "width": 512,
         "height": 512
       },
@@ -73,12 +73,12 @@
       "about": {
         "@id": "https://vigiedette.com/#donnees"
       },
-      "primaryImageOfPage": "https://vigiedette.com/partage-en.png"
+      "primaryImageOfPage": "https://vigiedette.com/assets/images/partage-en.png"
     }
   ]
 }
 </script>
-<link rel="stylesheet" href="../styles.css?v=459a7fdd">
+<link rel="stylesheet" href="../assets/css/styles.css?v=380ea5f8">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   // Langue choisie avec le bouton FR / EN : on renvoie vers sa page. Jamais d'après la langue du navigateur,
@@ -141,7 +141,7 @@
           <p data-i18n="courbe.quoi"><b>What it is.</b> A score from 0 to 100 that sums up the state of French debt, month by month.</p>
           <p data-i18n="courbe.pourquoi"><b>Why it matters.</b> To compare today with past crises: 2008, the euro crisis in 2011, Covid in 2020. When the index rises while the rest of the markets stay quiet, French debt itself is the worry.</p>
           <p data-i18n="courbe.lire"><b>How to read the chart.</b> In blue, the Vigie Index. In green, its “markets” part: what investors demand to lend to France. In dotted grey, stress across all financial markets in France, used as a benchmark. Each month shows its most strained day. Coloured backgrounds give the level; the eye in the legend hides or shows a line.</p>
-          <p data-i18n="courbe.qui"><b>Who measures it, and when.</b> Vigie Dette France, from the five signals on this page (<a href="methode.html">calculation method</a>, <a href="https://github.com/micka2000/vigie-dette-france/blob/main/score.mjs" target="_blank" rel="noopener">formula</a>, <a href="https://github.com/micka2000/vigie-dette-france/tree/main/data" target="_blank" rel="noopener">data</a>); market stress comes from the <a href="https://data.ecb.europa.eu/data/datasets/CISS/CISS.D.FR.Z0Z.4F.EC.SS_CIN.IDX" target="_blank" rel="noopener">European Central Bank</a>. Since May 2008, recalculated every morning using only the information known on each day.</p>
+          <p data-i18n="courbe.qui"><b>Who measures it, and when.</b> Vigie Dette France, from the five signals on this page (<a href="methode.html">calculation method</a>, <a href="https://github.com/micka2000/vigie-dette-france/blob/main/assets/js/score.mjs" target="_blank" rel="noopener">formula</a>, <a href="https://github.com/micka2000/vigie-dette-france/tree/main/data" target="_blank" rel="noopener">data</a>); market stress comes from the <a href="https://data.ecb.europa.eu/data/datasets/CISS/CISS.D.FR.Z0Z.4F.EC.SS_CIN.IDX" target="_blank" rel="noopener">European Central Bank</a>. Since May 2008, recalculated every morning using only the information known on each day.</p>
         </div>
       </details>
       <p class="sr-only" id="courbe-resume"></p>
@@ -336,7 +336,7 @@
     if (v) v.textContent = document.documentElement.lang === 'en' ? 'The page could not load. Please reload it in a moment.' : 'La page n’a pas pu se charger. Recharge-la dans un instant.';
   }, 10000);
 </script>
-<script type="module" src="../app.js?v=43f28dfd"></script>
+<script type="module" src="../assets/js/app.js?v=a4c1c44e"></script>
 <!-- Mesure d'audience sans cookie : https://vigiedette.goatcounter.com -->
 <script data-goatcounter="https://vigiedette.goatcounter.com/count" async src="https://gc.zgo.at/count.v4.js" crossorigin="anonymous" integrity="sha384-nRw6qfbWyJha9LhsOtSb2YJDyZdKvvCFh0fJYlkquSFjUxp9FVNugbfy8q1jdxI+"></script>
 </body>

@@ -16,13 +16,13 @@ Les fichiers de `data/` sont publiés sous [Licence Ouverte 2.0](https://www.eta
 
 ## Seuils de risque
 
-Quatre niveaux par signal : calme, vigilance, tension, crise. Ils sont définis dans `app.js` (constante `THRESHOLDS`) et expliqués sous chaque graphique.
+Quatre niveaux par signal : calme, vigilance, tension, crise. Ils sont définis dans `assets/js/app.js` (constante `THRESHOLDS`) et expliqués sous chaque graphique.
 
 ## Pages et référencement
 
-- `index.html` est la page française et la source de `en/index.html`, générée avec les textes d'`anglais.mjs` par `scripts/pages.mjs`. Le même script tire de chaque carte une page par signal et par langue (`SIGNAUX` dans `scripts/pages.mjs` : `/spread-france-allemagne/`, `/en/france-germany-spread/`, etc.) ; ces adresses sont définitives. Les pages Méthode existent en deux fichiers écrits à la main : `methode.html` et `en/methode.html`.
-- Chaque matin, après la collecte, `node scripts/pages.mjs --instantane` écrit dans les deux pages l'instantané du jour (verdict, Indice Vigie, date), lisible sans JavaScript, puis `sitemap.xml`. `scripts/image_partage.py` (Pillow) dessine les images des aperçus de liens, `partage-fr.png` et `partage-en.png`.
-- Après une modification d'`index.html`, d'`anglais.mjs`, d'`app.js`, de `score.mjs` ou de `styles.css` : `node scripts/empreintes.mjs` (empreintes et version anglaise). Les tests échouent sinon.
+- `index.html` est la page française et la source de `en/index.html`, générée avec les textes de `scripts/anglais.mjs` par `scripts/pages.mjs`. Le même script tire de chaque carte une page par signal et par langue (`SIGNAUX` dans `scripts/pages.mjs` : `/spread-france-allemagne/`, `/en/france-germany-spread/`, etc.) ; ces adresses sont définitives. Les pages Méthode existent en deux fichiers écrits à la main : `methode.html` et `en/methode.html`.
+- Chaque matin, après la collecte, `node scripts/pages.mjs --instantane` écrit dans les deux pages l'instantané du jour (verdict, Indice Vigie, date), lisible sans JavaScript, puis `sitemap.xml`. `scripts/image_partage.py` (Pillow) dessine les images des aperçus de liens, `assets/images/partage-fr.png` et `partage-en.png`.
+- Après une modification d'`index.html`, de `scripts/anglais.mjs`, d'`assets/js/app.js`, d'`assets/js/score.mjs` ou d'`assets/css/styles.css` : `node scripts/empreintes.mjs` (empreintes et version anglaise). Les tests échouent sinon.
 
 ## Lancer en local
 

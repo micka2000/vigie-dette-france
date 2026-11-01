@@ -284,7 +284,7 @@ Relecteur natif (agent Plan), Codex indisponible (jeton expiré, `codex login`).
 |---|---|---|---|
 | Indice canadien quasi constant (couverture + note figée) | Critique | raisonnement sur D9.2 et D10 | tranché, D9.2 et D10 rouverts, D13 candidat |
 | `app.js` affiche tous les `meta.echecs` sur la page qui lit le fichier | High | `app.js:907` | `data/canada/meta.json` séparé, corrigé dans « Isolation des pays » |
-| Pathspec `'partage-*.png'` ne couvre pas `canada/` | Medium | `.github/workflows/update-data.yml:46` | T4 |
+| Pathspec `'assets/images/partage-*.png'` ne couvre pas `canada/` | Medium | `.github/workflows/update-data.yml:46` | T4 |
 | DBRS absent de countryeconomy.com, or une note n'est appliquée que si les deux sources concordent | High | `scripts/update_data.py:7`, Wikipédia a une section DBRS Morningstar, countryeconomy.com non | tranché par D14, DBRS abandonné |
 | Test d'identité de la livraison 1 à normaliser sur les `?v=` d'empreintes et la date d'instantané | High | `scripts/empreintes.mjs`, `scripts/pages.mjs:168` | T1 |
 | Mécanisme du gabarit canadien non spécifié (textes par pays) | Medium | plan | T2 |

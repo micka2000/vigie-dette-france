@@ -6,9 +6,9 @@ import {
   ANCRAGES, NIVEAUX, interpoler, niveauBrut, niveauScore, crans, notch, moisEcart, moisMoins,
   variationUnAn, variationUnAnJour, fusionnerSeries, spreadPb, etatDuJour, phraseVerdict, partieDette, partieBCE,
   phraseIncomplete, cissDuJour, courbe, PHRASE_BCE_INDISPONIBLE, serieQuotidienne, plusHautDepuis, plusBasDepuis, picDuMois, picsMensuels,
-} from './score.mjs';
+} from '../assets/js/score.mjs';
 
-const lire = (dossier) => (f) => JSON.parse(readFileSync(new URL(`${dossier}/${f}`, import.meta.url)));
+const lire = (dossier) => (f) => JSON.parse(readFileSync(new URL(`../${dossier}/${f}`, import.meta.url)));
 function fichiers(dossier) {
   const r = lire(dossier);
   return { spread: r('spread.json'), target: r('target.json'), bilan: r('bilan_bce.json'), adj: r('adjudications.json'), ratings: r('notations.json'), nrAft: r('non_residents_aft.json') };

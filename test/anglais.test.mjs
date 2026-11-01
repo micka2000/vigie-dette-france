@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { EN } from '../anglais.mjs';
+import { EN } from '../scripts/anglais.mjs';
 
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const cles = new Set([

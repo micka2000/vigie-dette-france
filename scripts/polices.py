@@ -1,4 +1,4 @@
-"""Polices du site en WOFF2, allégées, à partir des TTF de fonts/ (gardés pour scripts/image_partage.py).
+"""Polices du site en WOFF2, allégées, à partir des TTF de assets/fonts/ (gardés pour scripts/image_partage.py).
 
 python scripts/polices.py   (demande fonttools et brotli : pip install fonttools brotli)
 
@@ -13,7 +13,7 @@ from fontTools.subset import Options, Subsetter
 from fontTools.ttLib import TTFont
 from fontTools.varLib.instancer import instantiateVariableFont
 
-FONTS = Path(__file__).resolve().parent.parent / 'fonts'
+FONTS = Path(__file__).resolve().parent.parent / 'assets' / 'fonts'
 POLICES = {
     'BricolageGrotesque-Variable': {'wdth': 100, 'wght': (400, 800)},
     'Roboto-Variable': {'wdth': 100, 'wght': (400, 700)},

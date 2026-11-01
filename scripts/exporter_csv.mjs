@@ -3,7 +3,7 @@
 // CSV : virgule, point décimal, UTF-8, une ligne d'en-tête ; colonnes nommées avec leur unité (_pct, _pb, _mds).
 // Un fichier n'est réécrit que si son contenu change.
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
-import { serieQuotidienne, partsTarget, niveauScore, MOIS_ECARTES } from '../score.mjs';
+import { serieQuotidienne, partsTarget, niveauScore, MOIS_ECARTES } from '../assets/js/score.mjs';
 
 const racine = new URL('../', import.meta.url);
 const lireJson = (f) => JSON.parse(readFileSync(new URL(`data/${f}`, racine), 'utf8'));
