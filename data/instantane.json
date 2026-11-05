@@ -1,6 +1,6 @@
 {
-  "jour": "2026-11-04",
-  "indice": 64,
+  "jour": "2026-11-05",
+  "indice": 60,
   "niveau": "tension",
   "niveauTexte": {
     "fr": "Tension",
@@ -16,15 +16,15 @@
         "cle": "spread",
         "niveau": "crise",
         "nom": "Spread OAT-Bund 10 ans",
-        "valeur": "153 pb",
-        "sous": "OAT 10 ans 4,88 %",
-        "taux": "OAT 10 ans 4,88 % · Bund 3,35 %"
+        "valeur": "144 pb",
+        "sous": "OAT 10 ans 4,75 %",
+        "taux": "OAT 10 ans 4,75 % · Bund 3,31 %"
       },
       {
         "cle": "adjudications",
         "niveau": "vigilance",
         "nom": "Couverture des adjudications",
-        "valeur": "2,00"
+        "valeur": "2,27"
       },
       {
         "cle": "non-residents",
@@ -50,15 +50,15 @@
         "cle": "spread",
         "niveau": "crise",
         "nom": "10-year OAT-Bund spread",
-        "valeur": "153 bp",
-        "sous": "10-year OAT 4.88%",
-        "taux": "10-year OAT 4.88% · Bund 3.35%"
+        "valeur": "144 bp",
+        "sous": "10-year OAT 4.75%",
+        "taux": "10-year OAT 4.75% · Bund 3.31%"
       },
       {
         "cle": "adjudications",
         "niveau": "vigilance",
         "nom": "Auction cover",
-        "valeur": "2.00"
+        "valeur": "2.27"
       },
       {
         "cle": "non-residents",

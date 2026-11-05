@@ -1944,6 +1944,14 @@
    "demande_mds": 12.564,
    "taux": 4.93,
    "source": "https://www.boursorama.com/bourse/actualites/details-de-l-adjudication-d-oat-5ca591a04af26b9ddba86acd70d04637"
+  },
+  {
+   "date": "2026-11-05",
+   "ligne": "OAT 3,70 % 25/11/2036",
+   "adjuge_mds": 6.578,
+   "demande_mds": 14.917,
+   "taux": 4.74,
+   "source": "https://www.boursorama.com/bourse/actualites/details-de-l-adjudication-d-oat-af25785d2211796d52207db19c35db6e"
   }
  ]
 }
