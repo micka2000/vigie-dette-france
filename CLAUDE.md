@@ -9,10 +9,14 @@ index.html, methode.html        pages françaises (sources)
 en/                             pages anglaises (générées, sauf en/methode.html)
 spread-france-allemagne/ …      5 pages par signal en français, adresses figées (référencement)
 assets/css/styles.css           feuille de style
-assets/js/app.js, score.mjs     page (navigateur) et calcul de l'indice (navigateur, tests, Action)
+assets/js/commun.mjs            socle commun des tableaux de bord (en-tête, courbe, graphiques, infobulles)
+assets/js/app.js, canada.js     cartes de la France et du Canada, qui appellent demarrer() de commun.mjs
+assets/js/score.mjs             calcul de l'indice, une fiche par pays (PAYS.france, PAYS.canada)
+canada/cartes.html              cartes et pied de page du Canada (source) ; canada/index.html et en/canada/ sont générés
+canada/methode.html, en/canada/methode.html   méthode du Canada, écrites à la main, modifiées ensemble
 assets/fonts/                   polices (WOFF2 pour le site, TTF pour les images)
 assets/images/                  icônes, logo, images de partage
-data/                           séries publiées (adresses utilisées par data.gouv.fr : ne pas déplacer)
+data/                           séries publiées (adresses utilisées par data.gouv.fr : ne pas déplacer) ; data/canada/ pour le Canada
 scripts/                        collecte, génération des pages, textes anglais (anglais.mjs), outils
 test/                           tests Node (dont score.test.mjs) et fixtures ; tests Python dans scripts/
 docs/                           conception, fiche data.gouv.fr, archive
@@ -30,12 +34,14 @@ favicon.ico CNAME robots.txt sitemap.xml .nojekyll   imposés à la racine
 ## Fichiers : source ou généré
 
 À modifier à la main :
-- `index.html`, `methode.html`, `en/methode.html`, `scripts/anglais.mjs` (textes EN), `assets/js/app.js`, `assets/js/score.mjs` (calcul de l'indice), `assets/css/styles.css`
+- `index.html`, `methode.html`, `en/methode.html`, `scripts/anglais.mjs` (textes EN, dont `EN_CANADA`), `assets/js/commun.mjs`, `assets/js/app.js`, `assets/js/canada.js`, `assets/js/score.mjs` (calcul de l'indice), `assets/css/styles.css`
+- Canada : `canada/cartes.html`, `canada/methode.html`, `en/canada/methode.html`, `data/canada/notations.json`
 - `scripts/update_data.py` (collecte), `scripts/pages.mjs`, `scripts/image_partage.py`, `scripts/exporter_csv.mjs`
 - `data/notations.json` (notes : corrigé à la main quand les sources divergent, voir plus bas), `data/sources/` (fichiers officiels téléchargés)
 - `docs/data-gouv-fiche.md` (fiche data.gouv.fr)
 
 Générés, ne jamais modifier à la main, ne pas lire pour comprendre le code :
+- `canada/index.html`, `en/canada/index.html`, `data/canada/instantane.json` : `node scripts/pages.mjs` (`--instantane`), dans un `try` à part : une erreur au Canada laisse la France écrite
 - `en/index.html` et les 10 pages par signal (`spread-france-allemagne/`, `en/oat-auctions/`, etc.) : `node scripts/pages.mjs` (`--instantane` ajoute l'instantané du jour et `sitemap.xml`)
 - empreintes `?v=` dans les pages : `node scripts/empreintes.mjs`, à lancer après toute modification d'`index.html`, des pages Méthode, d'`anglais.mjs`, d'`app.js`, de `score.mjs` ou de `styles.css` (les tests échouent sinon)
 - `data/*.json` sauf `notations.json` : collecte de l'Action ; `data/adjudications.json` avant octobre 2026 vient de `scripts/reconstituer_couverture.py`
@@ -68,5 +74,5 @@ Cas fréquent : **changement de note non confirmé.** Une note ou une perspectiv
 ## Documents
 
 - `docs/designs/indice-vigie.md` : méthode de l'Indice Vigie et décisions de conception. Lié depuis la page Méthode publique : ne pas le déplacer. Long (1 100 lignes) : chercher la section utile plutôt que tout lire.
-- `docs/designs/vigie-canada.md` : projet Vigie Canada en cours (revue CEO faite, signal D13 en attente).
+- `docs/designs/vigie-canada.md` : projet Vigie Canada en cours (revue CEO faite, signal D13 en attente). Phase discrète (D12) : `/canada/` en `noindex`, hors sitemap, sans lien depuis la France ; `test/pages.test.mjs` le vérifie.
 - `docs/archive/` : plans terminés (taux de l'OAT 10 ans, résumé de la revue CEO de l'indice) et captures d'avant la V1. À ouvrir seulement pour retrouver une décision passée.

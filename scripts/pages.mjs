@@ -9,16 +9,18 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
-import { etatDuJour, phraseVerdict, NIVEAUX_TEXTE, couvertures, partsTarget, notch, notchLabel } from '../assets/js/score.mjs';
-import { EN } from './anglais.mjs';
+import { etatDuJour, phraseVerdict, NIVEAUX_TEXTE, couvertures, partsTarget, notch, notchLabel, PAYS } from '../assets/js/score.mjs';
+import { EN, EN_CANADA } from './anglais.mjs';
 
 export const SITE = 'https://vigiedette.com/';
+const EN_DEFAUT = EN;
 // Dernière modification des pages Méthode, pour le sitemap : à changer quand on les modifie.
 const METHODE_MAJ = '2026-10-27';
 
 const racine = new URL('../', import.meta.url);
 // Empreinte de l'image de partage : son adresse change avec son contenu, et LinkedIn ne garde pas l'ancienne en cache.
-const empreinteImage = (lang) => createHash('sha256').update(readFileSync(new URL(`assets/images/partage-${lang}.png`, racine))).digest('hex').slice(0, 8);
+const empreinteFichier = (f) => createHash('sha256').update(readFileSync(new URL(f, racine))).digest('hex').slice(0, 8);
+const empreinteImage = (lang) => empreinteFichier(`assets/images/partage-${lang}.png`);
 const lire = (f) => readFileSync(new URL(f, racine), 'utf8');
 const ecrire = (f, contenu) => { mkdirSync(new URL('.', new URL(f, racine)), { recursive: true }); writeFileSync(new URL(f, racine), contenu); };
 const lireJson = (f) => JSON.parse(lire(`data/${f}`));
@@ -38,16 +40,16 @@ export function lireFichiers() {
 }
 
 // Ce que la page affiche en tête, dans les deux langues. Sans date de calcul : le fichier ne change qu'avec les données.
-export function instantane(fichiers, dateCalcul) {
-  const etat = etatDuJour(fichiers, dateCalcul);
+export function instantane(fichiers, dateCalcul, fiche = PAYS.france, tuilesDe = tuiles) {
+  const etat = etatDuJour(fichiers, dateCalcul, fiche);
   const { score, niveau } = etat.indice;
   return {
     jour: etat.cartes.spread.jour,
     indice: score == null ? null : Math.round(score),
     niveau: niveau ?? null,
     niveauTexte: niveau ? { fr: NIVEAUX_TEXTE.fr[niveau], en: NIVEAUX_TEXTE.en[niveau] } : null,
-    verdict: { fr: phraseVerdict(etat, 'fr'), en: phraseVerdict(etat, 'en') },
-    tuiles: tuiles(fichiers, etat),
+    verdict: { fr: phraseVerdict(etat, 'fr', fiche), en: phraseVerdict(etat, 'en', fiche) },
+    tuiles: tuilesDe(fichiers, etat),
   };
 }
 
@@ -174,7 +176,7 @@ export function appliquerInstantane(html, inst, lang) {
 }
 
 // Version anglaise : textes d'anglais.mjs (data-i18n, data-i18n-attr), chemins vers la racine depuis /en/.
-export function anglaise(html) {
+export function anglaise(html, EN = EN_DEFAUT) {
   html = html.replace(/<(\w+)(\b[^>]*\sdata-i18n="([^"]+)"[^>]*)>[\s\S]*?<\/\1>/g, (_, tag, attrs, cle) => {
     if (!(cle in EN)) throw new Error(`traduction manquante : ${cle}`);
     return `<${tag}${attrs}>${EN[cle]}</${tag}>`;
@@ -410,6 +412,102 @@ ${urls.join('\n')}
 `;
 }
 
+
+// ---------- Canada (plan docs/designs/vigie-canada.md) ----------
+// Phase discrète (D12) : /canada/ et /en/canada/ en noindex, hors sitemap, sans lien depuis la France.
+// Même gabarit qu'index.html : en-tête, styles et scripts communs ; cartes et pied de page de canada/cartes.html.
+
+const lireJsonCanada = (f) => JSON.parse(lire(`data/canada/${f}`));
+
+// Mêmes fichiers que loadFiles() dans assets/js/canada.js.
+export function lireFichiersCanada() {
+  return {
+    spread: lireJsonCanada('spread.json'), adj: lireJsonCanada('adjudications.json'), nr: lireJsonCanada('non_residents.json'),
+    ratings: lireJsonCanada('notations.json'), stress: lireJsonCanada('stress.json'), meta: lireJsonCanada('meta.json'),
+  };
+}
+
+const NOMS_TUILES_CANADA = {
+  spread: ['Écart Canada-États-Unis 10 ans', '10-year Canada-US gap'], adjudications: ['Couverture des adjudications', 'Auction cover'],
+  'non-residents': ['Part des non-résidents', 'Non-resident share'], notations: ['Note la plus basse', 'Lowest rating'],
+};
+
+// Les quatre tuiles canadiennes, mêmes textes que compute() dans assets/js/canada.js.
+export function tuilesCanada(fichiers, etat) {
+  const sp = fichiers.spread.at(-1), couv = fichiers.adj.lignes.at(-1), nr = fichiers.nr.points.at(-1);
+  const pire = Math.min(...fichiers.ratings.agences.map((a) => notch(a.note)));
+  const niv = etat.signaux;
+  const ca = (l) => (l === 'fr' ? 'Canada 10 ans' : '10-year Canada'), us = (l) => (l === 'fr' ? 'États-Unis' : 'US');
+  const brut = {
+    spread: { niveau: niv.spread.niveau, valeur: (l) => `${nombre(etat.cartes.spread.valeur, 0, l)} ${l === 'fr' ? 'pb' : 'bp'}`,
+      sous: (l) => `${ca(l)} ${pc(nombre(sp.ca10, 2, l), l)}`,
+      taux: (l) => `${ca(l)} ${pc(nombre(sp.ca10, 2, l), l)} · ${us(l)} ${pc(nombre(sp.us10, 2, l), l)}` },
+    adjudications: { niveau: niv.couverture.niveau, valeur: (l) => nombre(couv.couverture, 2, l) },
+    'non-residents': { niveau: niv.nonResidents.niveau, valeur: (l) => pc(nombre(nr.part, 1, l), l) },
+    notations: { niveau: niv.notes.niveau, valeur: () => notchLabel(pire) },
+  };
+  return Object.fromEntries(['fr', 'en'].map((l, i) => [l, Object.entries(brut).map(([cle, t]) => ({
+    cle, niveau: t.niveau, nom: NOMS_TUILES_CANADA[cle][i], valeur: t.valeur(l), ...(t.sous ? { sous: t.sous(l) } : {}),
+    ...(t.taux ? { taux: t.taux(l) } : {}),
+  }))]));
+}
+
+export const instantaneCanada = (fichiers, dateCalcul) => instantane(fichiers, dateCalcul, PAYS.canada, tuilesCanada);
+
+export const CANADA = {
+  fr: { chemin: 'canada/', h1: 'Vigie Dette Canada', titre: 'Vigie Dette Canada · Le risque de la dette fédérale, chaque jour',
+    description: 'Écart de taux avec les États-Unis, adjudications, non-résidents et notes des agences. Les quatre signaux de risque de la dette fédérale canadienne, mis à jour chaque jour.',
+    langue: 'Read this page in English', locale: 'fr_CA' },
+  en: { chemin: 'en/canada/', h1: 'Vigie Dette Canada', titre: 'Vigie Dette Canada · Canadian federal debt risk, every day',
+    description: 'Yield gap with the United States, bond auctions, foreign holdings and credit ratings. The four risk signals of Canadian federal debt, updated every day.',
+    langue: 'Lire la page en français', locale: 'en_CA' },
+};
+
+export function pageCanada(indexHtml, cartesHtml, inst, lang) {
+  const p = CANADA[lang], autre = lang === 'fr' ? 'en' : 'fr', url = `${SITE}${p.chemin}`;
+  const dico = { ...EN, ...EN_CANADA };
+  const cartes = cartesHtml.replace(/^<!--[\s\S]*?-->\n/, '');
+  const traduire = (h) => (lang === 'en' ? anglaise(h, dico) : h);
+  const morceau = (re) => traduire(cartes).match(re)[0];
+  let html = traduire(indexHtml)
+    .replace(/<main class="wrap">[\s\S]*?<\/main>/, morceau(/<main class="wrap">[\s\S]*?<\/main>/))
+    .replace(/<footer>[\s\S]*?<\/footer>/, morceau(/<footer>[\s\S]*?<\/footer>/));
+  html = appliquerInstantane(html, inst, lang)
+    .replace(/(href|src)="(?:\.\.\/)?(assets\/)/g, '$1="/$2')
+    .replace(/href="methode\.html"/g, `href="/${p.chemin}methode.html"`)
+    .replace(/\/assets\/js\/app\.js\?v=[0-9a-f]+/, `/assets/js/canada.js?v=${empreinteFichier('assets/js/canada.js')}`)
+    .replace(/<!-- (Source|Fichier)[^>]*-->\n/, `<!-- Fichier généré par scripts/pages.mjs à partir d’index.html et de canada/cartes.html${lang === 'en' ? ' (textes d’anglais.mjs)' : ''} : ne pas le modifier à la main. -->\n`)
+    .replace(/(<meta name="viewport"[^>]*>\n)/, '$1<meta name="robots" content="noindex">\n')
+    .replace(/<h1>[^<]*<\/h1>/, `<h1>${p.h1}</h1>`);
+  html = contenu(html, 'data-i18n="titre"', echapper(p.titre));
+  html = attribut(html, 'name="description"', 'content', p.description);
+  html = attribut(html, 'rel="canonical"', 'href', url);
+  html = attribut(html, 'hreflang="fr" href=', 'href', `${SITE}${CANADA.fr.chemin}`);
+  html = attribut(html, 'hreflang="en" href=', 'href', `${SITE}${CANADA.en.chemin}`);
+  html = attribut(html, 'hreflang="x-default"', 'href', `${SITE}${CANADA.fr.chemin}`);
+  html = attribut(html, 'property="og:site_name"', 'content', 'Vigie Dette');
+  html = attribut(html, 'property="og:locale"', 'content', p.locale);
+  html = attribut(html, 'property="og:url"', 'content', url);
+  html = attribut(html, 'property="og:title"', 'content', p.titre);
+  // Image de partage canadienne à venir (D9.3) : en attendant, le logo, sans la courbe française.
+  html = attribut(html, 'data-instantane="image"', 'content', `${SITE}assets/images/logo.png`);
+  html = attribut(html, 'property="og:image:width"', 'content', '512');
+  html = attribut(html, 'property="og:image:height"', 'content', '512');
+  html = attribut(html, 'property="og:image:alt"', 'content', p.titre);
+  html = attribut(html, 'name="twitter:card"', 'content', 'summary');
+  html = attribut(html, 'id="langue-toggle"', 'href', `/${CANADA[autre].chemin}`);
+  html = attribut(html, 'id="langue-toggle"', 'aria-label', p.langue);
+  html = contenu(html, 'donnees-structurees', `\n${JSON.stringify({ '@context': 'https://schema.org', '@graph': [
+    { '@type': 'WebPage', '@id': `${url}#page`, url, inLanguage: lang, name: p.titre, description: resume(inst, lang),
+      dateModified: inst.jour, isPartOf: { '@id': `${SITE}#site` }, publisher: { '@id': ORGANISATION } },
+  ] }, null, 2).replace(/</g, '\\u003c')}\n`);
+  return html;
+}
+
+export function construireCanada(indexHtml, cartesHtml, inst) {
+  return Object.fromEntries(['fr', 'en'].map((l) => [`${CANADA[l].chemin}index.html`, pageCanada(indexHtml, cartesHtml, inst, l)]));
+}
+
 // ---------- Construction ----------
 
 export function construire(indexHtml, inst) {
@@ -426,4 +524,15 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   }
   const inst = JSON.parse(lire('data/instantane.json'));
   for (const [f, html] of Object.entries(construire(lire('index.html'), inst))) ecrire(f, html);
+  // Canada à part : une erreur ici laisse les pages françaises écrites, et la commande finit en erreur (étape en rouge).
+  try {
+    if (process.argv.includes('--instantane')) {
+      ecrire('data/canada/instantane.json', `${JSON.stringify(instantaneCanada(lireFichiersCanada(), new Date()), null, 2)}\n`);
+    }
+    const instCa = JSON.parse(lire('data/canada/instantane.json'));
+    for (const [f, html] of Object.entries(construireCanada(lire('index.html'), lire('canada/cartes.html'), instCa))) ecrire(f, html);
+  } catch (e) {
+    console.error(`Canada : pages non régénérées (${e.message})`);
+    process.exitCode = 1;
+  }
 }

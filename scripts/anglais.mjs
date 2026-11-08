@@ -103,3 +103,36 @@ export const EN = {
   'pied.donnees': 'All series as open data on data.gouv.fr (CSV, Licence Ouverte)',
   'pied.collecte': 'Collected every morning (ECB, Banque de France, Bundesbank, Eurostat, Reuters dispatches); TARGET2 and the CISS are also read live. The thresholds are landmarks drawn from each series’ history, not forecasts.',
 };
+
+// Tableau de bord canadien : textes propres aux cartes de canada/cartes.html (les clés communes viennent d'EN ci-dessus)
+// et à l'en-tête des pages /canada/ (scripts/pages.mjs). test/anglais.test.mjs vérifie les deux fichiers.
+export const EN_CANADA = {
+  'ca.synthese.aria': 'Summary of the four signals',
+  'ca.courbe.quoi': '<b>What it is.</b> A score from 0 to 100 that sums up the state of Canada’s federal debt, month by month.',
+  'ca.courbe.pourquoi': '<b>Why it matters.</b> To place today against past crises: 2008, Covid in 2020. When the index rises while the rest of the markets stay still, it is Canadian debt itself that is causing concern.',
+  'ca.courbe.lire': '<b>How to read the chart.</b> In blue, the Vigie Index. In green, its “markets” part: what investors demand to lend to Canada. In dotted grey, stress across all Canadian financial markets, for comparison. Each month shows its most strained day. Coloured bands give the level; the eye in the legend hides or shows a line.',
+  'ca.courbe.qui': '<b>Who measures it, and when.</b> Vigie Dette, from the four signals on this page (<a href="methode.html">calculation method</a>, <a href="https://github.com/micka2000/vigie-dette-france/blob/main/assets/js/score.mjs" target="_blank" rel="noopener">formula</a>, <a href="https://github.com/micka2000/vigie-dette-france/tree/main/data/canada" target="_blank" rel="noopener">data</a>); market stress comes from the <a href="https://www.bankofcanada.ca/valet/series/FVI_FSI_CAN" target="_blank" rel="noopener">Bank of Canada</a>, every month. Since January 2001, recalculated every morning using only the information known on each day.',
+  'ca.courbe.th.stress': 'Market stress (Bank of Canada)',
+  'ca.spread.titre': 'Canada-US yield gap',
+  'ca.spread.vue.ecart': 'Gap',
+  'ca.spread.quoi': '<b>What it is.</b> The gap between the rate at which the Government of Canada borrows over 10 years and that of the United States, its large neighbour.',
+  'ca.spread.pourquoi': '<b>Why it matters.</b> The more the gap rises, the more investors demand from Canada compared with the United States. Since 2014, Canada has almost always borrowed more cheaply (the gap is negative 96 days out of 100). A caution: unlike the France-Germany spread, where both share one currency and one central bank, this gap also follows the decisions of the Bank of Canada and the US Federal Reserve. Its record, +134 points on 9 October 2002, came from interest rates set on each side, not from a crisis.',
+  'ca.spread.lire': '<b>How to read the chart.</b> The gap is given in basis points: 100 points equal 1%. At -100, Canada pays 1% a year less than the United States to borrow. In Gap view, coloured bands show the risk thresholds; the Yields button shows the two yields themselves, in %, without thresholds.',
+  'ca.spread.qui': '<b>Who measures it, and when.</b> The <a href="https://www.bankofcanada.ca/valet/series/BD.CDN.10YR.DQ.YLD" target="_blank" rel="noopener">Bank of Canada</a> for the Canadian yield (10-year benchmark bond) and the <a href="https://fred.stlouisfed.org/series/DGS10" target="_blank" rel="noopener">Federal Reserve</a> for the US yield, every day at market close since 2001; collected every morning. Only days published on both sides of the border are kept.',
+  'ca.adj.titre': '10-year bond auctions',
+  'ca.adj.quoi': '<b>What it is.</b> Investor demand when the Government of Canada auctions its 10-year bonds to borrow.',
+  'ca.adj.pourquoi': '<b>Why it matters.</b> Weakening demand means the government finds lenders harder to come by, and will have to pay them more. In Canada, demand varies little: since 1998, it has stayed between 1.79 (June 2009) and 2.71 times the amount sold.',
+  'ca.adj.lire': '<b>How to read the chart.</b> Each dot is an auction: amount bid divided by amount sold. At 2, buyers wanted twice what was sold. Coloured bands show the risk thresholds; the rate paid at each auction is in the auction details.',
+  'ca.adj.qui': '<b>Who measures it, and when.</b> The <a href="https://www.bankofcanada.ca/markets/government-securities-auctions/calls-for-tenders-and-results/nominal-bonds/" target="_blank" rel="noopener">Bank of Canada</a>, which sells on behalf of the government, about once a month since 2020 (four to six times a year before); results collected every morning. Sales of older bonds put back on the market are set aside.',
+  'ca.nonres.quoi': '<b>What it is.</b> The share of Government of Canada bonds held by foreign investors.',
+  'ca.nonres.pourquoi': '<b>Why it matters.</b> The higher this share, the more Canada depends on capital that can leave quickly in a crisis. It rose from 14% in April 2009 to a record 47% in July 2026. This rise can also reflect foreign confidence in Canadian debt: the signal measures dependence, not distrust.',
+  'ca.nonres.lire': '<b>How to read the chart.</b> The line gives the share held abroad at the end of each month, in %. Coloured bands show the risk thresholds.',
+  'ca.nonres.qui': '<b>Who measures it, and when.</b> <a href="https://www150.statcan.gc.ca/t1/tbl1/fr/tv.action?pid=3610047501" target="_blank" rel="noopener">Statistics Canada</a> for the bonds held abroad, relative to <a href="https://www150.statcan.gc.ca/t1/tbl1/fr/tv.action?pid=1010011301" target="_blank" rel="noopener">all government bonds</a>, every month since 1991, published about two and a half months later; collected every morning.',
+  'ca.notes.quoi': '<b>What it is.</b> The ratings that judge the Government of Canada’s ability to repay its debt. AAA is the best rating.',
+  'ca.notes.pourquoi': '<b>Why it matters.</b> A downgrade makes Canada’s borrowing more expensive. S&amp;P and Moody’s have given Canada their top rating since 2002; Fitch cut it by one notch, to AA+, on 24 June 2020, after the Covid spending.',
+  'ca.notes.lire': '<b>How to read the chart.</b> One line per agency: the higher it is, the better the rating. The lowest of the three is used. Moody’s writes its ratings differently: Aaa is the same as AAA.',
+  'ca.notes.qui': '<b>Who measures it, and when.</b> S&amp;P, Moody’s and Fitch. Collected every morning, a change is recorded only when two independent sources confirm it (<a href="https://en.wikipedia.org/wiki/List_of_countries_by_credit_rating" target="_blank" rel="noopener">Wikipedia</a>, <a href="https://countryeconomy.com/ratings/canada" target="_blank" rel="noopener">countryeconomy.com</a>).',
+  'ca.pied.collecte': 'Collected every morning (Bank of Canada, US Federal Reserve, Statistics Canada, rating agencies). Thresholds are benchmarks drawn from each series’ history since 2001, not forecasts.',
+  'ca.pied.methode': 'How the Canadian Vigie Index is calculated',
+  'ca.pied.donnees': 'All Canadian series as open data (JSON)',
+};

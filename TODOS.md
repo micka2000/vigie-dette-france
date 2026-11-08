@@ -43,6 +43,9 @@ Plan : `docs/designs/vigie-canada.md` (revue CEO terminée le 29/10/2026, mode S
 - [x] **Collecte canadienne** _(fait le 08/11/2026 : `main_canada` dans `update_data.py`, `data/canada/` (écart 10 ans Valet et FRED, adjudications à 10 ans Valet, non-résidents StatCan, stress BdC, notes), `meta.json` propre, workflow étendu ; panne canadienne testée sans effet sur la France)_.
 - [ ] **Repères canadiens** : centiles 2001-2026 gardés pour l'instant (décision de Mickaël le 08/11/2026), à revoir avant l'ouverture publique, indice jamais au-dessus de 49 ; écart CA-US dominé par la politique monétaire (+134 pb en 2002) ; non-résidents au record (45,9 %), refuge plutôt que risque ?
 - [ ] **Dénominateur des non-résidents** : vérifier que 10-10-0113 v37293 (« autres émissions négociables ») couvre les mêmes titres que 36-10-0475 v61913978 (obligations fédérales) ; valeur comptable contre nominale.
-- [ ] **Livraison 1, suite** : `pages.mjs` et `app.js` à rendre depuis la fiche (cartes par identifiant de signal).
+- [x] **Livraison 1, suite** _(fait le 08/11/2026 : socle `commun.mjs`, cartes `app.js` (France, rendu identique vérifié dans le navigateur) et `canada.js`)_.
+- [x] **Livraison 2, pages** _(fait le 08/11/2026 : `/canada/`, `/en/canada/` et leurs pages Méthode, en `noindex`, hors sitemap, sans lien depuis la France)_.
+- [ ] **Image de partage canadienne** (D9.3) : en attendant, le logo dans `og:image`.
+- [ ] **Deux collectes réelles vérifiées** (D12) avant la livraison 3 (sélecteur France | Canada, sitemap, JSON-LD « Vigie Dette »).
 - [ ] **Pages par signal canadiennes** (D9.1, reporté) : après la livraison 3, sur le modèle des 10 pages françaises.
 - [ ] **5e signal « pression sur le dollar canadien »** (D13, en attente des avis de l'Université de l'Épargne) : ensuite, données quotidiennes Valet depuis 2001, avance et fausses alertes mesurées (tâche T8 du plan) ; décider ensuite avec l'avis des spécialistes de l'Université de l'Épargne.

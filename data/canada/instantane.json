@@ -1,0 +1,71 @@
+{
+  "jour": "2026-11-05",
+  "indice": 27,
+  "niveau": "vigilance",
+  "niveauTexte": {
+    "fr": "Vigilance",
+    "en": "Watch"
+  },
+  "verdict": {
+    "fr": "Les signaux de la dette canadienne appellent à la vigilance, surtout sur le fond. Le reste des marchés financiers reste calme.",
+    "en": "Canadian debt signals call for vigilance, mostly in the fundamentals. The rest of the financial markets remain calm."
+  },
+  "tuiles": {
+    "fr": [
+      {
+        "cle": "spread",
+        "niveau": "calme",
+        "nom": "Écart Canada-États-Unis 10 ans",
+        "valeur": "-117 pb",
+        "sous": "Canada 10 ans 3,67 %",
+        "taux": "Canada 10 ans 3,67 % · États-Unis 4,84 %"
+      },
+      {
+        "cle": "adjudications",
+        "niveau": "calme",
+        "nom": "Couverture des adjudications",
+        "valeur": "2,51"
+      },
+      {
+        "cle": "non-residents",
+        "niveau": "crise",
+        "nom": "Part des non-résidents",
+        "valeur": "45,9 %"
+      },
+      {
+        "cle": "notations",
+        "niveau": "calme",
+        "nom": "Note la plus basse",
+        "valeur": "AA+"
+      }
+    ],
+    "en": [
+      {
+        "cle": "spread",
+        "niveau": "calme",
+        "nom": "10-year Canada-US gap",
+        "valeur": "-117 bp",
+        "sous": "10-year Canada 3.67%",
+        "taux": "10-year Canada 3.67% · US 4.84%"
+      },
+      {
+        "cle": "adjudications",
+        "niveau": "calme",
+        "nom": "Auction cover",
+        "valeur": "2.51"
+      },
+      {
+        "cle": "non-residents",
+        "niveau": "crise",
+        "nom": "Non-resident share",
+        "valeur": "45.9%"
+      },
+      {
+        "cle": "notations",
+        "niveau": "calme",
+        "nom": "Lowest rating",
+        "valeur": "AA+"
+      }
+    ]
+  }
+}

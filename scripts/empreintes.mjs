@@ -12,7 +12,9 @@ const empreinte = (f) => createHash('sha256').update(readFileSync(new URL(f, rac
 // « assets/js/app.js », « ../assets/css/styles.css ») : le chemin écrit devant est gardé tel quel.
 const JS = 'assets/js/app.js', SCORE = 'assets/js/score.mjs', COMMUN = 'assets/js/commun.mjs', CSS = 'assets/css/styles.css';
 // Dans cet ordre : l'empreinte de commun.mjs dépend de celle de score.mjs qu'il contient, celle d'app.js des deux.
-const appels = [[COMMUN, [SCORE]], [JS, [SCORE, COMMUN]], ['index.html', [JS, CSS]], ['methode.html', [CSS]], ['en/methode.html', [CSS]]];
+const CANADA = 'assets/js/canada.js'; // appelé par les pages /canada/, que pages.mjs écrit avec son empreinte
+const appels = [[COMMUN, [SCORE]], [JS, [SCORE, COMMUN]], [CANADA, [SCORE, COMMUN]], ['index.html', [JS, CSS]], ['methode.html', [CSS]], ['en/methode.html', [CSS]],
+  ['canada/methode.html', [CSS]], ['en/canada/methode.html', [CSS]]];
 for (const [fichier, cibles] of appels) {
   const chemin = new URL(fichier, racine);
   let contenu = readFileSync(chemin, 'utf8');

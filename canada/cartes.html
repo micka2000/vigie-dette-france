@@ -1,0 +1,177 @@
+<!-- Source des cartes du tableau de bord canadien. scripts/pages.mjs les place dans le gabarit d'index.html pour écrire
+     canada/index.html et en/canada/index.html (textes anglais : EN_CANADA dans scripts/anglais.mjs). -->
+<main class="wrap">
+
+  <section class="summary signals-summary" id="summary" aria-label="Synthèse des quatre signaux" data-i18n-attr="aria-label:ca.synthese.aria"></section>
+
+  <div class="signals">
+
+    <article class="signal" id="courbe">
+      <div class="signal-head">
+        <div>
+          <h2 data-i18n="courbe.titre">L’Indice Vigie dans le temps</h2>
+        </div>
+      </div>
+      <details class="desc">
+        <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Afficher la description</span><span class="desc-fermer" data-i18n="desc.fermer">Masquer la description</span></summary>
+        <div class="desc-corps">
+          <p data-i18n="ca.courbe.quoi"><b>Ce que c’est.</b> Une note de 0 à 100 qui résume l’état de la dette fédérale canadienne, mois par mois.</p>
+          <p data-i18n="ca.courbe.pourquoi"><b>Pourquoi ça compte.</b> Pour situer aujourd’hui par rapport aux crises passées : 2008, le Covid en 2020. Quand l’indice monte sans que le reste des marchés ne bouge, c’est la dette canadienne elle-même qui inquiète.</p>
+          <p data-i18n="ca.courbe.lire"><b>Comment lire le graphique.</b> En bleu, l’Indice Vigie. En vert, sa partie « marchés » : ce que les investisseurs exigent pour prêter au Canada. En pointillés gris, le stress de l’ensemble des marchés financiers canadiens, qui sert de comparaison. Chaque mois montre sa journée la plus tendue. Les fonds colorés donnent le niveau, l’œil de la légende masque ou affiche une courbe.</p>
+          <p data-i18n="ca.courbe.qui"><b>Qui le mesure, et quand.</b> Vigie Dette, à partir des quatre signaux de la page (<a href="methode.html">méthode de calcul</a>, <a href="https://github.com/micka2000/vigie-dette-france/blob/main/assets/js/score.mjs" target="_blank" rel="noopener">formule</a>, <a href="https://github.com/micka2000/vigie-dette-france/tree/main/data/canada" target="_blank" rel="noopener">données</a>) ; le stress des marchés vient de la <a href="https://www.bankofcanada.ca/valet/series/FVI_FSI_CAN" target="_blank" rel="noopener">Banque du Canada</a>, chaque mois. Depuis janvier 2001, recalculé chaque matin avec les seules informations connues chaque jour.</p>
+        </div>
+      </details>
+      <p class="sr-only" id="courbe-resume"></p>
+      <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-indice" data-i18n="periode">Période</span><div class="seg" role="group" aria-labelledby="periode-indice" data-periode="indice"></div></div></div>
+      <div class="chart" id="chart-indice"></div>
+      <div class="legend-row"><ul class="legend" id="legend-indice"></ul><button type="button" class="info" id="courbe-sans" data-tip="" aria-label="Périodes calculées avec moins de signaux" data-i18n-attr="aria-label:courbe.sans.aria" hidden>i</button></div>
+      <details class="desc detail-table">
+        <summary><span class="desc-ouvrir" data-i18n="courbe.table.ouvrir">Afficher les valeurs mois par mois</span><span class="desc-fermer" data-i18n="courbe.table.fermer">Masquer les valeurs mois par mois</span></summary>
+        <div class="table-scroll" id="courbe-table-wrap">
+  <table class="ratings-table" id="courbe-table">
+          <thead><tr><th data-i18n="courbe.th.mois">Mois</th><th data-i18n="courbe.th.indice">Indice Vigie</th><th data-i18n="courbe.th.marches">Partie marchés</th><th data-i18n="ca.courbe.th.stress">Stress des marchés (Banque du Canada)</th><th data-i18n="courbe.th.sans">Calculé sans</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        </div>
+      </details>
+    </article>
+
+    <article class="signal" id="spread">
+      <div class="signal-head">
+        <div>
+          <h2 data-i18n="ca.spread.titre">Écart de taux Canada-États-Unis</h2>
+        </div>
+        <div class="signal-mesure">
+          <div class="signal-now"><span class="big" data-now="spread"></span><span class="pill" data-pill="spread" data-level="calme"></span><button type="button" class="info" data-delta="spread" data-tip="" aria-label="Détail du chiffre" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
+          <p class="signal-taux" data-taux="spread" hidden></p>
+        </div>
+      </div>
+      <details class="desc">
+        <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Afficher la description</span><span class="desc-fermer" data-i18n="desc.fermer">Masquer la description</span></summary>
+        <div class="desc-corps">
+          <p data-i18n="ca.spread.quoi"><b>Ce que c’est.</b> L’écart entre le taux auquel le gouvernement du Canada emprunte sur 10 ans et celui des États-Unis, son grand voisin.</p>
+          <p data-i18n="ca.spread.pourquoi"><b>Pourquoi ça compte.</b> Plus l’écart remonte, plus les investisseurs demandent au Canada par rapport aux États-Unis. Depuis 2014, le Canada emprunte presque toujours moins cher (l’écart est négatif 96 jours sur 100). Prudence : contrairement à l’écart France-Allemagne, qui partage une même monnaie et une même banque centrale, cet écart suit aussi les décisions de la Banque du Canada et de la Réserve fédérale américaine. Son record, +134 points le 9 octobre 2002, venait des taux d’intérêt fixés de part et d’autre, pas d’une crise.</p>
+          <p data-i18n="ca.spread.lire"><b>Comment lire le graphique.</b> L’écart est donné en points de base : 100 points valent 1 %. À -100, le Canada paie chaque année 1 % de moins que les États-Unis pour emprunter. En vue Écart, les fonds colorés montrent les seuils de risque ; le bouton Taux montre les deux taux eux-mêmes, en %, sans seuils.</p>
+          <p data-i18n="ca.spread.qui"><b>Qui le mesure, et quand.</b> La <a href="https://www.bankofcanada.ca/valet/series/BD.CDN.10YR.DQ.YLD" target="_blank" rel="noopener">Banque du Canada</a> pour le taux canadien (obligation de référence à 10 ans) et la <a href="https://fred.stlouisfed.org/series/DGS10" target="_blank" rel="noopener">Réserve fédérale</a> pour le taux américain, chaque jour à la fermeture des marchés depuis 2001 ; relevé chaque matin. Seuls les jours publiés des deux côtés de la frontière sont gardés.</p>
+        </div>
+      </details>
+      <div class="chart-tools">
+        <div class="outil outil-vue">
+          <div class="seg" role="group" aria-label="Courbe affichée" data-i18n-attr="aria-label:spread.vue.aria">
+            <button type="button" data-spread-vue="ecart" aria-pressed="true" data-i18n="ca.spread.vue.ecart">Écart</button>
+            <button type="button" data-spread-vue="taux" aria-pressed="false" data-i18n="spread.vue.taux">Taux</button>
+          </div>
+        </div>
+        <div class="outil">
+          <span class="toolbar-label" id="step-label" data-i18n="spread.pas">Un point par</span>
+          <div class="seg" role="group" aria-labelledby="step-label" id="spread-step">
+            <button type="button" data-step="jour" aria-pressed="true" data-i18n="spread.jour">Jour</button>
+            <button type="button" data-step="semaine" data-i18n="spread.semaine">Semaine</button>
+            <button type="button" data-step="mois" data-i18n="spread.mois">Mois</button>
+          </div>
+        </div>
+        <div class="periode" hidden><span class="toolbar-label" id="periode-spread" data-i18n="periode">Période</span><div class="seg" role="group" aria-labelledby="periode-spread" data-periode="spread"></div></div>
+      </div>
+      <div class="chart" id="chart-spread"></div>
+      <ul class="legend" id="legend-spread" hidden></ul>
+      <p class="seuils-titre" data-i18n="seuils">Seuils de risque</p>
+      <ul class="thresholds" data-thresholds="spread"></ul>
+    </article>
+
+    <article class="signal" id="adjudications">
+      <div class="signal-head">
+        <div>
+          <h2 data-i18n="ca.adj.titre">Adjudications d’obligations à 10 ans</h2>
+        </div>
+        <div class="signal-now"><span class="big" data-now="adjudications"></span><span class="pill" data-pill="adjudications" data-level="calme"></span><button type="button" class="info" data-delta="adjudications" data-tip="" aria-label="Détail du chiffre" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
+      </div>
+      <details class="desc">
+        <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Afficher la description</span><span class="desc-fermer" data-i18n="desc.fermer">Masquer la description</span></summary>
+        <div class="desc-corps">
+          <p data-i18n="ca.adj.quoi"><b>Ce que c’est.</b> La demande des investisseurs quand le gouvernement du Canada vend aux enchères ses obligations à 10 ans pour emprunter.</p>
+          <p data-i18n="ca.adj.pourquoi"><b>Pourquoi ça compte.</b> Une demande qui faiblit signifie que le gouvernement a plus de mal à trouver des prêteurs, et devra les payer plus cher. Au Canada, la demande varie peu : depuis 1998, elle est restée entre 1,79 (juin 2009) et 2,71 fois le montant vendu.</p>
+          <p data-i18n="ca.adj.lire"><b>Comment lire le graphique.</b> Chaque point est une vente : montant demandé divisé par montant vendu. À 2, les acheteurs voulaient deux fois plus que ce qui a été vendu. Les fonds colorés montrent les seuils de risque ; le taux payé à chaque vente est dans le détail des ventes.</p>
+          <p data-i18n="ca.adj.qui"><b>Qui le mesure, et quand.</b> La <a href="https://www.bankofcanada.ca/markets/government-securities-auctions/calls-for-tenders-and-results/nominal-bonds/" target="_blank" rel="noopener">Banque du Canada</a>, qui vend au nom du gouvernement, environ une fois par mois depuis 2020 (quatre à six fois par an avant) ; résultats relevés chaque matin. Les ventes de vieilles obligations remises sur le marché sont mises de côté.</p>
+        </div>
+      </details>
+      <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-adj" data-i18n="periode">Période</span><div class="seg" role="group" aria-labelledby="periode-adj" data-periode="adj"></div></div></div>
+      <div class="chart" id="chart-auction-cover"></div>
+      <details class="desc detail-table">
+        <summary><span class="desc-ouvrir" data-i18n="adj.table.ouvrir">Afficher le détail des ventes</span><span class="desc-fermer" data-i18n="adj.table.fermer">Masquer le détail des ventes</span></summary>
+        <div class="table-scroll" id="auctions-table-wrap">
+          <table class="ratings-table" id="auctions-table">
+            <thead><tr><th data-i18n="adj.th.vente">Vente</th><th data-i18n="adj.th.obligation">Obligation</th><th data-i18n="adj.th.taux">Taux payé</th><th data-i18n="adj.th.vendu">Vendu</th><th data-i18n="adj.th.couverture">Couverture</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </details>
+      <p class="seuils-titre" data-i18n="seuils">Seuils de risque</p>
+      <ul class="thresholds" data-thresholds="adjudications"></ul>
+    </article>
+
+    <article class="signal" id="non-residents">
+      <div class="signal-head">
+        <div>
+          <h2 data-i18n="nonres.titre">Part des non-résidents</h2>
+        </div>
+        <div class="signal-now"><span class="big" data-now="non-residents"></span><span class="pill" data-pill="non-residents" data-level="calme"></span><button type="button" class="info" data-delta="non-residents" data-tip="" aria-label="Détail du chiffre" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
+      </div>
+      <details class="desc">
+        <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Afficher la description</span><span class="desc-fermer" data-i18n="desc.fermer">Masquer la description</span></summary>
+        <div class="desc-corps">
+          <p data-i18n="ca.nonres.quoi"><b>Ce que c’est.</b> La part des obligations du gouvernement du Canada détenue par des investisseurs étrangers.</p>
+          <p data-i18n="ca.nonres.pourquoi"><b>Pourquoi ça compte.</b> Plus cette part est élevée, plus le Canada dépend de capitaux qui peuvent partir vite en cas de crise. Elle est passée de 14 % en avril 2009 à un record de 47 % en juillet 2026. Cette hausse peut aussi traduire la confiance des étrangers dans la dette canadienne : le signal mesure la dépendance, pas la défiance.</p>
+          <p data-i18n="ca.nonres.lire"><b>Comment lire le graphique.</b> La courbe donne la part détenue par l’étranger à la fin de chaque mois, en %. Les fonds colorés montrent les seuils de risque.</p>
+          <p data-i18n="ca.nonres.qui"><b>Qui le mesure, et quand.</b> <a href="https://www150.statcan.gc.ca/t1/tbl1/fr/tv.action?pid=3610047501" target="_blank" rel="noopener">Statistique Canada</a> pour les obligations détenues par l’étranger, rapportées à l’<a href="https://www150.statcan.gc.ca/t1/tbl1/fr/tv.action?pid=1010011301" target="_blank" rel="noopener">ensemble des obligations du gouvernement</a>, chaque mois depuis 1991, publié environ deux mois et demi plus tard ; relevé chaque matin.</p>
+        </div>
+      </details>
+      <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-nonres" data-i18n="periode">Période</span><div class="seg" role="group" aria-labelledby="periode-nonres" data-periode="nonres"></div></div></div>
+      <div class="chart" id="chart-nonres"></div>
+      <p class="seuils-titre" data-i18n="seuils">Seuils de risque</p>
+      <ul class="thresholds" data-thresholds="non-residents"></ul>
+    </article>
+
+    <article class="signal" id="notations">
+      <div class="signal-head">
+        <div>
+          <h2 data-i18n="notes.titre">Notes des agences</h2>
+        </div>
+        <div class="signal-now"><span class="big" data-now="notations"></span><span class="pill" data-pill="notations" data-level="calme"></span><button type="button" class="info" data-delta="notations" data-tip="" aria-label="Détail du chiffre" data-i18n-attr="aria-label:chiffre.aria">i</button></div>
+      </div>
+      <details class="desc">
+        <summary><span class="desc-ouvrir" data-i18n="desc.ouvrir">Afficher la description</span><span class="desc-fermer" data-i18n="desc.fermer">Masquer la description</span></summary>
+        <div class="desc-corps">
+          <p data-i18n="ca.notes.quoi"><b>Ce que c’est.</b> Les notes qui jugent la capacité du gouvernement du Canada à rembourser sa dette. AAA est la meilleure note.</p>
+          <p data-i18n="ca.notes.pourquoi"><b>Pourquoi ça compte.</b> Une baisse de note rend les emprunts du Canada plus chers. S&amp;P et Moody’s donnent au Canada leur meilleure note depuis 2002 ; Fitch l’a abaissée d’un cran, à AA+, le 24 juin 2020, après les dépenses du Covid.</p>
+          <p data-i18n="ca.notes.lire"><b>Comment lire le graphique.</b> Une ligne par agence : plus elle est haute, meilleure est la note. On retient la plus basse des trois. Moody’s écrit ses notes autrement : Aaa équivaut à AAA.</p>
+          <p data-i18n="ca.notes.qui"><b>Qui le mesure, et quand.</b> S&amp;P, Moody’s et Fitch. Relevées chaque matin, un changement n’est enregistré que si deux sources indépendantes le confirment (<a href="https://en.wikipedia.org/wiki/List_of_countries_by_credit_rating" target="_blank" rel="noopener">Wikipédia</a>, <a href="https://countryeconomy.com/ratings/canada" target="_blank" rel="noopener">countryeconomy.com</a>).</p>
+        </div>
+      </details>
+      <div class="chart-tools"><div class="periode" hidden><span class="toolbar-label" id="periode-notes" data-i18n="periode">Période</span><div class="seg" role="group" aria-labelledby="periode-notes" data-periode="notes"></div></div></div>
+      <div class="chart" id="chart-ratings"></div>
+      <ul class="legend" id="legend-ratings"></ul>
+      <details class="desc detail-table">
+        <summary><span class="desc-ouvrir" data-i18n="notes.table.ouvrir">Afficher le détail des agences</span><span class="desc-fermer" data-i18n="notes.table.fermer">Masquer le détail des agences</span></summary>
+        <div class="table-scroll">
+          <table class="ratings-table" id="ratings-table">
+            <thead><tr><th data-i18n="notes.th.agence">Agence</th><th data-i18n="notes.th.note">Note</th><th data-i18n="notes.th.perspective">Perspective</th><th data-i18n="notes.th.derniere">Dernière décision</th><th data-i18n="notes.th.prochaine">Prochaine revue</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </details>
+      <p class="alert" id="ratings-alert" hidden></p>
+      <p class="seuils-titre" data-i18n="seuils">Seuils de risque</p>
+      <ul class="thresholds" data-thresholds="notations"></ul>
+    </article>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p data-i18n="ca.pied.collecte">Collecte chaque matin (Banque du Canada, Réserve fédérale américaine, Statistique Canada, agences de notation). Les seuils sont des repères tirés de l’historique de chaque série depuis 2001, pas des prévisions.</p>
+    <p class="retard" id="retard" hidden></p>
+    <p><a href="methode.html" data-i18n="ca.pied.methode">Méthode de calcul de l’Indice Vigie canadien</a></p>
+    <p><a href="https://github.com/micka2000/vigie-dette-france/tree/main/data/canada" target="_blank" rel="noopener" data-i18n="ca.pied.donnees">Toutes les séries canadiennes en données ouvertes (JSON)</a></p>
+  </div>
+</footer>
