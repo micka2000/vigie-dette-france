@@ -64,13 +64,19 @@
   --text-h1: clamp(32px, 3.5vw, 48px);
   --text-h2: clamp(24px, 2.5vw, 32px);
   --text-h3: 22px;
+  --text-h4: 18px;
   --text-body: 16px;
   --text-lecture: 18px;
   --text-sm: 14px;
   --text-xs: 12px;
+  --text-2xs: 11px;
+  /* Chiffres en vedette : carte du signal, tuile ; plus petits sur téléphone */
+  --text-chiffre: 40px; --text-chiffre-sm: 32px;
+  --text-tuile: 34px; --text-tuile-sm: 26px;
 
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
   --space-6: 24px; --space-8: 32px; --space-12: 48px; --space-16: 64px;
+  --radius-sm: 6px;
   --radius-md: 8px;
   --radius-pill: 9999px;
   --ease-standard: cubic-bezier(0.25, 0, 0, 1);
@@ -156,7 +162,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px soli
 .indice-side { display: grid; gap: var(--space-2); justify-items: start; }
 .indice-nom { font-family: var(--font-display); font-weight: 700; font-size: var(--text-h3); }
 /* Sur le bleu de l'en-tête, les couleurs de niveau ne contrastent pas : pastille sur fond de carte */
-.masthead .pill { background: var(--bg-surface); font-size: var(--text-sm); padding: 4px 12px; }
+.masthead .pill { background: var(--bg-surface); font-size: var(--text-sm); padding: var(--space-1) var(--space-3); }
 .repere { margin: 0; max-width: 70ch; font-size: var(--text-body); }
 .reperes { display: grid; gap: var(--space-1); }
 .reperes:not(:has(> :not([hidden]))) { display: none; }
@@ -188,7 +194,7 @@ a.btn-icone { text-decoration: none; }
 }
 .tile:hover { transform: translateY(-2px); }
 .tile-name { font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm); color: var(--fg-2); }
-.tile-value { font-family: var(--font-display); font-weight: 800; font-size: 34px; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.tile-value { font-family: var(--font-display); font-weight: 800; font-size: var(--text-tuile); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .tile-sub { font-size: var(--text-sm); font-weight: 600; color: var(--fg-2); font-variant-numeric: tabular-nums; }
 
 .pill {
@@ -206,7 +212,7 @@ a.btn-icone { text-decoration: none; }
 /* Filtre de période */
 .toolbar { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; padding-block: var(--space-8) var(--space-4); }
 .toolbar-label { font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm); color: var(--fg-2); }
-.chart-tools { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 4px 0 8px; }
+.chart-tools { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; margin: var(--space-1) 0 var(--space-2); }
 .seg { display: inline-flex; background: var(--bg-inset); border-radius: var(--radius-pill); padding: 3px; }
 .seg button {
   font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm);
@@ -216,7 +222,7 @@ a.btn-icone { text-decoration: none; }
 /* Au doigt : 44px de haut au moins, sans rien changer à la souris */
 @media (pointer: coarse) { .seg button { min-height: 44px; } }
 /* Une étiquette et ses boutons ne se séparent jamais */
-.outil { display: inline-flex; align-items: center; gap: 12px; flex-wrap: nowrap; }
+.outil { display: inline-flex; align-items: center; gap: var(--space-3); flex-wrap: nowrap; }
 
 /* Cartes des signaux */
 .signals { display: grid; gap: var(--space-6); padding-block: var(--space-6) var(--space-16); }
@@ -229,7 +235,7 @@ a.btn-icone { text-decoration: none; }
 .signal h2 { font-family: var(--font-display); font-weight: 700; font-size: var(--text-h2); line-height: 1.15; letter-spacing: -0.03em; margin: 0; }
 .signal-why { margin: 0; color: var(--fg-2); max-width: 70ch; }
 .signal-now { display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; }
-.signal-now .big { font-family: var(--font-display); font-weight: 800; font-size: 40px; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.signal-now .big { font-family: var(--font-display); font-weight: 800; font-size: var(--text-chiffre); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .signal-now .delta { font-size: var(--text-sm); color: var(--fg-3); }
 /* Chiffre du signal, puis une ligne discrète dessous (taux de l'OAT et du Bund), alignée sur lui */
 .signal-mesure { display: grid; gap: var(--space-1); justify-items: end; }
@@ -241,17 +247,17 @@ a.btn-icone { text-decoration: none; }
 .signal { container-type: inline-size; }
 .chart:empty { min-height: clamp(220px, calc((100cqi - 2 * var(--space-6)) * 0.34), 460px); }
 .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
-.chart text { fill: var(--fg-3); font-family: var(--font-body); font-size: 12px; }
+.chart text { fill: var(--fg-3); font-family: var(--font-body); font-size: var(--text-xs); }
 .chart .grid line { stroke: var(--chart-grid); }
 .chart .axis path, .chart .axis line { stroke: var(--chart-axis); }
-.chart .mark-label { font-family: var(--font-display); font-weight: 600; font-size: 11px; fill: var(--fg-2); paint-order: stroke; stroke: var(--bg-surface); stroke-width: 3px; }
+.chart .mark-label { font-family: var(--font-display); font-weight: 600; font-size: var(--text-2xs); fill: var(--fg-2); paint-order: stroke; stroke: var(--bg-surface); stroke-width: 3px; }
 .chart .end-label { font-family: var(--font-display); font-weight: 600; fill: var(--fg-1); }
 .chart-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: var(--space-6); }
 .chart-title { font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm); color: var(--fg-2); margin: 0 0 var(--space-2); }
 
 .tooltip {
   position: absolute; pointer-events: none; z-index: 2;
-  background: var(--bulle-bg); color: var(--bulle-fg); border-radius: 6px;
+  background: var(--bulle-bg); color: var(--bulle-fg); border-radius: var(--radius-sm);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); padding: 7px 12px; font-size: var(--text-xs);
   line-height: 1.4; min-width: 140px; max-width: 240px;
 }
@@ -277,7 +283,7 @@ a.btn-icone { text-decoration: none; }
 .alert { margin: 0; font-size: var(--text-sm); color: var(--fg-2); background: var(--bg-inset); border-radius: var(--radius-md); padding: var(--space-3); }
 
 .source { font-size: var(--text-xs); color: var(--fg-3); margin: 0; }
-.chart + .source, .legend + .source, .chart-pair + .source { margin: 6px 0 12px; }
+.chart + .source, .legend + .source, .chart-pair + .source { margin: var(--space-2) 0 var(--space-3); }
 .source a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .source a:hover { color: var(--fg-1); }
 .missing { font-size: var(--text-sm); color: var(--fg-3); }
@@ -303,7 +309,7 @@ footer p { margin: 0; max-width: 80ch; }
 @media (pointer: coarse) { .info { position: relative; } .info::after { content: ''; position: absolute; inset: -13px; } }
 .bulle {
   position: fixed; z-index: 50; max-width: min(280px, calc(100vw - 16px)); pointer-events: none;
-  background: var(--bulle-bg); color: var(--bulle-fg); padding: 7px 12px; border-radius: 6px;
+  background: var(--bulle-bg); color: var(--bulle-fg); padding: 7px 12px; border-radius: var(--radius-sm);
   font: 500 12px/1.45 var(--font-body); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   animation: bulle 120ms ease;
 }
@@ -366,7 +372,7 @@ footer p { margin: 0; max-width: 80ch; }
 .masthead .desc, .masthead .desc-corps b { color: var(--fg-inverse); }
 .masthead .desc summary { color: var(--fg-inverse); opacity: 0.85; }
 .masthead .desc-corps { opacity: 0.9; }
-.periode { display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.periode { display: inline-flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
 .periode[hidden] { display: none; }
 
 /* ---------- Usage de l'espace selon l'appareil ---------- */
@@ -374,12 +380,12 @@ footer p { margin: 0; max-width: 80ch; }
 /* Mobile : deux tuiles par ligne, chiffres un peu plus petits */
 @media (max-width: 599px) {
   .signals-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .signals-summary .tile-value { font-size: 26px; }
+  .signals-summary .tile-value { font-size: var(--text-tuile-sm); }
   .signals-summary .tile:last-child:nth-child(odd) { grid-column: 1 / -1; }
   .tile { padding: var(--space-3); }
   .signal { padding: var(--space-4); }
-  .signal-now .big { font-size: 32px; }
-  .signal h2 { font-size: 22px; }
+  .signal-now .big { font-size: var(--text-chiffre-sm); }
+  .signal h2 { font-size: var(--text-h3); }
   .signal-mesure { justify-items: start; }
   /* Le choix de la courbe d'abord, seul sur sa ligne ; le pas et la période dessous */
   .chart-tools .outil-vue { flex-basis: 100%; }
@@ -416,7 +422,7 @@ footer p { margin: 0; max-width: 80ch; }
 .methode .signal td:first-child { white-space: nowrap; }
 .methode .signal p, .methode .signal li { font-size: var(--text-lecture); line-height: 1.6; margin: 0; text-align: justify; hyphens: manual; }
 .methode .signal { display: grid; gap: var(--space-3); }
-.methode .signal h3 { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin: var(--space-2) 0 0; }
+.methode .signal h3 { font-family: var(--font-display); font-weight: 700; font-size: var(--text-h4); margin: var(--space-2) 0 0; }
 .methode .signal ul { margin: 0; padding-left: 1.2em; display: grid; gap: var(--space-2); }
 .formule {
   font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.6;
