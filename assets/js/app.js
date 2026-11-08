@@ -6,7 +6,7 @@ import {
 import {
   state, L, f0, f1, f2, fSigned1, pc, pb, fmtMonth, fmtMonthLong, fmtDayLong, fmtDay, fmtWeekday, parseMonth, parseDay, css, json,
   lineChart, legend, visibles, periodes, since, lastOfPeriod, bandes, nc, renderRatingsTable, demarrer,
-} from './commun.mjs?v=fbb93e3f';
+} from './commun.mjs?v=18c87b14';
 
 // Carte → signal de la fiche (score.mjs), et textes des seuils de risque affichés sous chaque carte.
 const CLE_SCORE = { spread: 'spread', adjudications: 'couverture', 'non-residents': 'nonResidents', notations: 'notes', target: 'target' };

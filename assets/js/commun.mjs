@@ -174,11 +174,12 @@ function dessinerLignes(el, series, opts) {
     .call(d3.axisBottom(x).ticks(Math.max(2, Math.floor(iw / 90))).tickSizeOuter(0))
     .attr('font-size', null).attr('font-family', null);
 
-  for (const [si, s] of series.entries()) {
+  // Les lignes fines d'abord : la ligne principale (la plus épaisse) passe par-dessus
+  for (const [si, s] of [...series.entries()].sort(([, a], [, b]) => (a.width ?? 2) - (b.width ?? 2))) {
     const off = opts.offset ? (si - (series.length - 1) / 2) * opts.offset : 0;
     const line = d3.line().x((p) => x(p.d)).y((p) => y(p.v) + off).curve(s.step ? d3.curveStepAfter : d3.curveLinear);
-    g.append('path').datum(s.points).attr('fill', 'none').attr('stroke', s.color).attr('stroke-width', 2)
-      .attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round').attr('stroke-dasharray', s.dash ?? null).attr('d', line);
+    g.append('path').datum(s.points).attr('fill', 'none').attr('stroke', s.color).attr('stroke-width', s.width ?? 2)
+      .attr('stroke-opacity', s.opacity ?? null).attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round').attr('stroke-dasharray', s.dash ?? null).attr('d', line);
     if (opts.dots) {
       g.selectAll(null).data(s.points).join('circle').attr('cx', (p) => x(p.d)).attr('cy', (p) => y(p.v))
         .attr('r', 4).attr('fill', s.color).attr('stroke', css('--bg-surface')).attr('stroke-width', 2);
@@ -426,9 +427,9 @@ function renderCourbe(c) {
   const moisCourant = new Date().toISOString().slice(0, 7);
   const vers = (pts) => pts.map((p) => ({ d: parseMonth(p.mois), v: p.valeur, p }));
   const series = [
-    { id: 'indice', name: L('Indice Vigie', 'Vigie Index'), endText: L('Indice', 'Index'), color: css('--series-1'), points: vers(indice) },
-    { id: 'tension', name: L('Partie marchés de l’indice', 'Markets part of the index'), endText: L('Marchés', 'Markets'), color: css('--series-2'), points: vers(tension) },
-    { id: 'ciss', name: pays.courbe.lecture.nom(), endText: pays.courbe.lecture.court(), color: css('--fg-3'), dash: '4 4', points: vers(ciss) },
+    { id: 'indice', name: L('Indice Vigie', 'Vigie Index'), endText: L('Indice', 'Index'), color: css('--series-1'), width: 3, points: vers(indice) },
+    { id: 'tension', name: L('Partie marchés de l’indice', 'Markets part of the index'), endText: L('Marchés', 'Markets'), color: css('--series-2'), width: 1.5, opacity: 0.8, points: vers(tension) },
+    { id: 'ciss', name: pays.courbe.lecture.nom(), endText: pays.courbe.lecture.court(), color: css('--fg-3'), dash: '4 4', width: 1.5, points: vers(ciss) },
   ].filter((s) => s.points.length);
   const debut = d3.min(series, (s) => s.points[0].d);
   lineChart(document.getElementById('chart-indice'), visibles('indice', series), {
