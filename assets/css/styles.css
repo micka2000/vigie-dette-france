@@ -298,6 +298,8 @@ footer p { margin: 0; max-width: 80ch; }
 .info:hover, .info[aria-describedby] { color: var(--fg-accent); }
 .masthead .info { color: rgba(255, 255, 255, 0.75); }
 .masthead .info:hover, .masthead .info[aria-describedby] { color: var(--fg-inverse); }
+/* Au doigt : une zone de 44 px autour du « i », sans changer son dessin */
+@media (pointer: coarse) { .info { position: relative; } .info::after { content: ''; position: absolute; inset: -13px; } }
 .bulle {
   position: fixed; z-index: 50; max-width: min(280px, calc(100vw - 16px)); pointer-events: none;
   background: var(--bulle-bg); color: var(--bulle-fg); padding: 7px 12px; border-radius: 6px;
