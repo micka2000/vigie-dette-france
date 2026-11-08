@@ -16,7 +16,7 @@ Ce qui est en ligne, en phase discrète (D12 : `noindex`, hors sitemap, sans lie
   `canada/cartes.html` (cartes), `update_data.py` (`main_canada`, `data/canada/`), `pages.mjs` (`construireCanada`).
 - France inchangée : calculs gardés par `test/identite-france.test.mjs`, rendu comparé dans le navigateur avant et après.
 
-Reste : seconde collecte réelle vérifiée (D12), puis livraison 3 (sélecteur France | Canada, sitemap, JSON-LD
+Deux collectes réelles vérifiées le 2026-11-08 (19 h 56 et 20 h 11 UTC, aucune série en échec). Reste : livraison 3 (sélecteur France | Canada, sitemap, JSON-LD
 « Vigie Dette ») sur feu vert de Mickaël ; repères à revoir avant l'ouverture (D15) ; D13 en attente ; pages par signal (D9.1).
 Le corps ci-dessous garde la conception d'origine ; là où il diverge, les décisions (D9 à D15) et cet état priment.
 
