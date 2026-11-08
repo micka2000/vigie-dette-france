@@ -380,6 +380,11 @@ footer p { margin: 0; max-width: 80ch; }
   .chart-tools .outil-vue { flex-basis: 100%; }
 }
 
+/* Tablette : quatre tuiles en 2 × 2 plutôt que 3 + 1 (Canada) */
+@media (min-width: 600px) and (max-width: 959px) {
+  .signals-summary:has(> :nth-child(4):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 /* Grand écran : l'indice à droite de la phrase, la description en pleine largeur dessous */
 @media (min-width: 960px) {
   .masthead .wrap {
