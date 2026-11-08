@@ -9,7 +9,7 @@ import { createHash } from 'node:crypto';
 const racine = new URL('../', import.meta.url);
 const empreinte = (f) => createHash('sha256').update(readFileSync(new URL(f, racine))).digest('hex').slice(0, 8);
 const lire = (f) => readFileSync(new URL(f, racine), 'utf8');
-const JS = 'assets/js/app.js', SCORE = 'assets/js/score.mjs', CSS = 'assets/css/styles.css';
+const JS = 'assets/js/app.js', SCORE = 'assets/js/score.mjs', COMMUN = 'assets/js/commun.mjs', CSS = 'assets/css/styles.css';
 
 test('index.html porte l’empreinte à jour de app.js et styles.css', () => {
   const html = lire('index.html');
@@ -19,10 +19,10 @@ test('index.html porte l’empreinte à jour de app.js et styles.css', () => {
   }
 });
 
-test('app.js importe score.mjs avec son empreinte à jour', () => {
-  for (const f of [SCORE]) {
+test('app.js et commun.mjs importent score.mjs et commun.mjs avec leur empreinte à jour', () => {
+  for (const [qui, f] of [[JS, SCORE], [JS, COMMUN], [COMMUN, SCORE]]) {
     const attendu = `'./${f.split('/').pop()}?v=${empreinte(f)}'`;
-    assert.ok(lire(JS).includes(attendu), `app.js doit importer ${attendu} (lancer : node scripts/empreintes.mjs)`);
+    assert.ok(lire(qui).includes(attendu), `${qui} doit importer ${attendu} (lancer : node scripts/empreintes.mjs)`);
   }
 });
 
