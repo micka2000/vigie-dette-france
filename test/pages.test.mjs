@@ -2,13 +2,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { construire, construireCanada, instantane, jourTexte, resume, appliquerInstantane, anglaise, SIGNAUX, CANADA } from '../scripts/pages.mjs';
+import { construire, construireCanada, instantane, jourTexte, resume, appliquerInstantane, anglaise, navPays, SIGNAUX, CANADA } from '../scripts/pages.mjs';
 
 const lire = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 const inst = JSON.parse(lire('data/instantane.json'));
+const instCa = JSON.parse(lire('data/canada/instantane.json'));
 
 test('index.html, en/index.html et sitemap.xml sont à jour (lancer : node scripts/empreintes.mjs)', () => {
-  for (const [f, attendu] of Object.entries(construire(lire('index.html'), inst))) assert.equal(lire(f), attendu, f);
+  for (const [f, attendu] of Object.entries(construire(lire('index.html'), inst, instCa))) assert.equal(lire(f), attendu, f);
 });
 
 test('l’instantané est lisible sans JavaScript, dans chaque langue', () => {
@@ -22,7 +23,7 @@ test('l’instantané est lisible sans JavaScript, dans chaque langue', () => {
 });
 
 test('appliquer l’instantané deux fois ne change rien', () => {
-  const html = lire('index.html');
+  const html = lire('index.html').replace(/<nav class="pays"[\s\S]*?<\/nav>/, navPays('fr', 'france'));
   assert.equal(appliquerInstantane(html, inst, 'fr'), html);
   assert.equal(appliquerInstantane(lire('en/index.html'), inst, 'en'), lire('en/index.html'));
 });
@@ -53,7 +54,8 @@ test('une traduction manquante arrête la génération', () => {
 });
 
 test('chaque page déclare sa canonique et ses deux langues, qui se répondent', () => {
-  const pages = { 'index.html': '', 'en/index.html': 'en/', 'methode.html': 'methode.html', 'en/methode.html': 'en/methode.html' };
+  const pages = { 'index.html': '', 'en/index.html': 'en/', 'methode.html': 'methode.html', 'en/methode.html': 'en/methode.html',
+    'canada/index.html': 'canada/', 'en/canada/index.html': 'en/canada/', 'canada/methode.html': 'canada/methode.html', 'en/canada/methode.html': 'en/canada/methode.html' };
   for (const sig of SIGNAUX) for (const l of ['fr', 'en']) pages[`${sig[l].chemin}index.html`] = sig[l].chemin;
   for (const [f, chemin] of Object.entries(pages)) {
     const html = lire(f);
@@ -93,31 +95,61 @@ test('chaque page de signal porte sa carte, ses liens et le chiffre du jour', ()
   }
 });
 
-// ---------- Canada (phase discrète, D12) ----------
-
-const instCa = JSON.parse(lire('data/canada/instantane.json'));
+// ---------- Canada (ouvert au public le 2026-11-08, livraison 3) ----------
 
 test('Canada : /canada/ et /en/canada/ sont à jour (lancer : node scripts/empreintes.mjs)', () => {
   for (const [f, attendu] of Object.entries(construireCanada(lire('index.html'), lire('canada/cartes.html'), instCa))) assert.equal(lire(f), attendu, f);
 });
 
-test('Canada : pages en noindex, hors sitemap, sans lien depuis la France, qui se répondent', () => {
+test('Canada : pages indexées, dans le sitemap, qui se répondent', () => {
   const sitemap = lire('sitemap.xml');
   for (const l of ['fr', 'en']) {
     const f = `${CANADA[l].chemin}index.html`, html = lire(f), autre = CANADA[l === 'fr' ? 'en' : 'fr'].chemin;
-    assert.match(html, /<meta name="robots" content="noindex">/, f);
-    assert.ok(!sitemap.includes(CANADA[l].chemin), `sitemap : ${CANADA[l].chemin}`);
+    assert.ok(!html.includes('noindex'), f);
+    for (const c of [CANADA[l].chemin, `${CANADA[l].chemin}methode.html`]) assert.ok(sitemap.includes(`<loc>https://vigiedette.com/${c}</loc>`), `sitemap : ${c}`);
     assert.equal(html.match(/<link rel="canonical"[^>]*\shref="([^"]*)"/)?.[1], `https://vigiedette.com/${CANADA[l].chemin}`, `${f} : canonique`);
     assert.match(html.match(/<a[^>]*id="langue-toggle"[^>]*>/)[0], new RegExp(`\\shref="/${autre}"`), `${f} : lien vers l’autre langue`);
     assert.ok(html.includes('/assets/js/canada.js?v='), `${f} : script du Canada`);
     assert.ok(!html.includes('/assets/js/app.js'), `${f} : pas le script de la France`);
     assert.ok(html.includes(`id="verdict">${instCa.verdict[l]}<`), `${f} : verdict du jour`);
     assert.equal([...html.matchAll(/<article class="signal" id="/g)].length, 5, `${f} : la courbe et quatre cartes`);
-    for (const m of html.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)) JSON.parse(m[1]);
+    const ld = [...html.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
+    const types = ld.flatMap((x) => x['@graph']).map((n) => n['@type']);
+    assert.deepEqual(types, ['Organization', 'WebSite', 'WebPage'], `${f} : JSON-LD`);
   }
-  for (const f of ['index.html', 'en/index.html', 'methode.html', 'en/methode.html', ...SIGNAUX.flatMap((x) => [`${x.fr.chemin}index.html`, `${x.en.chemin}index.html`])]) {
-    assert.ok(!lire(f).includes('canada'), `${f} : aucun lien vers le Canada`);
-    assert.ok(!lire(f).includes('noindex'), `${f} : indexée`);
+  assert.equal([...sitemap.matchAll(/<loc>/g)].length, 18, 'sitemap : 14 adresses françaises et 4 canadiennes');
+});
+
+// Sur les pages françaises, seuls changent le sélecteur de pays et le JSON-LD « Vigie Dette » (plan, Tests).
+test('sélecteur France | Canada : garde la langue, marque le pays en cours, seul lien vers le Canada en France', () => {
+  const attendu = {
+    'index.html': navPays('fr', 'france'), 'en/index.html': navPays('en', 'france'),
+    'methode.html': navPays('fr', 'france', 'methode'), 'en/methode.html': navPays('en', 'france', 'methode'),
+    'canada/index.html': navPays('fr', 'canada'), 'en/canada/index.html': navPays('en', 'canada'),
+    'canada/methode.html': navPays('fr', 'canada', 'methode'), 'en/canada/methode.html': navPays('en', 'canada', 'methode'),
+  };
+  for (const x of SIGNAUX) for (const l of ['fr', 'en']) attendu[`${x[l].chemin}index.html`] = navPays(l, 'france');
+  for (const [f, nav] of Object.entries(attendu)) {
+    const html = lire(f);
+    assert.equal([...html.matchAll(/<nav class="pays"/g)].length, 1, `${f} : un sélecteur`);
+    assert.ok(html.includes(nav), `${f} : sélecteur attendu`);
+    assert.ok(!html.includes('noindex'), `${f} : indexée`);
+    if (f.startsWith('canada/') || f.startsWith('en/canada/')) continue;
+    const reste = html.replace(nav, '').replace(/<script type="application\/ld\+json"[\s\S]*?<\/script>/g, '');
+    assert.ok(!/canada/i.test(reste), `${f} : rien d’autre sur le Canada`);
+  }
+  assert.ok(navPays('en', 'canada').includes('<a href="/en/">France</a><a href="/en/canada/" aria-current="true">Canada</a>'));
+  assert.ok(!navPays('fr', 'france').includes('hreflang'), 'le sélecteur ne change pas la langue mémorisée');
+});
+
+test('JSON-LD : l’organisation et le site s’appellent « Vigie Dette » et comptent les quatre tableaux de bord', () => {
+  for (const f of ['index.html', 'en/index.html', 'canada/index.html', 'en/canada/index.html']) {
+    const g = JSON.parse(lire(f).match(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/)[1])['@graph'];
+    assert.equal(g.find((n) => n['@type'] === 'Organization').name, 'Vigie Dette', f);
+    const site = g.find((n) => n['@type'] === 'WebSite');
+    assert.equal(site.name, 'Vigie Dette', f);
+    assert.deepEqual(site.hasPart.map((x) => x['@id']), ['', 'en/', 'canada/', 'en/canada/'].map((c) => `https://vigiedette.com/${c}#page`), f);
+    assert.ok(g.some((n) => n['@id'] === `https://vigiedette.com/${f.replace('index.html', '')}#page`), `${f} : sa page`);
   }
 });
 
@@ -130,5 +162,5 @@ test('Canada : les deux pages Méthode ont la même structure et les mêmes lien
   const fr = lire('canada/methode.html'), en = lire('en/canada/methode.html');
   const compte = (s, re) => [...s.matchAll(re)].length;
   for (const re of [/<article/g, /<h2/g, /<table/g, /<tr/g, /<pre/g, /<li/g]) assert.equal(compte(en, re), compte(fr, re), String(re));
-  for (const html of [fr, en]) assert.match(html, /<meta name="robots" content="noindex">/);
+  for (const html of [fr, en]) assert.ok(!html.includes('noindex'));
 });

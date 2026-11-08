@@ -8,7 +8,7 @@ Mode: Builder
 
 ## État au 2026-11-08
 
-Ce qui est en ligne, en phase discrète (D12 : `noindex`, hors sitemap, sans lien depuis la France) :
+Ce qui est en ligne, ouvert au public depuis la livraison 3 (sélecteur France | Canada, sitemap, JSON-LD « Vigie Dette ») :
 - `/canada/`, `/en/canada/`, `/canada/methode.html`, `/en/canada/methode.html`, image de partage FR et EN.
 - Quatre signaux dans l'indice (écart Canada-États-Unis, couverture des adjudications à 10 ans, non-résidents, notes) ;
   indice de stress de la Banque du Canada à côté, hors indice. Repères revus le 2026-11-08 (D16) : écart en centiles 1982-2026, couverture en centiles 2001-2026, non-résidents et notes au barème de la France.
@@ -16,8 +16,10 @@ Ce qui est en ligne, en phase discrète (D12 : `noindex`, hors sitemap, sans lie
   `canada/cartes.html` (cartes), `update_data.py` (`main_canada`, `data/canada/`), `pages.mjs` (`construireCanada`).
 - France inchangée : calculs gardés par `test/identite-france.test.mjs`, rendu comparé dans le navigateur avant et après.
 
-Deux collectes réelles vérifiées le 2026-11-08 (19 h 56 et 20 h 11 UTC, aucune série en échec). Reste : livraison 3 (sélecteur France | Canada, sitemap, JSON-LD
-« Vigie Dette ») sur feu vert de Mickaël ; D13 en attente ; pages par signal (D9.1).
+Deux collectes réelles vérifiées le 2026-11-08 (19 h 56 et 20 h 11 UTC, aucune série en échec). Livraison 3 faite le 2026-11-08 :
+sélecteur en tête de toutes les pages (`navPays` dans `pages.mjs`, pastilles « France » et « Canada » au-dessus du titre ; sur les pages
+Méthode, il mène à la Méthode de l'autre pays), `noindex` retiré, 18 adresses dans le sitemap, organisation et site nommés « Vigie Dette »
+(ancien nom en `alternateName`). Reste : D13 en attente ; pages par signal (D9.1).
 Le corps ci-dessous garde la conception d'origine ; là où il diverge, les décisions (D9 à D15) et cet état priment.
 
 ## Problem Statement

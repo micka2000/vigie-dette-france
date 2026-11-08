@@ -4,7 +4,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex">
 <meta name="color-scheme" content="light dark">
 <title data-i18n="titre">Vigie Dette Canada · Le risque de la dette fédérale, chaque jour</title>
 <meta name="description" data-i18n-attr="content:meta.description" content="Écart de taux avec les États-Unis, adjudications, non-résidents et notes des agences. Les quatre signaux de risque de la dette fédérale canadienne, mis à jour chaque jour.">
@@ -33,6 +32,51 @@
   "@context": "https://schema.org",
   "@graph": [
     {
+      "@type": "Organization",
+      "@id": "https://vigiedette.com/#organisation",
+      "name": "Vigie Dette",
+      "alternateName": "Vigie Dette France",
+      "url": "https://vigiedette.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://vigiedette.com/assets/images/logo.png",
+        "width": 512,
+        "height": 512
+      },
+      "sameAs": [
+        "https://github.com/micka2000/vigie-dette-france",
+        "https://www.data.gouv.fr/datasets/signaux-de-risque-de-la-dette-publique-francaise-vigie-dette-france"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://vigiedette.com/#site",
+      "url": "https://vigiedette.com/",
+      "name": "Vigie Dette",
+      "alternateName": "Vigie Dette France",
+      "inLanguage": [
+        "fr",
+        "en"
+      ],
+      "publisher": {
+        "@id": "https://vigiedette.com/#organisation"
+      },
+      "hasPart": [
+        {
+          "@id": "https://vigiedette.com/#page"
+        },
+        {
+          "@id": "https://vigiedette.com/en/#page"
+        },
+        {
+          "@id": "https://vigiedette.com/canada/#page"
+        },
+        {
+          "@id": "https://vigiedette.com/en/canada/#page"
+        }
+      ]
+    },
+    {
       "@type": "WebPage",
       "@id": "https://vigiedette.com/canada/#page",
       "url": "https://vigiedette.com/canada/",
@@ -45,12 +89,13 @@
       },
       "publisher": {
         "@id": "https://vigiedette.com/#organisation"
-      }
+      },
+      "primaryImageOfPage": "https://vigiedette.com/assets/images/partage-canada-fr.png"
     }
   ]
 }
 </script>
-<link rel="stylesheet" href="/assets/css/styles.css?v=6992bf1a">
+<link rel="stylesheet" href="/assets/css/styles.css?v=5fc7ade6">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   // Langue choisie avec le bouton FR / EN : on renvoie vers sa page. Jamais d'après la langue du navigateur,
@@ -69,6 +114,7 @@
 
 <header class="masthead">
   <div class="wrap">
+    <nav class="pays" aria-label="Pays"><a href="/">France</a><a href="/canada/" aria-current="true">Canada</a></nav>
     <div class="masthead-top">
       <h1>Vigie Dette Canada</h1>
       <div class="masthead-actions">

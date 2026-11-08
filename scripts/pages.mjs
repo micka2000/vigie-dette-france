@@ -15,7 +15,8 @@ import { EN, EN_CANADA } from './anglais.mjs';
 export const SITE = 'https://vigiedette.com/';
 const EN_DEFAUT = EN;
 // Dernière modification des pages Méthode, pour le sitemap : à changer quand on les modifie.
-const METHODE_MAJ = '2026-10-27';
+const METHODE_MAJ = '2026-11-08';
+const METHODE_CANADA_MAJ = '2026-11-08';
 
 const racine = new URL('../', import.meta.url);
 // Empreinte de l'image de partage : son adresse change avec son contenu, et LinkedIn ne garde pas l'ancienne en cache.
@@ -24,6 +25,21 @@ const empreinteImage = (lang) => empreinteFichier(`assets/images/partage-${lang}
 const lire = (f) => readFileSync(new URL(f, racine), 'utf8');
 const ecrire = (f, contenu) => { mkdirSync(new URL('.', new URL(f, racine)), { recursive: true }); writeFileSync(new URL(f, racine), contenu); };
 const lireJson = (f) => JSON.parse(lire(`data/${f}`));
+
+// Sélecteur France | Canada en tête de chaque page (livraison 3). Il garde la langue ; sur une page Méthode, il mène à la
+// Méthode de l'autre pays. Aucun pays n'est mémorisé : la racine reste la France.
+const LIENS_PAYS = {
+  tableau: { france: { fr: '/', en: '/en/' }, canada: { fr: '/canada/', en: '/en/canada/' } },
+  methode: { france: { fr: '/methode.html', en: '/en/methode.html' }, canada: { fr: '/canada/methode.html', en: '/en/canada/methode.html' } },
+};
+export function navPays(lang, actuel, type = 'tableau') {
+  const liens = ['france', 'canada'].map((p) => `<a href="${LIENS_PAYS[type][p][lang]}"${p === actuel ? ' aria-current="true"' : ''}>${p === 'france' ? 'France' : 'Canada'}</a>`);
+  return `<nav class="pays" aria-label="${lang === 'en' ? 'Country' : 'Pays'}">${liens.join('')}</nav>`;
+}
+const avecNavPays = (html, nav) => {
+  if (!/<nav class="pays"/.test(html)) throw new Error('sélecteur de pays introuvable');
+  return html.replace(/<nav class="pays"[\s\S]*?<\/nav>/, nav);
+};
 
 const echapper = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -277,6 +293,7 @@ export function pageSignal(tableau, sig, inst, lang) {
   const liens = SIGNAUX.filter((x) => x !== sig).map((x) => `        <li><a href="/${x[lang].chemin}">${echapper(x[lang].h1)}</a></li>`);
   const entete = `<header class="masthead">
   <div class="wrap">
+    ${navPays(lang, 'france')}
     <div class="masthead-top">
       <h1>${echapper(p.h1)}</h1>
       <div class="masthead-actions">
@@ -344,19 +361,26 @@ function donneesSignal(sig, inst, lang, phrase) {
 const ORGANISATION = `${SITE}#organisation`;
 export const DATA_GOUV = 'https://www.data.gouv.fr/datasets/signaux-de-risque-de-la-dette-publique-francaise-vigie-dette-france';
 
-export function donneesStructurees(inst, lang) {
-  const en = lang === 'en';
-  const url = en ? `${SITE}en/` : SITE;
-  const graphe = [
+// L'organisation et le site, les mêmes sur les tableaux de bord des deux pays.
+const NOEUDS_SITE = () => [
     {
-      '@type': 'Organization', '@id': ORGANISATION, name: 'Vigie Dette France', url: SITE,
+      '@type': 'Organization', '@id': ORGANISATION, name: 'Vigie Dette', alternateName: 'Vigie Dette France', url: SITE,
       logo: { '@type': 'ImageObject', url: `${SITE}assets/images/logo.png`, width: 512, height: 512 },
       sameAs: ['https://github.com/micka2000/vigie-dette-france', DATA_GOUV],
     },
     {
-      '@type': 'WebSite', '@id': `${SITE}#site`, url: SITE, name: 'Vigie Dette France', inLanguage: ['fr', 'en'],
+      '@type': 'WebSite', '@id': `${SITE}#site`, url: SITE, name: 'Vigie Dette', alternateName: 'Vigie Dette France', inLanguage: ['fr', 'en'],
       publisher: { '@id': ORGANISATION },
+      // Les quatre tableaux de bord : la France et le Canada, en français et en anglais
+      hasPart: ['', 'en/', 'canada/', 'en/canada/'].map((c) => ({ '@id': `${SITE}${c}#page` })),
     },
+];
+
+export function donneesStructurees(inst, lang) {
+  const en = lang === 'en';
+  const url = en ? `${SITE}en/` : SITE;
+  const graphe = [
+    ...NOEUDS_SITE(),
     {
       '@type': 'WebPage', '@id': `${url}#page`, url, inLanguage: lang, name: en ? EN.titre : TITRE_FR,
       description: resume(inst, lang), dateModified: inst.jour, isPartOf: { '@id': `${SITE}#site` },
@@ -393,9 +417,11 @@ const DATASET = (inst) => ({
 
 // ---------- Sitemap ----------
 
-export function sitemap(inst) {
+// instCa : instantané du Canada, null s'il manque (les adresses canadiennes sont alors omises, la France reste juste).
+export function sitemap(inst, instCa = null) {
   const paires = [['', 'en/', inst.jour], ...SIGNAUX.map((x) => [x.fr.chemin, x.en.chemin, inst.jour]),
-    ['methode.html', 'en/methode.html', METHODE_MAJ]];
+    ['methode.html', 'en/methode.html', METHODE_MAJ],
+    ...(instCa ? [[CANADA.fr.chemin, CANADA.en.chemin, instCa.jour], ['canada/methode.html', 'en/canada/methode.html', METHODE_CANADA_MAJ]] : [])];
   const urls = paires.flatMap(([fr, en, maj]) => [fr, en].map((chemin) => [
     '  <url>',
     `    <loc>${SITE}${chemin}</loc>`,
@@ -414,7 +440,7 @@ ${urls.join('\n')}
 
 
 // ---------- Canada (plan docs/designs/vigie-canada.md) ----------
-// Phase discrète (D12) : /canada/ et /en/canada/ en noindex, hors sitemap, sans lien depuis la France.
+// Ouvert au public le 2026-11-08 (livraison 3) : sélecteur France | Canada, sitemap, JSON-LD « Vigie Dette ».
 // Même gabarit qu'index.html : en-tête, styles et scripts communs ; cartes et pied de page de canada/cartes.html.
 
 const lireJsonCanada = (f) => JSON.parse(lire(`data/canada/${f}`));
@@ -479,7 +505,6 @@ export function pageCanada(indexHtml, cartesHtml, inst, lang) {
     .replace(/href="methode\.html"/g, `href="/${p.chemin}methode.html"`)
     .replace(/\/assets\/js\/app\.js\?v=[0-9a-f]+/, `/assets/js/canada.js?v=${empreinteFichier('assets/js/canada.js')}`)
     .replace(/<!-- (Source|Fichier)[^>]*-->\n/, `<!-- Fichier généré par scripts/pages.mjs à partir d’index.html et de canada/cartes.html${lang === 'en' ? ' (textes d’anglais.mjs)' : ''} : ne pas le modifier à la main. -->\n`)
-    .replace(/(<meta name="viewport"[^>]*>\n)/, '$1<meta name="robots" content="noindex">\n')
     .replace(/<h1>[^<]*<\/h1>/, `<h1>${p.h1}</h1>`);
   html = contenu(html, 'data-i18n="titre"', echapper(p.titre));
   html = attribut(html, 'name="description"', 'content', p.description);
@@ -498,9 +523,12 @@ export function pageCanada(indexHtml, cartesHtml, inst, lang) {
   html = attribut(html, 'id="langue-toggle"', 'href', `/${CANADA[autre].chemin}`);
   html = attribut(html, 'id="langue-toggle"', 'aria-label', p.langue);
   html = contenu(html, 'donnees-structurees', `\n${JSON.stringify({ '@context': 'https://schema.org', '@graph': [
+    ...NOEUDS_SITE(),
     { '@type': 'WebPage', '@id': `${url}#page`, url, inLanguage: lang, name: p.titre, description: resume(inst, lang),
-      dateModified: inst.jour, isPartOf: { '@id': `${SITE}#site` }, publisher: { '@id': ORGANISATION } },
+      dateModified: inst.jour, isPartOf: { '@id': `${SITE}#site` }, publisher: { '@id': ORGANISATION },
+      primaryImageOfPage: `${SITE}${image}` },
   ] }, null, 2).replace(/</g, '\\u003c')}\n`);
+  html = avecNavPays(html, navPays(lang, 'canada'));
   return html;
 }
 
@@ -510,11 +538,12 @@ export function construireCanada(indexHtml, cartesHtml, inst) {
 
 // ---------- Construction ----------
 
-export function construire(indexHtml, inst) {
-  const tableaux = { fr: appliquerInstantane(indexHtml, inst, 'fr'), en: appliquerInstantane(anglaise(indexHtml), inst, 'en') };
+export function construire(indexHtml, inst, instCa = null) {
+  const tableaux = { fr: avecNavPays(appliquerInstantane(indexHtml, inst, 'fr'), navPays('fr', 'france')),
+    en: avecNavPays(appliquerInstantane(anglaise(indexHtml), inst, 'en'), navPays('en', 'france')) };
   const pages = { 'index.html': tableaux.fr, 'en/index.html': tableaux.en };
   for (const sig of SIGNAUX) for (const lang of ['fr', 'en']) pages[`${sig[lang].chemin}index.html`] = pageSignal(tableaux[lang], sig, inst, lang);
-  pages['sitemap.xml'] = sitemap(inst);
+  pages['sitemap.xml'] = sitemap(inst, instCa);
   return pages;
 }
 
@@ -523,7 +552,9 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     ecrire('data/instantane.json', `${JSON.stringify(instantane(lireFichiers(), new Date()), null, 2)}\n`);
   }
   const inst = JSON.parse(lire('data/instantane.json'));
-  for (const [f, html] of Object.entries(construire(lire('index.html'), inst))) ecrire(f, html);
+  let instCaSitemap = null;
+  try { instCaSitemap = JSON.parse(lire('data/canada/instantane.json')); } catch { /* le sitemap garde la France seule */ }
+  for (const [f, html] of Object.entries(construire(lire('index.html'), inst, instCaSitemap))) ecrire(f, html);
   // Canada à part : une erreur ici laisse les pages françaises écrites, et la commande finit en erreur (étape en rouge).
   try {
     if (process.argv.includes('--instantane')) {

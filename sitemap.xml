@@ -86,16 +86,44 @@
   </url>
   <url>
     <loc>https://vigiedette.com/methode.html</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-11-08</lastmod>
     <xhtml:link rel="alternate" hreflang="fr" href="https://vigiedette.com/methode.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://vigiedette.com/en/methode.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://vigiedette.com/methode.html"/>
   </url>
   <url>
     <loc>https://vigiedette.com/en/methode.html</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-11-08</lastmod>
     <xhtml:link rel="alternate" hreflang="fr" href="https://vigiedette.com/methode.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://vigiedette.com/en/methode.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://vigiedette.com/methode.html"/>
+  </url>
+  <url>
+    <loc>https://vigiedette.com/canada/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://vigiedette.com/canada/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://vigiedette.com/en/canada/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://vigiedette.com/canada/"/>
+  </url>
+  <url>
+    <loc>https://vigiedette.com/en/canada/</loc>
+    <lastmod>2026-11-05</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://vigiedette.com/canada/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://vigiedette.com/en/canada/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://vigiedette.com/canada/"/>
+  </url>
+  <url>
+    <loc>https://vigiedette.com/canada/methode.html</loc>
+    <lastmod>2026-11-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://vigiedette.com/canada/methode.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://vigiedette.com/en/canada/methode.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://vigiedette.com/canada/methode.html"/>
+  </url>
+  <url>
+    <loc>https://vigiedette.com/en/canada/methode.html</loc>
+    <lastmod>2026-11-08</lastmod>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://vigiedette.com/canada/methode.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://vigiedette.com/en/canada/methode.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://vigiedette.com/canada/methode.html"/>
   </url>
 </urlset>

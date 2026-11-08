@@ -407,9 +407,10 @@ footer p { margin: 0; max-width: 80ch; }
 @media (min-width: 960px) {
   .masthead .wrap {
     grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space-12);
-    grid-template-areas: "top top" "verdict indice" "reperes indice" "stamp indice" "desc desc";
+    grid-template-areas: "pays pays" "top top" "verdict indice" "reperes indice" "stamp indice" "desc desc";
     align-items: start;
   }
+  .pays { grid-area: pays; }
   .masthead-top { grid-area: top; }
   .masthead .verdict { grid-area: verdict; font-size: clamp(22px, 2vw, 28px); }
   .masthead .indice { grid-area: indice; align-self: center; }
@@ -445,3 +446,14 @@ footer a { color: inherit; text-decoration: underline; text-underline-offset: 2p
 /* Méthode : justification des repères, repliée sous le barème */
 .methode .approfondir summary { font-size: var(--text-body); }
 .approfondir-corps { margin-top: var(--space-3); display: grid; gap: var(--space-3); color: var(--fg-1); font-size: var(--text-body); }
+
+/* Sélecteur France | Canada, en tête de chaque page (livraison 3) */
+.pays { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: calc(-1 * var(--space-2)); }
+.pays a {
+  display: inline-flex; align-items: center; min-height: 32px; padding-inline: var(--space-3); border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.45); color: var(--fg-inverse); text-decoration: none;
+  font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm);
+}
+.pays a:hover { background: rgba(255, 255, 255, 0.12); }
+.pays a[aria-current] { background: var(--bg-surface); border-color: var(--bg-surface); color: var(--fg-accent); }
+@media (pointer: coarse) { .pays a { min-height: 44px; padding-inline: var(--space-4); } }

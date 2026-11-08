@@ -34,7 +34,8 @@
     {
       "@type": "Organization",
       "@id": "https://vigiedette.com/#organisation",
-      "name": "Vigie Dette France",
+      "name": "Vigie Dette",
+      "alternateName": "Vigie Dette France",
       "url": "https://vigiedette.com/",
       "logo": {
         "@type": "ImageObject",
@@ -51,14 +52,29 @@
       "@type": "WebSite",
       "@id": "https://vigiedette.com/#site",
       "url": "https://vigiedette.com/",
-      "name": "Vigie Dette France",
+      "name": "Vigie Dette",
+      "alternateName": "Vigie Dette France",
       "inLanguage": [
         "fr",
         "en"
       ],
       "publisher": {
         "@id": "https://vigiedette.com/#organisation"
-      }
+      },
+      "hasPart": [
+        {
+          "@id": "https://vigiedette.com/#page"
+        },
+        {
+          "@id": "https://vigiedette.com/en/#page"
+        },
+        {
+          "@id": "https://vigiedette.com/canada/#page"
+        },
+        {
+          "@id": "https://vigiedette.com/en/canada/#page"
+        }
+      ]
     },
     {
       "@type": "WebPage",
@@ -158,7 +174,7 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="assets/css/styles.css?v=6992bf1a">
+<link rel="stylesheet" href="assets/css/styles.css?v=5fc7ade6">
 <script>
   try { const t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   // Langue choisie avec le bouton FR / EN : on renvoie vers sa page. Jamais d'après la langue du navigateur,
@@ -177,6 +193,7 @@
 
 <header class="masthead">
   <div class="wrap">
+    <nav class="pays" aria-label="Pays"><a href="/" aria-current="true">France</a><a href="/canada/">Canada</a></nav>
     <div class="masthead-top">
       <h1>Vigie Dette France</h1>
       <div class="masthead-actions">
