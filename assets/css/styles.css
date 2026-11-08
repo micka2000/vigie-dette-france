@@ -419,7 +419,7 @@ footer p { margin: 0; max-width: 80ch; }
   background: var(--bg-inset); color: var(--fg-1); border-radius: var(--radius-md, 8px);
   padding: var(--space-3) var(--space-4); margin: 0; overflow-x: auto; white-space: pre;
 }
-@media (max-width: 600px) { .formule { font-size: 12px; padding: var(--space-3); } }
+@media (max-width: 599px) { .formule { font-size: 12px; padding: var(--space-3); } }
 .retour { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 /* Lien de chaque carte vers la page du signal, et liste des autres signaux sur ces pages */
 .page-signal { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm); color: var(--fg-accent); }
