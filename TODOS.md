@@ -47,5 +47,6 @@ Plan : `docs/designs/vigie-canada.md` (revue CEO terminée le 29/10/2026, mode S
 - [x] **Livraison 2, pages** _(fait le 08/11/2026 : `/canada/`, `/en/canada/` et leurs pages Méthode, en `noindex`, hors sitemap, sans lien depuis la France)_.
 - [x] **Image de partage canadienne** (D9.3) _(fait le 08/11/2026 : `partage-canada-fr.png` et `-en.png`, écart Canada-États-Unis depuis 2001, ligne zéro, sans pic annoté ; images françaises inchangées au pixel près)_.
 - [ ] **Deux collectes réelles vérifiées** (D12) avant la livraison 3 (sélecteur France | Canada, sitemap, JSON-LD « Vigie Dette »).
+- [ ] **ISSUE-001 (/qa du 08/11/2026, faible, visuel)** : en thème sombre, S&P (`--series-1`) et Fitch (`--series-3`) sont deux bleus proches sur le graphique des notes, au Canada comme en France ; légende et étiquettes permettent de les distinguer. Repro : /canada/, bouton thème, carte Notes. À traiter avec /design-review.
 - [ ] **Pages par signal canadiennes** (D9.1, reporté) : après la livraison 3, sur le modèle des 10 pages françaises.
 - [ ] **5e signal « pression sur le dollar canadien »** (D13, en attente des avis de l'Université de l'Épargne) : ensuite, données quotidiennes Valet depuis 2001, avance et fausses alertes mesurées (tâche T8 du plan) ; décider ensuite avec l'avis des spécialistes de l'Université de l'Épargne.
