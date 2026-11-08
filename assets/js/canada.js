@@ -16,7 +16,7 @@ function textesSeuils(lang) {
   const n = fmtNombre[lang], et = lang === 'fr' ? 'à' : 'to';
   const unite = {
     spread: (v) => `${n(v, 0)} ${lang === 'fr' ? 'pb' : 'bp'}`, adjudications: (v) => n(v, 2),
-    'non-residents': (v) => (lang === 'fr' ? `${n(v, 1)} %` : `${n(v, 1)}%`),
+    'non-residents': (v) => (lang === 'fr' ? `${n(v, Number.isInteger(v) ? 0 : 1)} %` : `${n(v, Number.isInteger(v) ? 0 : 1)}%`),
   };
   const out = {};
   for (const [carte, u] of Object.entries(unite)) {
