@@ -359,6 +359,8 @@ footer p { margin: 0; max-width: 80ch; }
 }
 /* Justifié, sans coupure de mots */
 .desc-corps p { margin: 0; line-height: 1.55; text-align: justify; hyphens: manual; }
+/* Sur tablette, les deux colonnes font moins de 300 px : justifié sans coupure, il y aurait des trous entre les mots */
+@media (min-width: 700px) and (max-width: 959px) { :is(.signal, .masthead) .desc-corps p { text-align: start; } }
 .desc-corps b { font-family: var(--font-display); font-weight: 600; color: var(--fg-1); }
 .desc-corps a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .masthead .desc, .masthead .desc-corps b { color: var(--fg-inverse); }
