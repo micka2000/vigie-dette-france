@@ -25,7 +25,7 @@ jobs:
         with:
           python-version: "3.12"
       # Les tests tournent dans tests.yml, à chaque push : un test cassé ne bloque jamais la collecte.
-      - name: Collecte (chaque série à part)
+      - name: Collecte (chaque série à part, France puis Canada)
         env:
           WEBSTAT_API_KEY: ${{ secrets.WEBSTAT_API_KEY }}
         run: python scripts/update_data.py || echo "ECHECS=1" >> "$GITHUB_ENV"
@@ -47,9 +47,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git show HEAD:data/meta.json > "$RUNNER_TEMP/meta.json" 2>/dev/null || : > "$RUNNER_TEMP/meta.json"
+          git show HEAD:data/canada/meta.json > "$RUNNER_TEMP/meta_canada.json" 2>/dev/null || : > "$RUNNER_TEMP/meta_canada.json"
           git add data sitemap.xml 'assets/images/partage-*.png' '*.html'  # tableau, pages par signal, en/
-          if ! python scripts/update_data.py --echecs-changes "$RUNNER_TEMP/meta.json" \
-             && git diff --cached --quiet -- . ':(exclude)data/meta.json'; then
+          # data/canada/ : collecte du Canada, isolée de la France (son propre meta.json).
+          if ! python scripts/update_data.py --echecs-changes "$RUNNER_TEMP/meta.json" "$RUNNER_TEMP/meta_canada.json" \
+             && git diff --cached --quiet -- . ':(exclude)data/meta.json' ':(exclude)data/canada/meta.json'; then
             echo "Aucune nouvelle donnée."
           else
             git commit -m "Données du $(date -u +%F)"
@@ -70,4 +72,5 @@ jobs:
         if: always() && env.ECHECS == '1'
         run: |
           python -c "import json; [print('::error::' + e['serie'] + ' : ' + e['erreur']) for e in json.load(open('data/meta.json'))['echecs']]"
+          python -c "import json; [print('::error::Canada ' + e['serie'] + ' : ' + e['erreur']) for e in json.load(open('data/canada/meta.json'))['echecs']]" || true
           exit 1

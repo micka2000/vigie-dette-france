@@ -307,7 +307,7 @@ def perspective(texte):
     return PERSPECTIVES[m.group(0).lower()] if m else None
 
 
-def notes_wikipedia(wikitext):
+def notes_wikipedia(wikitext, pays="France"):
     """{agence: (note, perspective, date)} lus dans les tableaux par agence de « List of countries by credit rating »."""
     titres = list(re.finditer(r"^(=+)\s*(.*?)\s*\1\s*$", wikitext, re.M))
     out = {}
@@ -316,7 +316,7 @@ def notes_wikipedia(wikitext):
         if not agence:
             continue
         section = wikitext[t.end(): titres[i + 1].start() if i + 1 < len(titres) else None]
-        ligne = re.search(r"\{\{flag\|France\}\}(.*?)(?=\n\|-|\n\|\})", section, re.S)
+        ligne = re.search(r"\{\{flag\|" + pays + r"\}\}(.*?)(?=\n\|-|\n\|\})", section, re.S)
         if not ligne:
             continue
         cellules = ligne.group(1).split("||")
@@ -353,14 +353,14 @@ def notes_countryeconomy(page):
     return {a: v for a, v in out.items() if v}
 
 
-def maj_notations(ratings, sources=None):
+def maj_notations(ratings, sources=None, pays="France", countryeconomy=COUNTRYECONOMY):
     """Applique un changement de note ou de perspective plus récent que le fichier quand les deux sources concordent
     (même note, même perspective, dates à 7 jours près). Sinon, une alerte par source. Renvoie (fichier, alertes)."""
     if sources is None:
         sources = {
-            "Wikipédia": (notes_wikipedia(json.loads(get(WIKIPEDIA))["parse"]["wikitext"]),
+            "Wikipédia": (notes_wikipedia(json.loads(get(WIKIPEDIA))["parse"]["wikitext"], pays),
                           "https://en.wikipedia.org/wiki/List_of_countries_by_credit_rating"),
-            "countryeconomy.com": (notes_countryeconomy(get(COUNTRYECONOMY, NAVIGATEUR)), COUNTRYECONOMY),
+            "countryeconomy.com": (notes_countryeconomy(get(countryeconomy, NAVIGATEUR)), countryeconomy),
         }
     ratings = json.loads(json.dumps(ratings))
     alertes = []
@@ -387,11 +387,133 @@ def maj_notations(ratings, sources=None):
 SAISIES = {"adjudications.json": maj_adjudications, "notations.json": maj_notations}
 
 
+# ---------- Canada (data/canada/, plan docs/designs/vigie-canada.md) ----------
+# Sources ouvertes, sans clé : Banque du Canada (API Valet), FRED (Réserve fédérale de Saint-Louis), Statistique Canada.
+# Collecte isolée de la France : ses échecs vont dans data/canada/meta.json, jamais dans data/meta.json.
+
+DATA_CANADA = DATA / "canada"
+VALET = "https://www.bankofcanada.ca/valet/observations/"
+FRED = "https://fred.stlouisfed.org/graph/fredgraph.csv?id="
+STATCAN = "https://www150.statcan.gc.ca/t1/wds/rest/getDataFromVectorsAndLatestNPeriods"
+# Rendement de l'obligation de référence à 10 ans du gouvernement du Canada, clôture de chaque séance, depuis 2001.
+CA10 = "BD.CDN.10YR.DQ.YLD"
+# Rendement à 10 ans du Trésor américain, à maturité constante (Réserve fédérale), depuis 1962.
+US10 = "DGS10"
+# Obligations fédérales canadiennes détenues par les non-résidents, toutes devises, valeur comptable, en M$ (36-10-0475).
+NR_CANADA = 61913978
+# Titres négociables du gouvernement du Canada hors bons du Trésor (« autres émissions négociables »), en M$ (10-10-0113).
+ENCOURS_CANADA = 37293
+COUNTRYECONOMY_CANADA = "https://countryeconomy.com/ratings/canada"
+
+LIMITES_JOURS_CANADA = {
+    "spread.json": 7,  # quotidien : un long week-end férié au Canada ou aux États-Unis, plus une marge
+    "adjudications.json": 160,  # obligations à 10 ans : au plus 127 jours entre deux séances depuis 1998
+    "non_residents.json": 130,  # mensuel, publié environ 2 mois et demi après la fin du mois
+    "stress.json": 130,  # mensuel, publié environ 2 mois après la fin du mois
+}
+
+
+def valet(serie):
+    """{date: valeur} d'une série Valet ; les valeurs vides sont ignorées."""
+    obs = json.loads(get(f"{VALET}{serie}/json"))["observations"]
+    return {o["d"]: float(o[serie]["v"]) for o in obs if (o.get(serie) or {}).get("v") not in (None, "")}
+
+
+def fred_jours(serie):
+    """Le CSV de FRED met « . » (ou rien) les jours fériés américains : ces jours sont ignorés."""
+    lignes_csv = list(csv.reader(io.StringIO(get(f"{FRED}{serie}"))))
+    return {l[0]: float(l[1]) for l in lignes_csv[1:] if len(l) > 1 and l[1] not in ("", ".")}
+
+
+def statcan(vecteurs):
+    """{vecteur: {« AAAA-MM »: valeur}} pour des séries mensuelles de Statistique Canada (tout l'historique)."""
+    corps = json.dumps([{"vectorId": v, "latestN": 1000} for v in vecteurs]).encode()
+    req = urllib.request.Request(STATCAN, data=corps, headers={**UA, "Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=60) as r:
+        reponse = json.loads(r.read().decode("utf-8"))
+    out = {}
+    for x in reponse:
+        if x.get("status") != "SUCCESS":
+            raise ValueError(f"Statistique Canada : {x.get('status')} pour {x}")
+        o = x["object"]
+        out[o["vectorId"]] = {p["refPer"][:7]: float(p["value"]) for p in o["vectorDataPoint"] if p.get("value") is not None}
+    return out
+
+
+def serie_spread_canada(ca=None, us=None):
+    """Écart Canada moins États-Unis à 10 ans, aux seules dates publiées par les deux sources. Aucun report de valeur."""
+    ca = valet(CA10) if ca is None else ca
+    us = fred_jours(US10) if us is None else us
+    return [
+        {"jour": j, "ca10": ca[j], "us10": us[j], "spread_pb": round((ca[j] - us[j]) * 100, 1)}
+        for j in sorted(ca) if j in us
+    ]
+
+
+def serie_adjudications_canada(observations=None):
+    """Adjudications d'obligations à 10 ans (durée annoncée de 10 ans), résultats publiés seulement.
+    Les réouvertures d'anciennes lignes (« off the run ») sont écartées, comme août et décembre en France."""
+    if observations is None:
+        observations = json.loads(get(f"{VALET}group/AUC_BOND_RESULTS/json"))["observations"]
+    v = lambda o, k: (o.get(k) or {}).get("v")  # noqa: E731
+    lignes_adj = []
+    for o in observations:
+        if v(o, "AUC_BOND_TERM_YEARS") != "10" or v(o, "AUC_BOND_COVERAGE") in (None, "") or v(o, "AUC_BOND_OFF_THE_RUN") == "Yes":
+            continue
+        lignes_adj.append({
+            "jour": v(o, "AUC_BOND_AUCTION_DATE"), "isin": v(o, "AUC_BOND_ISIN"), "echeance": v(o, "AUC_BOND_MATURITY_DATE"),
+            "montant_m": float(v(o, "AUC_BOND_AMOUNT")), "couverture": float(v(o, "AUC_BOND_COVERAGE")),
+            "taux": float(v(o, "AUC_BOND_AVG_YIELD")) if v(o, "AUC_BOND_AVG_YIELD") else None,
+        })
+    lignes_adj.sort(key=lambda l: l["jour"])
+    return {
+        "description": "Adjudications d'obligations à 10 ans du gouvernement du Canada : montant adjugé (M$), taux de couverture "
+                       "(soumissions / montant adjugé), rendement moyen (%). Réouvertures d'anciennes lignes écartées.",
+        "source": "Banque du Canada, API Valet, groupe AUC_BOND_RESULTS",
+        "lignes": lignes_adj,
+    }
+
+
+def serie_non_residents_canada(series=None):
+    """Part des obligations fédérales détenue par les non-résidents, en %, chaque mois depuis 1991."""
+    series = statcan([NR_CANADA, ENCOURS_CANADA]) if series is None else series
+    nr, encours = series[NR_CANADA], series[ENCOURS_CANADA]
+    return {
+        "description": "Part des obligations négociables du gouvernement du Canada détenue par des non-résidents, en fin de mois (%). "
+                       "Numérateur en valeur comptable, dénominateur en valeur nominale.",
+        "source": f"Statistique Canada, tableaux 36-10-0475 (vecteur v{NR_CANADA}) et 10-10-0113 (vecteur v{ENCOURS_CANADA})",
+        "points": [
+            {"mois": m, "part": round(100 * nr[m] / encours[m], 2), "detenu_m": nr[m], "encours_m": encours[m]}
+            for m in sorted(nr) if encours.get(m)
+        ],
+    }
+
+
+def serie_stress_canada():
+    """Indice de stress financier canadien de la Banque du Canada, mensuel depuis 1981 (lecture officielle, hors indice)."""
+    return {
+        "description": "Indice de stress financier canadien (Banque du Canada), mensuel. Lecture officielle affichée à côté de l'Indice Vigie.",
+        "source": "Banque du Canada, API Valet, série FVI_FSI_CAN",
+        "mensuel": [{"mois": d[:7], "valeur": x} for d, x in sorted(valet("FVI_FSI_CAN").items())],
+    }
+
+
+SERIES_CANADA = {
+    "spread.json": serie_spread_canada,
+    "adjudications.json": serie_adjudications_canada,
+    "non_residents.json": serie_non_residents_canada,
+    "stress.json": serie_stress_canada,
+}
+SAISIES_CANADA = {
+    "notations.json": lambda r: maj_notations(r, pays="Canada", countryeconomy=COUNTRYECONOMY_CANADA),
+}
+
+
 # ---------- Contrôle de forme ----------
 
 
 def lignes(payload):
-    return payload if isinstance(payload, list) else payload.get("mensuel") or payload.get("points", [])
+    return payload if isinstance(payload, list) else payload.get("mensuel") or payload.get("lignes") or payload.get("points", [])
 
 
 def fin_de_periode(payload):
@@ -410,7 +532,7 @@ def fin_de_periode(payload):
     return date(int(r["annee"]), 12, 31)
 
 
-def controle_forme(nom, payload, ancien, aujourd_hui):
+def controle_forme(nom, payload, ancien, aujourd_hui, limites=LIMITES_JOURS):
     """Renvoie None si la série est acceptable, sinon la raison du refus."""
     n = len(lignes(payload))
     if n == 0 or (isinstance(payload, dict) and "quotidien" in payload and not payload["quotidien"]):
@@ -421,8 +543,8 @@ def controle_forme(nom, payload, ancien, aujourd_hui):
     elif n < len(lignes(ancien)) - 1:
         return f"{n} lignes contre {len(lignes(ancien))} la veille"
     age = (aujourd_hui - fin_de_periode(payload)).days
-    if age > LIMITES_JOURS[nom]:
-        return f"dernière donnée vieille de {age} jours (limite {LIMITES_JOURS[nom]})"
+    if age > limites[nom]:
+        return f"dernière donnée vieille de {age} jours (limite {limites[nom]})"
     return None
 
 
@@ -451,19 +573,13 @@ def write(dossier, nom, payload):
     (dossier / nom).write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
 
-def main(dossier=DATA, maintenant=None):
-    maintenant = maintenant or datetime.now(timezone.utc)
-    aujourd_hui = maintenant.date()
-    echecs = []
-
-    def echec(serie, erreur):
-        echecs.append({"serie": serie, "date": aujourd_hui.isoformat(), "erreur": erreur})
-
-    for nom, collecte in SERIES.items():
+def collecter(dossier, series, saisies, limites, echec, aujourd_hui):
+    """Chaque série à part : une panne garde l'ancien fichier et passe par echec(serie, erreur)."""
+    for nom, collecte in series.items():
         ancien = lire(dossier, nom)
         try:
             payload = collecte()
-            raison = controle_forme(nom, payload, ancien, aujourd_hui)
+            raison = controle_forme(nom, payload, ancien, aujourd_hui, limites)
         except ERREURS as e:
             echec(nom, f"{type(e).__name__} : {e}")
             continue
@@ -472,7 +588,7 @@ def main(dossier=DATA, maintenant=None):
         else:
             write(dossier, nom, payload)
 
-    for nom, mise_a_jour in SAISIES.items():
+    for nom, mise_a_jour in saisies.items():
         ancien = lire(dossier, nom)
         try:
             nouveau, alertes = mise_a_jour(ancien)
@@ -483,6 +599,17 @@ def main(dossier=DATA, maintenant=None):
             echec(nom, alerte)
         if nouveau != ancien:
             write(dossier, nom, nouveau)
+
+
+def main(dossier=DATA, maintenant=None):
+    maintenant = maintenant or datetime.now(timezone.utc)
+    aujourd_hui = maintenant.date()
+    echecs = []
+
+    def echec(serie, erreur):
+        echecs.append({"serie": serie, "date": aujourd_hui.isoformat(), "erreur": erreur})
+
+    collecter(dossier, SERIES, SAISIES, LIMITES_JOURS, echec, aujourd_hui)
 
     try:
         raison = alerte_couverture(lire(dossier, "adjudications.json"), aujourd_hui)
@@ -495,6 +622,25 @@ def main(dossier=DATA, maintenant=None):
     return echecs
 
 
+def main_canada(dossier=DATA_CANADA, maintenant=None, series=None, saisies=None):
+    """Collecte du Canada, isolée de la France : ses échecs vont dans data/canada/meta.json. Renvoie les échecs."""
+    maintenant = maintenant or datetime.now(timezone.utc)
+    aujourd_hui = maintenant.date()
+    echecs = []
+
+    def echec(serie, erreur):
+        echecs.append({"serie": serie, "date": aujourd_hui.isoformat(), "erreur": erreur})
+
+    dossier.mkdir(parents=True, exist_ok=True)
+    try:
+        collecter(dossier, SERIES_CANADA if series is None else series, SAISIES_CANADA if saisies is None else saisies,
+                  LIMITES_JOURS_CANADA, echec, aujourd_hui)
+    except Exception as e:  # noqa: BLE001 : une erreur imprévue au Canada ne doit jamais arrêter la France
+        echec("canada", f"{type(e).__name__} : {e}")
+    write(dossier, "meta.json", {"mis_a_jour": maintenant.isoformat(timespec="minutes"), "echecs": echecs})
+    return echecs
+
+
 def echecs_changes(ancien_meta, nouveau_meta):
     """meta.json est commité dès que la liste des échecs change, y compris quand une panne se résout."""
     def cles(m):
@@ -503,11 +649,20 @@ def echecs_changes(ancien_meta, nouveau_meta):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 3 and sys.argv[1] == "--echecs-changes":
-        # Compare data/meta.json à la version commitée passée en argument ; code 0 si les échecs ont changé.
-        texte = Path(sys.argv[2]).read_text(encoding="utf-8")
-        sys.exit(0 if echecs_changes(json.loads(texte) if texte.strip() else None, lire(DATA, "meta.json")) else 1)
+    if len(sys.argv) in (3, 4) and sys.argv[1] == "--echecs-changes":
+        # Compare data/meta.json (puis data/canada/meta.json) aux versions commitées passées en argument ;
+        # code 0 si les échecs ont changé dans l'un des deux pays.
+        def ancien(f):
+            texte = Path(f).read_text(encoding="utf-8")
+            return json.loads(texte) if texte.strip() else None
+        paires = list(zip(sys.argv[2:], (lire(DATA, "meta.json"), lire(DATA_CANADA, "meta.json"))))
+        sys.exit(0 if any(echecs_changes(ancien(f), nouveau) for f, nouveau in paires) else 1)
     resultat = main()
     for e in resultat:
         print(f"ÉCHEC {e['serie']} : {e['erreur']}", file=sys.stderr)
+    if "--sans-canada" not in sys.argv:
+        resultat_canada = main_canada()
+        for e in resultat_canada:
+            print(f"ÉCHEC Canada {e['serie']} : {e['erreur']}", file=sys.stderr)
+        resultat = resultat + resultat_canada
     sys.exit(1 if resultat else 0)

@@ -1,0 +1,84 @@
+{
+ "description": "Notes de long terme en devises du gouvernement du Canada. Échelle chiffrée : AAA = 20, AA+ = 19, AA = 18, AA- = 17, A+ = 16 … BBB- = 11 (dernier cran de la catégorie investissement).",
+ "source": "https://countryeconomy.com/ratings/canada",
+ "verification": "Historique depuis 2000 relevé le 08/11/2026 sur countryeconomy.com, note et perspective actuelles recoupées avec Wikipédia (List of countries by credit rating) le même jour. Un changement de note ou de perspective plus récent que ce fichier est appliqué automatiquement s'il est confirmé par les deux sources, sinon signalé dans data/canada/meta.json.",
+ "agences": [
+  {
+   "agence": "S&P",
+   "note": "AAA",
+   "perspective": "stable",
+   "derniere": "2002-07-29",
+   "prochaine": null,
+   "source_derniere": "https://countryeconomy.com/ratings/canada",
+   "historique": [
+    {
+     "date": "2000-01-01",
+     "note": "AA+",
+     "source": "https://countryeconomy.com/ratings/canada",
+     "amorce": "AA+ depuis le 14/10/1992, avant le début du graphique"
+    },
+    {
+     "date": "2002-07-29",
+     "note": "AAA",
+     "source": "https://countryeconomy.com/ratings/canada"
+    }
+   ]
+  },
+  {
+   "agence": "Moody's",
+   "note": "Aaa",
+   "perspective": "stable",
+   "derniere": "2025-10-31",
+   "prochaine": null,
+   "source_derniere": "https://countryeconomy.com/ratings/canada",
+   "historique": [
+    {
+     "date": "2000-01-01",
+     "note": "Aa2",
+     "source": "https://countryeconomy.com/ratings/canada",
+     "amorce": "Aa2 depuis le 12/04/1995, avant le début du graphique"
+    },
+    {
+     "date": "2000-06-21",
+     "note": "Aa1",
+     "source": "https://countryeconomy.com/ratings/canada"
+    },
+    {
+     "date": "2002-05-03",
+     "note": "Aaa",
+     "source": "https://countryeconomy.com/ratings/canada"
+    }
+   ]
+  },
+  {
+   "agence": "Fitch",
+   "note": "AA+",
+   "perspective": "stable",
+   "derniere": "2025-07-18",
+   "prochaine": null,
+   "source_derniere": "https://en.wikipedia.org/wiki/List_of_countries_by_credit_rating",
+   "historique": [
+    {
+     "date": "2000-09-21",
+     "note": "AA",
+     "source": "https://countryeconomy.com/ratings/canada"
+    },
+    {
+     "date": "2001-04-03",
+     "note": "AA+",
+     "source": "https://countryeconomy.com/ratings/canada"
+    },
+    {
+     "date": "2004-08-12",
+     "note": "AAA",
+     "source": "https://countryeconomy.com/ratings/canada"
+    },
+    {
+     "date": "2020-06-24",
+     "note": "AA+",
+     "source": "https://countryeconomy.com/ratings/canada"
+    }
+   ]
+  }
+ ]
+}

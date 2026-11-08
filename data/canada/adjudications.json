@@ -1,0 +1,1526 @@
+{
+ "description": "Adjudications d'obligations à 10 ans du gouvernement du Canada : montant adjugé (M$), taux de couverture (soumissions / montant adjugé), rendement moyen (%). Réouvertures d'anciennes lignes écartées.",
+ "source": "Banque du Canada, API Valet, groupe AUC_BOND_RESULTS",
+ "lignes": [
+  {
+   "jour": "1998-11-04",
+   "isin": "CA135087WR13",
+   "echeance": "2009-06-01",
+   "montant_m": 2300.0,
+   "couverture": 2.525,
+   "taux": 5.192
+  },
+  {
+   "jour": "1999-02-10",
+   "isin": "CA135087WR13",
+   "echeance": "2009-06-01",
+   "montant_m": 2300.0,
+   "couverture": 2.713,
+   "taux": 5.085
+  },
+  {
+   "jour": "1999-05-12",
+   "isin": "CA135087WR13",
+   "echeance": "2009-06-01",
+   "montant_m": 2500.0,
+   "couverture": 2.473,
+   "taux": 5.328
+  },
+  {
+   "jour": "1999-07-28",
+   "isin": "CA135087WX80",
+   "echeance": "2010-06-01",
+   "montant_m": 2600.0,
+   "couverture": 2.306,
+   "taux": 5.672
+  },
+  {
+   "jour": "1999-10-27",
+   "isin": "CA135087WX80",
+   "echeance": "2010-06-01",
+   "montant_m": 2600.0,
+   "couverture": 2.302,
+   "taux": 6.382
+  },
+  {
+   "jour": "2000-01-26",
+   "isin": "CA135087WX80",
+   "echeance": "2010-06-01",
+   "montant_m": 2600.0,
+   "couverture": 2.317,
+   "taux": 6.451
+  },
+  {
+   "jour": "2000-03-15",
+   "isin": "CA135087WX80",
+   "echeance": "2010-06-01",
+   "montant_m": 2600.0,
+   "couverture": 1.881,
+   "taux": 6.058
+  },
+  {
+   "jour": "2000-04-26",
+   "isin": "CA135087XB51",
+   "echeance": "2011-06-01",
+   "montant_m": 2600.0,
+   "couverture": 2.682,
+   "taux": 6.128
+  },
+  {
+   "jour": "2000-07-26",
+   "isin": "CA135087XB51",
+   "echeance": "2011-06-01",
+   "montant_m": 2600.0,
+   "couverture": 2.465,
+   "taux": 5.899
+  },
+  {
+   "jour": "2000-10-25",
+   "isin": "CA135087XB51",
+   "echeance": "2011-06-01",
+   "montant_m": 2400.0,
+   "couverture": 2.504,
+   "taux": 5.681
+  },
+  {
+   "jour": "2001-01-24",
+   "isin": "CA135087XB51",
+   "echeance": "2011-06-01",
+   "montant_m": 2500.0,
+   "couverture": 2.497,
+   "taux": 5.525
+  },
+  {
+   "jour": "2001-05-02",
+   "isin": "CA135087XB51",
+   "echeance": "2011-06-01",
+   "montant_m": 2500.0,
+   "couverture": 2.212,
+   "taux": 5.756
+  },
+  {
+   "jour": "2001-07-25",
+   "isin": "CA135087XB51",
+   "echeance": "2011-06-01",
+   "montant_m": 2400.0,
+   "couverture": 2.171,
+   "taux": 5.73
+  },
+  {
+   "jour": "2001-10-24",
+   "isin": "CA135087XH22",
+   "echeance": "2012-06-01",
+   "montant_m": 2500.0,
+   "couverture": 2.566,
+   "taux": 5.324
+  },
+  {
+   "jour": "2002-02-06",
+   "isin": "CA135087XH22",
+   "echeance": "2012-06-01",
+   "montant_m": 2500.0,
+   "couverture": 2.232,
+   "taux": 5.397
+  },
+  {
+   "jour": "2002-04-17",
+   "isin": "CA135087XH22",
+   "echeance": "2012-06-01",
+   "montant_m": 2400.0,
+   "couverture": 2.258,
+   "taux": 5.717
+  },
+  {
+   "jour": "2002-07-31",
+   "isin": "CA135087XH22",
+   "echeance": "2012-06-01",
+   "montant_m": 2500.0,
+   "couverture": 2.489,
+   "taux": 5.334
+  },
+  {
+   "jour": "2002-10-30",
+   "isin": "CA135087XM17",
+   "echeance": "2013-06-01",
+   "montant_m": 2400.0,
+   "couverture": 2.277,
+   "taux": 5.316
+  },
+  {
+   "jour": "2003-02-05",
+   "isin": "CA135087XM17",
+   "echeance": "2013-06-01",
+   "montant_m": 2400.0,
+   "couverture": 2.341,
+   "taux": 5.142
+  },
+  {
+   "jour": "2003-05-07",
+   "isin": "CA135087XM17",
+   "echeance": "2013-06-01",
+   "montant_m": 2400.0,
+   "couverture": 2.369,
+   "taux": 4.924
+  },
+  {
+   "jour": "2003-08-06",
+   "isin": "CA135087XM17",
+   "echeance": "2013-06-01",
+   "montant_m": 2400.0,
+   "couverture": 2.324,
+   "taux": 5.0
+  },
+  {
+   "jour": "2003-10-15",
+   "isin": "CA135087XS86",
+   "echeance": "2014-06-01",
+   "montant_m": 2400.0,
+   "couverture": 2.21,
+   "taux": 5.048
+  },
+  {
+   "jour": "2004-02-04",
+   "isin": "CA135087XS86",
+   "echeance": "2014-06-01",
+   "montant_m": 2300.0,
+   "couverture": 2.404,
+   "taux": 4.642
+  },
+  {
+   "jour": "2004-04-28",
+   "isin": "CA135087XS86",
+   "echeance": "2014-06-01",
+   "montant_m": 2200.0,
+   "couverture": 2.341,
+   "taux": 4.758
+  },
+  {
+   "jour": "2004-08-11",
+   "isin": "CA135087XS86",
+   "echeance": "2014-06-01",
+   "montant_m": 2200.0,
+   "couverture": 2.052,
+   "taux": 4.686
+  },
+  {
+   "jour": "2004-10-13",
+   "isin": "CA135087XX71",
+   "echeance": "2015-06-01",
+   "montant_m": 2100.0,
+   "couverture": 2.267,
+   "taux": 4.666
+  },
+  {
+   "jour": "2005-02-02",
+   "isin": "CA135087XX71",
+   "echeance": "2015-06-01",
+   "montant_m": 2100.0,
+   "couverture": 2.212,
+   "taux": 4.329
+  },
+  {
+   "jour": "2005-05-04",
+   "isin": "CA135087XX71",
+   "echeance": "2015-06-01",
+   "montant_m": 2100.0,
+   "couverture": 2.427,
+   "taux": 4.229
+  },
+  {
+   "jour": "2005-08-10",
+   "isin": "CA135087XX71",
+   "echeance": "2015-06-01",
+   "montant_m": 2100.0,
+   "couverture": 2.379,
+   "taux": 4.098
+  },
+  {
+   "jour": "2005-11-02",
+   "isin": "CA135087YB43",
+   "echeance": "2016-06-01",
+   "montant_m": 2100.0,
+   "couverture": 2.433,
+   "taux": 4.205
+  },
+  {
+   "jour": "2006-02-01",
+   "isin": "CA135087YB43",
+   "echeance": "2016-06-01",
+   "montant_m": 2000.0,
+   "couverture": 2.688,
+   "taux": 4.209
+  },
+  {
+   "jour": "2006-04-19",
+   "isin": "CA135087YB43",
+   "echeance": "2016-06-01",
+   "montant_m": 2300.0,
+   "couverture": 2.544,
+   "taux": 4.48
+  },
+  {
+   "jour": "2006-08-02",
+   "isin": "CA135087YB43",
+   "echeance": "2016-06-01",
+   "montant_m": 2300.0,
+   "couverture": 2.549,
+   "taux": 4.346
+  },
+  {
+   "jour": "2006-10-11",
+   "isin": "CA135087YF56",
+   "echeance": "2017-06-01",
+   "montant_m": 2300.0,
+   "couverture": 2.447,
+   "taux": 4.149
+  },
+  {
+   "jour": "2007-01-24",
+   "isin": "CA135087YF56",
+   "echeance": "2017-06-01",
+   "montant_m": 2300.0,
+   "couverture": 2.517,
+   "taux": 4.188
+  },
+  {
+   "jour": "2007-04-18",
+   "isin": "CA135087YF56",
+   "echeance": "2017-06-01",
+   "montant_m": 2600.0,
+   "couverture": 2.428,
+   "taux": 4.192
+  },
+  {
+   "jour": "2007-08-01",
+   "isin": "CA135087YF56",
+   "echeance": "2017-06-01",
+   "montant_m": 2600.0,
+   "couverture": 2.359,
+   "taux": 4.513
+  },
+  {
+   "jour": "2007-10-24",
+   "isin": "CA135087YL25",
+   "echeance": "2018-06-01",
+   "montant_m": 2500.0,
+   "couverture": 2.385,
+   "taux": 4.311
+  },
+  {
+   "jour": "2008-02-06",
+   "isin": "CA135087YL25",
+   "echeance": "2018-06-01",
+   "montant_m": 2600.0,
+   "couverture": 2.194,
+   "taux": 3.887
+  },
+  {
+   "jour": "2008-04-16",
+   "isin": "CA135087YL25",
+   "echeance": "2018-06-01",
+   "montant_m": 2500.0,
+   "couverture": 2.316,
+   "taux": 3.76
+  },
+  {
+   "jour": "2008-07-09",
+   "isin": "CA135087YL25",
+   "echeance": "2018-06-01",
+   "montant_m": 2500.0,
+   "couverture": 2.26,
+   "taux": 3.773
+  },
+  {
+   "jour": "2008-10-01",
+   "isin": "CA135087YR94",
+   "echeance": "2019-06-01",
+   "montant_m": 2500.0,
+   "couverture": 2.029,
+   "taux": 3.807
+  },
+  {
+   "jour": "2009-02-04",
+   "isin": "CA135087YR94",
+   "echeance": "2019-06-01",
+   "montant_m": 3300.0,
+   "couverture": 2.076,
+   "taux": 3.346
+  },
+  {
+   "jour": "2009-02-25",
+   "isin": "CA135087YR94",
+   "echeance": "2019-06-01",
+   "montant_m": 3500.0,
+   "couverture": 2.091,
+   "taux": 3.151
+  },
+  {
+   "jour": "2009-06-10",
+   "isin": "CA135087YR94",
+   "echeance": "2019-06-01",
+   "montant_m": 3500.0,
+   "couverture": 1.787,
+   "taux": 3.636
+  },
+  {
+   "jour": "2009-08-13",
+   "isin": "CA135087YR94",
+   "echeance": "2019-06-01",
+   "montant_m": 3200.0,
+   "couverture": 2.014,
+   "taux": 3.527
+  },
+  {
+   "jour": "2009-09-02",
+   "isin": "CA135087YZ11",
+   "echeance": "2020-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.054,
+   "taux": 3.539
+  },
+  {
+   "jour": "2009-11-05",
+   "isin": "CA135087YZ11",
+   "echeance": "2020-06-01",
+   "montant_m": 3500.0,
+   "couverture": 2.294,
+   "taux": 3.7
+  },
+  {
+   "jour": "2010-02-03",
+   "isin": "CA135087YZ11",
+   "echeance": "2020-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.593,
+   "taux": 3.577
+  },
+  {
+   "jour": "2010-04-28",
+   "isin": "CA135087YZ11",
+   "echeance": "2020-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.083,
+   "taux": 3.728
+  },
+  {
+   "jour": "2010-07-14",
+   "isin": "CA135087ZJ69",
+   "echeance": "2021-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.271,
+   "taux": 3.418
+  },
+  {
+   "jour": "2010-10-06",
+   "isin": "CA135087ZJ69",
+   "echeance": "2021-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.378,
+   "taux": 2.836
+  },
+  {
+   "jour": "2011-02-02",
+   "isin": "CA135087ZJ69",
+   "echeance": "2021-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.276,
+   "taux": 3.482
+  },
+  {
+   "jour": "2011-05-04",
+   "isin": "CA135087ZJ69",
+   "echeance": "2021-06-01",
+   "montant_m": 2500.0,
+   "couverture": 2.448,
+   "taux": 3.211
+  },
+  {
+   "jour": "2011-07-27",
+   "isin": "CA135087ZU15",
+   "echeance": "2022-06-01",
+   "montant_m": 2500.0,
+   "couverture": 2.458,
+   "taux": 2.994
+  },
+  {
+   "jour": "2011-10-05",
+   "isin": "CA135087ZU15",
+   "echeance": "2022-06-01",
+   "montant_m": 2500.0,
+   "couverture": 2.518,
+   "taux": 2.254
+  },
+  {
+   "jour": "2012-02-01",
+   "isin": "CA135087ZU15",
+   "echeance": "2022-06-01",
+   "montant_m": 2500.0,
+   "couverture": 2.31,
+   "taux": 2.015
+  },
+  {
+   "jour": "2012-05-02",
+   "isin": "CA135087ZU15",
+   "echeance": "2022-06-01",
+   "montant_m": 2600.0,
+   "couverture": 2.499,
+   "taux": 2.096
+  },
+  {
+   "jour": "2012-06-06",
+   "isin": "CA135087ZU15",
+   "echeance": "2022-06-01",
+   "montant_m": 2600.0,
+   "couverture": 2.368,
+   "taux": 1.765
+  },
+  {
+   "jour": "2012-07-25",
+   "isin": "CA135087A610",
+   "echeance": "2023-06-01",
+   "montant_m": 2600.0,
+   "couverture": 2.257,
+   "taux": 1.705
+  },
+  {
+   "jour": "2012-10-17",
+   "isin": "CA135087A610",
+   "echeance": "2023-06-01",
+   "montant_m": 2900.0,
+   "couverture": 2.481,
+   "taux": 1.987
+  },
+  {
+   "jour": "2013-01-30",
+   "isin": "CA135087A610",
+   "echeance": "2023-06-01",
+   "montant_m": 2900.0,
+   "couverture": 2.15,
+   "taux": 2.112
+  },
+  {
+   "jour": "2013-03-27",
+   "isin": "CA135087A610",
+   "echeance": "2023-06-01",
+   "montant_m": 2900.0,
+   "couverture": 2.358,
+   "taux": 1.882
+  },
+  {
+   "jour": "2013-05-01",
+   "isin": "CA135087A610",
+   "echeance": "2023-06-01",
+   "montant_m": 2900.0,
+   "couverture": 2.552,
+   "taux": 1.676
+  },
+  {
+   "jour": "2013-06-26",
+   "isin": "CA135087B451",
+   "echeance": "2024-06-01",
+   "montant_m": 2800.0,
+   "couverture": 2.479,
+   "taux": 2.607
+  },
+  {
+   "jour": "2013-08-14",
+   "isin": "CA135087B451",
+   "echeance": "2024-06-01",
+   "montant_m": 2800.0,
+   "couverture": 2.494,
+   "taux": 2.729
+  },
+  {
+   "jour": "2013-10-02",
+   "isin": "CA135087B451",
+   "echeance": "2024-06-01",
+   "montant_m": 2800.0,
+   "couverture": 2.428,
+   "taux": 2.64
+  },
+  {
+   "jour": "2014-02-05",
+   "isin": "CA135087B451",
+   "echeance": "2024-06-01",
+   "montant_m": 2700.0,
+   "couverture": 2.269,
+   "taux": 2.485
+  },
+  {
+   "jour": "2014-04-23",
+   "isin": "CA135087B451",
+   "echeance": "2024-06-01",
+   "montant_m": 2700.0,
+   "couverture": 2.479,
+   "taux": 2.416
+  },
+  {
+   "jour": "2014-06-25",
+   "isin": "CA135087D507",
+   "echeance": "2025-06-01",
+   "montant_m": 2700.0,
+   "couverture": 2.376,
+   "taux": 2.37
+  },
+  {
+   "jour": "2014-07-23",
+   "isin": "CA135087D507",
+   "echeance": "2025-06-01",
+   "montant_m": 2700.0,
+   "couverture": 2.123,
+   "taux": 2.234
+  },
+  {
+   "jour": "2014-10-15",
+   "isin": "CA135087D507",
+   "echeance": "2025-06-01",
+   "montant_m": 2600.0,
+   "couverture": 1.977,
+   "taux": 1.967
+  },
+  {
+   "jour": "2015-01-22",
+   "isin": "CA135087D507",
+   "echeance": "2025-06-01",
+   "montant_m": 2600.0,
+   "couverture": 2.155,
+   "taux": 1.529
+  },
+  {
+   "jour": "2015-04-16",
+   "isin": "CA135087D507",
+   "echeance": "2025-06-01",
+   "montant_m": 2500.0,
+   "couverture": 2.36,
+   "taux": 1.413
+  },
+  {
+   "jour": "2015-07-16",
+   "isin": "CA135087E679",
+   "echeance": "2026-06-01",
+   "montant_m": 2500.0,
+   "couverture": 2.168,
+   "taux": 1.717
+  },
+  {
+   "jour": "2015-10-22",
+   "isin": "CA135087E679",
+   "echeance": "2026-06-01",
+   "montant_m": 2500.0,
+   "couverture": 2.294,
+   "taux": 1.631
+  },
+  {
+   "jour": "2016-01-21",
+   "isin": "CA135087E679",
+   "echeance": "2026-06-01",
+   "montant_m": 2500.0,
+   "couverture": 2.106,
+   "taux": 1.38
+  },
+  {
+   "jour": "2016-04-20",
+   "isin": "CA135087E679",
+   "echeance": "2026-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.098,
+   "taux": 1.402
+  },
+  {
+   "jour": "2016-06-22",
+   "isin": "CA135087E679",
+   "echeance": "2026-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.11,
+   "taux": 1.245
+  },
+  {
+   "jour": "2016-07-28",
+   "isin": "CA135087F825",
+   "echeance": "2027-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.204,
+   "taux": 1.199
+  },
+  {
+   "jour": "2016-10-26",
+   "isin": "CA135087F825",
+   "echeance": "2027-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.316,
+   "taux": 1.273
+  },
+  {
+   "jour": "2017-03-02",
+   "isin": "CA135087F825",
+   "echeance": "2027-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.163,
+   "taux": 1.822
+  },
+  {
+   "jour": "2017-04-26",
+   "isin": "CA135087F825",
+   "echeance": "2027-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.186,
+   "taux": 1.593
+  },
+  {
+   "jour": "2017-06-21",
+   "isin": "CA135087F825",
+   "echeance": "2027-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.271,
+   "taux": 1.504
+  },
+  {
+   "jour": "2017-07-27",
+   "isin": "CA135087H235",
+   "echeance": "2028-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.049,
+   "taux": 2.076
+  },
+  {
+   "jour": "2017-10-26",
+   "isin": "CA135087H235",
+   "echeance": "2028-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.121,
+   "taux": 2.081
+  },
+  {
+   "jour": "2018-02-21",
+   "isin": "CA135087H235",
+   "echeance": "2028-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.185,
+   "taux": 2.352
+  },
+  {
+   "jour": "2018-04-25",
+   "isin": "CA135087H235",
+   "echeance": "2028-06-01",
+   "montant_m": 2300.0,
+   "couverture": 2.367,
+   "taux": 2.373
+  },
+  {
+   "jour": "2018-06-20",
+   "isin": "CA135087H235",
+   "echeance": "2028-06-01",
+   "montant_m": 2200.0,
+   "couverture": 2.356,
+   "taux": 2.165
+  },
+  {
+   "jour": "2018-07-25",
+   "isin": "CA135087J397",
+   "echeance": "2029-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.237,
+   "taux": 2.255
+  },
+  {
+   "jour": "2018-10-17",
+   "isin": "CA135087J397",
+   "echeance": "2029-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.306,
+   "taux": 2.492
+  },
+  {
+   "jour": "2019-01-23",
+   "isin": "CA135087J397",
+   "echeance": "2029-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.239,
+   "taux": 1.988
+  },
+  {
+   "jour": "2019-04-17",
+   "isin": "CA135087J397",
+   "echeance": "2029-06-01",
+   "montant_m": 3300.0,
+   "couverture": 2.315,
+   "taux": 1.814
+  },
+  {
+   "jour": "2019-07-24",
+   "isin": "CA135087K379",
+   "echeance": "2030-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.324,
+   "taux": 1.478
+  },
+  {
+   "jour": "2019-10-02",
+   "isin": "CA135087K379",
+   "echeance": "2030-06-01",
+   "montant_m": 3300.0,
+   "couverture": 1.929,
+   "taux": 1.333
+  },
+  {
+   "jour": "2020-01-15",
+   "isin": "CA135087K379",
+   "echeance": "2030-06-01",
+   "montant_m": 3400.0,
+   "couverture": 2.164,
+   "taux": 1.57
+  },
+  {
+   "jour": "2020-04-02",
+   "isin": "CA135087K379",
+   "echeance": "2030-06-01",
+   "montant_m": 4000.0,
+   "couverture": 2.007,
+   "taux": 0.661
+  },
+  {
+   "jour": "2020-05-06",
+   "isin": "CA135087K379",
+   "echeance": "2030-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.365,
+   "taux": 0.628
+  },
+  {
+   "jour": "2020-06-18",
+   "isin": "CA135087K379",
+   "echeance": "2030-06-01",
+   "montant_m": 4500.0,
+   "couverture": 2.343,
+   "taux": 0.537
+  },
+  {
+   "jour": "2020-07-09",
+   "isin": "CA135087K379",
+   "echeance": "2030-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.278,
+   "taux": 0.534
+  },
+  {
+   "jour": "2020-08-06",
+   "isin": "CA135087K379",
+   "echeance": "2030-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.606,
+   "taux": 0.462
+  },
+  {
+   "jour": "2020-08-26",
+   "isin": "CA135087K379",
+   "echeance": "2030-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.356,
+   "taux": 0.627
+  },
+  {
+   "jour": "2020-09-24",
+   "isin": "CA135087K379",
+   "echeance": "2030-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.165,
+   "taux": 0.561
+  },
+  {
+   "jour": "2020-10-01",
+   "isin": "CA135087L443",
+   "echeance": "2030-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.0,
+   "taux": 0.606
+  },
+  {
+   "jour": "2020-10-19",
+   "isin": "CA135087L443",
+   "echeance": "2030-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.216,
+   "taux": 0.639
+  },
+  {
+   "jour": "2020-11-12",
+   "isin": "CA135087L443",
+   "echeance": "2030-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.431,
+   "taux": 0.79
+  },
+  {
+   "jour": "2020-12-21",
+   "isin": "CA135087L443",
+   "echeance": "2030-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.167,
+   "taux": 0.776
+  },
+  {
+   "jour": "2021-01-07",
+   "isin": "CA135087L443",
+   "echeance": "2030-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.126,
+   "taux": 0.844
+  },
+  {
+   "jour": "2021-01-28",
+   "isin": "CA135087L443",
+   "echeance": "2030-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.373,
+   "taux": 0.88
+  },
+  {
+   "jour": "2021-03-04",
+   "isin": "CA135087L443",
+   "echeance": "2030-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.085,
+   "taux": 1.443
+  },
+  {
+   "jour": "2021-03-25",
+   "isin": "CA135087L443",
+   "echeance": "2030-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.207,
+   "taux": 1.472
+  },
+  {
+   "jour": "2021-04-22",
+   "isin": "CA135087M276",
+   "echeance": "2031-06-01",
+   "montant_m": 5500.0,
+   "couverture": 2.209,
+   "taux": 1.624
+  },
+  {
+   "jour": "2021-05-06",
+   "isin": "CA135087M276",
+   "echeance": "2031-06-01",
+   "montant_m": 5500.0,
+   "couverture": 2.419,
+   "taux": 1.586
+  },
+  {
+   "jour": "2021-06-14",
+   "isin": "CA135087M276",
+   "echeance": "2031-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.228,
+   "taux": 1.462
+  },
+  {
+   "jour": "2021-06-30",
+   "isin": "CA135087M276",
+   "echeance": "2031-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.442,
+   "taux": 1.449
+  },
+  {
+   "jour": "2021-07-21",
+   "isin": "CA135087M276",
+   "echeance": "2031-06-01",
+   "montant_m": 5500.0,
+   "couverture": 2.211,
+   "taux": 1.29
+  },
+  {
+   "jour": "2021-08-04",
+   "isin": "CA135087M276",
+   "echeance": "2031-06-01",
+   "montant_m": 5500.0,
+   "couverture": 2.132,
+   "taux": 1.173
+  },
+  {
+   "jour": "2021-09-02",
+   "isin": "CA135087M276",
+   "echeance": "2031-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.389,
+   "taux": 1.236
+  },
+  {
+   "jour": "2021-09-27",
+   "isin": "CA135087M276",
+   "echeance": "2031-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.263,
+   "taux": 1.446
+  },
+  {
+   "jour": "2021-10-21",
+   "isin": "CA135087N266",
+   "echeance": "2031-12-01",
+   "montant_m": 4500.0,
+   "couverture": 2.365,
+   "taux": 1.726
+  },
+  {
+   "jour": "2021-11-01",
+   "isin": "CA135087N266",
+   "echeance": "2031-12-01",
+   "montant_m": 4500.0,
+   "couverture": 2.086,
+   "taux": 1.784
+  },
+  {
+   "jour": "2021-11-29",
+   "isin": "CA135087N266",
+   "echeance": "2031-12-01",
+   "montant_m": 4000.0,
+   "couverture": 2.021,
+   "taux": 1.682
+  },
+  {
+   "jour": "2021-12-20",
+   "isin": "CA135087N266",
+   "echeance": "2031-12-01",
+   "montant_m": 4000.0,
+   "couverture": 2.159,
+   "taux": 1.384
+  },
+  {
+   "jour": "2022-01-06",
+   "isin": "CA135087N266",
+   "echeance": "2031-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.143,
+   "taux": 1.766
+  },
+  {
+   "jour": "2022-02-03",
+   "isin": "CA135087N266",
+   "echeance": "2031-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.132,
+   "taux": 1.85
+  },
+  {
+   "jour": "2022-02-28",
+   "isin": "CA135087N266",
+   "echeance": "2031-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.112,
+   "taux": 1.894
+  },
+  {
+   "jour": "2022-03-14",
+   "isin": "CA135087N597",
+   "echeance": "2032-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.165,
+   "taux": 2.188
+  },
+  {
+   "jour": "2022-04-21",
+   "isin": "CA135087N597",
+   "echeance": "2032-06-01",
+   "montant_m": 4000.0,
+   "couverture": 2.254,
+   "taux": 2.972
+  },
+  {
+   "jour": "2022-05-02",
+   "isin": "CA135087N597",
+   "echeance": "2032-06-01",
+   "montant_m": 4000.0,
+   "couverture": 2.395,
+   "taux": 2.98
+  },
+  {
+   "jour": "2022-05-25",
+   "isin": "CA135087N597",
+   "echeance": "2032-06-01",
+   "montant_m": 4000.0,
+   "couverture": 2.342,
+   "taux": 2.801
+  },
+  {
+   "jour": "2022-06-23",
+   "isin": "CA135087N597",
+   "echeance": "2032-06-01",
+   "montant_m": 4000.0,
+   "couverture": 2.243,
+   "taux": 3.259
+  },
+  {
+   "jour": "2022-07-07",
+   "isin": "CA135087N597",
+   "echeance": "2032-06-01",
+   "montant_m": 3000.0,
+   "couverture": 2.523,
+   "taux": 3.225
+  },
+  {
+   "jour": "2022-08-04",
+   "isin": "CA135087P329",
+   "echeance": "2032-12-01",
+   "montant_m": 3000.0,
+   "couverture": 2.374,
+   "taux": 2.728
+  },
+  {
+   "jour": "2022-08-25",
+   "isin": "CA135087P329",
+   "echeance": "2032-12-01",
+   "montant_m": 3000.0,
+   "couverture": 2.402,
+   "taux": 3.093
+  },
+  {
+   "jour": "2022-09-22",
+   "isin": "CA135087P329",
+   "echeance": "2032-12-01",
+   "montant_m": 3000.0,
+   "couverture": 2.56,
+   "taux": 3.133
+  },
+  {
+   "jour": "2022-10-05",
+   "isin": "CA135087P329",
+   "echeance": "2032-12-01",
+   "montant_m": 4000.0,
+   "couverture": 1.947,
+   "taux": 3.24
+  },
+  {
+   "jour": "2022-11-03",
+   "isin": "CA135087P329",
+   "echeance": "2032-12-01",
+   "montant_m": 4000.0,
+   "couverture": 2.229,
+   "taux": 3.427
+  },
+  {
+   "jour": "2022-12-22",
+   "isin": "CA135087P329",
+   "echeance": "2032-12-01",
+   "montant_m": 4000.0,
+   "couverture": 2.269,
+   "taux": 3.062
+  },
+  {
+   "jour": "2023-02-02",
+   "isin": "CA135087Q236",
+   "echeance": "2033-06-01",
+   "montant_m": 4000.0,
+   "couverture": 2.328,
+   "taux": 2.869
+  },
+  {
+   "jour": "2023-02-23",
+   "isin": "CA135087Q236",
+   "echeance": "2033-06-01",
+   "montant_m": 4000.0,
+   "couverture": 2.314,
+   "taux": 3.375
+  },
+  {
+   "jour": "2023-03-15",
+   "isin": "CA135087Q236",
+   "echeance": "2033-06-01",
+   "montant_m": 4000.0,
+   "couverture": 2.171,
+   "taux": 2.717
+  },
+  {
+   "jour": "2023-04-05",
+   "isin": "CA135087Q236",
+   "echeance": "2033-06-01",
+   "montant_m": 3500.0,
+   "couverture": 2.083,
+   "taux": 2.781
+  },
+  {
+   "jour": "2023-05-24",
+   "isin": "CA135087Q236",
+   "echeance": "2033-06-01",
+   "montant_m": 3500.0,
+   "couverture": 2.284,
+   "taux": 3.258
+  },
+  {
+   "jour": "2023-06-22",
+   "isin": "CA135087Q723",
+   "echeance": "2033-12-01",
+   "montant_m": 3000.0,
+   "couverture": 2.462,
+   "taux": 3.484
+  },
+  {
+   "jour": "2023-08-03",
+   "isin": "CA135087Q723",
+   "echeance": "2033-12-01",
+   "montant_m": 3500.0,
+   "couverture": 2.37,
+   "taux": 3.726
+  },
+  {
+   "jour": "2023-08-30",
+   "isin": "CA135087Q723",
+   "echeance": "2033-12-01",
+   "montant_m": 3500.0,
+   "couverture": 2.398,
+   "taux": 3.595
+  },
+  {
+   "jour": "2023-09-27",
+   "isin": "CA135087Q723",
+   "echeance": "2033-12-01",
+   "montant_m": 3000.0,
+   "couverture": 2.303,
+   "taux": 4.063
+  },
+  {
+   "jour": "2023-10-19",
+   "isin": "CA135087Q723",
+   "echeance": "2033-12-01",
+   "montant_m": 4000.0,
+   "couverture": 2.305,
+   "taux": 4.138
+  },
+  {
+   "jour": "2023-11-29",
+   "isin": "CA135087Q723",
+   "echeance": "2033-12-01",
+   "montant_m": 4000.0,
+   "couverture": 2.291,
+   "taux": 3.55
+  },
+  {
+   "jour": "2023-12-21",
+   "isin": "CA135087R481",
+   "echeance": "2034-06-01",
+   "montant_m": 4000.0,
+   "couverture": 2.231,
+   "taux": 3.105
+  },
+  {
+   "jour": "2024-01-25",
+   "isin": "CA135087R481",
+   "echeance": "2034-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.32,
+   "taux": 3.5
+  },
+  {
+   "jour": "2024-02-21",
+   "isin": "CA135087R481",
+   "echeance": "2034-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.3,
+   "taux": 3.534
+  },
+  {
+   "jour": "2024-03-27",
+   "isin": "CA135087R481",
+   "echeance": "2034-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.336,
+   "taux": 3.455
+  },
+  {
+   "jour": "2024-04-18",
+   "isin": "CA135087R481",
+   "echeance": "2034-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.357,
+   "taux": 3.749
+  },
+  {
+   "jour": "2024-05-22",
+   "isin": "CA135087R481",
+   "echeance": "2034-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.331,
+   "taux": 3.595
+  },
+  {
+   "jour": "2024-06-20",
+   "isin": "CA135087R481",
+   "echeance": "2034-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.065,
+   "taux": 3.353
+  },
+  {
+   "jour": "2024-07-11",
+   "isin": "CA135087S216",
+   "echeance": "2034-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.317,
+   "taux": 3.403
+  },
+  {
+   "jour": "2024-08-21",
+   "isin": "CA135087S216",
+   "echeance": "2034-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.261,
+   "taux": 3.034
+  },
+  {
+   "jour": "2024-09-25",
+   "isin": "CA135087S216",
+   "echeance": "2034-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.322,
+   "taux": 3.031
+  },
+  {
+   "jour": "2024-10-17",
+   "isin": "CA135087S216",
+   "echeance": "2034-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.382,
+   "taux": 3.19
+  },
+  {
+   "jour": "2024-11-20",
+   "isin": "CA135087S216",
+   "echeance": "2034-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.026,
+   "taux": 3.368
+  },
+  {
+   "jour": "2024-12-12",
+   "isin": "CA135087S216",
+   "echeance": "2034-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.189,
+   "taux": 3.142
+  },
+  {
+   "jour": "2025-01-09",
+   "isin": "CA135087S620",
+   "echeance": "2035-06-01",
+   "montant_m": 6000.0,
+   "couverture": 2.01,
+   "taux": 3.358
+  },
+  {
+   "jour": "2025-02-06",
+   "isin": "CA135087S620",
+   "echeance": "2035-06-01",
+   "montant_m": 6000.0,
+   "couverture": 1.899,
+   "taux": 3.033
+  },
+  {
+   "jour": "2025-03-06",
+   "isin": "CA135087S620",
+   "echeance": "2035-06-01",
+   "montant_m": 6000.0,
+   "couverture": 2.048,
+   "taux": 3.088
+  },
+  {
+   "jour": "2025-04-03",
+   "isin": "CA135087S620",
+   "echeance": "2035-06-01",
+   "montant_m": 5250.0,
+   "couverture": 1.979,
+   "taux": 2.95
+  },
+  {
+   "jour": "2025-05-01",
+   "isin": "CA135087S620",
+   "echeance": "2035-06-01",
+   "montant_m": 5250.0,
+   "couverture": 1.991,
+   "taux": 3.164
+  },
+  {
+   "jour": "2025-05-28",
+   "isin": "CA135087S620",
+   "echeance": "2035-06-01",
+   "montant_m": 5250.0,
+   "couverture": 2.143,
+   "taux": 3.335
+  },
+  {
+   "jour": "2025-06-25",
+   "isin": "CA135087S620",
+   "echeance": "2035-06-01",
+   "montant_m": 5250.0,
+   "couverture": 1.854,
+   "taux": 3.335
+  },
+  {
+   "jour": "2025-07-02",
+   "isin": "CA135087T537",
+   "echeance": "2035-12-01",
+   "montant_m": 5250.0,
+   "couverture": 1.912,
+   "taux": 3.4
+  },
+  {
+   "jour": "2025-08-07",
+   "isin": "CA135087T537",
+   "echeance": "2035-12-01",
+   "montant_m": 5250.0,
+   "couverture": 2.125,
+   "taux": 3.41
+  },
+  {
+   "jour": "2025-08-27",
+   "isin": "CA135087T537",
+   "echeance": "2035-12-01",
+   "montant_m": 5250.0,
+   "couverture": 2.085,
+   "taux": 3.506
+  },
+  {
+   "jour": "2025-09-24",
+   "isin": "CA135087T537",
+   "echeance": "2035-12-01",
+   "montant_m": 5250.0,
+   "couverture": 2.417,
+   "taux": 3.245
+  },
+  {
+   "jour": "2025-10-22",
+   "isin": "CA135087T537",
+   "echeance": "2035-12-01",
+   "montant_m": 5250.0,
+   "couverture": 2.276,
+   "taux": 3.126
+  },
+  {
+   "jour": "2025-11-06",
+   "isin": "CA135087T537",
+   "echeance": "2035-12-01",
+   "montant_m": 5250.0,
+   "couverture": 2.486,
+   "taux": 3.155
+  },
+  {
+   "jour": "2025-12-03",
+   "isin": "CA135087T537",
+   "echeance": "2035-12-01",
+   "montant_m": 5250.0,
+   "couverture": 2.461,
+   "taux": 3.273
+  },
+  {
+   "jour": "2025-12-18",
+   "isin": "CA135087T537",
+   "echeance": "2035-12-01",
+   "montant_m": 5250.0,
+   "couverture": 2.25,
+   "taux": 3.447
+  },
+  {
+   "jour": "2026-01-29",
+   "isin": "CA135087U287",
+   "echeance": "2036-06-01",
+   "montant_m": 5250.0,
+   "couverture": 2.461,
+   "taux": 3.463
+  },
+  {
+   "jour": "2026-02-25",
+   "isin": "CA135087U287",
+   "echeance": "2036-06-01",
+   "montant_m": 5250.0,
+   "couverture": 2.493,
+   "taux": 3.233
+  },
+  {
+   "jour": "2026-03-12",
+   "isin": "CA135087U287",
+   "echeance": "2036-06-01",
+   "montant_m": 5250.0,
+   "couverture": 2.245,
+   "taux": 3.551
+  },
+  {
+   "jour": "2026-03-25",
+   "isin": "CA135087U287",
+   "echeance": "2036-06-01",
+   "montant_m": 5250.0,
+   "couverture": 2.271,
+   "taux": 3.53
+  },
+  {
+   "jour": "2026-04-22",
+   "isin": "CA135087U287",
+   "echeance": "2036-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.312,
+   "taux": 3.506
+  },
+  {
+   "jour": "2026-05-27",
+   "isin": "CA135087U287",
+   "echeance": "2036-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.418,
+   "taux": 3.491
+  },
+  {
+   "jour": "2026-06-11",
+   "isin": "CA135087U287",
+   "echeance": "2036-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.152,
+   "taux": 3.484
+  },
+  {
+   "jour": "2026-06-22",
+   "isin": "CA135087U287",
+   "echeance": "2036-06-01",
+   "montant_m": 5000.0,
+   "couverture": 2.113,
+   "taux": 3.453
+  },
+  {
+   "jour": "2026-07-22",
+   "isin": "CA135087U931",
+   "echeance": "2036-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.27,
+   "taux": 3.622
+  },
+  {
+   "jour": "2026-08-06",
+   "isin": "CA135087U931",
+   "echeance": "2036-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.297,
+   "taux": 3.653
+  },
+  {
+   "jour": "2026-08-26",
+   "isin": "CA135087U931",
+   "echeance": "2036-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.36,
+   "taux": 3.707
+  },
+  {
+   "jour": "2026-09-23",
+   "isin": "CA135087U931",
+   "echeance": "2036-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.3,
+   "taux": 3.966
+  },
+  {
+   "jour": "2026-10-29",
+   "isin": "CA135087U931",
+   "echeance": "2036-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.511,
+   "taux": 3.887
+  }
+ ]
+}

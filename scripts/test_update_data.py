@@ -305,5 +305,72 @@ class Reseau(unittest.TestCase):
         self.assertEqual((n, pause), (1, 0))
 
 
+class Canada(unittest.TestCase):
+    """Collecte canadienne (data/canada/) : sources Valet, FRED et Statistique Canada, isolée de la France."""
+
+    def test_ecart_aux_seules_dates_communes(self):
+        ca = {"2026-11-02": 3.60, "2026-11-03": 3.65, "2026-11-11": 3.70}  # 11 nov. : Veterans Day, FRED vide
+        us = {"2026-11-02": 4.91, "2026-11-03": 4.95, "2026-11-04": 4.90}
+        self.assertEqual(u.serie_spread_canada(ca, us), [
+            {"jour": "2026-11-02", "ca10": 3.60, "us10": 4.91, "spread_pb": -131.0},
+            {"jour": "2026-11-03", "ca10": 3.65, "us10": 4.95, "spread_pb": -130.0},
+        ])
+
+    def test_fred_ignore_les_points_des_jours_feries(self):
+        csv_fred = "observation_date,DGS10\n2026-11-10,4.80\n2026-11-11,.\n2026-11-12,\n2026-11-13,4.85\n"
+        with mock.patch.object(u, "get", return_value=csv_fred):
+            self.assertEqual(u.fred_jours("DGS10"), {"2026-11-10": 4.80, "2026-11-13": 4.85})
+
+    def test_adjudications_dix_ans_seulement_avec_resultat(self):
+        def obs(jour, duree, couverture=None, hors=None):
+            o = {"AUC_BOND_AUCTION_DATE": {"v": jour}, "AUC_BOND_TERM_YEARS": {"v": duree}, "AUC_BOND_ISIN": {"v": "CA0"},
+                 "AUC_BOND_MATURITY_DATE": {"v": "2036-12-01"}, "AUC_BOND_AMOUNT": {"v": "5000.000"},
+                 "AUC_BOND_AVG_YIELD": {"v": "3.887"}}
+            if couverture:
+                o["AUC_BOND_COVERAGE"] = {"v": couverture}
+            if hors:
+                o["AUC_BOND_OFF_THE_RUN"] = {"v": hors}
+            return o
+        adj = u.serie_adjudications_canada([
+            obs("2026-10-29", "10", "2.511"), obs("2026-10-22", "2", "2.900"),  # 2 ans : écartée
+            obs("2026-11-09", "10"),  # annoncée, sans résultat : écartée
+            obs("2025-07-24", "10", "1.851", "Yes"),  # réouverture d'une ancienne ligne : écartée
+            obs("2026-09-23", "10", "2.300"),
+        ])
+        self.assertEqual([(l["jour"], l["couverture"]) for l in adj["lignes"]], [("2026-09-23", 2.3), ("2026-10-29", 2.511)])
+        self.assertIsNone(u.controle_forme("adjudications.json", adj, adj, date(2026, 11, 8), u.LIMITES_JOURS_CANADA))
+
+    def test_part_des_non_residents_aux_mois_communs(self):
+        nr = u.serie_non_residents_canada({u.NR_CANADA: {"2026-07": 613068.0, "2026-08": 601548.0},
+                                           u.ENCOURS_CANADA: {"2026-08": 1311229.0, "2026-09": 1311511.0}})
+        self.assertEqual(nr["points"], [{"mois": "2026-08", "part": 45.88, "detenu_m": 601548.0, "encours_m": 1311229.0}])
+
+    def test_vrais_fichiers_canadiens_acceptes(self):
+        for nom in u.SERIES_CANADA:
+            payload = json.loads((DATA / "canada" / nom).read_text(encoding="utf-8"))
+            fin = u.fin_de_periode(payload)
+            self.assertIsNone(u.controle_forme(nom, payload, payload, fin, u.LIMITES_JOURS_CANADA), nom)
+
+    def test_notes_canadiennes_lues_dans_wikipedia(self):
+        wiki = (SAISIES / "wikipedia.txt").read_text(encoding="utf-8")
+        canada = wiki.replace("{{flag|France}}", "{{flag|Canada}}")  # la copie n'a que la ligne française
+        self.assertEqual(u.notes_wikipedia(canada, "Canada"), u.notes_wikipedia(wiki))
+        self.assertEqual(u.notes_wikipedia(canada, "France"), {})
+
+    def test_une_panne_canadienne_ne_touche_pas_la_france(self):
+        with tempfile.TemporaryDirectory() as d:
+            dossier = Path(d) / "canada"
+            def panne():
+                raise urllib.error.URLError("Valet en panne")
+            def plantage():
+                raise RuntimeError("imprévu")
+            echecs = u.main_canada(dossier, datetime(2026, 11, 8, tzinfo=timezone.utc),
+                                   series={"spread.json": panne}, saisies={"notations.json": lambda r: plantage()})
+            self.assertEqual([e["serie"] for e in echecs], ["spread.json", "canada"])
+            meta = json.loads((dossier / "meta.json").read_text(encoding="utf-8"))
+            self.assertEqual(len(meta["echecs"]), 2)
+            self.assertFalse((Path(d) / "meta.json").exists(), "aucun meta.json français écrit par le Canada")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -3,7 +3,7 @@
 import {
   SEUILS, ANCRAGES, METHODE_VERSION, couvertures, niveauBrut, niveauScore, interpoler, notch, notchLabel, fusionnerSeries, etatDuJour,
   serieQuotidienne, plusHautDepuis, plusBasDepuis, picDuMois, picsMensuels, phraseVerdict, partsTarget, NIVEAUX_TEXTE,
-} from './score.mjs?v=c3b33b7a';
+} from './score.mjs?v=84a4b8cd';
 
 window.vigieDemarre = true; // lu par le script de secours d'index.html
 

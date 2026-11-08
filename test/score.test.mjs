@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import {
   ANCRAGES, NIVEAUX, interpoler, niveauBrut, niveauScore, crans, notch, moisEcart, moisMoins,
   variationUnAn, variationUnAnJour, fusionnerSeries, spreadPb, etatDuJour, phraseVerdict, partieDette, partieBCE,
-  phraseIncomplete, cissDuJour, courbe, PHRASE_BCE_INDISPONIBLE, serieQuotidienne, plusHautDepuis, plusBasDepuis, picDuMois, picsMensuels,
+  phraseIncomplete, cissDuJour, courbe, PHRASE_BCE_INDISPONIBLE, serieQuotidienne, plusHautDepuis, plusBasDepuis, picDuMois, picsMensuels, PAYS,
 } from '../assets/js/score.mjs';
 
 const lire = (dossier) => (f) => JSON.parse(readFileSync(new URL(`../${dossier}/${f}`, import.meta.url)));
@@ -302,4 +302,42 @@ test('courbe affichée : pire séance de chaque mois, comme le repère « plus h
   const t = picsMensuels(q, 'tension');
   assert.equal(t[0].mois, '2004-11'); // la tension sur la dette commence avec le spread
   assert.ok(t.every((p, i) => i === 0 || p.mois > t[i - 1].mois));
+});
+
+// ---------- Canada (fiche provisoire, non publiée) ----------
+
+const CA = (() => {
+  const r = lire('data/canada');
+  return { spread: r('spread.json'), adj: r('adjudications.json'), nr: r('non_residents.json'), ratings: r('notations.json'), stress: r('stress.json') };
+})();
+
+test('Canada : quatre signaux, tension = écart et couverture, fond = non-résidents et notes', () => {
+  const e = etatDuJour(CA, new Date(`${CA.spread.at(-1).jour}T12:00:00Z`), PAYS.canada);
+  assert.deepEqual(Object.keys(e.signaux), ['spread', 'couverture', 'nonResidents', 'notes']);
+  for (const s of Object.values(e.signaux)) assert.equal(s.perime, false, s.nom);
+  proche(e.indice.score, (e.tension.score + e.fond.score) / 2, 1e-9);
+  assert.match(phraseVerdict(e, 'fr', PAYS.canada), /dette canadienne/);
+  assert.doesNotMatch(phraseVerdict(e, 'en', PAYS.canada), /française|French/);
+});
+
+test('Canada : l’écart vient des deux taux, et une couverture de plus de 5 mois sort du calcul', () => {
+  const f = {
+    spread: [{ jour: '2026-03-02', ca10: 3.10, us10: 4.30, spread_pb: -120 }],
+    adj: { lignes: [{ jour: '2025-10-26', couverture: 2.3 }] }, nr: { points: [{ mois: '2026-01', part: 40 }] },
+    ratings: CA.ratings, stress: { mensuel: [{ mois: '2025-10', valeur: 0.05 }] },
+  };
+  const e = etatDuJour(f, new Date('2026-03-02T12:00:00Z'), PAYS.canada);
+  assert.equal(e.signaux.spread.valeur, -120);
+  assert.equal(e.signaux.couverture.perime, false); // octobre → mars : 5 mois, gardé
+  assert.equal(e.ciss, null); // indice de stress d'octobre : 5 mois, périmé (limite 4)
+  const avril = etatDuJour(f, new Date('2026-04-01T12:00:00Z'), PAYS.canada);
+  assert.equal(avril.signaux.couverture.perime, true);
+  assert.equal(avril.indice.score, null);
+  assert.match(phraseVerdict(avril, 'fr', PAYS.canada), /il manque écart de taux et couverture/);
+});
+
+test('Canada : série quotidienne calculable à chaque séance depuis 2001 (péremptions mesurées)', () => {
+  const serie = serieQuotidienne(CA, null, PAYS.canada);
+  assert.equal(serie[0].jour, '2001-01-02');
+  assert.equal(serie.filter((p) => p.indice == null).length, 0);
 });

@@ -167,17 +167,156 @@ export function noteLaPlusBasse(ratings, jusquA = null) {
   return pire;
 }
 
+// ---------- Fiches pays ----------
+// Une fiche décrit un pays : ses signaux (repères, seuils, péremption), ses sous-indices, la lecture officielle
+// affichée à côté de l'indice, ses textes et la façon de lire ses fichiers. Le calcul ci-dessous ne connaît que la fiche.
+// Types de signaux : 'jour' (séance quotidienne, péremption en jours), 'date' (événement daté au jour, comme une
+// adjudication, péremption en mois), 'mois' (donnée mensuelle ou trimestrielle, comptée dès son mois), 'notes'.
+
+const FRANCE = {
+  id: 'france',
+  pilote: 'spread', // la série quotidienne qui rythme la série de l'indice
+  signaux: {
+    spread: { type: 'jour', ancrages: ANCRAGES.spread, seuils: SEUILS.spread, peremptionJours: PEREMPTION_JOURS.spread },
+    couverture: { type: 'date', ancrages: ANCRAGES.couverture, seuils: SEUILS.couverture, peremptionMois: PEREMPTION_MOIS.couverture },
+    nonResidents: { type: 'mois', ancrages: ANCRAGES.nonResidents, seuils: SEUILS.nonResidents, peremptionMois: PEREMPTION_MOIS.nonResidents },
+    notes: { type: 'notes', ancrages: ANCRAGES.notes, seuils: SEUILS.notes, peremptionMois: PEREMPTION_MOIS.notes },
+    target: { type: 'mois', ancrages: ANCRAGES.target, seuils: SEUILS.target, peremptionMois: PEREMPTION_MOIS.target },
+  },
+  sousIndices: SOUS_INDICES,
+  noms: { fr: NOMS, en: null }, // en : NOMS_EN, rempli plus bas
+  tetes: null, // TETES, rempli plus bas
+  lecture: (fichiers, dateCalcul) => cissDuJour(fichiers.ciss, dateCalcul),
+  /** Séries de chaque signal, en [{ date, valeur, ligne }] triées ; notes : le fichier des notes tel quel. */
+  series(fichiers) {
+    const target = partsTarget(fichiers.target, fichiers.bilan);
+    return {
+      spread: fichiers.spread.map((r) => ({ date: r.jour, valeur: valeurSpread(r), ligne: r })),
+      couverture: couvertures(fichiers.adj).map((a) => ({ date: a.date, valeur: a.couverture, ligne: a })),
+      nonResidents: fichiers.nrAft.points.map((p) => ({ date: p.date, valeur: p.part, ligne: p })),
+      notes: fichiers.ratings,
+      target: target.map((r) => ({ date: r.mois, valeur: valeurTarget(r), ligne: r })),
+    };
+  },
+  cartes(fichiers, s, series) {
+    const { spread, adj, nrAft } = fichiers;
+    const sp = spread.at(-1), tg = series.target.at(-1).ligne;
+    const couv = series.couverture.map((x) => x.ligne), dc = couv.at(-1);
+    return {
+      spread: {
+        valeur: s.spread.valeur, niveau: s.spread.niveau, jour: sp.jour, fr10: sp.fr10, de10: sp.de10,
+        variationUnAn: variationUnAnJour(series.spread.map((x) => ({ jour: x.date, v: x.valeur })), 'v'),
+      },
+      adjudications: {
+        taux: adj.lignes.at(-1).taux, dateTaux: adj.lignes.at(-1).date, niveau: s.couverture.niveau,
+        derniere: dc, precedente: couv.at(-2),
+      },
+      nonResidents: { valeur: s.nonResidents.valeur, niveau: s.nonResidents.niveau, date: s.nonResidents.date, precedent: nrAft.points.at(-2) },
+      notes: { note: s.notes.note, notch: 20 - s.notes.valeur, niveau: s.notes.niveau, agences: s.notes.agences },
+      target: {
+        valeur: s.target.valeur, niveau: s.target.niveau, mois: tg.mois, solde: tg.solde_mds, bilan: tg.bilan_mds,
+        variationUnAn: variationUnAn(series.target.map((x) => ({ mois: x.date, v: x.valeur })), 'mois', 'v'),
+        record: Math.min(...series.target.map((x) => x.valeur)),
+      },
+    };
+  },
+};
+
+
+// Canada (plan docs/designs/vigie-canada.md) : PROVISOIRE, non publié. Repères à valider par Mickaël (question ouverte 2).
+// Règle proposée, la même pour chaque signal : centiles de l'historique canadien depuis 2001 (première séance commune
+// des deux taux à 10 ans), figés le 08/11/2026 : score 0 au 25e centile, 25 à la médiane, 50 au 75e, 75 au 90e, 100 au 99e.
+// Les notes gardent l'échelle de la France (crans perdus depuis AAA, la même pour tous les pays).
+export const ANCRAGES_CANADA = {
+  spread: [-62, -23, 5, 43, 113], // pb, 10 ans Canada moins 10 ans États-Unis
+  couverture: [2.38, 2.28, 2.16, 2.05, 1.85], // soumissions / montant adjugé, obligations à 10 ans
+  nonResidents: [21.3, 29.5, 34.3, 38.3, 44.2], // % des obligations fédérales négociables
+  notes: ANCRAGES.notes,
+  stress: [0.03, 0.06, 0.13, 0.20, 0.47], // indice de stress financier de la Banque du Canada
+};
+// Seuils de niveau d'un signal seul : les mêmes centiles (médiane, 75e, 90e), comme les ancrages 25, 50 et 75.
+const seuilsDe = ([, m, c75, c90], sens = 1) => (sens > 0
+  ? [['calme', -Infinity, m], ['vigilance', m, c75], ['tension', c75, c90], ['crise', c90, Infinity]]
+  : [['calme', m, Infinity], ['vigilance', c75, m], ['tension', c90, c75], ['crise', -Infinity, c90]]);
+// Péremption mesurée sur les publications : au plus 5 mois d'écart entre deux adjudications à 10 ans depuis 1998 ;
+// non-résidents et indice de stress publiés environ 2 mois et demi après la fin du mois.
+export const PEREMPTION_CANADA = { spread: 7, couverture: 5, nonResidents: 4, notes: Infinity, stress: 4 };
+
+const CANADA = {
+  id: 'canada',
+  pilote: 'spread',
+  signaux: {
+    spread: { type: 'jour', ancrages: ANCRAGES_CANADA.spread, seuils: seuilsDe(ANCRAGES_CANADA.spread), peremptionJours: PEREMPTION_CANADA.spread },
+    couverture: { type: 'date', ancrages: ANCRAGES_CANADA.couverture, seuils: seuilsDe(ANCRAGES_CANADA.couverture, -1), peremptionMois: PEREMPTION_CANADA.couverture },
+    nonResidents: { type: 'mois', ancrages: ANCRAGES_CANADA.nonResidents, seuils: seuilsDe(ANCRAGES_CANADA.nonResidents), peremptionMois: PEREMPTION_CANADA.nonResidents },
+    notes: { type: 'notes', ancrages: ANCRAGES.notes, seuils: SEUILS.notes, peremptionMois: Infinity },
+  },
+  sousIndices: { tension: ['spread', 'couverture'], fond: ['nonResidents', 'notes'] },
+  noms: {
+    fr: { spread: 'écart de taux', couverture: 'couverture', nonResidents: 'non-résidents', notes: 'notes' },
+    en: { spread: 'yield gap', couverture: 'auction cover', nonResidents: 'non-residents', notes: 'ratings' },
+  },
+  tetes: {
+    fr: {
+      calme: 'Les signaux de la dette canadienne sont calmes',
+      vigilance: 'Les signaux de la dette canadienne appellent à la vigilance',
+      tension: 'La dette canadienne est sous tension',
+      crise: 'La dette canadienne est en zone de crise',
+    },
+    en: {
+      calme: 'Canadian debt signals are calm',
+      vigilance: 'Canadian debt signals call for vigilance',
+      tension: 'Canadian debt is under stress',
+      crise: 'Canadian debt is in crisis territory',
+    },
+  },
+  // Indice de stress financier de la Banque du Canada : mensuel, lu à son dernier mois publié.
+  lecture(fichiers, dateCalcul) {
+    const q = fichiers.stress?.mensuel?.at(-1);
+    if (!q || moisEcart(q.mois, dateCalcul) > PEREMPTION_CANADA.stress) return null;
+    const score = interpoler(q.valeur, ANCRAGES_CANADA.stress);
+    return { valeur: q.valeur, mois: q.mois, score, niveau: niveauScore(score) };
+  },
+  series(fichiers) {
+    return {
+      spread: fichiers.spread.map((r) => ({ date: r.jour, valeur: spreadPb(r.ca10, r.us10), ligne: r })),
+      couverture: fichiers.adj.lignes.map((a) => ({ date: a.jour, valeur: a.couverture, ligne: a })),
+      nonResidents: fichiers.nr.points.map((p) => ({ date: p.mois, valeur: p.part, ligne: p })),
+      notes: fichiers.ratings,
+    };
+  },
+  cartes(fichiers, s, series) {
+    const sp = series.spread.at(-1).ligne, couv = series.couverture.map((x) => x.ligne);
+    return {
+      spread: {
+        valeur: s.spread.valeur, niveau: s.spread.niveau, jour: sp.jour, ca10: sp.ca10, us10: sp.us10,
+        variationUnAn: variationUnAnJour(series.spread.map((x) => ({ jour: x.date, v: x.valeur })), 'v'),
+      },
+      adjudications: { taux: couv.at(-1)?.taux, niveau: s.couverture.niveau, derniere: couv.at(-1), precedente: couv.at(-2) },
+      nonResidents: { valeur: s.nonResidents.valeur, niveau: s.nonResidents.niveau, date: s.nonResidents.date, precedent: series.nonResidents.at(-2)?.ligne },
+      notes: { note: s.notes.note, notch: 20 - s.notes.valeur, niveau: s.notes.niveau, agences: s.notes.agences },
+    };
+  },
+};
+
+export const PAYS = { france: FRANCE, canada: CANADA };
+
+// Niveau d'un signal seul, lu sur l'échelle de ses seuils (les notes : crans perdus → échelle AAA = 20).
+const valeurPourSeuils = (cfg, v) => (cfg.type === 'notes' ? 20 - v : v);
+const niveauDe = (cfg, v) => cfg.seuils.find(([, de, a]) => v >= de && v < a)?.[0];
+
 // ---------- Indice ----------
 
-function signal(nom, valeur, date, dateCalcul, niveau) {
+function signal(nom, valeur, date, dateCalcul, niveau, fiche = FRANCE) {
   if (valeur == null) return { nom, valeur: null, perime: true, manquant: true };
+  const cfg = fiche.signaux[nom];
   const age = date ? moisEcart(date, dateCalcul) : 0;
-  const perime = nom in PEREMPTION_JOURS ? Math.floor(joursEcart(date, dateCalcul)) > PEREMPTION_JOURS[nom] : age > PEREMPTION_MOIS[nom];
-  return { nom, valeur, date, age, niveau, score: interpoler(valeur, ANCRAGES[nom]), perime };
+  const perime = cfg.peremptionJours != null ? Math.floor(joursEcart(date, dateCalcul)) > cfg.peremptionJours : age > cfg.peremptionMois;
+  return { nom, valeur, date, age, niveau, score: interpoler(valeur, cfg.ancrages), perime };
 }
 
 // Composition constante : un sous-indice n'existe que si tous ses signaux sont valables, jamais une moyenne des restants.
-// L'Indice Vigie commence donc quand les cinq signaux existent : mai 2008, premier mois de TARGET2.
+// L'Indice Vigie commence donc quand tous les signaux existent (France : mai 2008, premier mois de TARGET2).
 function indiceDe(tension, fond) {
   return tension.score != null && fond.score != null ? (tension.score + fond.score) / 2 : null;
 }
@@ -197,50 +336,30 @@ export function cissDuJour(ciss, dateCalcul) {
 }
 
 /**
- * État du jour à partir des fichiers bruts de data/ (déjà fusionnés avec la BCE en direct).
- * fichiers : { spread, target, bilan, adj, ratings, nrAft, ciss? } ; dateCalcul : Date (UTC).
+ * État du jour à partir des fichiers bruts du pays (déjà fusionnés avec les lectures en direct).
+ * France : fichiers = { spread, target, bilan, adj, ratings, nrAft, ciss? } ; dateCalcul : Date (UTC).
  */
-export function etatDuJour(fichiers, dateCalcul) {
-  const { spread, adj, ratings, nrAft } = fichiers;
-  const target = partsTarget(fichiers.target, fichiers.bilan);
-  const sp = spread.at(-1), tg = target.at(-1), nr = nrAft.points.at(-1);
-  const couv = couvertures(adj), dc = couv.at(-1);
-  const pire = noteLaPlusBasse(ratings);
+export function etatDuJour(fichiers, dateCalcul, fiche = FRANCE) {
+  const series = fiche.series(fichiers);
+  const s = {};
+  for (const [nom, cfg] of Object.entries(fiche.signaux)) {
+    if (cfg.type === 'notes') {
+      const pire = noteLaPlusBasse(series[nom]);
+      s[nom] = { ...signal(nom, pire.crans, null, dateCalcul, niveauDe(cfg, valeurPourSeuils(cfg, pire.crans)), fiche), note: pire.note, agences: pire.agences };
+      continue;
+    }
+    const d = series[nom].at(-1);
+    s[nom] = d ? signal(nom, d.valeur, d.date, dateCalcul, niveauDe(cfg, d.valeur), fiche) : signal(nom, null);
+  }
 
-  const s = {
-    spread: signal('spread', valeurSpread(sp), sp.jour, dateCalcul, niveauBrut('spread', valeurSpread(sp))),
-    couverture: dc ? signal('couverture', dc.couverture, dc.date, dateCalcul, niveauBrut('couverture', dc.couverture)) : signal('couverture', null),
-    nonResidents: signal('nonResidents', nr.part, nr.date, dateCalcul, niveauBrut('nonResidents', nr.part)),
-    notes: { ...signal('notes', pire.crans, null, dateCalcul, niveauBrut('notes', 20 - pire.crans)), note: pire.note, agences: pire.agences },
-    target: signal('target', valeurTarget(tg), tg.mois, dateCalcul, niveauBrut('target', valeurTarget(tg))),
-  };
-
-  const tension = sousIndice(s, SOUS_INDICES.tension), fond = sousIndice(s, SOUS_INDICES.fond);
+  const tension = sousIndice(s, fiche.sousIndices.tension), fond = sousIndice(s, fiche.sousIndices.fond);
   const score = indiceDe(tension, fond);
   const indice = { score, niveau: niveauScore(score) };
-  const ciss = cissDuJour(fichiers.ciss, dateCalcul);
-
-  const cartes = {
-    spread: {
-      valeur: s.spread.valeur, niveau: s.spread.niveau, jour: sp.jour, fr10: sp.fr10, de10: sp.de10,
-      variationUnAn: variationUnAnJour(spread.map((r) => ({ jour: r.jour, v: valeurSpread(r) })), 'v'),
-    },
-    adjudications: {
-      taux: adj.lignes.at(-1).taux, dateTaux: adj.lignes.at(-1).date, niveau: s.couverture.niveau,
-      derniere: dc, precedente: couv.at(-2),
-    },
-    nonResidents: { valeur: nr.part, niveau: s.nonResidents.niveau, date: nr.date, precedent: nrAft.points.at(-2) },
-    notes: { note: pire.note, notch: 20 - pire.crans, niveau: s.notes.niveau, agences: pire.agences },
-    target: {
-      valeur: s.target.valeur, niveau: s.target.niveau, mois: tg.mois, solde: tg.solde_mds, bilan: tg.bilan_mds,
-      variationUnAn: variationUnAn(target.map((r) => ({ mois: r.mois, v: valeurTarget(r) })), 'mois', 'v'),
-      record: Math.min(...target.map(valeurTarget)),
-    },
-  };
+  const ciss = fiche.lecture(fichiers, dateCalcul);
 
   return {
-    signaux: s, tension, fond, indice, ciss, cartes,
-    phrase: phraseVerdict({ indice, tension, fond, ciss }),
+    signaux: s, tension, fond, indice, ciss, cartes: fiche.cartes(fichiers, s, series),
+    phrase: phraseVerdict({ indice, tension, fond, ciss }, 'fr', fiche),
     methode: METHODE_VERSION,
   };
 }
@@ -262,19 +381,20 @@ const TETES = {
     crise: 'French debt is in crisis territory',
   },
 };
+FRANCE.tetes = TETES;
 const SURTOUT = {
   fr: { marches: ', surtout sur les marchés.', fond: ', surtout sur le fond.' },
   en: { marches: ', mostly in the markets.', fond: ', mostly in the fundamentals.' },
 };
 
-export function partieDette(I, T, V, lang = 'fr') {
-  const tete = TETES[lang][I];
+export function partieDette(I, T, V, lang = 'fr', fiche = FRANCE) {
+  const tete = fiche.tetes[lang][I];
   if (rang(T) > rang(V)) return `${tete}${SURTOUT[lang].marches}`;
   if (rang(V) > rang(T)) return `${tete}${SURTOUT[lang].fond}`;
   return `${tete}.`;
 }
 
-// Le CISS de la BCE, dit simplement : « le reste des marchés financiers ».
+// L'indice de stress de la banque centrale (CISS de la BCE en France), dit simplement : « le reste des marchés financiers ».
 const ETAT = {
   fr: { calme: 'calme', vigilance: 'en vigilance', tension: 'sous tension', crise: 'en crise' },
   en: { calme: 'calm', vigilance: 'on watch', tension: 'under stress', crise: 'in crisis' },
@@ -300,34 +420,35 @@ export function partieBCE(I, C, lang = 'fr') {
 export const NOMS_EN = {
   spread: 'spread', couverture: 'auction cover', nonResidents: 'non-residents', notes: 'ratings', target: 'TARGET2',
 };
+FRANCE.noms.en = NOMS_EN;
 const liste = (xs, et = 'et') => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} ${et} ${xs.at(-1)}`);
 
-export function phraseIncomplete(manquants, lang = 'fr') {
-  if (lang === 'en') return `Incomplete index: missing ${liste(manquants.map((n) => NOMS_EN[n]), 'and')}.`;
-  return `Indice incomplet : il manque ${liste(manquants.map((n) => NOMS[n]))}.`;
+export function phraseIncomplete(manquants, lang = 'fr', fiche = FRANCE) {
+  const noms = fiche.noms[lang];
+  if (lang === 'en') return `Incomplete index: missing ${liste(manquants.map((n) => noms[n]), 'and')}.`;
+  return `Indice incomplet : il manque ${liste(manquants.map((n) => noms[n]))}.`;
 }
 
-export function phraseVerdict({ indice, tension, fond, ciss }, lang = 'fr') {
+export function phraseVerdict({ indice, tension, fond, ciss }, lang = 'fr', fiche = FRANCE) {
   const C = ciss?.niveau ?? null;
-  if (indice.niveau) return `${partieDette(indice.niveau, tension.niveau, fond.niveau, lang)} ${partieBCE(indice.niveau, C, lang)}`;
+  if (indice.niveau) return `${partieDette(indice.niveau, tension.niveau, fond.niveau, lang, fiche)} ${partieBCE(indice.niveau, C, lang)}`;
   const vide = tension.score == null ? tension : fond;
   const dispo = vide === tension ? fond : tension;
-  const base = phraseIncomplete(vide.sans, lang);
+  const base = phraseIncomplete(vide.sans, lang, fiche);
   return dispo.niveau ? `${base} ${partieBCE(dispo.niveau, C, lang)}` : base;
 }
 
 // ---------- Courbe mensuelle ----------
 
-// Sous-indices et indice à partir des dernières données valables (absentes : undefined ou null).
-function pointA({ sp, tg, nr, dc, pire }, calcul) {
-  const s = {
-    spread: sp ? signal('spread', valeurSpread(sp), sp.jour, calcul) : null,
-    couverture: dc ? signal('couverture', dc.couverture, dc.date, calcul) : null,
-    nonResidents: nr ? signal('nonResidents', nr.part, nr.date, calcul) : null,
-    notes: pire ? signal('notes', pire.crans, null, calcul) : null,
-    target: tg ? signal('target', valeurTarget(tg), tg.mois, calcul) : null,
-  };
-  const tension = sousIndice(s, SOUS_INDICES.tension), fond = sousIndice(s, SOUS_INDICES.fond);
+// Sous-indices et indice à partir de la dernière donnée valable de chaque signal (absente : undefined ou null).
+// derniers : { nom: { date, valeur } } ; pour les notes, { crans } (note la plus basse).
+function pointA(derniers, calcul, fiche) {
+  const s = {};
+  for (const [nom, cfg] of Object.entries(fiche.signaux)) {
+    const d = derniers[nom];
+    s[nom] = !d ? null : cfg.type === 'notes' ? signal(nom, d.crans, null, calcul, undefined, fiche) : signal(nom, d.valeur, d.date, calcul, undefined, fiche);
+  }
+  const tension = sousIndice(s, fiche.sousIndices.tension), fond = sousIndice(s, fiche.sousIndices.fond);
   return { tension: tension.score, fond: fond.score, indice: indiceDe(tension, fond), sans: [...tension.sans, ...fond.sans] };
 }
 
@@ -337,20 +458,19 @@ function pointA({ sp, tg, nr, dc, pire }, calcul) {
  * Le mois en cours est calculé à dateCalcul plutôt qu'au dernier jour du mois, qui n'est pas encore arrivé.
  * Renvoie [{ mois, tension, fond, indice, sans: [...] }] ; indice vaut null tant qu'un sous-indice est vide.
  */
-export function courbe(fichiers, jusquA, dateCalcul = null) {
-  const { spread, adj, ratings, nrAft } = fichiers;
-  const target = partsTarget(fichiers.target, fichiers.bilan);
-  const couv = couvertures(adj);
-  const debut = spread[0].jour.slice(0, 7);
+export function courbe(fichiers, jusquA, dateCalcul = null, fiche = FRANCE) {
+  const series = fiche.series(fichiers);
+  const debut = series[fiche.pilote][0].date.slice(0, 7);
   const points = [];
   for (let mois = debut; mois <= jusquA; mois = moisMoins(mois, -1)) {
     const fin = new Date(`${moisMoins(mois, -1)}-01T00:00:00Z`);
     const finMois = new Date(fin - 86400000); // dernier jour du mois
     const calcul = dateCalcul && dateCalcul < finMois ? dateCalcul : finMois;
-    const avant = (serie, cle) => serie.filter((r) => r[cle].slice(0, 7) <= mois).at(-1);
-    const sp = avant(spread, 'jour'), tg = avant(target, 'mois'), nr = avant(nrAft.points, 'date'), dc = avant(couv, 'date');
-    const pire = noteLaPlusBasse(ratings, `${mois}-31`);
-    points.push({ mois, ...pointA({ sp, tg, nr, dc, pire }, calcul) });
+    const derniers = {};
+    for (const [nom, cfg] of Object.entries(fiche.signaux)) {
+      derniers[nom] = cfg.type === 'notes' ? noteLaPlusBasse(series[nom], `${mois}-31`) : series[nom].filter((r) => r.date.slice(0, 7) <= mois).at(-1);
+    }
+    points.push({ mois, ...pointA(derniers, calcul, fiche) });
   }
   return points;
 }
@@ -358,31 +478,37 @@ export function courbe(fichiers, jusquA, dateCalcul = null) {
 // ---------- Série quotidienne et repères historiques ----------
 
 /**
- * Un point par séance du spread, jusqu'à jusquA (« AAAA-MM-JJ ») inclus, calculé à la date de la séance.
+ * Un point par séance de la série pilote (le spread), jusqu'à jusquA (« AAAA-MM-JJ ») inclus, calculé à la date de la séance.
  * Mêmes règles que la courbe : une donnée datée au jour (spread, adjudication, note) compte à partir de ce jour,
  * une donnée mensuelle ou trimestrielle (TARGET2, non-résidents) dès son mois. La dernière séance d'un mois
  * donne donc le point de la courbe pour ce mois.
  * Parcours en une passe (pointeurs), pour les quelque 5 500 séances depuis 2004.
  * Renvoie [{ jour, tension, fond, indice, sans: [...] }].
  */
-export function serieQuotidienne(fichiers, jusquA = null) {
-  const { spread, adj, ratings, nrAft } = fichiers;
-  const target = partsTarget(fichiers.target, fichiers.bilan);
-  const couv = couvertures(adj), nrs = nrAft.points;
+export function serieQuotidienne(fichiers, jusquA = null, fiche = FRANCE) {
+  const series = fiche.series(fichiers);
+  const autres = Object.entries(fiche.signaux).filter(([nom, cfg]) => nom !== fiche.pilote && cfg.type !== 'notes');
+  const nomNotes = Object.keys(fiche.signaux).find((n) => fiche.signaux[n].type === 'notes');
+  const ratings = series[nomNotes];
   const changements = [...new Set(ratings.agences.flatMap((a) => a.historique.map((h) => h.date)))].sort();
-  let iT = -1, iN = -1, iC = -1, iR = -1, pire = null;
+  const i = Object.fromEntries(autres.map(([nom]) => [nom, -1]));
+  let iR = -1, pire = null;
   const points = [];
-  for (const sp of spread) {
-    const jour = sp.jour, mois = jour.slice(0, 7);
+  for (const sp of series[fiche.pilote]) {
+    const jour = sp.date, mois = jour.slice(0, 7);
     if (jusquA && jour > jusquA) break;
-    while (iT + 1 < target.length && target[iT + 1].mois <= mois) iT++;
-    while (iN + 1 < nrs.length && nrs[iN + 1].date <= mois) iN++;
-    while (iC + 1 < couv.length && couv[iC + 1].date <= jour) iC++;
+    const derniers = { [fiche.pilote]: sp };
+    for (const [nom, cfg] of autres) {
+      const xs = series[nom], borne = cfg.type === 'mois' ? mois : jour;
+      while (i[nom] + 1 < xs.length && xs[i[nom] + 1].date <= borne) i[nom]++;
+      derniers[nom] = xs[i[nom]];
+    }
     let r = iR;
     while (r + 1 < changements.length && changements[r + 1] <= jour) r++;
     if (r !== iR) { iR = r; pire = noteLaPlusBasse(ratings, jour); }
+    derniers[nomNotes] = pire;
     const calcul = new Date(`${jour}T00:00:00Z`);
-    points.push({ jour, ...pointA({ sp, tg: target[iT], nr: nrs[iN], dc: couv[iC], pire }, calcul) });
+    points.push({ jour, ...pointA(derniers, calcul, fiche) });
   }
   return points;
 }
