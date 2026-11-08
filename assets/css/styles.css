@@ -441,7 +441,7 @@ footer p { margin: 0; max-width: 80ch; }
 .methode .formule { font-size: 13px; }
 /* Sur téléphone, la colonne est étroite : le texte de lecture reste en 16 px */
 @media (max-width: 599px) { .methode .signal :is(p, li) { font-size: var(--text-body); } }
-@media (max-width: 599px) { .formule { font-size: 12px; padding: var(--space-3); } }
+@media (max-width: 599px) { .formule, .methode .formule { font-size: 12px; padding: var(--space-3); } }
 .retour { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 /* Lien de chaque carte vers la page du signal, et liste des autres signaux sur ces pages */
 .page-signal { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm); color: var(--fg-accent); }
