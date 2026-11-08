@@ -2,7 +2,9 @@
 
 python scripts/image_partage.py            images de partage assets/images/partage-fr.png et partage-en.png (1200 x 630) :
                                            accroche, spread France-Allemagne depuis 2004 et échelle des niveaux,
-                                           à partir de data/spread.json (moyennes des semaines complètes)
+                                           à partir de data/spread.json (moyennes des semaines complètes) ;
+                                           Canada : partage-canada-fr.png et partage-canada-en.png, écart Canada-États-Unis
+                                           depuis 2001 (data/canada/spread.json)
 python scripts/image_partage.py --icones   favicon.ico (racine), assets/images/favicon-48.png, apple-touch-icon.png et logo.png,
                                            d'après assets/images/favicon.svg
 
@@ -37,6 +39,30 @@ TEXTES = {
                pic='2011 · euro area crisis', auj='today',
                niveaux=['Calm', 'Watch', 'Stress', 'Crisis'],
                signaux='Spread · AFT · foreign holdings · ratings · TARGET2'),
+}
+# Canada : pas de pic annoté (le record de l'écart, en 2002, vient de la politique monétaire, pas d'une crise),
+# mais la ligne zéro, puisque l'écart est d'ordinaire négatif.
+TEXTES_CANADA = {
+    'fr': dict(titre='Le risque de la dette fédérale canadienne, mesuré chaque jour.',
+               sous='4 signaux officiels réunis dans un indice de 0 à 100',
+               courbe='Écart de taux Canada-États-Unis à 10 ans, depuis 2001',
+               zero='même taux que les États-Unis', auj="aujourd'hui",
+               niveaux=['Calme', 'Vigilance', 'Tension', 'Crise'],
+               signaux='Écart · adjudications · non-résidents · notes'),
+    'en': dict(titre='The risk on Canadian federal debt, measured every day.',
+               sous='4 official signals combined into a 0 to 100 index',
+               courbe='Canada-US 10-year yield gap, since 2001',
+               zero='same rate as the US', auj='today',
+               niveaux=['Calm', 'Watch', 'Stress', 'Crisis'],
+               signaux='Gap · auctions · foreign holdings · ratings'),
+}
+# Par pays : textes, nom, bornes de l'échelle (France : l'écart sous zéro est ramené à zéro, comme avant).
+PAYS = {
+    'france': dict(textes=TEXTES, nom='Vigie Dette France', vmin=0, vmax=230, haut=330, fichier='data/spread.json',
+                   image='partage-{lang}.png'),
+    # Canada : courbe plus haute (l'écart va de -158 à +134 pb) et « aujourd'hui » sous le point, la courbe passant au-dessus.
+    'canada': dict(textes=TEXTES_CANADA, nom='Vigie Dette Canada', vmin=-170, vmax=150, haut=305, fichier='data/canada/spread.json',
+                   image='partage-canada-{lang}.png', auj_dessous=True),
 }
 LARGEUR, HAUTEUR = 1200, 630
 K = 2  # dessin à 2x puis réduction
@@ -103,36 +129,46 @@ def fond(w, h):
     return img
 
 
-def partage(serie, lang):
-    t = TEXTES[lang]
+def partage(serie, lang, pays='france'):
+    p = PAYS[pays]
+    t = p['textes'][lang]
     W, H = LARGEUR * K, HAUTEUR * K
     img = fond(W, H).convert('RGBA')
     calque = Image.new('RGBA', img.size, (0, 0, 0, 0))
     d = ImageDraw.Draw(calque)
 
     # Courbe du spread, sur toute la largeur, en bas
-    x0, x1, yb, yh = s(40), s(1160), s(480), s(330)
-    vmax = 230
-    pts = [(x0 + (x1 - x0) * i / (len(serie) - 1), yb - (yb - yh) * max(v, 0) / vmax) for i, v in enumerate(serie)]
-    for g in range(0, vmax, 50):  # repères horizontaux discrets
-        y = yb - (yb - yh) * g / vmax
+    x0, x1, yb, yh = s(40), s(1160), s(480), s(p['haut'])
+    vmin, vmax = p['vmin'], p['vmax']
+    hauteur = lambda v: yb - (yb - yh) * (max(v, vmin) - vmin) / (vmax - vmin)  # noqa: E731
+    pts = [(x0 + (x1 - x0) * i / (len(serie) - 1), hauteur(v)) for i, v in enumerate(serie)]
+    for g in range(vmin, vmax, 50):  # repères horizontaux discrets
+        y = hauteur(g)
         d.line([(x0, y), (x1, y)], fill=(255, 255, 255, 18), width=s(1))
+    if 'zero' in t:  # ligne zéro, plus marquée ; sa légende est écrite après la courbe, que le remplissage effacerait
+        d.line([(x0, hauteur(0)), (x1, hauteur(0))], fill=(255, 255, 255, 70), width=s(2))
     d.polygon(pts + [(x1, yb), (x0, yb)], fill=(*CIEL, 40))
     lueur = Image.new('RGBA', img.size, (0, 0, 0, 0))
     ImageDraw.Draw(lueur).line(pts, fill=(140, 180, 255, 170), width=s(12), joint='curve')
     calque = Image.alpha_composite(calque, lueur.filter(ImageFilter.GaussianBlur(s(6))))
     d = ImageDraw.Draw(calque)
     d.line(pts, fill=(235, 242, 255, 255), width=s(4), joint='curve')
+    if 'zero' in t:  # au-dessus de la ligne, vers 2015-2019, quand l'écart est nettement sous zéro
+        d.text((x0 + (x1 - x0) * 0.64, hauteur(0) - s(10)), t['zero'], font=texte(s(22), 600), fill=CIEL, anchor='ms')
 
-    # Pic de 2011 et point du jour
-    px, py = pts[max(range(len(serie)), key=lambda i: serie[i])]
-    d.line([(px + s(10), py), (px + s(34), py)], fill=(255, 255, 255, 170), width=s(2))
-    d.text((px + s(42), py), t['pic'], font=texte(s(26), 600), fill=CIEL, anchor='lm')
+    # Pic de 2011 (France) et point du jour
+    if 'pic' in t:
+        px, py = pts[max(range(len(serie)), key=lambda i: serie[i])]
+        d.line([(px + s(10), py), (px + s(34), py)], fill=(255, 255, 255, 170), width=s(2))
+        d.text((px + s(42), py), t['pic'], font=texte(s(26), 600), fill=CIEL, anchor='lm')
     ex, ey = pts[-1]
     for r, a in ((s(16), 50), (s(10), 90)):
         d.ellipse([ex - r, ey - r, ex + r, ey + r], fill=(240, 138, 58, a))
     d.ellipse([ex - s(5.5), ey - s(5.5), ex + s(5.5), ey + s(5.5)], fill=BLANC)
-    d.text((ex - s(20), ey - s(20)), t['auj'], font=texte(s(26), 700), fill=BLANC, anchor='rs')
+    if p.get('auj_dessous'):
+        d.text((ex - s(14), ey + s(14)), t['auj'], font=texte(s(26), 700), fill=BLANC, anchor='rt')
+    else:
+        d.text((ex - s(20), ey - s(20)), t['auj'], font=texte(s(26), 700), fill=BLANC, anchor='rs')
     d.text((x0 + s(24), yb + s(34)), t['courbe'], font=texte(s(22), 500), fill=CIEL, anchor='ls')
     d.text((W - s(64), yb + s(34)), t['signaux'], font=texte(s(22), 600), fill=CIEL, anchor='rs')
 
@@ -142,7 +178,7 @@ def partage(serie, lang):
     # En-tête : logo et nom
     d.rounded_rectangle([s(62), s(50), s(122), s(110)], radius=s(14), outline=(255, 255, 255, 90), width=s(2))
     img.alpha_composite(icone(s(56)), (s(64), s(52)))
-    d.text((s(136), s(80)), 'Vigie Dette France', font=titre(s(38), 700), fill=BLANC, anchor='lm')
+    d.text((s(136), s(80)), p['nom'], font=titre(s(38), 700), fill=BLANC, anchor='lm')
     d.text((W - s(64), s(80)), 'vigiedette.com', font=texte(s(28), 600), fill=CIEL, anchor='rm')
 
     # Accroche
@@ -201,10 +237,11 @@ def main(args):
         icone(48).save(RACINE / 'favicon.ico', sizes=[(16, 16), (32, 32), (48, 48)])
         print('favicon.ico écrit')
         return
-    serie = semaines(json.loads((RACINE / 'data' / 'spread.json').read_text(encoding='utf-8')))
-    for lang in ('fr', 'en'):
-        nom = f'partage-{lang}.png'
-        print(nom, 'écrit' if enregistrer(partage(serie, lang), nom) else 'inchangé')
+    for pays, p in PAYS.items():
+        serie = semaines(json.loads((RACINE / p['fichier']).read_text(encoding='utf-8')))
+        for lang in ('fr', 'en'):
+            nom = p['image'].format(lang=lang)
+            print(nom, 'écrit' if enregistrer(partage(serie, lang, pays), nom) else 'inchangé')
 
 
 if __name__ == '__main__':

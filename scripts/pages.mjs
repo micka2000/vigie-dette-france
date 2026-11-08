@@ -457,10 +457,12 @@ export const instantaneCanada = (fichiers, dateCalcul) => instantane(fichiers, d
 export const CANADA = {
   fr: { chemin: 'canada/', h1: 'Vigie Dette Canada', titre: 'Vigie Dette Canada · Le risque de la dette fédérale, chaque jour',
     description: 'Écart de taux avec les États-Unis, adjudications, non-résidents et notes des agences. Les quatre signaux de risque de la dette fédérale canadienne, mis à jour chaque jour.',
-    langue: 'Read this page in English', locale: 'fr_CA' },
+    langue: 'Read this page in English', locale: 'fr_CA',
+    alt: 'Vigie Dette Canada : le risque de la dette fédérale canadienne, mesuré chaque jour, avec l’écart de taux Canada-États-Unis à 10 ans depuis 2001' },
   en: { chemin: 'en/canada/', h1: 'Vigie Dette Canada', titre: 'Vigie Dette Canada · Canadian federal debt risk, every day',
     description: 'Yield gap with the United States, bond auctions, foreign holdings and credit ratings. The four risk signals of Canadian federal debt, updated every day.',
-    langue: 'Lire la page en français', locale: 'en_CA' },
+    langue: 'Lire la page en français', locale: 'en_CA',
+    alt: 'Vigie Dette Canada: the risk on Canadian federal debt, measured every day, with the Canada-US 10-year yield gap since 2001' },
 };
 
 export function pageCanada(indexHtml, cartesHtml, inst, lang) {
@@ -489,12 +491,10 @@ export function pageCanada(indexHtml, cartesHtml, inst, lang) {
   html = attribut(html, 'property="og:locale"', 'content', p.locale);
   html = attribut(html, 'property="og:url"', 'content', url);
   html = attribut(html, 'property="og:title"', 'content', p.titre);
-  // Image de partage canadienne à venir (D9.3) : en attendant, le logo, sans la courbe française.
-  html = attribut(html, 'data-instantane="image"', 'content', `${SITE}assets/images/logo.png`);
-  html = attribut(html, 'property="og:image:width"', 'content', '512');
-  html = attribut(html, 'property="og:image:height"', 'content', '512');
-  html = attribut(html, 'property="og:image:alt"', 'content', p.titre);
-  html = attribut(html, 'name="twitter:card"', 'content', 'summary');
+  // Image de partage canadienne (D9.3), écrite par scripts/image_partage.py ; son empreinte dans l'adresse, comme pour la France.
+  const image = `assets/images/partage-canada-${lang}.png`;
+  html = attribut(html, 'data-instantane="image"', 'content', `${SITE}${image}?v=${empreinteFichier(image)}`);
+  html = attribut(html, 'property="og:image:alt"', 'content', p.alt);
   html = attribut(html, 'id="langue-toggle"', 'href', `/${CANADA[autre].chemin}`);
   html = attribut(html, 'id="langue-toggle"', 'aria-label', p.langue);
   html = contenu(html, 'donnees-structurees', `\n${JSON.stringify({ '@context': 'https://schema.org', '@graph': [
