@@ -341,8 +341,9 @@ class Canada(unittest.TestCase):
         self.assertIsNone(u.controle_forme("adjudications.json", adj, adj, date(2026, 11, 8), u.LIMITES_JOURS_CANADA))
 
     def test_part_des_non_residents_aux_mois_communs(self):
-        nr = u.serie_non_residents_canada({u.NR_CANADA: {"2026-07": 613068.0, "2026-08": 601548.0},
-                                           u.ENCOURS_CANADA: {"2026-08": 1311229.0, "2026-09": 1311511.0}})
+        nr = u.serie_non_residents_canada({u.NR_CANADA: {"1994-12": 75698.0, "2026-07": 613068.0, "2026-08": 601548.0},
+                                           u.ENCOURS_CANADA: {"1994-12": 234000.0, "2026-08": 1311229.0, "2026-09": 1311511.0}})
+        # 1994 : avant le changement de définition de 1995 (repos), écarté
         self.assertEqual(nr["points"], [{"mois": "2026-08", "part": 45.88, "detenu_m": 601548.0, "encours_m": 1311229.0}])
 
     def test_vrais_fichiers_canadiens_acceptes(self):

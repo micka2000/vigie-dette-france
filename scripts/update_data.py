@@ -474,8 +474,13 @@ def serie_adjudications_canada(observations=None):
     }
 
 
+# Avant 1995, Statistique Canada compte les pensions sur titres (« repos ») dans les obligations détenues par l'étranger
+# (note 1 du tableau 36-10-0475) : la série commence en janvier 1995, à définition constante.
+DEBUT_NR_CANADA = "1995-01"
+
+
 def serie_non_residents_canada(series=None):
-    """Part des obligations fédérales détenue par les non-résidents, en %, chaque mois depuis 1991."""
+    """Part des obligations fédérales détenue par les non-résidents, en %, chaque mois depuis 1995."""
     series = statcan([NR_CANADA, ENCOURS_CANADA]) if series is None else series
     nr, encours = series[NR_CANADA], series[ENCOURS_CANADA]
     return {
@@ -484,7 +489,7 @@ def serie_non_residents_canada(series=None):
         "source": f"Statistique Canada, tableaux 36-10-0475 (vecteur v{NR_CANADA}) et 10-10-0113 (vecteur v{ENCOURS_CANADA})",
         "points": [
             {"mois": m, "part": round(100 * nr[m] / encours[m], 2), "detenu_m": nr[m], "encours_m": encours[m]}
-            for m in sorted(nr) if encours.get(m)
+            for m in sorted(nr) if encours.get(m) and m >= DEBUT_NR_CANADA
         ],
     }
 
