@@ -66,7 +66,6 @@
   --text-h3: 22px;
   --text-h4: 18px;
   --text-body: 16px;
-  --text-lecture: 18px;
   --text-sm: 14px;
   --text-xs: 12px;
   --text-2xs: 11px;
@@ -425,10 +424,9 @@ footer p { margin: 0; max-width: 80ch; }
 .info[hidden] { display: none; }
 
 /* Page de lecture : une seule largeur pour le texte, les tableaux et les formules, bords alignés */
-/* 720 px et texte en 18 px : environ 80 signes par ligne au lieu de 105 */
-.methode .wrap { max-width: 720px; }
+.methode .wrap { max-width: 860px; }
 .methode .signal td:first-child { white-space: nowrap; }
-.methode .signal p, .methode .signal li { font-size: var(--text-lecture); line-height: 1.6; margin: 0; text-align: justify; hyphens: manual; }
+.methode .signal p, .methode .signal li { line-height: 1.6; margin: 0; text-align: justify; hyphens: manual; }
 .methode .signal { display: grid; gap: var(--space-3); }
 .methode .signal h3 { font-family: var(--font-display); font-weight: 700; font-size: var(--text-h4); margin: var(--space-2) 0 0; }
 .methode .signal ul { margin: 0; padding-left: 1.2em; display: grid; gap: var(--space-2); }
@@ -437,10 +435,6 @@ footer p { margin: 0; max-width: 80ch; }
   background: var(--bg-inset); color: var(--fg-1); border-radius: var(--radius-md, 8px);
   padding: var(--space-3) var(--space-4); margin: 0; overflow-x: auto; white-space: pre;
 }
-/* Page de lecture : la plus longue formule (environ 48 signes) tient dans la colonne de 640 px */
-.methode .formule { font-size: 13px; }
-/* Sur téléphone, la colonne est étroite : le texte de lecture reste en 16 px */
-@media (max-width: 599px) { .methode .signal :is(p, li) { font-size: var(--text-body); } }
 @media (max-width: 599px) { .formule { font-size: 12px; padding: var(--space-3); } }
 .retour { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 /* Lien de chaque carte vers la page du signal, et liste des autres signaux sur ces pages */
