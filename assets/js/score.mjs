@@ -228,9 +228,13 @@ const FRANCE = {
 // des deux taux à 10 ans), figés le 08/11/2026 : score 0 au 25e centile, 25 à la médiane, 50 au 75e, 75 au 90e, 100 au 99e.
 // Les notes gardent l'échelle de la France (crans perdus depuis AAA, la même pour tous les pays).
 export const ANCRAGES_CANADA = {
-  spread: [-62, -23, 5, 43, 113], // pb, 10 ans Canada moins 10 ans États-Unis
+  // pb, 10 ans Canada moins 10 ans États-Unis : centiles des moyennes mensuelles 1982-2026 (Statistique Canada v122543
+  // et FRED GS10), pour que la crise de la dette de 1994-1995 (150 à 200 pb) soit dans l'historique (D16)
+  spread: [-36, 2, 86, 142, 218],
   couverture: [2.38, 2.28, 2.16, 2.05, 1.85], // soumissions / montant adjugé, obligations à 10 ans
-  nonResidents: [21.3, 29.5, 34.3, 38.3, 44.2], // % des obligations fédérales négociables
+  // % des obligations fédérales négociables : barème de la France, comme les notes. L'exposition à une fuite des
+  // étrangers ne dépend pas du pays ; au Canada, une part haute a surtout suivi la demande refuge (14 % en 2009, 47 % en 2026) (D16)
+  nonResidents: ANCRAGES.nonResidents,
   notes: ANCRAGES.notes,
   stress: [0.03, 0.06, 0.13, 0.20, 0.47], // indice de stress financier de la Banque du Canada
 };
@@ -248,7 +252,7 @@ const CANADA = {
   signaux: {
     spread: { type: 'jour', ancrages: ANCRAGES_CANADA.spread, seuils: seuilsDe(ANCRAGES_CANADA.spread), peremptionJours: PEREMPTION_CANADA.spread },
     couverture: { type: 'date', ancrages: ANCRAGES_CANADA.couverture, seuils: seuilsDe(ANCRAGES_CANADA.couverture, -1), peremptionMois: PEREMPTION_CANADA.couverture },
-    nonResidents: { type: 'mois', ancrages: ANCRAGES_CANADA.nonResidents, seuils: seuilsDe(ANCRAGES_CANADA.nonResidents), peremptionMois: PEREMPTION_CANADA.nonResidents },
+    nonResidents: { type: 'mois', ancrages: ANCRAGES_CANADA.nonResidents, seuils: SEUILS.nonResidents, peremptionMois: PEREMPTION_CANADA.nonResidents },
     notes: { type: 'notes', ancrages: ANCRAGES.notes, seuils: SEUILS.notes, peremptionMois: Infinity },
   },
   sousIndices: { tension: ['spread', 'couverture'], fond: ['nonResidents', 'notes'] },

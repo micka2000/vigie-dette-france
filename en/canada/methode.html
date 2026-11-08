@@ -7,7 +7,7 @@
 <meta name="color-scheme" content="light dark">
 <meta name="robots" content="noindex">
 <title>How the Canadian Vigie Index is calculated · Vigie Dette Canada</title>
-<meta name="description" content="How the Canadian Vigie Index is calculated: the four signals, benchmarks drawn from history since 2001, the two parts, a full example and known limits.">
+<meta name="description" content="How the Canadian Vigie Index is calculated: the four signals, benchmarks (Canadian history since 1982 or France’s scale), the two parts, a full example and known limits.">
 <link rel="canonical" href="https://vigiedette.com/en/canada/methode.html">
 <link rel="alternate" hreflang="fr" href="https://vigiedette.com/canada/methode.html">
 <link rel="alternate" hreflang="en" href="https://vigiedette.com/en/canada/methode.html">
@@ -43,7 +43,7 @@
       </div>
     </div>
     <p class="verdict">The Canadian Vigie Index sums up the state of Canadian federal debt in a score from 0 to 100. Here is how it is calculated, with the example of 8 November 2026.</p>
-    <p class="stamp"><a class="retour" href="/en/canada/">← Back to the dashboard</a> · Provisional benchmarks, set on 8 November 2026</p>
+    <p class="stamp"><a class="retour" href="/en/canada/">← Back to the dashboard</a> · Benchmarks reviewed on 8 November 2026</p>
   </div>
 </header>
 
@@ -52,7 +52,7 @@
 
 <article class="signal">
   <h2>In short</h2>
-  <p>Four signals are tracked. Each gets a score out of 100 from a scale drawn from Canadian history. The two “markets” signals are averaged, then the two “fundamentals” signals. The index is the average of these two parts. It is the same calculation as for France, with benchmarks specific to Canada.</p>
+  <p>Four signals are tracked. Each gets a score out of 100 from a scale: Canadian history for the gap and cover, France’s scale for non-residents and ratings. The two “markets” signals are averaged, then the two “fundamentals” signals. The index is the average of these two parts. It is the same calculation as for France.</p>
   <pre class="formule">Index = ( Markets + Fundamentals ) ÷ 2
 
 Markets      = ( Gap + Cover ) ÷ 2
@@ -67,7 +67,7 @@ Index = ¼·Gap + ¼·Cover + ¼·Non-residents + ¼·Ratings</pre>
   <div class="table-scroll"><table class="ratings-table">
     <thead><tr><th>Signal</th><th>What is measured</th><th>Source</th><th>Frequency</th></tr></thead>
     <tbody>
-      <tr><td>Gap</td><td>Canada’s 10-year yield (benchmark bond) minus the US 10-year yield, at the close, in basis points (100 bp = 1%), on days published on both sides only</td><td>Bank of Canada, Federal Reserve</td><td>every day since 2001</td></tr>
+      <tr><td>Gap</td><td>Canada’s 10-year yield (benchmark bond) minus the US 10-year yield, at the close, in basis points (100 bp = 1%), on days published on both sides only</td><td>Bank of Canada, Federal Reserve</td><td>every day since 2001; every month since 1982 for the benchmarks</td></tr>
       <tr><td>Cover</td><td>Amount bid ÷ amount sold at government 10-year bond auctions (reopenings of older bonds set aside)</td><td>Bank of Canada</td><td>about every month since 2020, four to six times a year before</td></tr>
       <tr><td>Non-residents</td><td>Federal bonds held by foreign investors ÷ all marketable government bonds, at month end</td><td>Statistics Canada</td><td>every month since 1995</td></tr>
       <tr><td>Ratings</td><td>Lowest rating from S&amp;P, Moody’s and Fitch, counted in notches lost from AAA</td><td>agencies, two matching sources</td><td>at each decision</td></tr>
@@ -78,17 +78,21 @@ Index = ¼·Gap + ¼·Cover + ¼·Non-residents + ¼·Ratings</pre>
 
 <article class="signal">
   <h2>2. Each signal becomes a score out of 100</h2>
-  <p>Each signal has five benchmarks, drawn from its history since January 2001 (the first session when both 10-year yields exist) by one rule, the percentile rule: the score is 0 at the 25th percentile (a better level was seen only one day in four), 25 at the median, 50 at the 75th percentile, 75 at the 90th and 100 at the 99th (a worse level was seen only one day in a hundred). Between two benchmarks, the score moves in a straight line, as for France.</p>
+  <p>Each signal has five benchmarks: the score is 0 at the first, 25 at the second (watch), 50 at the third (stress), 75 at the fourth (crisis) and 100 at the last. Between two benchmarks, the score moves in a straight line, as for France. The benchmarks come from two rules.</p>
+  <ul>
+    <li><b>Gap and cover: the percentiles of their history.</b> The score is 0 at the 25th percentile (a better level was seen only one time in four), 25 at the median, 50 at the 75th percentile, 75 at the 90th and 100 at the 99th (a worse level was seen only one time in a hundred). For the gap, the history starts in 1982, in monthly averages (Statistics Canada, Federal Reserve): it includes Canada’s 1994-1995 debt crisis, when the gap was 150 to 200 bp. For cover, it starts in 2001.</li>
+    <li><b>Non-residents and ratings: France’s scale.</b> The agencies’ scale is the same for every country. The risk of debt held abroad, sellers who can leave all at once, depends on the share held, not on the country. In Canada, this share has mostly followed demand for debt seen as safe: 33% during the 1995 crisis, 14% in 2009, 47% in 2026. Percentiles would have put it in “crisis” at its record.</li>
+  </ul>
   <div class="table-scroll"><table class="ratings-table">
     <thead><tr><th>Score</th><th>0</th><th>25 watch</th><th>50 stress</th><th>75 crisis</th><th>100</th></tr></thead>
     <tbody>
-      <tr><td>Gap</td><td>-62 bp</td><td>-23 bp</td><td>5 bp</td><td>43 bp</td><td>113 bp</td></tr>
+      <tr><td>Gap</td><td>-36 bp</td><td>2 bp</td><td>86 bp</td><td>142 bp</td><td>218 bp</td></tr>
       <tr><td>Cover</td><td>2.38</td><td>2.28</td><td>2.16</td><td>2.05</td><td>1.85</td></tr>
-      <tr><td>Non-residents</td><td>21.3%</td><td>29.5%</td><td>34.3%</td><td>38.3%</td><td>44.2%</td></tr>
+      <tr><td>Non-residents</td><td>40%</td><td>50%</td><td>55%</td><td>60%</td><td>70%</td></tr>
       <tr><td>Ratings</td><td>AAA</td><td>AA-</td><td>A+</td><td>BBB+</td><td>BBB-</td></tr>
     </tbody>
   </table></div>
-  <p>For cover, a low value is bad: the scale goes down. Ratings keep France’s scale, since the agencies’ scale is the same for every country. By construction, each signal except ratings spends about half the time in “calm”, a quarter in “watch”, 15% in “stress” and 10% in “crisis” over 2001-2026. These benchmarks are fixed: they do not move with new data.</p>
+  <p>For cover, a low value is bad: the scale goes down. Over the 2001-2026 sessions, the gap was in “calm” 73% of the time, in “watch” 24%, in “stress” 4% and never in “crisis”; the non-resident share never reached 50%. These benchmarks are fixed: they do not move with new data.</p>
 </article>
 
 <article class="signal">
@@ -111,30 +115,30 @@ Index = ¼·Gap + ¼·Cover + ¼·Non-residents + ¼·Ratings</pre>
   <div class="table-scroll"><table class="ratings-table">
     <thead><tr><th>Signal</th><th>Value</th><th>Date</th><th>Score</th></tr></thead>
     <tbody>
-      <tr><td>Gap</td><td>-117 bp</td><td>5 November 2026</td><td>0 (below the first benchmark, -62)</td></tr>
+      <tr><td>Gap</td><td>-117 bp</td><td>5 November 2026</td><td>0 (below the first benchmark, -36)</td></tr>
       <tr><td>Cover</td><td>2.51</td><td>29 October 2026</td><td>0 (above the first benchmark, 2.38)</td></tr>
-      <tr><td>Non-residents</td><td>45.9%</td><td>end of August 2026</td><td>100 (beyond the last benchmark, 44.2%)</td></tr>
+      <tr><td>Non-residents</td><td>45.9%</td><td>end of August 2026</td><td>14.7 (between 40% and 50%: 25 × 5.88 ÷ 10)</td></tr>
       <tr><td>Ratings</td><td>AA+ (Fitch)</td><td>since 24 June 2020</td><td>8.3 (1 notch lost: 25 × 1 ÷ 3)</td></tr>
     </tbody>
   </table></div>
   <pre class="formule">Markets      = ( 0 + 0 ) ÷ 2       = 0
-Fundamentals = ( 100 + 8.3 ) ÷ 2   = 54.2
-Index        = ( 0 + 54.2 ) ÷ 2    = 27.1   →  watch, mostly in the fundamentals</pre>
+Fundamentals = ( 14.7 + 8.3 ) ÷ 2  = 11.5
+Index        = ( 0 + 11.5 ) ÷ 2    = 5.8    →  calm</pre>
 </article>
 
 <article class="signal">
   <h2>5. What is not in the index</h2>
-  <p>The Bank of Canada’s financial stress index, published monthly, is shown next to the index for comparison: it measures strain across all Canadian markets (equities, currency, credit), not only on federal debt. It is converted to 100 with the same percentiles: 0.03; 0.06; 0.13; 0.20; 0.47. Its record, 0.55, dates from February 2009.</p>
+  <p>The Bank of Canada’s financial stress index, published monthly, is shown next to the index for comparison: it measures strain across all Canadian markets (equities, currency, credit), not only on federal debt. It is converted to 100 by the percentile rule, over 2001-2026: 0.03; 0.06; 0.13; 0.20; 0.47. Its record, 0.55, dates from February 2009.</p>
 </article>
 
 <article class="signal">
   <h2>6. Known limits</h2>
   <ul>
-    <li><b>The gap with the United States is not a pure risk premium.</b> The two countries share neither a currency nor a central bank: the gap also follows their policy rates. Its record, +134 bp on 9 October 2002, came from monetary policy, not a crisis. It is kept because it is the only free daily market measure.</li>
-    <li><b>A high non-resident share can also reflect confidence.</b> The 2026 record (46.9% in July) is pushing the index towards watch today, while it may reflect foreign demand for debt seen as safe.</li>
+    <li><b>The gap with the United States is not a pure risk premium.</b> The two countries share neither a currency nor a central bank: the gap also follows their policy rates. Its high, +272 bp in April 1990, and its record since 2001, +134 bp on 9 October 2002, came mostly from monetary policy, not a debt crisis. It is kept because it is the only free daily market measure.</li>
+    <li><b>A high non-resident share can also reflect confidence.</b> This is why it follows France’s scale rather than Canadian history: its 2026 record (46.9% in July) stays “calm”, below the 50% threshold.</li>
     <li><b>Non-resident numerator and denominator, checked on 8 November 2026.</b> Both count bonds only: no Treasury bills, no Crown corporations, no retail savings products. They differ on two points. Bonds held abroad are at book value (accrued interest included), the total at nominal value. And they include foreign-currency bonds, 2.8% of foreign holdings in August 2026 (7.8% at the end of 2015): without them, the share would be 44.6% instead of 45.9%. Before 1995, the series also counted repurchase agreements: it therefore starts in January 1995.</li>
-    <li><b>The Canadian index moves little.</b> Over 2001-2026, it never went above 49 (on 3 April 2020). Its “markets” part reached 81 on 18 December 2008.</li>
-    <li><b>The benchmarks are provisional.</b> They will be reviewed before the Canadian page opens to the public.</li>
+    <li><b>The Canadian index moves little.</b> Over 2001-2026, it never went above 31 (on 18 December 2008, with its “markets” part at 61) and was in “watch” in only 4% of sessions. It does not go back to the 1995 crisis: 10-year bond auctions are only published from 1998.</li>
+    <li><b>The benchmarks were reviewed on 8 November 2026.</b> The first version drew all four signals except ratings from 2001-2026 percentiles: the gap entered “crisis” from 43 bp, far from the 1995 crisis, and the non-resident record put the index in watch (27 on 8 November 2026, against 5.8 now).</li>
   </ul>
 </article>
 

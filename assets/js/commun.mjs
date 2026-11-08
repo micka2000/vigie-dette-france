@@ -3,7 +3,7 @@
 // Le code de rendu ne teste jamais le pays : il lit ce que la page du pays lui passe à demarrer().
 import {
   NIVEAUX_TEXTE, etatDuJour, serieQuotidienne, plusHautDepuis, picDuMois, phraseVerdict,
-} from './score.mjs?v=84a4b8cd';
+} from './score.mjs?v=c172bcbb';
 
 window.vigieDemarre = true; // lu par le script de secours d'index.html
 

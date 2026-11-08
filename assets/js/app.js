@@ -2,11 +2,11 @@
 // Le socle commun (en-tête, courbe, graphiques, infobulles) est dans commun.mjs ; le calcul dans score.mjs (PAYS.france).
 import {
   ANCRAGES, PAYS, couvertures, interpoler, notch, notchLabel, fusionnerSeries, plusHautDepuis, plusBasDepuis, picsMensuels, partsTarget,
-} from './score.mjs?v=84a4b8cd';
+} from './score.mjs?v=c172bcbb';
 import {
   state, L, f0, f1, f2, fSigned1, pc, pb, fmtMonth, fmtMonthLong, fmtDayLong, fmtDay, fmtWeekday, parseMonth, parseDay, css, json,
   lineChart, legend, visibles, periodes, since, lastOfPeriod, bandes, nc, renderRatingsTable, demarrer,
-} from './commun.mjs?v=18c87b14';
+} from './commun.mjs?v=38d652b1';
 
 // Carte → signal de la fiche (score.mjs), et textes des seuils de risque affichés sous chaque carte.
 const CLE_SCORE = { spread: 'spread', adjudications: 'couverture', 'non-residents': 'nonResidents', notations: 'notes', target: 'target' };

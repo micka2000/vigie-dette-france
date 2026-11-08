@@ -1,10 +1,10 @@
 // Vigie Dette Canada : les quatre cartes canadiennes (fichiers de data/canada/, textes, graphiques).
 // Le socle commun (en-tête, courbe, graphiques, infobulles) est dans commun.mjs ; le calcul dans score.mjs (PAYS.canada).
-import { ANCRAGES_CANADA, PAYS, interpoler, notch, notchLabel, picsMensuels } from './score.mjs?v=84a4b8cd';
+import { ANCRAGES_CANADA, PAYS, interpoler, notch, notchLabel, picsMensuels } from './score.mjs?v=c172bcbb';
 import {
   state, L, f0, f1, f2, fSigned1, pc, pb, fmtMonth, fmtDay, fmtWeekday, parseMonth, parseDay, css, json,
   lineChart, legend, visibles, periodes, since, lastOfPeriod, bandes, nc, renderRatingsTable, demarrer,
-} from './commun.mjs?v=18c87b14';
+} from './commun.mjs?v=38d652b1';
 
 const FICHE = PAYS.canada;
 // Carte → signal de la fiche (score.mjs).
@@ -200,8 +200,8 @@ const descriptionIndice = () => ({
     'A score from 0 to 100 that sums up the state of Canadian federal debt in a single figure, from the four signals below.'),
   pourquoi: L('Plus elle est haute, plus la situation est tendue. « Plus haut depuis » dit si l’on n’a pas vu pire depuis longtemps : il compare le chiffre du jour à chaque journée depuis 2001.',
     'The higher it is, the more strained the situation. “Highest since” tells whether things have not been this bad for a long time: it compares today’s figure with every day since 2001.'),
-  lire: L('De 0 à 25 : calme. De 25 à 50 : vigilance. De 50 à 75 : tension. Au-delà de 75 : crise. L’indice est la moyenne de deux parties : ce que les marchés exigent pour prêter au Canada (écart de taux avec les États-Unis, demande lors des emprunts) et ses fragilités de fond (part détenue par l’étranger, notes des agences). Chaque repère est tiré de l’historique canadien depuis 2001 : l’indice se compare à son propre passé, pas à l’indice français.',
-    'From 0 to 25: calm. From 25 to 50: watch. From 50 to 75: stress. Above 75: crisis. The index is the average of two parts: what markets demand to lend to Canada (yield gap with the United States, demand at auctions) and its underlying weaknesses (share held abroad, agency ratings). Each benchmark comes from Canadian history since 2001: the index is compared with its own past, not with the French index.'),
+  lire: L('De 0 à 25 : calme. De 25 à 50 : vigilance. De 50 à 75 : tension. Au-delà de 75 : crise. L’indice est la moyenne de deux parties : ce que les marchés exigent pour prêter au Canada (écart de taux avec les États-Unis, demande lors des emprunts) et ses fragilités de fond (part détenue par l’étranger, notes des agences). Les repères de l’écart et de la couverture viennent de l’historique canadien (depuis 1982 pour l’écart, 2001 pour la couverture) ; la part détenue par l’étranger et les notes gardent le barème de la France.',
+    'From 0 to 25: calm. From 25 to 50: watch. From 50 to 75: stress. Above 75: crisis. The index is the average of two parts: what markets demand to lend to Canada (yield gap with the United States, demand at auctions) and its underlying weaknesses (share held abroad, agency ratings). The gap and cover benchmarks come from Canadian history (since 1982 for the gap, 2001 for cover); the share held abroad and ratings keep France’s scale.'),
   qui: L('Vigie Dette, recalculé chaque matin à partir des sources de chaque signal', 'Vigie Dette, recalculated every morning from the sources of each signal'),
   sources: [[L('les quatre signaux', 'the four signals'), '#spread'], [L('la méthode de calcul', 'how it is calculated'), 'methode.html'], [L('formule ouverte', 'open formula'), 'https://github.com/micka2000/vigie-dette-france/blob/main/assets/js/score.mjs']],
 });

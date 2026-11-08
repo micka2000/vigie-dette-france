@@ -1,14 +1,14 @@
 {
   "jour": "2026-11-05",
-  "indice": 27,
-  "niveau": "vigilance",
+  "indice": 6,
+  "niveau": "calme",
   "niveauTexte": {
-    "fr": "Vigilance",
-    "en": "Watch"
+    "fr": "Calme",
+    "en": "Calm"
   },
   "verdict": {
-    "fr": "Les signaux de la dette canadienne appellent à la vigilance, surtout sur le fond. Le reste des marchés financiers reste calme.",
-    "en": "Canadian debt signals call for vigilance, mostly in the fundamentals. The rest of the financial markets remain calm."
+    "fr": "Les signaux de la dette canadienne sont calmes. Le reste des marchés financiers est aussi calme.",
+    "en": "Canadian debt signals are calm. The rest of the financial markets are also calm."
   },
   "tuiles": {
     "fr": [
@@ -28,7 +28,7 @@
       },
       {
         "cle": "non-residents",
-        "niveau": "crise",
+        "niveau": "calme",
         "nom": "Part des non-résidents",
         "valeur": "45,9 %"
       },
@@ -56,7 +56,7 @@
       },
       {
         "cle": "non-residents",
-        "niveau": "crise",
+        "niveau": "calme",
         "nom": "Non-resident share",
         "valeur": "45.9%"
       },

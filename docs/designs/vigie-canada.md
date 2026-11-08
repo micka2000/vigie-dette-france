@@ -11,13 +11,13 @@ Mode: Builder
 Ce qui est en ligne, en phase discrète (D12 : `noindex`, hors sitemap, sans lien depuis la France) :
 - `/canada/`, `/en/canada/`, `/canada/methode.html`, `/en/canada/methode.html`, image de partage FR et EN.
 - Quatre signaux dans l'indice (écart Canada-États-Unis, couverture des adjudications à 10 ans, non-résidents, notes) ;
-  indice de stress de la Banque du Canada à côté, hors indice. Repères en centiles 2001-2026 (D15).
+  indice de stress de la Banque du Canada à côté, hors indice. Repères revus le 2026-11-08 (D16) : écart en centiles 1982-2026, couverture en centiles 2001-2026, non-résidents et notes au barème de la France.
 - Code : `score.mjs` (`PAYS.france`, `PAYS.canada`), `commun.mjs` (socle), `app.js` (France), `canada.js` (Canada),
   `canada/cartes.html` (cartes), `update_data.py` (`main_canada`, `data/canada/`), `pages.mjs` (`construireCanada`).
 - France inchangée : calculs gardés par `test/identite-france.test.mjs`, rendu comparé dans le navigateur avant et après.
 
 Deux collectes réelles vérifiées le 2026-11-08 (19 h 56 et 20 h 11 UTC, aucune série en échec). Reste : livraison 3 (sélecteur France | Canada, sitemap, JSON-LD
-« Vigie Dette ») sur feu vert de Mickaël ; repères à revoir avant l'ouverture (D15) ; D13 en attente ; pages par signal (D9.1).
+« Vigie Dette ») sur feu vert de Mickaël ; D13 en attente ; pages par signal (D9.1).
 Le corps ci-dessous garde la conception d'origine ; là où il diverge, les décisions (D9 à D15) et cet état priment.
 
 ## Problem Statement
@@ -281,6 +281,7 @@ Mode : SCOPE REDUCTION (D8). Ces décisions priment sur le texte ci-dessus quand
 | D13 | 5e signal candidat, équivalent de TARGET2 : « pression sur le dollar canadien ». Chaque mois, baisse du CAD face à l'USD et creusement de l'écart Canada-États-Unis à 10 ans, sur 3 mois, chacun en écarts-types des 10 années précédentes ; pression = le plus faible des deux si les deux vont dans le sens d'une fuite, sinon 0 ; vigilance au p90 et alerte au p97 de 1981-2000, seuils figés ensuite. Prototype du 2026-10-29 (FRED DEXCAUS, IRLTLT01CAM156N, GS10) : sur 2001-2026, vigilance dès 2008-01 (pic de stress BdC en 2008-10), calme en 2015, un mois de vigilance en 2022-07, fausse alerte en 2002-09, aucune avance en 2020-03 ; corrélation 0,49 avec la variation de l'écart, 0,24 avec FVI_FSI_CAN. Non prouvé : aucune fuite propre au Canada hors période de réglage. En production : taux quotidiens Valet (depuis 2001 seulement). Avis des spécialistes demandé sur l'Université de l'Épargne | En attente (décision de Mickaël le 2026-10-29 : rien ne bouge avant les avis de l'Université de l'Épargne) |
 | D14 | DBRS Morningstar abandonné : les trois agences S&P, Moody's et Fitch suffisent, comme pour la France ; `maj_notations` et sa règle de recoupement à deux sources restent inchangés | Trois agences |
 | D15 | Repères canadiens : centiles de l'historique depuis 2001 (score 0 au 25e, 25 à la médiane, 50 au 75e, 75 au 90e, 100 au 99e), figés le 08/11/2026 dans `PAYS.canada` (`score.mjs`). Simulation : indice entre 0 et 49 sur 2001-2026, 27 le 08/11/2026 ; écart CA-US au plus haut en 2002 (politique monétaire), non-résidents au record | Gardés pour l'instant (Mickaël, 2026-11-08), à revoir avant la livraison 3 |
+| D16 | Repères canadiens revus avant l'ouverture : écart en centiles des moyennes mensuelles 1982-2026 (Statistique Canada v122543, FRED GS10 ; écart mensuel fidèle au quotidien à 7,6 pb près sur 2001-2026), pour inclure la crise de 1994-1995 (150 à 200 pb) : -36 / 2 / 86 / 142 / 218 pb. Non-résidents au barème de la France (40 / 50 / 55 / 60 / 70 %) : 33 % pendant la crise de 1995, 14 % en 2009, 47 % en 2026, la part suit la demande refuge. Couverture et notes inchangées. Indice 2001-2026 : calme 96 % des séances, plus haut 31 (18/12/2008) ; 5,8 le 08/11/2026 (27,1 avant) | V2 choisie par Mickaël, 2026-11-08 |
 
 Livraisons :
 1. Refonte à l'identique : fiche par pays, fichiers français identiques octet pour octet.

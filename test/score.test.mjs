@@ -341,3 +341,19 @@ test('Canada : série quotidienne calculable à chaque séance depuis 2001 (pér
   assert.equal(serie[0].jour, '2001-01-02');
   assert.equal(serie.filter((p) => p.indice == null).length, 0);
 });
+
+test('Canada : repères revus (D16), la crise de 1995 en « crise », le record des non-résidents en « calme »', () => {
+  const { spread, nonResidents } = PAYS.canada.signaux;
+  const niveau = (cfg, v) => cfg.seuils.find(([, de, a]) => v >= de && v < a)[0];
+  // Écart de 1994-1995 (150 à 200 pb, moyennes mensuelles) : crise sur la carte et note d'au moins 75
+  assert.equal(niveau(spread, 150), 'crise');
+  assert.ok(interpoler(150, spread.ancrages) >= 75);
+  // Même barème que la France pour les non-résidents : le record de juillet 2026 (46,9 %) reste calme
+  assert.deepEqual(nonResidents.ancrages, ANCRAGES.nonResidents);
+  assert.equal(niveau(nonResidents, 46.9), 'calme');
+  // Le 8 novembre 2026 : indice 5,8, calme ; jamais au-delà de 31 sur 2001-2026
+  const e = etatDuJour(CA, new Date('2026-11-08T12:00:00Z'), PAYS.canada);
+  assert.equal(Math.round(e.indice.score * 10) / 10, 5.8);
+  const max = Math.max(...serieQuotidienne(CA, null, PAYS.canada).map((p) => p.indice));
+  assert.ok(max < 31, `plus haut ${max}`);
+});

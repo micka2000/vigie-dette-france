@@ -7,7 +7,7 @@
 <meta name="color-scheme" content="light dark">
 <meta name="robots" content="noindex">
 <title>Méthode de calcul de l’Indice Vigie canadien · Vigie Dette Canada</title>
-<meta name="description" content="Comment l’Indice Vigie canadien est calculé : les quatre signaux, les repères tirés de l’historique depuis 2001, les deux parties, un exemple complet et les limites connues.">
+<meta name="description" content="Comment l’Indice Vigie canadien est calculé : les quatre signaux, les repères (historique canadien depuis 1982 ou barème de la France), les deux parties, un exemple complet et les limites connues.">
 <link rel="canonical" href="https://vigiedette.com/canada/methode.html">
 <link rel="alternate" hreflang="fr" href="https://vigiedette.com/canada/methode.html">
 <link rel="alternate" hreflang="en" href="https://vigiedette.com/en/canada/methode.html">
@@ -43,7 +43,7 @@
       </div>
     </div>
     <p class="verdict">L’Indice Vigie canadien résume en une note de 0 à 100 l’état de la dette fédérale canadienne. Voici comment il est calculé, avec l’exemple du 8 novembre 2026.</p>
-    <p class="stamp"><a class="retour" href="/canada/">← Retour au tableau de bord</a> · Repères provisoires, figés le 8 novembre 2026</p>
+    <p class="stamp"><a class="retour" href="/canada/">← Retour au tableau de bord</a> · Repères revus le 8 novembre 2026</p>
   </div>
 </header>
 
@@ -52,7 +52,7 @@
 
 <article class="signal">
   <h2>En résumé</h2>
-  <p>On suit quatre signaux. Chacun reçoit une note sur 100 grâce à un barème tiré de l’historique canadien. On fait la moyenne des deux signaux « marchés », puis celle des deux signaux « de fond ». L’indice est la moyenne de ces deux parties. C’est le même calcul que pour la France, avec des repères propres au Canada.</p>
+  <p>On suit quatre signaux. Chacun reçoit une note sur 100 grâce à un barème : l’historique canadien pour l’écart et la couverture, celui de la France pour les non-résidents et les notes. On fait la moyenne des deux signaux « marchés », puis celle des deux signaux « de fond ». L’indice est la moyenne de ces deux parties. C’est le même calcul que pour la France.</p>
   <pre class="formule">Indice = ( Marchés + Fond ) ÷ 2
 
 Marchés = ( Écart + Couverture ) ÷ 2
@@ -67,7 +67,7 @@ Indice  = ¼·Écart + ¼·Couverture + ¼·Non-résidents + ¼·Notes</pre>
   <div class="table-scroll"><table class="ratings-table">
     <thead><tr><th>Signal</th><th>Ce qu’on mesure</th><th>Source</th><th>Fréquence</th></tr></thead>
     <tbody>
-      <tr><td>Écart</td><td>Taux à 10 ans du Canada (obligation de référence) moins taux à 10 ans des États-Unis, à la clôture, en points de base (100 pb = 1 %), aux seuls jours publiés des deux côtés</td><td>Banque du Canada, Réserve fédérale</td><td>chaque jour depuis 2001</td></tr>
+      <tr><td>Écart</td><td>Taux à 10 ans du Canada (obligation de référence) moins taux à 10 ans des États-Unis, à la clôture, en points de base (100 pb = 1 %), aux seuls jours publiés des deux côtés</td><td>Banque du Canada, Réserve fédérale</td><td>chaque jour depuis 2001 ; chaque mois depuis 1982 pour les repères</td></tr>
       <tr><td>Couverture</td><td>Montant demandé ÷ montant vendu lors de la vente d’obligations à 10 ans du gouvernement (réouvertures d’anciennes obligations écartées)</td><td>Banque du Canada</td><td>environ chaque mois depuis 2020, quatre à six fois par an avant</td></tr>
       <tr><td>Non-résidents</td><td>Obligations fédérales détenues par des investisseurs étrangers ÷ ensemble des obligations négociables du gouvernement, en fin de mois</td><td>Statistique Canada</td><td>chaque mois depuis 1995</td></tr>
       <tr><td>Notes</td><td>Note la plus basse de S&amp;P, Moody’s et Fitch, comptée en crans perdus depuis AAA</td><td>agences, deux sources concordantes</td><td>à chaque décision</td></tr>
@@ -78,17 +78,21 @@ Indice  = ¼·Écart + ¼·Couverture + ¼·Non-résidents + ¼·Notes</pre>
 
 <article class="signal">
   <h2>2. Chaque signal devient une note sur 100</h2>
-  <p>Chaque signal a cinq repères, tirés de son historique depuis janvier 2001 (première séance où les deux taux à 10 ans existent) par une même règle, celle des centiles : la note vaut 0 au 25<sup>e</sup> centile (un niveau meilleur n’a été vu qu’un jour sur quatre), 25 à la médiane, 50 au 75<sup>e</sup> centile, 75 au 90<sup>e</sup> et 100 au 99<sup>e</sup> (un niveau pire n’a été vu qu’un jour sur cent). Entre deux repères, la note avance en ligne droite, comme pour la France.</p>
+  <p>Chaque signal a cinq repères : la note vaut 0 au premier, 25 au deuxième (vigilance), 50 au troisième (tension), 75 au quatrième (crise) et 100 au dernier. Entre deux repères, la note avance en ligne droite, comme pour la France. Les repères viennent de deux règles.</p>
+  <ul>
+    <li><b>Écart et couverture : les centiles de leur historique.</b> La note vaut 0 au 25<sup>e</sup> centile (un niveau meilleur n’a été vu qu’une fois sur quatre), 25 à la médiane, 50 au 75<sup>e</sup> centile, 75 au 90<sup>e</sup> et 100 au 99<sup>e</sup> (un niveau pire n’a été vu qu’une fois sur cent). Pour l’écart, l’historique part de 1982, en moyennes mensuelles (Statistique Canada, Réserve fédérale) : il comprend la crise de la dette canadienne de 1994-1995, quand l’écart valait 150 à 200 pb. Pour la couverture, il part de 2001.</li>
+    <li><b>Non-résidents et notes : le barème de la France.</b> L’échelle des agences est la même pour tous les pays. Le risque d’une dette détenue par l’étranger, des vendeurs qui peuvent partir d’un coup, dépend de la part détenue, pas du pays. Au Canada, cette part a surtout suivi la demande pour une dette jugée sûre : 33 % pendant la crise de 1995, 14 % en 2009, 47 % en 2026. Des centiles l’auraient mise en « crise » à son record.</li>
+  </ul>
   <div class="table-scroll"><table class="ratings-table">
     <thead><tr><th>Note</th><th>0</th><th>25 vigilance</th><th>50 tension</th><th>75 crise</th><th>100</th></tr></thead>
     <tbody>
-      <tr><td>Écart</td><td>-62 pb</td><td>-23 pb</td><td>5 pb</td><td>43 pb</td><td>113 pb</td></tr>
+      <tr><td>Écart</td><td>-36 pb</td><td>2 pb</td><td>86 pb</td><td>142 pb</td><td>218 pb</td></tr>
       <tr><td>Couverture</td><td>2,38</td><td>2,28</td><td>2,16</td><td>2,05</td><td>1,85</td></tr>
-      <tr><td>Non-résidents</td><td>21,3 %</td><td>29,5 %</td><td>34,3 %</td><td>38,3 %</td><td>44,2 %</td></tr>
+      <tr><td>Non-résidents</td><td>40 %</td><td>50 %</td><td>55 %</td><td>60 %</td><td>70 %</td></tr>
       <tr><td>Notes</td><td>AAA</td><td>AA-</td><td>A+</td><td>BBB+</td><td>BBB-</td></tr>
     </tbody>
   </table></div>
-  <p>Pour la couverture, une valeur basse est mauvaise : le barème descend. Les notes gardent le barème de la France, car l’échelle des agences est la même pour tous les pays. Par construction, chaque signal sauf les notes passe environ la moitié du temps en « calme », un quart en « vigilance », 15 % en « tension » et 10 % en « crise » sur 2001-2026. Ces repères sont figés : ils ne bougent pas avec les nouvelles données.</p>
+  <p>Pour la couverture, une valeur basse est mauvaise : le barème descend. Sur les séances de 2001-2026, l’écart a été en « calme » 73 % du temps, en « vigilance » 24 %, en « tension » 4 % et jamais en « crise » ; la part des non-résidents n’a jamais atteint 50 %. Ces repères sont figés : ils ne bougent pas avec les nouvelles données.</p>
 </article>
 
 <article class="signal">
@@ -111,30 +115,30 @@ Indice  = ¼·Écart + ¼·Couverture + ¼·Non-résidents + ¼·Notes</pre>
   <div class="table-scroll"><table class="ratings-table">
     <thead><tr><th>Signal</th><th>Valeur</th><th>Date</th><th>Note</th></tr></thead>
     <tbody>
-      <tr><td>Écart</td><td>-117 pb</td><td>5 novembre 2026</td><td>0 (sous le premier repère, -62)</td></tr>
+      <tr><td>Écart</td><td>-117 pb</td><td>5 novembre 2026</td><td>0 (sous le premier repère, -36)</td></tr>
       <tr><td>Couverture</td><td>2,51</td><td>29 octobre 2026</td><td>0 (au-dessus du premier repère, 2,38)</td></tr>
-      <tr><td>Non-résidents</td><td>45,9 %</td><td>fin août 2026</td><td>100 (au-delà du dernier repère, 44,2 %)</td></tr>
+      <tr><td>Non-résidents</td><td>45,9 %</td><td>fin août 2026</td><td>14,7 (entre 40 % et 50 % : 25 × 5,88 ÷ 10)</td></tr>
       <tr><td>Notes</td><td>AA+ (Fitch)</td><td>depuis le 24 juin 2020</td><td>8,3 (1 cran perdu : 25 × 1 ÷ 3)</td></tr>
     </tbody>
   </table></div>
   <pre class="formule">Marchés = ( 0 + 0 ) ÷ 2       = 0
-Fond    = ( 100 + 8,3 ) ÷ 2   = 54,2
-Indice  = ( 0 + 54,2 ) ÷ 2    = 27,1   →  vigilance, surtout sur le fond</pre>
+Fond    = ( 14,7 + 8,3 ) ÷ 2  = 11,5
+Indice  = ( 0 + 11,5 ) ÷ 2    = 5,8    →  calme</pre>
 </article>
 
 <article class="signal">
   <h2>5. Ce qui n’entre pas dans l’indice</h2>
-  <p>L’indice de stress financier de la Banque du Canada, publié chaque mois, est affiché à côté de l’indice pour comparaison : il mesure la tension sur l’ensemble des marchés canadiens (actions, change, crédit), pas seulement sur la dette fédérale. Il est converti sur 100 avec les mêmes centiles : 0,03 ; 0,06 ; 0,13 ; 0,20 ; 0,47. Son record, 0,55, date de février 2009.</p>
+  <p>L’indice de stress financier de la Banque du Canada, publié chaque mois, est affiché à côté de l’indice pour comparaison : il mesure la tension sur l’ensemble des marchés canadiens (actions, change, crédit), pas seulement sur la dette fédérale. Il est converti sur 100 par la règle des centiles, sur 2001-2026 : 0,03 ; 0,06 ; 0,13 ; 0,20 ; 0,47. Son record, 0,55, date de février 2009.</p>
 </article>
 
 <article class="signal">
   <h2>6. Limites connues</h2>
   <ul>
-    <li><b>L’écart avec les États-Unis n’est pas une prime de risque pure.</b> Les deux pays n’ont ni la même monnaie ni la même banque centrale : l’écart suit aussi leurs taux directeurs. Son record, +134 pb le 9 octobre 2002, venait de la politique monétaire, pas d’une crise. Il est gardé parce que c’est la seule mesure de marché quotidienne et gratuite.</li>
-    <li><b>Une part élevée de non-résidents peut aussi traduire la confiance.</b> Le record de 2026 (46,9 % en juillet) pousse aujourd’hui l’indice vers la vigilance, alors qu’il peut refléter une demande étrangère pour une dette jugée sûre.</li>
+    <li><b>L’écart avec les États-Unis n’est pas une prime de risque pure.</b> Les deux pays n’ont ni la même monnaie ni la même banque centrale : l’écart suit aussi leurs taux directeurs. Son plus haut, +272 pb en avril 1990, et son record depuis 2001, +134 pb le 9 octobre 2002, venaient surtout de la politique monétaire, pas d’une crise de la dette. Il est gardé parce que c’est la seule mesure de marché quotidienne et gratuite.</li>
+    <li><b>Une part élevée de non-résidents peut aussi traduire la confiance.</b> C’est pour cela qu’elle suit le barème de la France et non l’historique canadien : son record de 2026 (46,9 % en juillet) reste « calme », sous le seuil de 50 %.</li>
     <li><b>Numérateur et dénominateur des non-résidents, vérifiés le 8 novembre 2026.</b> Les deux ne comptent que des obligations : ni bons du Trésor, ni sociétés d’État, ni produits d’épargne. Ils diffèrent sur deux points. Les obligations détenues par l’étranger sont en valeur comptable (intérêts courus compris), l’ensemble en valeur nominale. Et elles comprennent les obligations en devises étrangères, 2,8 % des avoirs étrangers en août 2026 (7,8 % fin 2015) : sans elles, la part serait de 44,6 % au lieu de 45,9 %. Avant 1995, la série comptait aussi les pensions sur titres : elle commence donc en janvier 1995.</li>
-    <li><b>L’indice canadien bouge peu.</b> Sur 2001-2026, il n’a jamais dépassé 49 (le 3 avril 2020). Sa partie « marchés » a atteint 81 le 18 décembre 2008.</li>
-    <li><b>Les repères sont provisoires.</b> Ils seront revus avant l’ouverture publique de la page canadienne.</li>
+    <li><b>L’indice canadien bouge peu.</b> Sur 2001-2026, il n’a jamais dépassé 31 (le 18 décembre 2008, sa partie « marchés » à 61) et n’a été en « vigilance » que 4 % des séances. Il ne remonte pas jusqu’à la crise de 1995 : les ventes d’obligations à 10 ans ne sont publiées que depuis 1998.</li>
+    <li><b>Les repères ont été revus le 8 novembre 2026.</b> La première version tirait les quatre signaux, sauf les notes, des centiles de 2001-2026 : l’écart passait en « crise » dès 43 pb, loin de la crise de 1995, et le record des non-résidents mettait l’indice en vigilance (27 le 8 novembre 2026, contre 5,8 désormais).</li>
   </ul>
 </article>
 
