@@ -41,7 +41,7 @@ Plan : `docs/designs/vigie-canada.md` (revue CEO terminée le 29/10/2026, mode S
 
 - [x] **Livraison 1, moteur** _(fait le 08/11/2026 : fiche par pays dans `score.mjs` (`PAYS.france`, `PAYS.canada`), calculs français identiques, gardés par `test/identite-france.test.mjs`)_.
 - [x] **Collecte canadienne** _(fait le 08/11/2026 : `main_canada` dans `update_data.py`, `data/canada/` (écart 10 ans Valet et FRED, adjudications à 10 ans Valet, non-résidents StatCan, stress BdC, notes), `meta.json` propre, workflow étendu ; panne canadienne testée sans effet sur la France)_.
-- [ ] **Repères canadiens à valider** (Mickaël) : fiche provisoire calée sur les centiles 2001-2026, indice jamais au-dessus de 49 ; écart CA-US dominé par la politique monétaire (+134 pb en 2002) ; non-résidents au record (45,9 %), refuge plutôt que risque ?
+- [ ] **Repères canadiens** : centiles 2001-2026 gardés pour l'instant (décision de Mickaël le 08/11/2026), à revoir avant l'ouverture publique, indice jamais au-dessus de 49 ; écart CA-US dominé par la politique monétaire (+134 pb en 2002) ; non-résidents au record (45,9 %), refuge plutôt que risque ?
 - [ ] **Dénominateur des non-résidents** : vérifier que 10-10-0113 v37293 (« autres émissions négociables ») couvre les mêmes titres que 36-10-0475 v61913978 (obligations fédérales) ; valeur comptable contre nominale.
 - [ ] **Livraison 1, suite** : `pages.mjs` et `app.js` à rendre depuis la fiche (cartes par identifiant de signal).
 - [ ] **Pages par signal canadiennes** (D9.1, reporté) : après la livraison 3, sur le modèle des 10 pages françaises.
