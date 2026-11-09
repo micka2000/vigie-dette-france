@@ -173,8 +173,8 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: var(--fo
 .indice-sur { font-size: 0.35em; font-weight: 600; letter-spacing: 0; opacity: 0.8; margin-left: 4px; }
 .indice-side { display: grid; gap: var(--space-2); justify-items: start; }
 .indice-nom { font-family: var(--font-display); font-weight: 700; font-size: var(--text-h3); }
-/* Sur le bleu de l'en-tête, les couleurs de niveau ne contrastent pas : pastille sur fond de carte */
-.masthead .pill { background: var(--bg-surface); font-size: var(--text-sm); padding: var(--space-1) var(--space-3); }
+/* Sur le bleu de l'en-tête, les couleurs de niveau ne contrastent pas : même Badge, sur fond de carte */
+.masthead .pill { background: var(--bg-surface); }
 .repere { margin: 0; max-width: 70ch; font-size: var(--text-body); }
 .reperes { display: grid; gap: var(--space-1); }
 .reperes:not(:has(> :not([hidden]))) { display: none; }
@@ -210,13 +210,15 @@ a.btn-icone { text-decoration: none; }
 .tile-value { font-family: var(--font-display); font-weight: 800; font-size: var(--text-tuile); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .tile-sub { font-size: var(--text-sm); font-weight: 600; color: var(--fg-2); font-variant-numeric: tabular-nums; }
 
+/* Pastille de niveau : Badge du design system, variante à contour (12 px, 600, interligne 1,4, 4 × 10 px, contour 1,5 px).
+   Deux ajouts : la couleur du niveau, et un symbole par niveau (● ▲ ◆ ■) pour ne pas dépendre de la couleur seule. */
 .pill {
-  font-family: var(--font-display); font-weight: 600; font-size: var(--text-xs);
-  display: inline-flex; align-items: center; gap: 6px; width: fit-content;
-  padding: 3px 10px; border-radius: var(--radius-pill);
+  font-family: var(--font-display); font-weight: 600; font-size: var(--text-xs); line-height: 1.4;
+  display: inline-flex; align-items: center; gap: var(--space-1); width: fit-content; white-space: nowrap;
+  padding: var(--space-1) 10px; border-radius: var(--radius-pill); background: transparent;
   color: var(--level-texte, var(--level-color)); border: 1.5px solid var(--level-color);
 }
-.pill::before { content: var(--level-glyph); font-size: 10px; }
+.pill::before { content: var(--level-glyph); font-size: 9px; line-height: 1; }
 [data-level="calme"] { --level-color: var(--risk-calme); --level-texte: var(--risk-calme-texte); --level-glyph: '●'; }
 [data-level="vigilance"] { --level-color: var(--risk-vigilance); --level-texte: var(--risk-vigilance-texte); --level-glyph: '▲'; }
 [data-level="tension"] { --level-color: var(--risk-tension); --level-texte: var(--risk-tension-texte); --level-glyph: '◆'; }
