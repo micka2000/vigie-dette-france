@@ -31,8 +31,8 @@ test('interpolation : ancrages, entre deux, plancher et plafond', () => {
 });
 
 test('interpolation : sens inversé (couverture, TARGET2)', () => {
-  proche(interpoler(2.0035, ANCRAGES.couverture), 49.8);
-  assert.equal(interpoler(2.0, ANCRAGES.couverture), 50);
+  proche(interpoler(2.0035, ANCRAGES.couverture), 29.1); // méthode 2.2 : entre 2,03 (25) et 1,87 (50)
+  assert.equal(interpoler(1.87, ANCRAGES.couverture), 50);
   assert.equal(interpoler(4, ANCRAGES.couverture), 0);
   assert.equal(interpoler(0.8, ANCRAGES.couverture), 100);
   proche(interpoler(-3.065, ANCRAGES.target), 59.4); // % du bilan de l'Eurosystème (méthode 2.1)
@@ -42,7 +42,8 @@ test('interpolation : sens inversé (couverture, TARGET2)', () => {
 test('niveau brut : une valeur pile sur un seuil', () => {
   assert.equal(niveauBrut('spread', 50), 'vigilance');
   assert.equal(niveauBrut('spread', 80), 'tension');
-  assert.equal(niveauBrut('couverture', 2.0), 'vigilance'); // inversé : le niveau le moins grave
+  assert.equal(niveauBrut('couverture', 1.87), 'vigilance'); // inversé : le niveau le moins grave
+  assert.equal(niveauBrut('couverture', 2.03), 'calme');
   assert.equal(niveauBrut('couverture', 2.0035), 'vigilance');
   assert.equal(niveauBrut('target', -2.5), 'vigilance');
   assert.equal(niveauBrut('nonResidents', 55), 'tension');
@@ -110,11 +111,11 @@ test('copie figée du 20/10/2026 : les cinq cartes (ENG-R1, spread à la clôtur
 
 test('copie figée : sous-indices et Indice Vigie du jour', () => {
   const e = etatDuJour(FIGE, LE_20_OCTOBRE);
-  proche(e.tension.score, 66.8);
+  proche(e.tension.score, 56.4); // méthode 2.2 : couverture 2,0035 à 29 sur 100 (50 avant)
   proche(e.fond.score, 57.3); // méthode 2.1 : TARGET2 à -3,06 % du bilan (59 sur 100) au lieu de -181 Md€ (69)
-  proche(e.indice.score, 62.0);
+  proche(e.indice.score, 56.9);
   assert.equal(e.indice.niveau, 'tension');
-  assert.equal(Math.round(e.indice.score), 62);
+  assert.equal(Math.round(e.indice.score), 57);
 });
 
 test('sous-indice vide : indice absent et phrase « incomplet »', () => {
@@ -215,8 +216,8 @@ test('courbe : composition constante, tension depuis novembre 2004, indice depui
   assert.equal(c.find((p) => p.indice != null).mois, '2008-05'); // premier mois de TARGET2
   assert.ok(c.filter((p) => p.mois >= '2008-05').every((p) => p.indice != null && p.sans.length === 0));
   const nov2011 = c.find((p) => p.mois === '2011-11'); // séance du 30 novembre
-  assert.equal(Math.round(nov2011.indice), 53);
-  assert.equal(Math.round(nov2011.tension), 53);
+  assert.equal(Math.round(nov2011.indice), 46); // méthode 2.2
+  assert.equal(Math.round(nov2011.tension), 38);
   assert.equal(Math.round(nov2011.fond), 53);
 });
 
@@ -261,16 +262,16 @@ test('série quotidienne : adjudication et note comptent à partir de leur jour,
   assert.ok(le(q, '2012-01-13').fond > le(q, '2012-01-12').fond); // S&P retire le AAA le 13 janvier 2012
 });
 
-test('repères : pic de novembre 2011 et « plus haut depuis » (méthode 2.1)', () => {
+test('repères : pic de novembre 2011 et « plus haut depuis » (méthode 2.2)', () => {
   const q = serieQuotidienne(FIGE_21);
   const pic = picDuMois(q, '2011-11');
-  assert.equal(pic.jour, '2011-11-17'); // pire séance du mois, pas la dernière (30 novembre : 48)
-  proche(pic.indice, 61.0);
+  assert.equal(pic.jour, '2011-11-17'); // pire séance du mois, pas la dernière (30 novembre : 46)
+  proche(pic.indice, 53.7);
   assert.deepEqual(pic.sans, []);
-  // Le 21 octobre 2026 (64) : plus haut depuis le 19 janvier 2012 (64,8), au plus fort de la crise de l'euro.
+  // Le 21 octobre 2026 (59) : plus haut depuis le 29 février 2012 (60,7), pendant la crise de l'euro.
   const depuis = plusHautDepuis(q, q.at(-1).indice, '2026-10-21');
-  assert.equal(depuis.jour, '2012-01-19');
-  proche(depuis.indice, 64.8);
+  assert.equal(depuis.jour, '2012-02-29');
+  proche(depuis.indice, 60.7);
   assert.equal(plusHautDepuis(q, pic.indice, '2011-11-18').jour, '2011-11-17');
   const r = plusHautDepuis(q, 55, '2026-10-21');
   assert.ok(r.jour < '2026-10-21' && r.indice >= 55);

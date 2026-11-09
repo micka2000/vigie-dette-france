@@ -15,7 +15,7 @@ import { EN, EN_CANADA } from './anglais.mjs';
 export const SITE = 'https://vigiedette.com/';
 const EN_DEFAUT = EN;
 // Dernière modification des pages Méthode, pour le sitemap : à changer quand on les modifie.
-const METHODE_MAJ = '2026-11-08';
+const METHODE_MAJ = '2026-11-09';
 const METHODE_CANADA_MAJ = '2026-11-08';
 
 const racine = new URL('../', import.meta.url);

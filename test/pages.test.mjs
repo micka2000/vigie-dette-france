@@ -136,7 +136,9 @@ test('sélecteur France | Canada : garde la langue, marque le pays en cours, seu
     assert.ok(!html.includes('noindex'), `${f} : indexée`);
     if (f.startsWith('canada/') || f.startsWith('en/canada/')) continue;
     const reste = html.replace(nav, '').replace(/<script type="application\/ld\+json"[\s\S]*?<\/script>/g, '');
-    assert.ok(!/canada/i.test(reste), `${f} : rien d’autre sur le Canada`);
+    // Les pages Méthode citent la règle commune aux deux pays (méthode 2.2) : le mot, mais aucun autre lien
+    if (f.includes('methode')) assert.ok(!/href="[^"]*canada/i.test(reste), `${f} : aucun autre lien vers le Canada`);
+    else assert.ok(!/canada/i.test(reste), `${f} : rien d’autre sur le Canada`);
   }
   assert.ok(navPays('en', 'canada').includes('<a href="/en/">France</a><a href="/en/canada/" aria-current="true">Canada</a>'));
   assert.ok(!navPays('fr', 'france').includes('hreflang'), 'le sélecteur ne change pas la langue mémorisée');

@@ -101,7 +101,7 @@
       </div>
     </div>
     <p class="verdict">The Vigie Index sums up the state of French debt in a score from 0 to 100. Here is how it is calculated, step by step, with the example of 21 October 2026.</p>
-    <p class="stamp"><a class="retour" href="./">← Back to the dashboard</a> · Method 2.1, in force since 21 October 2026</p>
+    <p class="stamp"><a class="retour" href="./">← Back to the dashboard</a> · Method 2.2, in force since 9 November 2026</p>
   </div>
 </header>
 
@@ -149,7 +149,7 @@ below the first point: 0        beyond the last: 100</pre>
     <thead><tr><th>Score</th><th>0</th><th>25 watch</th><th>50 stress</th><th>75 crisis</th><th>100</th></tr></thead>
     <tbody>
       <tr><td>Spread</td><td>0 bp</td><td>50 bp</td><td>80 bp</td><td>120 bp</td><td>200 bp</td></tr>
-      <tr><td>Cover</td><td>3.5</td><td>2.5</td><td>2.0</td><td>1.5</td><td>1.0</td></tr>
+      <tr><td>Cover</td><td>2.35</td><td>2.03</td><td>1.87</td><td>1.68</td><td>1.45</td></tr>
       <tr><td>Non-residents</td><td>40%</td><td>50%</td><td>55%</td><td>60%</td><td>70%</td></tr>
       <tr><td>Ratings</td><td>AAA</td><td>AA-</td><td>A+</td><td>BBB+</td><td>BBB-</td></tr>
       <tr><td>TARGET2</td><td>+1%</td><td>-1%</td><td>-2.5%</td><td>-4%</td><td>-6%</td></tr>
@@ -175,6 +175,15 @@ below the first point: 0        beyond the last: 100</pre>
     <li><b>-2.5% (50) and -1% (25)</b>: chosen so that the level follows history. Since 2008, 42% of months are calm, 32% on watch, 18% under stress and 8% in crisis.</li>
     <li><b>+1% (0)</b>: above the highest level observed (+0.9%).</li>
   </ul>
+  <h3>Cover: drawn from its history (method 2.2)</h3>
+  <ul>
+    <li><b>2.35 (0)</b>: exceeded in one auction in four since 2004.</li>
+    <li><b>2.03 (25)</b>: the median: one auction in two comes in below it.</li>
+    <li><b>1.87 (50)</b>: one auction in four comes in below it.</li>
+    <li><b>1.68 (75)</b>: one auction in ten comes in below it.</li>
+    <li><b>1.45 (100)</b>: one auction in a hundred. The lowest: 1.39 in November 2014.</li>
+  </ul>
+  <p>Same rule as for Canada, applied to the 225 10-year auctions since 2004 (August and December set aside). By construction, cover is calm one auction in two, on watch one in four, under stress 15% of the time and in crisis 10%. Known weakness: its lows (2014, 2016, 2018) came in calm periods. It is a noisy signal, which matters mostly when it drops while the spread rises.</p>
   <h3>Spread: chosen at launch, then checked against 5,576 sessions since 2004</h3>
   <ul>
     <li><b>0 bp (0)</b>: France borrows at the same rate as Germany.</li>
@@ -184,15 +193,6 @@ below the first point: 0        beyond the last: 100</pre>
     <li><b>200 bp (100)</b>: close to the record, 214 bp on 17 November 2011.</li>
   </ul>
   <p>These values were set by hand when the site was launched, then checked against the data: they match notable moments, but no rule produced them. For comparison, five euro area countries had to be rescued between 2010 and 2012 with a spread of 470 to 590 bp.</p>
-  <h3>Cover: chosen at launch, to be reviewed</h3>
-  <ul>
-    <li><b>3.5 (0)</b>: exceptional demand, exceeded in 2% of auctions since 2004.</li>
-    <li><b>2.5 (25)</b>: the usual level before 2008 (median 2.42 from 2004 to 2007). 81% of auctions came in below it.</li>
-    <li><b>2.0 (50)</b>: the median since 2004 (2.02): one auction in two comes in below it.</li>
-    <li><b>1.5 (75)</b>: only 2% of auctions. The lowest: 1.39 in November 2014.</li>
-    <li><b>1.0 (100)</b>: absolute limit: buyers bid no more than the State sells.</li>
-  </ul>
-  <p>Known weakness: cover is “under stress” half the time, and its lows (2014, 2016, 2018) came in calm periods. It is a noisy signal, which matters mostly when it drops while the spread rises.</p>
   <h3>Non-residents: chosen at launch, to be reviewed</h3>
   <ul>
     <li><b>70% (100)</b>: the record, 70.6% in June 2010.</li>
@@ -226,16 +226,16 @@ below the first point: 0        beyond the last: 100</pre>
     <thead><tr><th>Signal</th><th>Value</th><th>Between the points</th><th>Calculation</th><th>Score</th></tr></thead>
     <tbody>
       <tr><td>Spread</td><td>154.5 bp</td><td>120 (75) and 200 (100)</td><td>75 + 25 × 34.5 ÷ 80</td><td><b>85.8</b></td></tr>
-      <tr><td>Cover</td><td>12.564 ÷ 6.271 = 2.0035 (auction of 1 October)</td><td>2.5 (25) and 2.0 (50)</td><td>25 + 25 × 0.4965 ÷ 0.5</td><td><b>49.8</b></td></tr>
+      <tr><td>Cover</td><td>12.564 ÷ 6.271 = 2.0035 (auction of 1 October)</td><td>2.03 (25) and 1.87 (50)</td><td>25 + 25 × 0.0265 ÷ 0.16</td><td><b>29.1</b></td></tr>
       <tr><td>Non-residents</td><td>59.7% (end June 2026)</td><td>55 (50) and 60 (75)</td><td>50 + 25 × 4.7 ÷ 5</td><td><b>73.5</b></td></tr>
       <tr><td>Ratings</td><td>A+ (S&amp;P, Fitch) = 4 notches</td><td>exactly 4 (50)</td><td>50 + 25 × 0 ÷ 3</td><td><b>50.0</b></td></tr>
       <tr><td>TARGET2</td><td>-181.3 ÷ 5,915.3 €bn = -3.065% (end August 2026)</td><td>-2.5 (50) and -4 (75)</td><td>50 + 25 × 0.565 ÷ 1.5</td><td><b>59.4</b></td></tr>
     </tbody>
   </table></div>
-  <pre class="formule">Markets      = (85.8 + 49.8) ÷ 2         = 67.8
+  <pre class="formule">Markets      = (85.8 + 29.1) ÷ 2         = 57.5
 Fundamentals = (73.5 + 50.0 + 59.4) ÷ 3  = 61.0
-Index        = (67.8 + 61.0) ÷ 2         = 64.4   →   64 out of 100, stress</pre>
-  <p>The spread pushes the index the most: it counts for a quarter and it is in the crisis zone. That day, the index had not been this high since 19 January 2012 (64.8), at the height of the euro crisis.</p>
+Index        = (57.5 + 61.0) ÷ 2         = 59.2   →   59 out of 100, stress</pre>
+  <p>The spread pushes the index the most: it counts for a quarter and it is in the crisis zone. That day, the index had not been this high since 29 February 2012 (60.7), during the euro crisis.</p>
 </article>
 
 <article class="signal">
@@ -266,7 +266,7 @@ Highest since  = the last past session when the index
 <article class="signal">
   <h2>8. Known limits</h2>
   <ul>
-    <li><b>Reference points chosen by hand.</b> Each signal’s thresholds come from its history, but without a common rule: non-residents are “in crisis” 43% of the time since 2008, cover “under stress” half the time. A single rule, or a scale based on the euro crisis (five countries had to be rescued with a spread of 470 to 590 bp), is under consideration.</li>
+    <li><b>Reference points without a common rule.</b> Those of the spread, non-residents and TARGET2 were chosen by hand: non-residents are “in crisis” 43% of the time since 2008. Only cover follows, since version 2.2, a rule drawn from its history, the same as for Canada. A single rule, or a scale based on the euro crisis (five countries had to be rescued with a spread of 470 to 590 bp), is under consideration.</li>
     <li><b>If the State stopped borrowing at 10 years</b>, cover would become too old after 3 months and the index would disappear, at the worst moment. This is what happened to Greece in 2010.</li>
     <li><b>It is not a forecast.</b> The index says where things stand compared with the past, not what will happen.</li>
   </ul>
@@ -275,6 +275,7 @@ Highest since  = the last past session when the index
 <article class="signal">
   <h2>9. Versions</h2>
   <ul>
+    <li><b>2.2</b> (9 November 2026): cover reference points drawn from its history since 2004, as for Canada: 2.35 / 2.03 / 1.87 / 1.68 / 1.45 instead of 3.5 / 2.5 / 2 / 1.5 / 1, chosen by hand, which put one auction in two “under stress”. The whole curve is recalculated.</li>
     <li><b>2.1</b> (21 October 2026): TARGET2 divided by the Eurosystem balance sheet, new points -1 / -2.5 / -4%.</li>
     <li><b>2.0</b> (21 October 2026): cover rebuilt since 2004 from the Agence France Trésor official history; always all five signals; August and December auctions set aside.</li>
     <li><b>1.0</b> (20 October 2026): first version.</li>

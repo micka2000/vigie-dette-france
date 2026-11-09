@@ -5,7 +5,10 @@
 // séances d'août et de décembre écartées de la couverture.
 // 2.1 (21/10/2026) : solde TARGET2 rapporté au bilan de l'Eurosystème, pour neutraliser le gonflement des soldes
 // dû aux rachats de dette de la BCE (en milliards, octobre 2025 dépassait 2008 ; rapporté au bilan, 2008 reste le pire).
-export const METHODE_VERSION = '2.1';
+// 2.2 (09/11/2026) : repères de la couverture tirés de son historique (225 ventes à 10 ans, 2004-2026), même règle que le
+// Canada : 0 au 75e centile, 25 à la médiane, 50 au 25e, 75 au 10e, 100 au 1er (interpolation linéaire). Avant : 3,5 / 2,5
+// / 2 / 1,5 / 1, choisis à la main ; une vente sur deux était en tension.
+export const METHODE_VERSION = '2.2';
 
 export const NIVEAUX = ['calme', 'vigilance', 'tension', 'crise'];
 
@@ -13,7 +16,7 @@ export const NIVEAUX = ['calme', 'vigilance', 'tension', 'crise'];
 // Une suite décroissante signale un sens inversé (une valeur basse est mauvaise).
 export const ANCRAGES = {
   spread: [0, 50, 80, 120, 200], // pb
-  couverture: [3.5, 2.5, 2.0, 1.5, 1.0], // demandé / servi
+  couverture: [2.35, 2.03, 1.87, 1.68, 1.45], // demandé / servi (centiles 2004-2026, méthode 2.2)
   nonResidents: [40, 50, 55, 60, 70], // %
   notes: [0, 3, 4, 7, 9], // crans perdus depuis AAA (BBB- = 9)
   target: [1, -1, -2.5, -4, -6], // % du bilan de l'Eurosystème (nov. 2008 : -6,0)
@@ -23,7 +26,7 @@ export const ANCRAGES = {
 // Niveau d'un signal seul, lu sur sa valeur brute avec les seuils publiés : bornes [de, à).
 export const SEUILS = {
   spread: [['calme', -Infinity, 50], ['vigilance', 50, 80], ['tension', 80, 120], ['crise', 120, Infinity]],
-  couverture: [['calme', 2.5, Infinity], ['vigilance', 2, 2.5], ['tension', 1.5, 2], ['crise', -Infinity, 1.5]],
+  couverture: [['calme', 2.03, Infinity], ['vigilance', 1.87, 2.03], ['tension', 1.68, 1.87], ['crise', -Infinity, 1.68]],
   nonResidents: [['calme', -Infinity, 50], ['vigilance', 50, 55], ['tension', 55, 60], ['crise', 60, Infinity]],
   notes: [['calme', 18, Infinity], ['vigilance', 17, 18], ['tension', 14, 17], ['crise', -Infinity, 14]], // échelle AAA = 20
   // Crise sous -4 % : les mois de 2008-2009 et de la crise de l'euro (2011-2012), et eux seuls.

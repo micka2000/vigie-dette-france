@@ -60,7 +60,7 @@ La méthode a changé après relecture. Le document proposait d'abord un centile
 | Signal | Série et fichier | 0 | 25 | 50 | 75 | 100 |
 |---|---|---|---|---|---|---|
 | Spread OAT-Bund 10 ans | BCE IRS, `data/spread.json` | 0 pb | 50 pb | 80 pb | 120 pb | 200 pb |
-| Couverture de l'adjudication à 10 ans (sens inversé) | `data/adjudications.json` | 3,5 | 2,5 | 2,0 | 1,5 | 1,0 |
+| Couverture de l'adjudication à 10 ans (sens inversé, méthode 2.2 : centiles 2004-2026) | `data/adjudications.json` | 2,35 | 2,03 | 1,87 | 1,68 | 1,45 |
 | Part des non-résidents | AFT, `data/non_residents_aft.json` (Eurostat est affiché sur le graphique, pas utilisé dans le score) | 40 % | 50 % | 55 % | 60 % | 70 % |
 | Note la plus basse | `data/notations.json` | AAA | AA- | A+ | BBB+ | BBB- |
 | Solde TARGET2 en % du bilan de l'Eurosystème (sens inversé, méthode 2.1) | BCE TGB et ILM, `data/target.json` et `data/bilan_bce.json` | +1 % | -1 % | -2,5 % | -4 % | -6 % |
@@ -147,6 +147,14 @@ Question de l'utilisateur : pourquoi 120 pb comme seuil de crise du spread ? Dé
 | France | 6 | 66 (juil. 2011) | jamais | 154 (nov. 2011) |
 
 Les cinq pays ont basculé entre 470 et 590 pb. Un barème calé sur ces bascules (25 ≈ 100 pb, 50 ≈ 250, 75 ≈ 500, 100 ≈ 900) mesurerait la distance au scénario de 2010-2012 ; il ramènerait le spread du 21/10/2026 (155 pb) d'environ 86 à 34 et l'indice d'environ 64 à 52 (estimation). Arguments pour : repères observés cinq fois, point de départ identique en 2007, dette grecque de 2009 (~127 % du PIB) proche de la française d'aujourd'hui (~115 %). Argument contre principal : le cadre a changé (OMT en 2012, TPI en 2022, MES trop petit pour la France), la bascule française pourrait venir bien plus bas que 500 pb, et personne ne l'a observée. Le barème actuel répond à « est-ce anormal pour la France ? », celui de la crise de l'euro à « la France approche-t-elle du point où d'autres ont dû être secourus ? ». Si on l'adopte un jour, il faudra recaler les cinq signaux sur la même crise, pas le seul spread.
+
+### Méthode 2.2 (2026-11-09) : couverture calée sur son historique
+
+Question de Mickaël en ouvrant le Canada : pourquoi les seuils de couverture diffèrent-ils entre la France (2,5 / 2 / 1,5, choisis à la main) et le Canada (centiles de son historique) ? Appliquer le barème français au Canada mettait le signal canadien en vigilance 88 % du temps (ventes canadiennes entre 2 et 2,5 pour 159 sur 180). Sa question suivante : « n'est-il pas trop haut pour la France ? ». Oui : sur les 225 ventes à 10 ans depuis 2004 (sans août ni décembre), médiane 2,03 ; 44 % des ventes « en tension », 18 % « calme ».
+
+Décision (Mickaël, 2026-11-09) : **même règle que le Canada**, centiles de l'historique, interpolation linéaire : 0 au 75e centile (2,35), 25 à la médiane (2,03), 50 au 25e (1,87), 75 au 10e (1,68), 100 au 1er (1,45). Par construction : calme une vente sur deux, vigilance une sur quatre, tension 15 %, crise 10 %. Les seuils restent différents par pays (Canada : 2,38 / 2,28 / 2,16 / 2,05 / 1,85), la règle est la même.
+
+Effets mesurés sur la série quotidienne : Indice Vigie calme 21 % des séances au lieu de 7 % ; pic de novembre 2011 53,7 au lieu de 61,0 ; avril 2020 45 au lieu de 40 ; 21/10/2026 59,2 au lieu de 64,4 (plus haut depuis le 29/02/2012 au lieu du 19/01/2012) ; 06/11/2026 53 au lieu de 61 (couverture 2,27 : calme). Empreintes de `test/identite-france.test.mjs` relevées à nouveau.
 
 ### Méthode 2.1 (2026-10-21) : TARGET2 rapporté au bilan de l'Eurosystème
 

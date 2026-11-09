@@ -1,14 +1,14 @@
 {
   "jour": "2026-11-06",
-  "indice": 61,
+  "indice": 53,
   "niveau": "tension",
   "niveauTexte": {
     "fr": "Tension",
     "en": "Stress"
   },
   "verdict": {
-    "fr": "La dette française est sous tension. Le reste des marchés financiers reste calme.",
-    "en": "French debt is under stress. The rest of the financial markets remain calm."
+    "fr": "La dette française est sous tension, surtout sur le fond. Le reste des marchés financiers reste calme.",
+    "en": "French debt is under stress, mostly in the fundamentals. The rest of the financial markets remain calm."
   },
   "tuiles": {
     "fr": [
@@ -22,7 +22,7 @@
       },
       {
         "cle": "adjudications",
-        "niveau": "vigilance",
+        "niveau": "calme",
         "nom": "Couverture des adjudications",
         "valeur": "2,27"
       },
@@ -56,7 +56,7 @@
       },
       {
         "cle": "adjudications",
-        "niveau": "vigilance",
+        "niveau": "calme",
         "nom": "Auction cover",
         "valeur": "2.27"
       },

@@ -1,10 +1,10 @@
 // Vigie Dette Canada : les quatre cartes canadiennes (fichiers de data/canada/, textes, graphiques).
 // Le socle commun (en-tête, courbe, graphiques, infobulles) est dans commun.mjs ; le calcul dans score.mjs (PAYS.canada).
-import { ANCRAGES_CANADA, PAYS, interpoler, notch, notchLabel, picsMensuels } from './score.mjs?v=c172bcbb';
+import { ANCRAGES_CANADA, PAYS, interpoler, notch, notchLabel, picsMensuels } from './score.mjs?v=caee4dd5';
 import {
   state, L, f0, f1, f2, fSigned1, pc, pb, fmtMonth, fmtDay, fmtWeekday, parseMonth, parseDay, css, json,
   lineChart, legend, visibles, periodes, since, lastOfPeriod, bandes, nc, renderRatingsTable, demarrer,
-} from './commun.mjs?v=38d652b1';
+} from './commun.mjs?v=d95b54cb';
 
 const FICHE = PAYS.canada;
 // Carte → signal de la fiche (score.mjs).
