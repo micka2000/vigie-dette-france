@@ -192,7 +192,7 @@ a.btn-icone { text-decoration: none; }
 .btn-icone:active { transform: scale(0.92); background: color-mix(in srgb, currentColor 12%, transparent); }
 .btn-icone:focus-visible { outline: var(--focus-ring-width) solid currentColor; outline-offset: var(--focus-ring-offset); }
 /* Bouton de langue : même cercle, la langue proposée en lettres */
-.btn-langue { font-family: var(--font-display); font-weight: 600; font-size: 13px; letter-spacing: 0.02em; }
+.btn-langue { font-family: var(--font-display); font-weight: 600; font-size: 13px; }
 
 /* Synthèse : sous-indices et CISS, puis les cinq signaux */
 .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: var(--space-3); }
