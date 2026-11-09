@@ -119,7 +119,7 @@ function renderCharts(data) {
       label: L('Taux à 10 ans du Canada et des États-Unis, en %, à la clôture', '10-year Canada and US yields, in %, at the close'),
     });
     legend('legend-spread', tauxSeries, 'spread');
-    legendeTaux.hidden = false;
+    if (legendeTaux) legendeTaux.hidden = false;
   } else {
     lineChart(document.getElementById('chart-spread'), [{ name: L('Écart', 'Gap'), color: css('--series-1'), points: spread }], {
       bands: bandes('spread'), yDomain: [Math.min(-100, d3.min(spread, (p) => p.v) - 10), Math.max(60, d3.max(spread, (p) => p.v) + 10)],
@@ -127,7 +127,7 @@ function renderCharts(data) {
       dateFormat: fmtWeekday, xDomain: xDom('spread', spread),
       label: L('Écart de taux Canada-États-Unis à 10 ans en points de base, à la clôture', '10-year Canada-US yield gap in basis points, at the close'),
     });
-    legendeTaux.hidden = true;
+    if (legendeTaux) legendeTaux.hidden = true;
   }
 
   const nr = clipDe('nonres')(data.nr.points.map((p) => ({ d: parseMonth(p.mois), v: p.part })));

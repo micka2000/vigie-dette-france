@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { construire, construireCanada, instantane, jourTexte, resume, appliquerInstantane, anglaise, navPays, SIGNAUX, CANADA } from '../scripts/pages.mjs';
+import { construire, construireCanada, instantane, jourTexte, resume, appliquerInstantane, anglaise, navPays, SIGNAUX, SIGNAUX_CANADA, CANADA } from '../scripts/pages.mjs';
 
 const lire = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 const inst = JSON.parse(lire('data/instantane.json'));
@@ -117,7 +117,7 @@ test('Canada : pages indexées, dans le sitemap, qui se répondent', () => {
     const types = ld.flatMap((x) => x['@graph']).map((n) => n['@type']);
     assert.deepEqual(types, ['Organization', 'WebSite', 'WebPage'], `${f} : JSON-LD`);
   }
-  assert.equal([...sitemap.matchAll(/<loc>/g)].length, 18, 'sitemap : 14 adresses françaises et 4 canadiennes');
+  assert.equal([...sitemap.matchAll(/<loc>/g)].length, 26, 'sitemap : 14 adresses françaises et 12 canadiennes');
 });
 
 // Sur les pages françaises, seuls changent le sélecteur de pays et le JSON-LD « Vigie Dette » (plan, Tests).
@@ -153,6 +153,31 @@ test('JSON-LD : l’organisation et le site s’appellent « Vigie Dette » et c
     assert.deepEqual(site.hasPart.map((x) => x['@id']), ['', 'en/', 'canada/', 'en/canada/'].map((c) => `https://vigiedette.com/${c}#page`), f);
     assert.ok(g.some((n) => n['@id'] === `https://vigiedette.com/${f.replace('index.html', '')}#page`), `${f} : sa page`);
   }
+});
+
+test('Canada : chaque page de signal porte sa carte, ses liens, le chiffre du jour et le sélecteur', () => {
+  const sitemap = lire('sitemap.xml');
+  for (const sig of SIGNAUX_CANADA) {
+    for (const l of ['fr', 'en']) {
+      const f = `${sig[l].chemin}index.html`, html = lire(f);
+      assert.equal([...html.matchAll(/<article class="signal" id="/g)].length, 1, `${f} : une seule carte`);
+      assert.ok(html.includes(`<article class="signal" id="${sig.carte}">`), `${f} : sa carte`);
+      assert.ok(!html.includes('class="page-signal"'), `${f} : pas de lien vers elle-même`);
+      assert.ok(html.includes(`<h1>${sig[l].h1.replace(/&/g, '&amp;')}</h1>`), `${f} : titre`);
+      const t = instCa.tuiles[l].find((x) => x.cle === sig.carte);
+      assert.ok(html.includes(`data-now="${sig.carte}">${t.valeur}<`), `${f} : chiffre du jour`);
+      assert.ok(html.includes(`href="/${sig[l === 'fr' ? 'en' : 'fr'].chemin}"`), `${f} : lien vers l’autre langue`);
+      for (const autre of SIGNAUX_CANADA.filter((x) => x !== sig)) assert.ok(html.includes(`href="/${autre[l].chemin}"`), `${f} : lien vers ${autre.carte}`);
+      assert.ok(html.includes(navPays(l, 'canada')), `${f} : sélecteur sur le Canada`);
+      assert.ok(html.includes('/assets/js/canada.js?v='), `${f} : script du Canada`);
+      assert.equal(html.match(/<link rel="canonical"[^>]*\shref="([^"]*)"/)?.[1], `https://vigiedette.com/${sig[l].chemin}`, `${f} : canonique`);
+      assert.ok(sitemap.includes(`<loc>https://vigiedette.com/${sig[l].chemin}</loc>`), `sitemap : ${sig[l].chemin}`);
+      assert.ok(lire(`${CANADA[l].chemin}index.html`).includes(`href="/${sig[l].chemin}"`), `tableau ${l} : lien vers ${sig.carte}`);
+      for (const m of html.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)) JSON.parse(m[1]);
+    }
+  }
+  const en = lire(`${SIGNAUX_CANADA[0].en.chemin}index.html`).replace(/<script[\s\S]*?<\/script>/g, '').replace(/<[^>]+>/g, ' ');
+  for (const mot of ['Écart', 'Afficher', 'Seuils', 'Tout sur']) assert.ok(!en.includes(mot), `page anglaise : ${mot}`);
 });
 
 test('Canada : la page anglaise n’a aucun texte français des cartes', () => {

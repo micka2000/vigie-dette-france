@@ -107,6 +107,10 @@ export const EN = {
 // Tableau de bord canadien : textes propres aux cartes de canada/cartes.html (les clés communes viennent d'EN ci-dessus)
 // et à l'en-tête des pages /canada/ (scripts/pages.mjs). test/anglais.test.mjs vérifie les deux fichiers.
 export const EN_CANADA = {
+  'ca.page.spread': 'All about the Canada-US yield gap', 'ca.page.spread.url': '/en/canada/canada-us-bond-spread/',
+  'ca.page.adjudications': 'All about 10-year bond auctions', 'ca.page.adjudications.url': '/en/canada/canada-bond-auctions/',
+  'ca.page.non-residents': 'All about debt held by non-residents', 'ca.page.non-residents.url': '/en/canada/canada-foreign-holdings/',
+  'ca.page.notations': 'All about Canada’s credit rating', 'ca.page.notations.url': '/en/canada/canada-credit-rating/',
   'ca.synthese.aria': 'Summary of the four signals',
   'ca.courbe.quoi': '<b>What it is.</b> A score from 0 to 100 that sums up the state of Canada’s federal debt, month by month.',
   'ca.courbe.pourquoi': '<b>Why it matters.</b> To place today against past crises: 2008, Covid in 2020. When the index rises while the rest of the markets stay still, it is Canadian debt itself that is causing concern.',

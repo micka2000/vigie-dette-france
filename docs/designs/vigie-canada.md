@@ -19,7 +19,7 @@ Ce qui est en ligne, ouvert au public depuis la livraison 3 (sélecteur France |
 Deux collectes réelles vérifiées le 2026-11-08 (19 h 56 et 20 h 11 UTC, aucune série en échec). Livraison 3 faite le 2026-11-08 :
 sélecteur en tête de toutes les pages (`navPays` dans `pages.mjs`, pastilles « France » et « Canada » au-dessus du titre ; sur les pages
 Méthode, il mène à la Méthode de l'autre pays), `noindex` retiré, 18 adresses dans le sitemap, organisation et site nommés « Vigie Dette »
-(ancien nom en `alternateName`). Reste : D13 en attente ; pages par signal (D9.1).
+(ancien nom en `alternateName`). Pages par signal canadiennes (D9.1) faites le 2026-11-09 (`SIGNAUX_CANADA`, `pageSignal(…, 'canada')`). Reste : D13 en attente.
 Le corps ci-dessous garde la conception d'origine ; là où il diverge, les décisions (D9 à D15) et cet état priment.
 
 ## Problem Statement

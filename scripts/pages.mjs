@@ -271,11 +271,67 @@ export const SIGNAUX = [
   },
 ];
 
+// Adresses définitives des pages canadiennes (choisies le 09/11/2026), sous /canada/ et /en/canada/ (D9.1).
+export const SIGNAUX_CANADA = [
+  {
+    carte: 'spread',
+    fr: { chemin: 'canada/ecart-taux-canada-etats-unis/', h1: 'Écart de taux Canada-États-Unis',
+      titre: 'Écart de taux Canada-États-Unis à 10 ans aujourd’hui · Vigie Dette Canada',
+      description: 'L’écart entre les taux à 10 ans du Canada et des États-Unis, mis à jour chaque jour depuis 2001, avec ses seuils de risque et la crise de la dette de 1994-1995 pour repère.',
+      phrase: (t) => `L’écart entre les taux à 10 ans du Canada et des États-Unis est de ${t.valeur}, niveau ${t.niv}.` },
+    en: { chemin: 'en/canada/canada-us-bond-spread/', h1: 'Canada-US yield gap',
+      titre: '10-year Canada-US yield gap today · Vigie Dette Canada',
+      description: 'The gap between Canada’s and the United States’ 10-year yields, updated every day since 2001, with its risk thresholds and the 1994-1995 debt crisis as a benchmark.',
+      phrase: (t) => `The gap between Canada’s and the US 10-year yields is ${t.valeur}, ${t.niv} level.` },
+  },
+  {
+    carte: 'adjudications',
+    fr: { chemin: 'canada/adjudications-obligations-canada/', h1: 'Adjudications d’obligations du Canada à 10 ans',
+      titre: 'Adjudications d’obligations du Canada à 10 ans, taux de couverture · Vigie Dette Canada',
+      description: 'La demande des investisseurs à chaque vente d’obligations du gouvernement du Canada à 10 ans par la Banque du Canada depuis 1998 : taux de couverture, taux payé et montants.',
+      phrase: (t) => `À la dernière adjudication d’obligations à 10 ans, les investisseurs ont demandé ${t.valeur} fois le montant vendu, niveau ${t.niv}.` },
+    en: { chemin: 'en/canada/canada-bond-auctions/', h1: '10-year Government of Canada bond auctions',
+      titre: '10-year Government of Canada bond auctions, cover ratio · Vigie Dette Canada',
+      description: 'Investor demand at each 10-year Government of Canada bond auction by the Bank of Canada since 1998: cover ratio, rate paid and amounts.',
+      phrase: (t) => `At the latest 10-year bond auction, investors bid ${t.valeur} times the amount sold, ${t.niv} level.` },
+  },
+  {
+    carte: 'non-residents',
+    fr: { chemin: 'canada/dette-canadienne-non-residents/', h1: 'Dette canadienne détenue par les non-résidents',
+      titre: 'Dette fédérale canadienne détenue par les non-résidents · Vigie Dette Canada',
+      description: 'La part des obligations du gouvernement du Canada détenue par des investisseurs étrangers, chaque mois depuis 1995 (Statistique Canada).',
+      phrase: (t) => `Les investisseurs étrangers détiennent ${t.valeur} des obligations du gouvernement du Canada, niveau ${t.niv}.` },
+    en: { chemin: 'en/canada/canada-foreign-holdings/', h1: 'Canadian debt held by non-residents',
+      titre: 'Canadian federal debt held by foreign investors · Vigie Dette Canada',
+      description: 'The share of Government of Canada bonds held by foreign investors, every month since 1995 (Statistics Canada).',
+      phrase: (t) => `Foreign investors hold ${t.valeur} of Government of Canada bonds, ${t.niv} level.` },
+  },
+  {
+    carte: 'notations',
+    fr: { chemin: 'canada/notation-canada/', h1: 'Note du Canada',
+      titre: 'Note du Canada par S&P, Moody’s et Fitch · Vigie Dette Canada',
+      description: 'Les notes de la dette fédérale canadienne par les trois grandes agences, leur historique et les dates des prochaines revues.',
+      phrase: (t) => `La note la plus basse du Canada est ${t.valeur}, niveau ${t.niv}.` },
+    en: { chemin: 'en/canada/canada-credit-rating/', h1: 'Canada’s credit rating',
+      titre: 'Canada’s credit rating by S&P, Moody’s and Fitch · Vigie Dette Canada',
+      description: 'Canada’s credit ratings from the three main agencies, their history and the dates of upcoming reviews.',
+      phrase: (t) => `Canada’s lowest credit rating is ${t.valeur}, ${t.niv} level.` },
+  },
+];
+
 const TEXTES_SIGNAL = {
   fr: { accueil: '← Tableau de bord', methode: 'Méthode de calcul', autres: 'Les autres signaux', tous: 'L’Indice Vigie et les cinq signaux',
     langue: 'Read this page in English', base: '/', locale: 'fr_FR' },
   en: { accueil: '← Dashboard', methode: 'How it is calculated', autres: 'The other signals', tous: 'The Vigie Index and the five signals',
     langue: 'Lire la page en français', base: '/en/', locale: 'en_GB' },
+};
+
+// Ce qui change d'un pays à l'autre sur une page par signal
+const PAGES_PAYS = {
+  france: { signaux: SIGNAUX, base: { fr: '/', en: '/en/' }, fil: 'Vigie Dette France', jeuDeDonnees: true,
+    tous: { fr: 'L’Indice Vigie et les cinq signaux', en: 'The Vigie Index and the five signals' } },
+  canada: { signaux: SIGNAUX_CANADA, base: { fr: '/canada/', en: '/en/canada/' }, fil: 'Vigie Dette Canada', jeuDeDonnees: false,
+    tous: { fr: 'L’Indice Vigie canadien et les quatre signaux', en: 'The Canadian Vigie Index and the four signals' } },
 };
 
 const phraseSignal = (sig, inst, lang) => {
@@ -284,18 +340,19 @@ const phraseSignal = (sig, inst, lang) => {
 };
 
 // Page d'un signal, à partir du tableau de bord déjà rempli dans sa langue : même tête, même carte, même pied.
-export function pageSignal(tableau, sig, inst, lang) {
+export function pageSignal(tableau, sig, inst, lang, pays = 'france') {
+  const P = PAGES_PAYS[pays], base = P.base[lang];
   const p = sig[lang], autre = lang === 'fr' ? 'en' : 'fr', T = TEXTES_SIGNAL[lang];
   const url = `${SITE}${p.chemin}`, phrase = phraseSignal(sig, inst, lang);
   const carte = tableau.match(new RegExp(`<article class="signal" id="${sig.carte}">[\\s\\S]*?</article>`))[0]
     .replace(/\n\s*<p class="page-signal">[\s\S]*?<\/p>/, '');
   const theme = tableau.match(/<button class="btn-icone" id="theme-toggle"[\s\S]*?<\/button>/)[0];
-  const liens = SIGNAUX.filter((x) => x !== sig).map((x) => `        <li><a href="/${x[lang].chemin}">${echapper(x[lang].h1)}</a></li>`);
+  const liens = P.signaux.filter((x) => x !== sig).map((x) => `        <li><a href="/${x[lang].chemin}">${echapper(x[lang].h1)}</a></li>`);
   const entete = `<header class="masthead">
   <div class="wrap">
     <div class="masthead-top">
       <h1>${echapper(p.h1)}</h1>
-      ${navPays(lang, 'france')}
+      ${navPays(lang, pays)}
       <div class="masthead-actions">
         <a class="btn-icone btn-langue" id="langue-toggle" href="/${sig[autre].chemin}" hreflang="${autre}" lang="${autre}" aria-label="${T.langue}"><span>${autre.toUpperCase()}</span></a>
         ${theme}
@@ -304,8 +361,8 @@ export function pageSignal(tableau, sig, inst, lang) {
     <p class="verdict">${echapper(phrase)}</p>
     <p class="stamp">
       <span id="donnees">${lang === 'en' ? 'Data as of' : 'Données du'} ${jourTexte(inst.jour, lang)}</span>
-      <a class="retour" href="${T.base}">${T.accueil}</a>
-      <a class="retour" href="${T.base}methode.html">${T.methode}</a>
+      <a class="retour" href="${base}">${T.accueil}</a>
+      <a class="retour" href="${base}methode.html">${T.methode}</a>
     </p>
   </div>
 </header>`;
@@ -319,7 +376,7 @@ ${carte}
       <h2>${T.autres}</h2>
       <ul>
 ${liens.join('\n')}
-        <li><a href="${T.base}">${T.tous}</a></li>
+        <li><a href="${base}">${P.tous[lang]}</a></li>
       </ul>
     </nav>
 
@@ -329,8 +386,8 @@ ${liens.join('\n')}
     .replace(/<header class="masthead">[\s\S]*?<\/header>/, entete)
     .replace(/<main class="wrap">[\s\S]*?<\/main>/, principal)
     .replace(/(href|src)="(?:\.\.\/)?(assets\/)/g, '$1="/$2')
-    .replace(/href="methode\.html"/g, `href="${T.base}methode.html"`)
-    .replace(/<!-- (Source|Fichier)[^>]*-->\n/, `<!-- Fichier généré par scripts/pages.mjs à partir d’index.html${lang === 'en' ? ' et d’anglais.mjs' : ''} : ne pas le modifier à la main. -->\n`);
+    .replace(/href="methode\.html"/g, `href="${base}methode.html"`)
+    .replace(/<!-- (Source|Fichier)[^>]*-->\n/, `<!-- Fichier généré par scripts/pages.mjs à partir d’index.html${pays === 'canada' ? ' et de canada/cartes.html' : ''}${lang === 'en' ? ' et d’anglais.mjs' : ''} : ne pas le modifier à la main. -->\n`);
   html = contenu(html, 'data-i18n="titre"', echapper(p.titre));
   html = attribut(html, 'name="description"', 'content', p.description);
   html = attribut(html, 'rel="canonical"', 'href', url);
@@ -340,18 +397,19 @@ ${liens.join('\n')}
   html = attribut(html, 'property="og:url"', 'content', url);
   html = attribut(html, 'property="og:title"', 'content', p.titre);
   html = attribut(html, 'data-instantane="resume"', 'content', phrase);
-  html = contenu(html, 'donnees-structurees', `\n${JSON.stringify(donneesSignal(sig, inst, lang, phrase), null, 2).replace(/</g, '\\u003c')}\n`);
+  html = contenu(html, 'donnees-structurees', `\n${JSON.stringify(donneesSignal(sig, inst, lang, phrase, P), null, 2).replace(/</g, '\\u003c')}\n`);
   return html;
 }
 
-function donneesSignal(sig, inst, lang, phrase) {
-  const p = sig[lang], url = `${SITE}${p.chemin}`, accueil = lang === 'en' ? `${SITE}en/` : SITE;
+function donneesSignal(sig, inst, lang, phrase, P = PAGES_PAYS.france) {
+  const p = sig[lang], url = `${SITE}${p.chemin}`, accueil = `${SITE}${P.base[lang].slice(1)}`;
   return { '@context': 'https://schema.org', '@graph': [
     { '@type': 'WebPage', '@id': `${url}#page`, url, inLanguage: lang, name: p.titre, description: phrase, dateModified: inst.jour,
-      isPartOf: { '@id': `${SITE}#site` }, publisher: { '@id': ORGANISATION }, about: { '@id': `${SITE}#donnees` },
-      primaryImageOfPage: `${SITE}assets/images/partage-${lang}.png`, breadcrumb: { '@id': `${url}#fil` } },
+      isPartOf: { '@id': `${SITE}#site` }, publisher: { '@id': ORGANISATION },
+      ...(P.jeuDeDonnees ? { about: { '@id': `${SITE}#donnees` } } : {}),
+      primaryImageOfPage: `${SITE}assets/images/partage-${P.jeuDeDonnees ? '' : 'canada-'}${lang}.png`, breadcrumb: { '@id': `${url}#fil` } },
     { '@type': 'BreadcrumbList', '@id': `${url}#fil`, itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Vigie Dette France', item: accueil },
+      { '@type': 'ListItem', position: 1, name: P.fil, item: accueil },
       { '@type': 'ListItem', position: 2, name: p.h1, item: url }] },
   ] };
 }
@@ -421,7 +479,8 @@ const DATASET = (inst) => ({
 export function sitemap(inst, instCa = null) {
   const paires = [['', 'en/', inst.jour], ...SIGNAUX.map((x) => [x.fr.chemin, x.en.chemin, inst.jour]),
     ['methode.html', 'en/methode.html', METHODE_MAJ],
-    ...(instCa ? [[CANADA.fr.chemin, CANADA.en.chemin, instCa.jour], ['canada/methode.html', 'en/canada/methode.html', METHODE_CANADA_MAJ]] : [])];
+    ...(instCa ? [[CANADA.fr.chemin, CANADA.en.chemin, instCa.jour], ...SIGNAUX_CANADA.map((x) => [x.fr.chemin, x.en.chemin, instCa.jour]),
+      ['canada/methode.html', 'en/canada/methode.html', METHODE_CANADA_MAJ]] : [])];
   const urls = paires.flatMap(([fr, en, maj]) => [fr, en].map((chemin) => [
     '  <url>',
     `    <loc>${SITE}${chemin}</loc>`,
@@ -533,7 +592,13 @@ export function pageCanada(indexHtml, cartesHtml, inst, lang) {
 }
 
 export function construireCanada(indexHtml, cartesHtml, inst) {
-  return Object.fromEntries(['fr', 'en'].map((l) => [`${CANADA[l].chemin}index.html`, pageCanada(indexHtml, cartesHtml, inst, l)]));
+  const pages = {};
+  for (const l of ['fr', 'en']) {
+    const tableau = pageCanada(indexHtml, cartesHtml, inst, l);
+    pages[`${CANADA[l].chemin}index.html`] = tableau;
+    for (const sig of SIGNAUX_CANADA) pages[`${sig[l].chemin}index.html`] = pageSignal(tableau, sig, inst, l, 'canada');
+  }
+  return pages;
 }
 
 // ---------- Construction ----------
