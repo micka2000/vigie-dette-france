@@ -180,16 +180,16 @@ a:focus-visible, button:focus-visible, summary:focus-visible { outline: var(--fo
 .reperes:not(:has(> :not([hidden]))) { display: none; }
 .repere[hidden] { display: none; }
 
-/* Bouton-icône à contour Material 3 (icône « light_mode ») : 40 px, voile d'état au survol */
+/* IconButton à contour du design system : 40 px, icône 18 px, appui à 0,92, voile d'état au survol */
 .btn-icone {
   display: inline-grid; place-items: center; width: 40px; height: 40px; flex: none;
   background: transparent; color: inherit; border: 1.5px solid currentColor; border-radius: 50%; cursor: pointer;
   transition: background-color 150ms var(--ease-standard), transform 150ms var(--ease-standard);
 }
 a.btn-icone { text-decoration: none; }
-.btn-icone svg { width: 22px; height: 22px; fill: currentColor; }
+.btn-icone svg { width: 18px; height: 18px; fill: currentColor; }
 .btn-icone:hover { background: color-mix(in srgb, currentColor 8%, transparent); }
-.btn-icone:active { transform: scale(0.94); background: color-mix(in srgb, currentColor 12%, transparent); }
+.btn-icone:active { transform: scale(0.92); background: color-mix(in srgb, currentColor 12%, transparent); }
 .btn-icone:focus-visible { outline: var(--focus-ring-width) solid currentColor; outline-offset: var(--focus-ring-offset); }
 /* Bouton de langue : même cercle, la langue proposée en lettres */
 .btn-langue { font-family: var(--font-display); font-weight: 600; font-size: 13px; letter-spacing: 0.02em; }
