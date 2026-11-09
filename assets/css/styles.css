@@ -23,6 +23,7 @@
 
   --bg-base: #F5F3EE;
   --bg-surface: #FFFFFF;
+  --bg-surface-2: #F0EEE9;
   --bg-inset: #EAE7E0;
   --bg-accent: var(--color-blue);
   --fg-1: #0F0F0F;
@@ -85,7 +86,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg-base: #0F0F0F; --bg-surface: #1A1A1A; --bg-inset: #111111;
+    --bg-base: #0F0F0F; --bg-surface: #1A1A1A; --bg-surface-2: #242424; --bg-inset: #111111;
     --fg-1: #F0EEE9; --fg-2: #B5B3AE; --fg-3: #8E8C87;
     --fg-accent: var(--color-sky); --color-blue-tint: #001F52;
     --border-subtle: #242424; --border-default: #383838;
@@ -100,7 +101,7 @@
   }
 }
 :root[data-theme="dark"] {
-  --bg-base: #0F0F0F; --bg-surface: #1A1A1A; --bg-inset: #111111;
+  --bg-base: #0F0F0F; --bg-surface: #1A1A1A; --bg-surface-2: #242424; --bg-inset: #111111;
   --fg-1: #F0EEE9; --fg-2: #B5B3AE; --fg-3: #8E8C87;
   --fg-accent: var(--color-sky); --color-blue-tint: #001F52;
   --border-subtle: #242424; --border-default: #383838;
@@ -407,10 +408,9 @@ footer p { margin: 0; max-width: 80ch; }
 @media (min-width: 960px) {
   .masthead .wrap {
     grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--space-12);
-    grid-template-areas: "pays pays" "top top" "verdict indice" "reperes indice" "stamp indice" "desc desc";
+    grid-template-areas: "top top" "verdict indice" "reperes indice" "stamp indice" "desc desc";
     align-items: start;
   }
-  .pays { grid-area: pays; }
   .masthead-top { grid-area: top; }
   .masthead .verdict { grid-area: verdict; font-size: clamp(22px, 2vw, 28px); }
   .masthead .indice { grid-area: indice; align-self: center; }
@@ -447,13 +447,31 @@ footer a { color: inherit; text-decoration: underline; text-underline-offset: 2p
 .methode .approfondir summary { font-size: var(--text-body); }
 .approfondir-corps { margin-top: var(--space-3); display: grid; gap: var(--space-3); color: var(--fg-1); font-size: var(--text-body); }
 
-/* Sélecteur France | Canada, en tête de chaque page (livraison 3) */
-.pays { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: calc(-1 * var(--space-2)); }
-.pays a {
-  display: inline-flex; align-items: center; min-height: 32px; padding-inline: var(--space-3); border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.45); color: var(--fg-inverse); text-decoration: none;
-  font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm);
+/* Sélecteur France | Canada (livraison 3) : composant Tabs, variante pill, du design system Mickaël Brousse
+   (artifact « Mickaël Brousse Design System », mb-tabs--pill). Dans la ligne du titre, avant EN et le thème ;
+   sous le titre sur mobile (jamais au-dessus : pas d'eyebrow). Liens de navigation, aria-current sur le pays affiché. */
+.pays {
+  display: inline-flex; gap: 6px; padding: 5px; border-radius: 12px; background: var(--bg-surface-2);
+  margin-left: auto; flex: none;
 }
-.pays a:hover { background: rgba(255, 255, 255, 0.12); }
-.pays a[aria-current] { background: var(--bg-surface); border-color: var(--bg-surface); color: var(--fg-accent); }
-@media (pointer: coarse) { .pays a { min-height: 44px; padding-inline: var(--space-4); } }
+.pays a {
+  padding: 7px 16px; border-radius: var(--radius-md); font-family: var(--font-display); font-size: 13px; font-weight: 600;
+  line-height: 1.2; color: var(--fg-3); text-decoration: none; white-space: nowrap;
+  transition: background-color 150ms var(--ease-standard), color 150ms var(--ease-standard);
+}
+.pays a:hover { color: var(--fg-1); }
+.pays a[aria-current] { background: var(--bg-surface); color: var(--fg-1); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); }
+/* Sur la piste claire, l'anneau de focus reprend la couleur d'accent (le blanc du bandeau ne s'y verrait pas) */
+.masthead .pays a:focus-visible { outline-color: var(--fg-accent); }
+@media (max-width: 599px) {
+  .masthead-top { flex-wrap: wrap; }
+  .masthead-top h1 { flex: 1 1 0; }
+  .pays { order: 3; margin-left: 0; }
+  /* Retour à la ligne forcé : le titre et EN / thème d'abord, le sélecteur dessous à sa largeur */
+  .masthead-top:has(.pays)::after { content: ''; order: 2; flex-basis: 100%; }
+}
+/* Au doigt : 44px de zone sans changer l'aspect */
+@media (pointer: coarse) {
+  .pays a { position: relative; }
+  .pays a::after { content: ''; position: absolute; inset: -7px -3px; }
+}

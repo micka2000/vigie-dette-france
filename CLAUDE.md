@@ -74,5 +74,5 @@ Cas fréquent : **changement de note non confirmé.** Une note ou une perspectiv
 ## Documents
 
 - `docs/designs/indice-vigie.md` : méthode de l'Indice Vigie et décisions de conception. Lié depuis la page Méthode publique : ne pas le déplacer. Long (1 100 lignes) : chercher la section utile plutôt que tout lire.
-- `docs/designs/vigie-canada.md` : projet Vigie Canada en cours (revue CEO faite, signal D13 en attente). Phase discrète (D12) : `/canada/` en `noindex`, hors sitemap, sans lien depuis la France ; `test/pages.test.mjs` le vérifie.
+- `docs/designs/vigie-canada.md` : projet Vigie Canada (revue CEO faite, signal D13 en attente). Ouvert au public (livraison 3, 08/11/2026) : sélecteur France | Canada en tête de chaque page (`navPays` dans `pages.mjs`), pages canadiennes indexées et dans le sitemap ; `test/pages.test.mjs` vérifie que les pages françaises ne changent que par le sélecteur et le JSON-LD « Vigie Dette ».
 - `docs/archive/` : plans terminés (taux de l'OAT 10 ans, résumé de la revue CEO de l'indice) et captures d'avant la V1. À ouvrir seulement pour retrouver une décision passée.

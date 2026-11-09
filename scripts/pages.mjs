@@ -293,9 +293,9 @@ export function pageSignal(tableau, sig, inst, lang) {
   const liens = SIGNAUX.filter((x) => x !== sig).map((x) => `        <li><a href="/${x[lang].chemin}">${echapper(x[lang].h1)}</a></li>`);
   const entete = `<header class="masthead">
   <div class="wrap">
-    ${navPays(lang, 'france')}
     <div class="masthead-top">
       <h1>${echapper(p.h1)}</h1>
+      ${navPays(lang, 'france')}
       <div class="masthead-actions">
         <a class="btn-icone btn-langue" id="langue-toggle" href="/${sig[autre].chemin}" hreflang="${autre}" lang="${autre}" aria-label="${T.langue}"><span>${autre.toUpperCase()}</span></a>
         ${theme}
