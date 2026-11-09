@@ -201,7 +201,7 @@ a.btn-icone { text-decoration: none; }
 .tile {
   background: var(--bg-surface); border-radius: var(--radius-carte); box-shadow: var(--shadow-md);
   padding: var(--space-4); display: grid; gap: var(--space-2); align-content: start;
-  text-decoration: none; color: inherit; border-top: 4px solid var(--level-color, var(--border-subtle));
+  text-decoration: none; color: inherit;
   transition: transform 150ms var(--ease-standard), box-shadow 150ms var(--ease-standard);
 }
 /* Survol du design system : monte de 2 px et l'ombre grandit */
