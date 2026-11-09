@@ -84,6 +84,8 @@
   --space-6: 24px; --space-8: 32px; --space-12: 48px; --space-16: 64px;
   --radius-sm: 4px;
   --radius-md: 8px;
+  /* Cartes : 8 px en clair, 4 px en sombre (design system) */
+  --radius-carte: var(--radius-md);
   --radius-pill: 9999px;
   --ease-standard: cubic-bezier(0.25, 0, 0, 1);
   /* La balise color-scheme des pages propose les deux ; ici, clair tant que le thème sombre n'est pas choisi */
@@ -97,7 +99,7 @@
     --fg-accent: var(--color-sky); --color-blue-tint: #001F52;
     --border-subtle: #242424; --border-default: #383838;
     --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.4); --shadow-md: 0 2px 20px rgba(0, 0, 0, 0.5); --shadow-lg: 0 8px 48px rgba(0, 0, 0, 0.6);
-    --border-control: #6D6D6D; --focus-ring: var(--color-sky);
+    --border-control: #6D6D6D; --focus-ring: var(--color-sky); --radius-carte: var(--radius-sm);
     --series-1: #3D78E0; --series-2: #929228; --series-3: #6F95D6;
     --risk-calme: #4FB0C0; --risk-vigilance: #D0B640; --risk-tension: #F08A3A; --risk-crise: #F0645A;
     --risk-calme-texte: var(--risk-calme); --risk-vigilance-texte: var(--risk-vigilance); --risk-tension-texte: var(--risk-tension); --risk-crise-texte: var(--risk-crise);
@@ -113,7 +115,7 @@
   --fg-accent: var(--color-sky); --color-blue-tint: #001F52;
   --border-subtle: #242424; --border-default: #383838;
   --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.4); --shadow-md: 0 2px 20px rgba(0, 0, 0, 0.5); --shadow-lg: 0 8px 48px rgba(0, 0, 0, 0.6);
-  --border-control: #6D6D6D; --focus-ring: var(--color-sky);
+  --border-control: #6D6D6D; --focus-ring: var(--color-sky); --radius-carte: var(--radius-sm);
   --series-1: #3D78E0; --series-2: #929228; --series-3: #6F95D6;
   --risk-calme: #4FB0C0; --risk-vigilance: #D0B640; --risk-tension: #F08A3A; --risk-crise: #F0645A;
   --risk-calme-texte: var(--risk-calme); --risk-vigilance-texte: var(--risk-vigilance); --risk-tension-texte: var(--risk-tension); --risk-crise-texte: var(--risk-crise);
@@ -197,7 +199,7 @@ a.btn-icone { text-decoration: none; }
 .signals-summary { margin-top: calc(-1 * var(--space-6)); }
 
 .tile {
-  background: var(--bg-surface); border-radius: var(--radius-md); box-shadow: var(--shadow-md);
+  background: var(--bg-surface); border-radius: var(--radius-carte); box-shadow: var(--shadow-md);
   padding: var(--space-4); display: grid; gap: var(--space-2); align-content: start;
   text-decoration: none; color: inherit; border-top: 4px solid var(--level-color, var(--border-subtle));
   transition: transform 150ms var(--ease-standard);
@@ -240,7 +242,7 @@ a.btn-icone { text-decoration: none; }
 /* Cartes des signaux */
 .signals { display: grid; gap: var(--space-6); padding-block: var(--space-6) var(--space-16); }
 .signal {
-  background: var(--bg-surface); border-radius: var(--radius-md); box-shadow: var(--shadow-md);
+  background: var(--bg-surface); border-radius: var(--radius-carte); box-shadow: var(--shadow-md);
   padding: var(--space-6); display: grid; gap: var(--space-4); min-width: 0;
   scroll-margin-top: var(--space-4);
 }
