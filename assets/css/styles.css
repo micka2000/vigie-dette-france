@@ -202,9 +202,10 @@ a.btn-icone { text-decoration: none; }
   background: var(--bg-surface); border-radius: var(--radius-carte); box-shadow: var(--shadow-md);
   padding: var(--space-4); display: grid; gap: var(--space-2); align-content: start;
   text-decoration: none; color: inherit; border-top: 4px solid var(--level-color, var(--border-subtle));
-  transition: transform 150ms var(--ease-standard);
+  transition: transform 150ms var(--ease-standard), box-shadow 150ms var(--ease-standard);
 }
-.tile:hover { transform: translateY(-2px); }
+/* Survol du design system : monte de 2 px et l'ombre grandit */
+.tile:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
 .tile-name { font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm); color: var(--fg-2); }
 .tile-value { font-family: var(--font-display); font-weight: 800; font-size: var(--text-tuile); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .tile-sub { font-size: var(--text-sm); font-weight: 600; color: var(--fg-2); font-variant-numeric: tabular-nums; }
