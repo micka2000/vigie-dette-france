@@ -1,6 +1,6 @@
 {
-  "jour": "2026-11-05",
-  "indice": 6,
+  "jour": "2026-11-06",
+  "indice": 15,
   "niveau": "calme",
   "niveauTexte": {
     "fr": "Calme",
@@ -16,15 +16,15 @@
         "cle": "spread",
         "niveau": "calme",
         "nom": "Écart Canada-États-Unis 10 ans",
-        "valeur": "-117 pb",
-        "sous": "Canada 10 ans 3,67 %",
-        "taux": "Canada 10 ans 3,67 % · États-Unis 4,84 %"
+        "valeur": "-121 pb",
+        "sous": "Canada 10 ans 3,65 %",
+        "taux": "Canada 10 ans 3,65 % · États-Unis 4,86 %"
       },
       {
         "cle": "adjudications",
-        "niveau": "calme",
+        "niveau": "vigilance",
         "nom": "Couverture des adjudications",
-        "valeur": "2,51"
+        "valeur": "2,22"
       },
       {
         "cle": "non-residents",
@@ -44,15 +44,15 @@
         "cle": "spread",
         "niveau": "calme",
         "nom": "10-year Canada-US gap",
-        "valeur": "-117 bp",
-        "sous": "10-year Canada 3.67%",
-        "taux": "10-year Canada 3.67% · US 4.84%"
+        "valeur": "-121 bp",
+        "sous": "10-year Canada 3.65%",
+        "taux": "10-year Canada 3.65% · US 4.86%"
       },
       {
         "cle": "adjudications",
-        "niveau": "calme",
+        "niveau": "vigilance",
         "nom": "Auction cover",
-        "valeur": "2.51"
+        "valeur": "2.22"
       },
       {
         "cle": "non-residents",

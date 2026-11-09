@@ -1521,6 +1521,14 @@
    "montant_m": 5000.0,
    "couverture": 2.511,
    "taux": 3.887
+  },
+  {
+   "jour": "2026-11-09",
+   "isin": "CA135087U931",
+   "echeance": "2036-12-01",
+   "montant_m": 5000.0,
+   "couverture": 2.224,
+   "taux": 3.679
   }
  ]
 }
