@@ -133,7 +133,7 @@ body {
   color: var(--fg-1);
   font-family: var(--font-body);
   font-size: var(--text-body);
-  line-height: 1.6;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
 }
 a { color: var(--fg-accent); }
