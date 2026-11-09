@@ -209,6 +209,10 @@ a.btn-icone { text-decoration: none; }
 .tile-name { font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm); color: var(--fg-2); }
 .tile-value { font-family: var(--font-display); font-weight: 800; font-size: var(--text-tuile); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .tile-sub { font-size: var(--text-sm); font-weight: 600; color: var(--fg-2); font-variant-numeric: tabular-nums; }
+/* La pastille et la ligne du taux (spread) côte à côte : pas de ligne de plus, toutes les tuiles gardent la même hauteur */
+.tile { grid-template-columns: auto minmax(0, 1fr); column-gap: var(--space-3); align-items: center; }
+.tile-name, .tile-value { grid-column: 1 / -1; }
+.tile .tile-sub { line-height: 1.3; }
 
 /* Pastille de niveau : Badge du design system, variante à contour (12 px, 600, interligne 1,4, 4 × 10 px, contour 1,5 px).
    Deux ajouts : la couleur du niveau, et un symbole par niveau (● ▲ ◆ ■) pour ne pas dépendre de la couleur seule. */
@@ -407,6 +411,8 @@ footer p { margin: 0; max-width: 80ch; }
   .signals-summary .tile-value { font-size: var(--text-tuile-sm); }
   .signals-summary .tile:last-child:nth-child(odd) { grid-column: 1 / -1; }
   .tile { padding: var(--space-3); }
+  /* Tuiles étroites : le taux sous la pastille, sur une ligne */
+  .tile .tile-sub { grid-column: 1 / -1; white-space: nowrap; font-size: var(--text-xs); }
   .signal { padding: var(--space-4); }
   .signal-now .big { font-size: var(--text-chiffre-sm); }
   .signal h2 { font-size: var(--text-h3); }
