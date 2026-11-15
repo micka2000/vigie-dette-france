@@ -353,7 +353,11 @@ test('Canada : repères revus (D16), la crise de 1995 en « crise », le record 
   assert.deepEqual(nonResidents.ancrages, ANCRAGES.nonResidents);
   assert.equal(niveau(nonResidents, 46.9), 'calme');
   // Le 8 novembre 2026 : indice 5,8, calme ; jamais au-delà de 31 sur 2001-2026
-  const e = etatDuJour(CA, new Date('2026-11-08T12:00:00Z'), PAYS.canada);
+  // etatDuJour lit le dernier point de chaque série : les données sont coupées au 8 novembre, sinon chaque nouvelle
+  // adjudication déplace l'indice (celle du 9 novembre l'a porté à 14,9).
+  const auJour = (lignes) => lignes.filter((l) => l.jour <= '2026-11-08');
+  const CA8 = { ...CA, spread: auJour(CA.spread), adj: { ...CA.adj, lignes: auJour(CA.adj.lignes) } };
+  const e = etatDuJour(CA8, new Date('2026-11-08T12:00:00Z'), PAYS.canada);
   assert.equal(Math.round(e.indice.score * 10) / 10, 5.8);
   const max = Math.max(...serieQuotidienne(CA, null, PAYS.canada).map((p) => p.indice));
   assert.ok(max < 31, `plus haut ${max}`);
