@@ -20,7 +20,11 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
+      # ref: main, pas le commit du déclenchement : une relance (« Re-run ») repartirait sinon d'un état dépassé
+      # et entrerait en conflit avec les données poussées entre-temps (échec du 10/11/2026).
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.12"
@@ -55,7 +59,19 @@ jobs:
             echo "Aucune nouvelle donnée."
           else
             git commit -m "Données du $(date -u +%F)"
-            git pull --rebase
+            # Conflit dans data/ (meta.json surtout) : on garde la collecte de ce passage, la plus récente.
+            # Conflit ailleurs (une page modifiée à la main entre-temps) : on abandonne sans rien écraser.
+            if ! git pull --rebase; then
+              conflits=$(git diff --name-only --diff-filter=U)
+              if [ -z "$conflits" ] || printf '%s\n' "$conflits" | grep -qv '^data/'; then
+                git rebase --abort || true
+                echo "::error::Rebase impossible, rien n'est poussé. Fichiers en conflit : $(echo ${conflits:-aucun})"
+                exit 1
+              fi
+              printf '%s\n' "$conflits" | xargs git checkout --theirs --
+              printf '%s\n' "$conflits" | xargs git add --
+              GIT_EDITOR=true git rebase --continue
+            fi
             git push
           fi
       - name: Signaler l'échec des pages
@@ -71,6 +87,5 @@ jobs:
       - name: Signaler les séries en échec
         if: always() && env.ECHECS == '1'
         run: |
-          python -c "import json; [print('::error::' + e['serie'] + ' : ' + e['erreur']) for e in json.load(open('data/meta.json'))['echecs']]"
-          python -c "import json; [print('::error::Canada ' + e['serie'] + ' : ' + e['erreur']) for e in json.load(open('data/canada/meta.json'))['echecs']]" || true
+          python scripts/signaler_echecs.py
           exit 1

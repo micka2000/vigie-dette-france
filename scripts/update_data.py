@@ -62,17 +62,20 @@ COUVERTURE_ALERTE_MOIS = 2  # un mois avant la sortie du calcul (péremption à 
 ERREURS = (urllib.error.URLError, TimeoutError, KeyError, ValueError, ZeroDivisionError)
 
 
+PAUSES_RESEAU = (10, 30)  # secondes avant le 2e puis le 3e essai ; le 10/11/2026, la BCE a renvoyé des 504 plus de 10 s
+
+
 def get(url, headers=None):
-    """Un second essai après une panne passagère (délai dépassé, coupure, erreur 5xx), jamais après une erreur 4xx."""
+    """Trois essais en cas de panne passagère (délai dépassé, coupure, erreur 5xx), aucun nouvel essai après une erreur 4xx."""
     req = urllib.request.Request(url, headers={**UA, **(headers or {})})
-    for essai in (1, 2):
+    for essai in range(len(PAUSES_RESEAU) + 1):
         try:
             with urllib.request.urlopen(req, timeout=60) as r:
                 return r.read().decode("utf-8-sig")
         except (TimeoutError, urllib.error.URLError) as e:
-            if essai == 2 or (isinstance(e, urllib.error.HTTPError) and e.code < 500):
+            if essai == len(PAUSES_RESEAU) or (isinstance(e, urllib.error.HTTPError) and e.code < 500):
                 raise
-            time.sleep(10)
+            time.sleep(PAUSES_RESEAU[essai])
 
 
 def ecb_series(key, start="1999-01"):

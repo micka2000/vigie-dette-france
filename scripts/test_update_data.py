@@ -12,6 +12,7 @@ from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import update_data as u  # noqa: E402
+import signaler_echecs  # noqa: E402
 
 DATA = Path(__file__).resolve().parent.parent / "data"
 SAISIES = Path(__file__).resolve().parent.parent / "test" / "fixtures" / "saisies"
@@ -293,16 +294,48 @@ class Reseau(unittest.TestCase):
         erreur = urllib.error.HTTPError("https://exemple.test/serie", 503, "Service Unavailable", {}, None)
         self.assertEqual(self.appels(erreur, self.reponse("ok")), ("ok", 2, 1))
 
-    def test_deux_timeouts_remontent_l_erreur(self):
-        resultat, n, _ = self.appels(TimeoutError("1"), TimeoutError("2"))
+    def test_deux_erreurs_504_puis_reponse(self):
+        """Le 10/11/2026, la BCE a renvoyé des 504 aux deux essais (bilan_bce.json, puis ciss.json)."""
+        erreur = lambda: urllib.error.HTTPError("https://exemple.test/serie", 504, "Gateway Time-out", {}, None)  # noqa: E731
+        urlopen = mock.Mock(side_effect=[erreur(), erreur(), self.reponse("ok")])
+        with mock.patch.object(u.urllib.request, "urlopen", urlopen), mock.patch.object(u.time, "sleep") as pause:
+            self.assertEqual(u.get("https://exemple.test/serie"), "ok")
+        self.assertEqual([c.args[0] for c in pause.call_args_list], [10, 30])
+
+    def test_trois_timeouts_remontent_l_erreur(self):
+        resultat, n, pause = self.appels(TimeoutError("1"), TimeoutError("2"), TimeoutError("3"))
         self.assertIsInstance(resultat, TimeoutError)
-        self.assertEqual(n, 2)
+        self.assertEqual((n, pause), (3, 2))
 
     def test_erreur_client_sans_nouvel_essai(self):
         erreur = urllib.error.HTTPError("https://exemple.test/serie", 404, "Not Found", {}, None)
         resultat, n, pause = self.appels(erreur, self.reponse("ok"))
         self.assertIs(resultat, erreur)
         self.assertEqual((n, pause), (1, 0))
+
+
+class SignalerEchecs(unittest.TestCase):
+    """Le 10/11/2026, l'étape de signalement a planté sur un meta.json laissé en conflit par le rebase."""
+
+    def test_meta_en_conflit_signale_sans_planter(self):
+        with tempfile.TemporaryDirectory() as d:
+            racine = Path(d)
+            (racine / "data" / "canada").mkdir(parents=True)
+            (racine / "data" / "meta.json").write_text("{\n<<<<<<< HEAD\n \"echecs\": []\n=======\n", encoding="utf-8")
+            (racine / "data" / "canada" / "meta.json").write_text(
+                json.dumps({"echecs": [{"serie": "valet.json", "erreur": "HTTPError : 504"}]}), encoding="utf-8")
+            self.assertEqual(signaler_echecs.annotations(racine), [
+                "::error::data/meta.json illisible (JSONDecodeError)",
+                "::error::Canada valet.json : HTTPError : 504",
+            ])
+
+    def test_meta_canada_absent(self):
+        with tempfile.TemporaryDirectory() as d:
+            racine = Path(d)
+            (racine / "data").mkdir()
+            (racine / "data" / "meta.json").write_text(
+                json.dumps({"echecs": [{"serie": "ciss.json", "erreur": "HTTPError : 504"}]}), encoding="utf-8")
+            self.assertEqual(signaler_echecs.annotations(racine), ["::error::ciss.json : HTTPError : 504"])
 
 
 class Canada(unittest.TestCase):
