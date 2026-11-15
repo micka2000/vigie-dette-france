@@ -8,8 +8,9 @@ L'AFT bloque les robots et les agences de notation n'ont pas d'API gratuite :
   sinon il est signalé dans `echecs` pour vérification.
 
 Chaque série est collectée à part : une panne garde l'ancien fichier et s'inscrit dans
-data/meta.json (`echecs`). Le script se termine en erreur s'il y a des échecs, après
-avoir écrit tout ce qui pouvait l'être.
+data/meta.json (`echecs`). Le script se termine en erreur s'il y a un échec bloquant, après
+avoir écrit tout ce qui pouvait l'être. Une panne réseau isolée (délai dépassé, coupure, erreur 5xx)
+est notée `"passager": true` et ne bloque pas : elle le devient si la série échoue encore au passage suivant.
 """
 
 import calendar
@@ -581,15 +582,23 @@ def write(dossier, nom, payload):
     (dossier / nom).write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
 
+def panne_reseau(e):
+    """Délai dépassé, coupure ou erreur 5xx : la source peut répondre au passage suivant. Une 4xx (clé refusée,
+    adresse changée) demande une intervention."""
+    if isinstance(e, urllib.error.HTTPError):
+        return e.code >= 500
+    return isinstance(e, (TimeoutError, urllib.error.URLError))
+
+
 def collecter(dossier, series, saisies, limites, echec, aujourd_hui):
-    """Chaque série à part : une panne garde l'ancien fichier et passe par echec(serie, erreur)."""
+    """Chaque série à part : une panne garde l'ancien fichier et passe par echec(serie, erreur, reseau)."""
     for nom, collecte in series.items():
         ancien = lire(dossier, nom)
         try:
             payload = collecte()
             raison = controle_forme(nom, payload, ancien, aujourd_hui, limites)
         except ERREURS as e:
-            echec(nom, f"{type(e).__name__} : {e}")
+            echec(nom, f"{type(e).__name__} : {e}", panne_reseau(e))
             continue
         if raison:
             echec(nom, raison)
@@ -601,7 +610,7 @@ def collecter(dossier, series, saisies, limites, echec, aujourd_hui):
         try:
             nouveau, alertes = mise_a_jour(ancien)
         except (*ERREURS, TypeError, IndexError) as e:
-            echec(nom, f"{type(e).__name__} : {e}")
+            echec(nom, f"{type(e).__name__} : {e}", panne_reseau(e))
             continue
         for alerte in alertes:
             echec(nom, alerte)
@@ -609,13 +618,29 @@ def collecter(dossier, series, saisies, limites, echec, aujourd_hui):
             write(dossier, nom, nouveau)
 
 
+def registre_echecs(dossier, aujourd_hui):
+    """Liste des échecs du passage et fonction pour en ajouter un. Une panne réseau est passagère si la série
+    n'était pas déjà en échec au passage précédent (meta.json avant réécriture)."""
+    deja = {e["serie"] for e in (lire(dossier, "meta.json") or {}).get("echecs", [])}
+    echecs = []
+
+    def echec(serie, erreur, reseau=False):
+        e = {"serie": serie, "date": aujourd_hui.isoformat(), "erreur": erreur}
+        if reseau and serie not in deja:
+            e["passager"] = True
+        echecs.append(e)
+
+    return echecs, echec
+
+
+def bloquants(echecs):
+    return [e for e in echecs if not e.get("passager")]
+
+
 def main(dossier=DATA, maintenant=None):
     maintenant = maintenant or datetime.now(timezone.utc)
     aujourd_hui = maintenant.date()
-    echecs = []
-
-    def echec(serie, erreur):
-        echecs.append({"serie": serie, "date": aujourd_hui.isoformat(), "erreur": erreur})
+    echecs, echec = registre_echecs(dossier, aujourd_hui)
 
     collecter(dossier, SERIES, SAISIES, LIMITES_JOURS, echec, aujourd_hui)
 
@@ -634,17 +659,14 @@ def main_canada(dossier=DATA_CANADA, maintenant=None, series=None, saisies=None)
     """Collecte du Canada, isolée de la France : ses échecs vont dans data/canada/meta.json. Renvoie les échecs."""
     maintenant = maintenant or datetime.now(timezone.utc)
     aujourd_hui = maintenant.date()
-    echecs = []
-
-    def echec(serie, erreur):
-        echecs.append({"serie": serie, "date": aujourd_hui.isoformat(), "erreur": erreur})
+    echecs, echec = registre_echecs(dossier, aujourd_hui)
 
     dossier.mkdir(parents=True, exist_ok=True)
     try:
         collecter(dossier, SERIES_CANADA if series is None else series, SAISIES_CANADA if saisies is None else saisies,
                   LIMITES_JOURS_CANADA, echec, aujourd_hui)
     except Exception as e:  # noqa: BLE001 : une erreur imprévue au Canada ne doit jamais arrêter la France
-        echec("canada", f"{type(e).__name__} : {e}")
+        echec("canada", f"{type(e).__name__} : {e}")  # jamais passager : erreur de code, pas de réseau
     write(dossier, "meta.json", {"mis_a_jour": maintenant.isoformat(timespec="minutes"), "echecs": echecs})
     return echecs
 
@@ -652,7 +674,7 @@ def main_canada(dossier=DATA_CANADA, maintenant=None, series=None, saisies=None)
 def echecs_changes(ancien_meta, nouveau_meta):
     """meta.json est commité dès que la liste des échecs change, y compris quand une panne se résout."""
     def cles(m):
-        return [(e["serie"], e["erreur"]) for e in (m or {}).get("echecs", [])]
+        return [(e["serie"], e["erreur"], bool(e.get("passager"))) for e in (m or {}).get("echecs", [])]
     return cles(ancien_meta) != cles(nouveau_meta)
 
 
@@ -665,12 +687,10 @@ if __name__ == "__main__":
             return json.loads(texte) if texte.strip() else None
         paires = list(zip(sys.argv[2:], (lire(DATA, "meta.json"), lire(DATA_CANADA, "meta.json"))))
         sys.exit(0 if any(echecs_changes(ancien(f), nouveau) for f, nouveau in paires) else 1)
-    resultat = main()
-    for e in resultat:
-        print(f"ÉCHEC {e['serie']} : {e['erreur']}", file=sys.stderr)
+    resultat = [("", e) for e in main()]
     if "--sans-canada" not in sys.argv:
-        resultat_canada = main_canada()
-        for e in resultat_canada:
-            print(f"ÉCHEC Canada {e['serie']} : {e['erreur']}", file=sys.stderr)
-        resultat = resultat + resultat_canada
-    sys.exit(1 if resultat else 0)
+        resultat += [("Canada ", e) for e in main_canada()]
+    for pays, e in resultat:
+        etat = "PANNE PASSAGÈRE" if e.get("passager") else "ÉCHEC"
+        print(f"{etat} {pays}{e['serie']} : {e['erreur']}", file=sys.stderr)
+    sys.exit(1 if bloquants([e for _, e in resultat]) else 0)

@@ -1,4 +1,5 @@
-"""Annotations GitHub (::error::) pour les séries en échec, France puis Canada.
+"""Annotations GitHub pour les séries en échec, France puis Canada : ::error:: si l'échec bloque,
+::warning:: pour une panne passagère (voir update_data.py).
 
 Un meta.json illisible (le 10/11/2026, des marqueurs de conflit de rebase) est signalé comme tel,
 au lieu d'interrompre l'étape sur une JSONDecodeError qui masquait les vraies erreurs.
@@ -21,7 +22,8 @@ def annotations(racine=RACINE):
         except (ValueError, KeyError, TypeError) as e:
             lignes.append(f"::error::{chemin} illisible ({e.__class__.__name__})")
             continue
-        lignes += [f"::error::{pays}{e['serie']} : {e['erreur']}" for e in echecs]
+        lignes += [f"::warning::{pays}{e['serie']} : panne passagère, nouvel essai au prochain passage ({e['erreur']})"
+                   if e.get("passager") else f"::error::{pays}{e['serie']} : {e['erreur']}" for e in echecs]
     return lignes
 
 

@@ -156,6 +156,41 @@ class Collecte(unittest.TestCase):
         meta = json.loads((self.dossier / "meta.json").read_text(encoding="utf-8"))
         self.assertEqual(meta["echecs"], echecs)
 
+    def collecte_avec(self, panne, quand=datetime(2026, 10, 20, 6, 30, tzinfo=timezone.utc)):
+        with mock.patch.dict(u.SERIES, self.series(**{"ciss.json": panne}), clear=True):
+            return u.main(self.dossier, quand)
+
+    def test_504_isolee_passagere_puis_bloquante_au_passage_suivant(self):
+        """Le 10/11/2026 : une 504 de la BCE suffisait à mettre le passage en rouge."""
+        def panne():
+            raise urllib.error.HTTPError("https://bce.test", 504, "Gateway Time-out", {}, None)
+        premier = self.collecte_avec(panne)
+        self.assertEqual([(e["serie"], e.get("passager")) for e in premier], [("ciss.json", True)])
+        self.assertEqual(u.bloquants(premier), [])
+        second = self.collecte_avec(panne)
+        self.assertEqual([e["serie"] for e in u.bloquants(second)], ["ciss.json"])
+        self.assertNotIn("passager", second[0])
+
+    def test_passage_reussi_entre_deux_pannes(self):
+        def panne():
+            raise TimeoutError("The read operation timed out")
+        self.collecte_avec(panne)
+        self.assertEqual(self.collecte_avec(self.series()["ciss.json"]), [])
+        self.assertEqual(u.bloquants(self.collecte_avec(panne)), [])
+
+    def test_erreur_4xx_bloquante_des_le_premier_passage(self):
+        def refus():
+            raise urllib.error.HTTPError("https://webstat.test", 401, "Unauthorized", {}, None)
+        echecs = self.collecte_avec(refus)
+        self.assertEqual([e["serie"] for e in u.bloquants(echecs)], ["ciss.json"])
+
+    def test_donnee_trop_vieille_bloquante(self):
+        # Le CISS du jour lu le 20 décembre : sa dernière séance a plus de 10 jours (les autres séries aussi)
+        echecs = self.collecte_avec(self.series()["ciss.json"], datetime(2026, 12, 20, 6, 30, tzinfo=timezone.utc))
+        ciss = [e for e in u.bloquants(echecs) if e["serie"] == "ciss.json"]
+        self.assertEqual(len(ciss), 1)
+        self.assertIn("vieille", ciss[0]["erreur"])
+
     def test_cle_manquante_dans_la_reponse(self):
         def forme_changee():
             raise KeyError("OBS_VALUE")
@@ -270,6 +305,10 @@ class CommitDeMeta(unittest.TestCase):
         self.assertFalse(u.echecs_changes({"mis_a_jour": "x"}, {"echecs": []}))
         self.assertFalse(u.echecs_changes(None, {"echecs": []}))
 
+    def test_panne_devenue_bloquante_est_commitee(self):
+        e = {"serie": "ciss.json", "erreur": "HTTPError : 504"}
+        self.assertTrue(u.echecs_changes({"echecs": [{**e, "passager": True}]}, {"echecs": [e]}))
+
 
 class Reseau(unittest.TestCase):
     """Le 26/10/2026, la BCE n'a pas répondu en 60 s à la requête TARGET2, puis répondait en moins d'une seconde."""
@@ -328,6 +367,15 @@ class SignalerEchecs(unittest.TestCase):
                 "::error::data/meta.json illisible (JSONDecodeError)",
                 "::error::Canada valet.json : HTTPError : 504",
             ])
+
+    def test_panne_passagere_en_avertissement(self):
+        with tempfile.TemporaryDirectory() as d:
+            racine = Path(d)
+            (racine / "data").mkdir()
+            (racine / "data" / "meta.json").write_text(json.dumps({"echecs": [
+                {"serie": "ciss.json", "erreur": "HTTPError : HTTP Error 504: Gateway Time-out", "passager": True}]}), encoding="utf-8")
+            self.assertEqual(signaler_echecs.annotations(racine), [
+                "::warning::ciss.json : panne passagère, nouvel essai au prochain passage (HTTPError : HTTP Error 504: Gateway Time-out)"])
 
     def test_meta_canada_absent(self):
         with tempfile.TemporaryDirectory() as d:
