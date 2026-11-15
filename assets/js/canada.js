@@ -4,7 +4,7 @@ import { ANCRAGES_CANADA, PAYS, interpoler, notch, notchLabel, picsMensuels } fr
 import {
   state, L, f0, f1, f2, fSigned1, pc, pb, fmtMonth, fmtDay, fmtWeekday, parseMonth, parseDay, css, json,
   lineChart, legend, visibles, periodes, since, lastOfPeriod, bandes, nc, renderRatingsTable, demarrer,
-} from './commun.mjs?v=d95b54cb';
+} from './commun.mjs?v=2471d1b7';
 
 const FICHE = PAYS.canada;
 // Carte → signal de la fiche (score.mjs).

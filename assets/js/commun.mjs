@@ -574,8 +574,22 @@ function repere(data, etat) {
 // composition constante le long de la courbe).
 const INDICE_VISIBLE = true;
 
+// Dernier passage de la collecte (meta.json, commité à chaque passage), en heure de Paris : la date des données
+// ne bouge pas le week-end, l'heure de vérification montre que la collecte tourne.
+export function verification(misAJour, lang = state.lang) {
+  const d = new Date(misAJour);
+  if (!misAJour || Number.isNaN(d.getTime())) return '';
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Paris', day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+  }).formatToParts(d).map((x) => [x.type, x.value]));
+  const jour = Number(p.day) === 1 && lang === 'fr' ? '1er' : Number(p.day);
+  const mois = DATES[lang].mois[Number(p.month) - 1];
+  return lang === 'en' ? `checked ${jour} ${mois} at ${p.hour}:${p.minute} Paris time` : `vérifiées le ${jour} ${mois} à ${Number(p.hour)} h ${p.minute}`;
+}
+
 function renderHeader(data, etat) {
-  text('#donnees', `${L('Données du', 'Data as of')} ${fmtDay(parseDay(etat.cartes.spread.jour))}`);
+  const verifie = verification(data.meta?.mis_a_jour);
+  text('#donnees', `${L('Données du', 'Data as of')} ${fmtDay(parseDay(etat.cartes.spread.jour))}${verifie ? `, ${verifie}` : ''}`);
   if (!document.getElementById('indice')) return; // page d'un seul signal : pas d'indice en tête
   if (!INDICE_VISIBLE) {
     text('#verdict', L('L’Indice Vigie est en cours de révision. Les cinq signaux ci-dessous restent à jour chaque jour.',
