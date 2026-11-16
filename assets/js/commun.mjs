@@ -620,7 +620,9 @@ function renderHeader(data, etat) {
 }
 
 function renderSources(data) {
-  const retard = [...new Set((data.meta.echecs ?? []).map((e) => e.serie ?? String(e)))];
+  // Une panne passagère (réseau, premier passage) ne retarde rien : l'ancien fichier reste frais et la collecte
+  // réessaie au passage suivant, où elle devient bloquante si elle persiste (update_data.py).
+  const retard = [...new Set((data.meta.echecs ?? []).filter((e) => !e.passager).map((e) => e.serie ?? String(e)))];
   const r = document.getElementById('retard');
   if (!r) return;
   r.hidden = !retard.length;
