@@ -392,12 +392,16 @@ SAISIES = {"adjudications.json": maj_adjudications, "notations.json": maj_notati
 
 
 # ---------- Canada (data/canada/, plan docs/designs/vigie-canada.md) ----------
-# Sources ouvertes, sans clé : Banque du Canada (API Valet), FRED (Réserve fédérale de Saint-Louis), Statistique Canada.
+# Sources ouvertes, sans clé : Banque du Canada (API Valet), Trésor américain et FRED (Réserve fédérale de Saint-Louis), Statistique Canada.
 # Collecte isolée de la France : ses échecs vont dans data/canada/meta.json, jamais dans data/meta.json.
 
 DATA_CANADA = DATA / "canada"
 VALET = "https://www.bankofcanada.ca/valet/observations/"
 FRED = "https://fred.stlouisfed.org/graph/fredgraph.csv?id="
+# Courbe du Trésor américain, l'année en cours : la séance du jour y paraît le soir même, FRED la reprend
+# le jour ouvré suivant (mêmes valeurs, vérifié sur 2026). FRED garde l'historique depuis 1962.
+TRESOR = ("https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/"
+          "{an}/all?type=daily_treasury_yield_curve&field_tdr_date_value={an}&page&_format=csv")
 STATCAN = "https://www150.statcan.gc.ca/t1/wds/rest/getDataFromVectorsAndLatestNPeriods"
 # Rendement de l'obligation de référence à 10 ans du gouvernement du Canada, clôture de chaque séance, depuis 2001.
 CA10 = "BD.CDN.10YR.DQ.YLD"
@@ -429,6 +433,29 @@ def fred_jours(serie):
     return {l[0]: float(l[1]) for l in lignes_csv[1:] if len(l) > 1 and l[1] not in ("", ".")}
 
 
+def tresor_10ans(an):
+    """{date: rendement à 10 ans} de la courbe du Trésor américain pour une année (dates MM/JJ/AAAA)."""
+    out = {}
+    for l in csv.DictReader(io.StringIO(get(TRESOR.format(an=an)))):
+        m, j, a = l["Date"].split("/")
+        if l.get("10 Yr") not in (None, ""):
+            out[f"{a}-{m}-{j}"] = float(l["10 Yr"])
+    return out
+
+
+def us10_jours(aujourd_hui=None):
+    """FRED pour l'historique, complété par le Trésor pour les dernières séances. Une panne du Trésor ne bloque rien :
+    l'écart attend alors FRED, comme avant."""
+    us = fred_jours(US10)
+    an = (aujourd_hui or date.today()).year
+    try:
+        recent = tresor_10ans(an)
+    except Exception as e:  # noqa: BLE001
+        print(f"Trésor américain indisponible, FRED seul : {e}")
+        return us
+    return {**us, **{j: v for j, v in recent.items() if j not in us}}
+
+
 def statcan(vecteurs):
     """{vecteur: {« AAAA-MM »: valeur}} pour des séries mensuelles de Statistique Canada (tout l'historique)."""
     corps = json.dumps([{"vectorId": v, "latestN": 1000} for v in vecteurs]).encode()
@@ -447,7 +474,7 @@ def statcan(vecteurs):
 def serie_spread_canada(ca=None, us=None):
     """Écart Canada moins États-Unis à 10 ans, aux seules dates publiées par les deux sources. Aucun report de valeur."""
     ca = valet(CA10) if ca is None else ca
-    us = fred_jours(US10) if us is None else us
+    us = us10_jours() if us is None else us
     return [
         {"jour": j, "ca10": ca[j], "us10": us[j], "spread_pb": round((ca[j] - us[j]) * 100, 1)}
         for j in sorted(ca) if j in us

@@ -402,6 +402,25 @@ class Canada(unittest.TestCase):
         with mock.patch.object(u, "get", return_value=csv_fred):
             self.assertEqual(u.fred_jours("DGS10"), {"2026-11-10": 4.80, "2026-11-13": 4.85})
 
+    def test_tresor_complete_fred_sans_le_remplacer(self):
+        csv_fred = "observation_date,DGS10\n2026-11-12,5.10\n2026-11-13,5.15\n"
+        csv_tresor = 'Date,"1 Mo","10 Yr"\n11/16/2026,4.10,5.12\n11/13/2026,4.10,5.16\n'
+        def get(url, headers=None):
+            return csv_fred if url.startswith(u.FRED) else csv_tresor
+        with mock.patch.object(u, "get", get):
+            us = u.us10_jours(u.date(2026, 11, 17))
+        # Le 16 vient du Trésor ; le 13 garde la valeur de FRED.
+        self.assertEqual(us, {"2026-11-12": 5.10, "2026-11-13": 5.15, "2026-11-16": 5.12})
+
+    def test_tresor_en_panne_fred_seul(self):
+        csv_fred = "observation_date,DGS10\n2026-11-13,5.15\n"
+        def get(url, headers=None):
+            if url.startswith(u.FRED):
+                return csv_fred
+            raise u.urllib.error.URLError("hors ligne")
+        with mock.patch.object(u, "get", get), mock.patch("builtins.print"):
+            self.assertEqual(u.us10_jours(u.date(2026, 11, 17)), {"2026-11-13": 5.15})
+
     def test_adjudications_dix_ans_seulement_avec_resultat(self):
         def obs(jour, duree, couverture=None, hors=None):
             o = {"AUC_BOND_AUCTION_DATE": {"v": jour}, "AUC_BOND_TERM_YEARS": {"v": duree}, "AUC_BOND_ISIN": {"v": "CA0"},
