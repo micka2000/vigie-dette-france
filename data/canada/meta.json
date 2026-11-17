@@ -1,4 +1,10 @@
 {
- "mis_a_jour": "2026-11-17T16:20+00:00",
- "echecs": []
+ "mis_a_jour": "2026-11-17T23:21+00:00",
+ "echecs": [
+  {
+   "serie": "non_residents.json",
+   "date": "2026-11-17",
+   "erreur": "HTTPError : HTTP Error 403: Forbidden"
+  }
+ ]
 }
