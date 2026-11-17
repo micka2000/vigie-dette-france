@@ -136,7 +136,7 @@ export const EN_CANADA = {
   'ca.notes.pourquoi': '<b>Why it matters.</b> A downgrade makes Canada’s borrowing more expensive. S&amp;P and Moody’s have given Canada their top rating since 2002; Fitch cut it by one notch, to AA+, on 24 June 2020, after the Covid spending.',
   'ca.notes.lire': '<b>How to read the chart.</b> One line per agency: the higher it is, the better the rating. The lowest of the three is used. Moody’s writes its ratings differently: Aaa is the same as AAA.',
   'ca.notes.qui': '<b>Who measures it, and when.</b> S&amp;P, Moody’s and Fitch. Collected every morning, a change is recorded only when two independent sources confirm it (<a href="https://en.wikipedia.org/wiki/List_of_countries_by_credit_rating" target="_blank" rel="noopener">Wikipedia</a>, <a href="https://countryeconomy.com/ratings/canada" target="_blank" rel="noopener">countryeconomy.com</a>).',
-  'ca.pied.collecte': 'Collected every morning (Bank of Canada, US Federal Reserve, Statistics Canada, rating agencies). Thresholds are benchmarks drawn from Canadian history (gap, cover) or France’s scale (non-residents, ratings), not forecasts.',
+  'ca.pied.collecte': 'Collected every morning (Bank of Canada, US Federal Reserve, Statistics Canada, rating agencies). Thresholds are benchmarks drawn from Canadian history (gap) or France’s scale (cover, non-residents, ratings), not forecasts.',
   'ca.pied.methode': 'How the Canadian Vigie Index is calculated',
   'ca.pied.donnees': 'All Canadian series as open data (JSON)',
 };
