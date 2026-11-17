@@ -1,5 +1,5 @@
 {
-  "jour": "2026-11-13",
+  "jour": "2026-11-16",
   "indice": 9,
   "niveau": "calme",
   "niveauTexte": {
@@ -16,9 +16,9 @@
         "cle": "spread",
         "niveau": "calme",
         "nom": "Écart Canada-États-Unis 10 ans",
-        "valeur": "-130 pb",
-        "sous": "Canada 10 ans 3,85 %",
-        "taux": "Canada 10 ans 3,85 % · États-Unis 5,15 %"
+        "valeur": "-131 pb",
+        "sous": "Canada 10 ans 3,81 %",
+        "taux": "Canada 10 ans 3,81 % · États-Unis 5,12 %"
       },
       {
         "cle": "adjudications",
@@ -30,7 +30,7 @@
         "cle": "non-residents",
         "niveau": "calme",
         "nom": "Part des non-résidents",
-        "valeur": "45,9 %"
+        "valeur": "46,0 %"
       },
       {
         "cle": "notations",
@@ -44,9 +44,9 @@
         "cle": "spread",
         "niveau": "calme",
         "nom": "10-year Canada-US gap",
-        "valeur": "-130 bp",
-        "sous": "10-year Canada 3.85%",
-        "taux": "10-year Canada 3.85% · US 5.15%"
+        "valeur": "-131 bp",
+        "sous": "10-year Canada 3.81%",
+        "taux": "10-year Canada 3.81% · US 5.12%"
       },
       {
         "cle": "adjudications",
@@ -58,7 +58,7 @@
         "cle": "non-residents",
         "niveau": "calme",
         "nom": "Non-resident share",
-        "valeur": "45.9%"
+        "valeur": "46.0%"
       },
       {
         "cle": "notations",
