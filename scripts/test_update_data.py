@@ -346,6 +346,14 @@ class Reseau(unittest.TestCase):
         self.assertIsInstance(resultat, TimeoutError)
         self.assertEqual((n, pause), (3, 2))
 
+    def test_trop_de_requetes_429_nouvel_essai(self):
+        """Le 17/11/2026, l'AFT a répondu 429 (adjudications.json) : c'est passager, comme une 5xx."""
+        erreur = urllib.error.HTTPError("https://exemple.test/serie", 429, "Too Many Requests", {}, None)
+        resultat, n, pause = self.appels(erreur, self.reponse("ok"))
+        self.assertEqual(resultat, "ok")
+        self.assertEqual((n, pause), (2, 1))
+        self.assertTrue(u.panne_reseau(erreur))
+
     def test_erreur_client_sans_nouvel_essai(self):
         erreur = urllib.error.HTTPError("https://exemple.test/serie", 404, "Not Found", {}, None)
         resultat, n, pause = self.appels(erreur, self.reponse("ok"))

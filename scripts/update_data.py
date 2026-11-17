@@ -67,14 +67,15 @@ PAUSES_RESEAU = (10, 30)  # secondes avant le 2e puis le 3e essai ; le 10/11/202
 
 
 def get(url, headers=None):
-    """Trois essais en cas de panne passagère (délai dépassé, coupure, erreur 5xx), aucun nouvel essai après une erreur 4xx."""
+    """Trois essais en cas de panne passagère (délai dépassé, coupure, erreur 5xx ou 429), aucun nouvel essai
+    après une autre erreur 4xx."""
     req = urllib.request.Request(url, headers={**UA, **(headers or {})})
     for essai in range(len(PAUSES_RESEAU) + 1):
         try:
             with urllib.request.urlopen(req, timeout=60) as r:
                 return r.read().decode("utf-8-sig")
         except (TimeoutError, urllib.error.URLError) as e:
-            if essai == len(PAUSES_RESEAU) or (isinstance(e, urllib.error.HTTPError) and e.code < 500):
+            if essai == len(PAUSES_RESEAU) or not panne_reseau(e):
                 raise
             time.sleep(PAUSES_RESEAU[essai])
 
@@ -610,10 +611,10 @@ def write(dossier, nom, payload):
 
 
 def panne_reseau(e):
-    """Délai dépassé, coupure ou erreur 5xx : la source peut répondre au passage suivant. Une 4xx (clé refusée,
-    adresse changée) demande une intervention."""
+    """Délai dépassé, coupure, erreur 5xx ou 429 (trop de requêtes, l'AFT le 17/11/2026) : la source peut répondre
+    au passage suivant. Une autre 4xx (clé refusée, adresse changée) demande une intervention."""
     if isinstance(e, urllib.error.HTTPError):
-        return e.code >= 500
+        return e.code >= 500 or e.code == 429
     return isinstance(e, (TimeoutError, urllib.error.URLError))
 
 
