@@ -617,15 +617,23 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     ecrire('data/instantane.json', `${JSON.stringify(instantane(lireFichiers(), new Date()), null, 2)}\n`);
   }
   const inst = JSON.parse(lire('data/instantane.json'));
-  let instCaSitemap = null;
-  try { instCaSitemap = JSON.parse(lire('data/canada/instantane.json')); } catch { /* le sitemap garde la France seule */ }
-  for (const [f, html] of Object.entries(construire(lire('index.html'), inst, instCaSitemap))) ecrire(f, html);
   // Canada à part : une erreur ici laisse les pages françaises écrites, et la commande finit en erreur (étape en rouge).
+  // Son instantané est recalculé avant le sitemap, qui en tire la date des pages canadiennes (sitemap en retard le 17/11/2026).
+  let instCa = null;
+  let erreurCanada = null;
   try {
     if (process.argv.includes('--instantane')) {
       ecrire('data/canada/instantane.json', `${JSON.stringify(instantaneCanada(lireFichiersCanada(), new Date()), null, 2)}\n`);
     }
-    const instCa = JSON.parse(lire('data/canada/instantane.json'));
+    instCa = JSON.parse(lire('data/canada/instantane.json'));
+  } catch (e) {
+    erreurCanada = e;
+    // Le sitemap garde alors les dates du dernier instantané écrit, ou la France seule s'il n'y en a pas.
+    try { instCa = JSON.parse(lire('data/canada/instantane.json')); } catch { /* France seule */ }
+  }
+  for (const [f, html] of Object.entries(construire(lire('index.html'), inst, instCa))) ecrire(f, html);
+  try {
+    if (erreurCanada) throw erreurCanada;
     for (const [f, html] of Object.entries(construireCanada(lire('index.html'), lire('canada/cartes.html'), instCa))) ecrire(f, html);
   } catch (e) {
     console.error(`Canada : pages non régénérées (${e.message})`);
