@@ -1,10 +1,10 @@
 // Vigie Dette Canada : les quatre cartes canadiennes (fichiers de data/canada/, textes, graphiques).
 // Le socle commun (en-tête, courbe, graphiques, infobulles) est dans commun.mjs ; le calcul dans score.mjs (PAYS.canada).
-import { ANCRAGES_CANADA, PAYS, interpoler, notch, notchLabel, picsMensuels } from './score.mjs?v=caee4dd5';
+import { ANCRAGES_CANADA, PAYS, interpoler, notch, notchLabel, picsMensuels } from './score.mjs?v=5d461258';
 import {
   state, L, f0, f1, f2, fSigned1, pc, pb, fmtMonth, fmtDay, fmtWeekday, parseMonth, parseDay, css, json,
   lineChart, legend, visibles, periodes, since, lastOfPeriod, bandes, nc, renderRatingsTable, demarrer,
-} from './commun.mjs?v=46b2d612';
+} from './commun.mjs?v=9aea6676';
 
 const FICHE = PAYS.canada;
 // Carte → signal de la fiche (score.mjs).
@@ -15,7 +15,8 @@ const fmtNombre = { fr: (v, d) => v.toFixed(d).replace('.', ','), en: (v, d) => 
 function textesSeuils(lang) {
   const n = fmtNombre[lang], et = lang === 'fr' ? 'à' : 'to';
   const unite = {
-    spread: (v) => `${n(v, 0)} ${lang === 'fr' ? 'pb' : 'bp'}`, adjudications: (v) => n(v, 2),
+    spread: (v) => `${n(v, 0)} ${lang === 'fr' ? 'pb' : 'bp'}`,
+    adjudications: (v) => n(v, [0, 1, 2].find((d) => Number(v.toFixed(d)) === v) ?? 2), // 2, 1,75, 1,5 : sans zéro inutile
     'non-residents': (v) => (lang === 'fr' ? `${n(v, Number.isInteger(v) ? 0 : 1)} %` : `${n(v, Number.isInteger(v) ? 0 : 1)}%`),
   };
   const out = {};

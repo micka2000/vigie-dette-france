@@ -2,25 +2,25 @@
 // Le socle commun (en-tête, courbe, graphiques, infobulles) est dans commun.mjs ; le calcul dans score.mjs (PAYS.france).
 import {
   ANCRAGES, PAYS, couvertures, interpoler, notch, notchLabel, fusionnerSeries, plusHautDepuis, plusBasDepuis, picsMensuels, partsTarget,
-} from './score.mjs?v=caee4dd5';
+} from './score.mjs?v=5d461258';
 import {
   state, L, f0, f1, f2, fSigned1, pc, pb, fmtMonth, fmtMonthLong, fmtDayLong, fmtDay, fmtWeekday, parseMonth, parseDay, css, json,
   lineChart, legend, visibles, periodes, since, lastOfPeriod, bandes, nc, renderRatingsTable, demarrer,
-} from './commun.mjs?v=46b2d612';
+} from './commun.mjs?v=9aea6676';
 
 // Carte → signal de la fiche (score.mjs), et textes des seuils de risque affichés sous chaque carte.
 const CLE_SCORE = { spread: 'spread', adjudications: 'couverture', 'non-residents': 'nonResidents', notations: 'notes', target: 'target' };
 const TEXTES_SEUILS = {
   fr: {
     spread: { calme: 'moins de 50 pb', vigilance: '50 à 80 pb', tension: '80 à 120 pb', crise: '120 pb et plus' },
-    adjudications: { calme: 'couverture de 2,03 et plus', vigilance: 'de 1,87 à 2,03', tension: 'de 1,68 à 1,87', crise: 'moins de 1,68' },
+    adjudications: { calme: 'couverture de 2 et plus', vigilance: 'de 1,75 à 2', tension: 'de 1,5 à 1,75', crise: 'moins de 1,5' },
     'non-residents': { calme: 'moins de 50 %', vigilance: '50 à 55 %', tension: '55 à 60 %', crise: '60 % et plus' },
     notations: { calme: 'AA ou mieux', vigilance: 'AA-', tension: 'A+ à A-', crise: 'BBB+ ou moins' },
     target: { calme: 'au-dessus de -1 % du bilan', vigilance: '-2,5 à -1 %', tension: '-4 à -2,5 %', crise: '-4 % et moins' },
   },
   en: {
     spread: { calme: 'below 50 bp', vigilance: '50 to 80 bp', tension: '80 to 120 bp', crise: '120 bp and above' },
-    adjudications: { calme: 'cover of 2.03 and above', vigilance: '1.87 to 2.03', tension: '1.68 to 1.87', crise: 'below 1.68' },
+    adjudications: { calme: 'cover of 2 and above', vigilance: '1.75 to 2', tension: '1.5 to 1.75', crise: 'below 1.5' },
     'non-residents': { calme: 'below 50%', vigilance: '50 to 55%', tension: '55 to 60%', crise: '60% and above' },
     notations: { calme: 'AA or better', vigilance: 'AA-', tension: 'A+ to A-', crise: 'BBB+ or lower' },
     target: { calme: 'above -1% of the balance sheet', vigilance: '-2.5% to -1%', tension: '-4% to -2.5%', crise: '-4% and below' },

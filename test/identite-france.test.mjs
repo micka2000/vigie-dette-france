@@ -29,14 +29,15 @@ function sorties() {
   };
 }
 
-// Méthode 2.2 (09/11/2026) : repères de la couverture tirés de son historique (centiles). Toutes les empreintes changent ;
-// en 2.1 elles valaient eceb20ab9e5da56c, f53d548c22bd17be, f16b78c9d250a86b, c40174acb44be32d, a09d750154a433fa.
+// Méthode 2.3 (17/11/2026) : couverture sur un barème fixe (2,5 / 2 / 1,75 / 1,5 / 1). Toutes les empreintes changent ;
+// en 2.2 elles valaient 1156770097622783, c41674f88654e949, ac1a83fbbb2871d1, bf96f40db76529ee, f7025c7f6d764397 ;
+// en 2.1 eceb20ab9e5da56c, f53d548c22bd17be, f16b78c9d250a86b, c40174acb44be32d, a09d750154a433fa.
 const ATTENDU = {
-  etat: '1156770097622783',
-  courbe: 'c41674f88654e949',
-  serie: 'ac1a83fbbb2871d1',
-  pics: 'bf96f40db76529ee',
-  instantane: 'f7025c7f6d764397',
+  etat: 'da558667a69d5ddd',
+  courbe: '3ffa1d1fe4038664',
+  serie: 'd9934336e5e1be39',
+  pics: 'ef2d214dfe656b5a',
+  instantane: '21d319d06722866a',
 };
 
 if (process.argv.includes('--afficher')) console.log(sorties());

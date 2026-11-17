@@ -1,6 +1,6 @@
 {
   "jour": "2026-11-13",
-  "indice": 15,
+  "indice": 9,
   "niveau": "calme",
   "niveauTexte": {
     "fr": "Calme",
@@ -22,7 +22,7 @@
       },
       {
         "cle": "adjudications",
-        "niveau": "vigilance",
+        "niveau": "calme",
         "nom": "Couverture des adjudications",
         "valeur": "2,22"
       },
@@ -50,7 +50,7 @@
       },
       {
         "cle": "adjudications",
-        "niveau": "vigilance",
+        "niveau": "calme",
         "nom": "Auction cover",
         "valeur": "2.22"
       },

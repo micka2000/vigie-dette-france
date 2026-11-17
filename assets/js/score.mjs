@@ -8,7 +8,10 @@
 // 2.2 (09/11/2026) : repères de la couverture tirés de son historique (225 ventes à 10 ans, 2004-2026), même règle que le
 // Canada : 0 au 75e centile, 25 à la médiane, 50 au 25e, 75 au 10e, 100 au 1er (interpolation linéaire). Avant : 3,5 / 2,5
 // / 2 / 1,5 / 1, choisis à la main ; une vente sur deux était en tension.
-export const METHODE_VERSION = '2.2';
+// 2.3 (17/11/2026) : couverture sur un barème fixe, le même pour la France et le Canada : au-dessus de 2, la demande
+// couvre largement l'offre (calme) ; sous 1,5, crise ; une vente sous 1 serait ratée (100). Repères 2,5 / 2 / 1,75 / 1,5 / 1.
+// Les centiles mettaient « en crise » une vente sur dix, souscrite plus d'1,6 fois en France, plus de 2 fois au Canada.
+export const METHODE_VERSION = '2.3';
 
 export const NIVEAUX = ['calme', 'vigilance', 'tension', 'crise'];
 
@@ -16,7 +19,7 @@ export const NIVEAUX = ['calme', 'vigilance', 'tension', 'crise'];
 // Une suite décroissante signale un sens inversé (une valeur basse est mauvaise).
 export const ANCRAGES = {
   spread: [0, 50, 80, 120, 200], // pb
-  couverture: [2.35, 2.03, 1.87, 1.68, 1.45], // demandé / servi (centiles 2004-2026, méthode 2.2)
+  couverture: [2.5, 2, 1.75, 1.5, 1], // demandé / servi, barème fixe (méthode 2.3), le même au Canada
   nonResidents: [40, 50, 55, 60, 70], // %
   notes: [0, 3, 4, 7, 9], // crans perdus depuis AAA (BBB- = 9)
   target: [1, -1, -2.5, -4, -6], // % du bilan de l'Eurosystème (nov. 2008 : -6,0)
@@ -26,7 +29,7 @@ export const ANCRAGES = {
 // Niveau d'un signal seul, lu sur sa valeur brute avec les seuils publiés : bornes [de, à).
 export const SEUILS = {
   spread: [['calme', -Infinity, 50], ['vigilance', 50, 80], ['tension', 80, 120], ['crise', 120, Infinity]],
-  couverture: [['calme', 2.03, Infinity], ['vigilance', 1.87, 2.03], ['tension', 1.68, 1.87], ['crise', -Infinity, 1.68]],
+  couverture: [['calme', 2, Infinity], ['vigilance', 1.75, 2], ['tension', 1.5, 1.75], ['crise', -Infinity, 1.5]],
   nonResidents: [['calme', -Infinity, 50], ['vigilance', 50, 55], ['tension', 55, 60], ['crise', 60, Infinity]],
   notes: [['calme', 18, Infinity], ['vigilance', 17, 18], ['tension', 14, 17], ['crise', -Infinity, 14]], // échelle AAA = 20
   // Crise sous -4 % : les mois de 2008-2009 et de la crise de l'euro (2011-2012), et eux seuls.
@@ -234,7 +237,9 @@ export const ANCRAGES_CANADA = {
   // pb, 10 ans Canada moins 10 ans États-Unis : centiles des moyennes mensuelles 1982-2026 (Statistique Canada v122543
   // et FRED GS10), pour que la crise de la dette de 1994-1995 (150 à 200 pb) soit dans l'historique (D16)
   spread: [-36, 2, 86, 142, 218],
-  couverture: [2.38, 2.28, 2.16, 2.05, 1.85], // soumissions / montant adjugé, obligations à 10 ans
+  // soumissions / montant adjugé, obligations à 10 ans : barème de la France (méthode 2.3), au lieu des centiles
+  // canadiens (2,38 / 2,28 / 2,16 / 2,05 / 1,85) qui mettaient en crise une vente souscrite plus de 2 fois
+  couverture: ANCRAGES.couverture,
   // % des obligations fédérales négociables : barème de la France, comme les notes. L'exposition à une fuite des
   // étrangers ne dépend pas du pays ; au Canada, une part haute a surtout suivi la demande refuge (14 % en 2009, 47 % en 2026) (D16)
   nonResidents: ANCRAGES.nonResidents,
@@ -254,7 +259,7 @@ const CANADA = {
   pilote: 'spread',
   signaux: {
     spread: { type: 'jour', ancrages: ANCRAGES_CANADA.spread, seuils: seuilsDe(ANCRAGES_CANADA.spread), peremptionJours: PEREMPTION_CANADA.spread },
-    couverture: { type: 'date', ancrages: ANCRAGES_CANADA.couverture, seuils: seuilsDe(ANCRAGES_CANADA.couverture, -1), peremptionMois: PEREMPTION_CANADA.couverture },
+    couverture: { type: 'date', ancrages: ANCRAGES_CANADA.couverture, seuils: SEUILS.couverture, peremptionMois: PEREMPTION_CANADA.couverture },
     nonResidents: { type: 'mois', ancrages: ANCRAGES_CANADA.nonResidents, seuils: SEUILS.nonResidents, peremptionMois: PEREMPTION_CANADA.nonResidents },
     notes: { type: 'notes', ancrages: ANCRAGES.notes, seuils: SEUILS.notes, peremptionMois: Infinity },
   },

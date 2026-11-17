@@ -60,7 +60,7 @@ La méthode a changé après relecture. Le document proposait d'abord un centile
 | Signal | Série et fichier | 0 | 25 | 50 | 75 | 100 |
 |---|---|---|---|---|---|---|
 | Spread OAT-Bund 10 ans | BCE IRS, `data/spread.json` | 0 pb | 50 pb | 80 pb | 120 pb | 200 pb |
-| Couverture de l'adjudication à 10 ans (sens inversé, méthode 2.2 : centiles 2004-2026) | `data/adjudications.json` | 2,35 | 2,03 | 1,87 | 1,68 | 1,45 |
+| Couverture de l'adjudication à 10 ans (sens inversé, méthode 2.3 : barème fixe, le même au Canada) | `data/adjudications.json` | 2,5 | 2 | 1,75 | 1,5 | 1 |
 | Part des non-résidents | AFT, `data/non_residents_aft.json` (Eurostat est affiché sur le graphique, pas utilisé dans le score) | 40 % | 50 % | 55 % | 60 % | 70 % |
 | Note la plus basse | `data/notations.json` | AAA | AA- | A+ | BBB+ | BBB- |
 | Solde TARGET2 en % du bilan de l'Eurosystème (sens inversé, méthode 2.1) | BCE TGB et ILM, `data/target.json` et `data/bilan_bce.json` | +1 % | -1 % | -2,5 % | -4 % | -6 % |
@@ -147,6 +147,14 @@ Question de l'utilisateur : pourquoi 120 pb comme seuil de crise du spread ? Dé
 | France | 6 | 66 (juil. 2011) | jamais | 154 (nov. 2011) |
 
 Les cinq pays ont basculé entre 470 et 590 pb. Un barème calé sur ces bascules (25 ≈ 100 pb, 50 ≈ 250, 75 ≈ 500, 100 ≈ 900) mesurerait la distance au scénario de 2010-2012 ; il ramènerait le spread du 21/10/2026 (155 pb) d'environ 86 à 34 et l'indice d'environ 64 à 52 (estimation). Arguments pour : repères observés cinq fois, point de départ identique en 2007, dette grecque de 2009 (~127 % du PIB) proche de la française d'aujourd'hui (~115 %). Argument contre principal : le cadre a changé (OMT en 2012, TPI en 2022, MES trop petit pour la France), la bascule française pourrait venir bien plus bas que 500 pb, et personne ne l'a observée. Le barème actuel répond à « est-ce anormal pour la France ? », celui de la crise de l'euro à « la France approche-t-elle du point où d'autres ont dû être secourus ? ». Si on l'adopte un jour, il faudra recaler les cinq signaux sur la même crise, pas le seul spread.
+
+### Méthode 2.3 (2026-11-17) : couverture sur un barème fixe, France et Canada
+
+Remarque de Mickaël en comparant les deux pays : « tu es en crise quand la demande est inférieure à 1 ». Avec les centiles de la 2.2, une vente souscrite 1,6 fois (France) ou 2 fois (Canada) était « en crise » : une vente sur dix par construction, alors qu'aucune n'a été ratée (couverture sous 1) depuis 2004 en France ni depuis 1998 au Canada.
+
+Décision (Mickaël, 2026-11-17) : **crise sous 1,5, zone intermédiaire de 1,5 à 2, calme au-dessus de 2**, la zone intermédiaire coupée en vigilance (1,75 à 2) et tension (1,5 à 1,75) ; **le même barème pour les deux pays**. Repères 2,5 (0) / 2 (25) / 1,75 (50) / 1,5 (75) / 1 (100, vente ratée).
+
+Effets mesurés : France, 225 ventes, calme 55 %, vigilance 27 %, tension 16 %, crise 2 % (4 ventes : 11/2014, 01/2016, 01/2018, 04/2020) au lieu de 23 ventes en crise ; Indice Vigie, moyenne 28,5 → 27,1, plus haut 67,6 → 63,0 ; 21/10/2026 59,2 → 58,1 (plus haut depuis le 02/02/2012, 58,4, au lieu du 29/02/2012) ; pic de novembre 2011 53,7 → 54,8 ; 16/11/2026 53 → 55. Canada, 191 ventes : calme 95 %, vigilance 5 %, aucune en tension ni en crise ; indice toujours calme depuis 2001, plus haut 30,7 → 21,4 (01/04/2003). Le signal canadien ne pèse presque plus : choix assumé, un même chiffre veut dire la même chose dans les deux pays. Empreintes de `test/identite-france.test.mjs` relevées à nouveau.
 
 ### Méthode 2.2 (2026-11-09) : couverture calée sur son historique
 
