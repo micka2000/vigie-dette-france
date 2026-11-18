@@ -1,10 +1,11 @@
 {
- "mis_a_jour": "2026-11-18T02:42+00:00",
+ "mis_a_jour": "2026-11-18T05:12+00:00",
  "echecs": [
   {
    "serie": "non_residents.json",
    "date": "2026-11-18",
-   "erreur": "HTTPError : HTTP Error 403: Forbidden"
+   "erreur": "VerificationAntiRobot : 403, vérification anti-robots de www150.statcan.gc.ca",
+   "passager": true
   }
  ]
 }
