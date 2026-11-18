@@ -91,7 +91,8 @@ jobs:
           echo "::error::Fichiers CSV non régénérés (voir l'étape « Fichiers CSV »)"
           exit 1
       # Toujours lancée : les pannes passagères y sont signalées en avertissement, sans mettre le passage en rouge.
-      # ECHECS=1 seulement pour un échec bloquant (deuxième échec de suite, erreur 4xx, donnée trop vieille, alerte).
+      # ECHECS=1 seulement pour un échec bloquant : panne de source qui dure au point que la donnée gardée dépasse sa limite
+      # d'âge, erreur 4xx (hors 429 et vérification anti-robots), donnée trop vieille, alerte.
       - name: Signaler les séries en échec
         if: always()
         run: |

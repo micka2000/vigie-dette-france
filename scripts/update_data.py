@@ -66,14 +66,37 @@ ERREURS = (urllib.error.URLError, TimeoutError, KeyError, ValueError, ZeroDivisi
 PAUSES_RESEAU = (10, 30)  # secondes avant le 2e puis le 3e essai ; le 10/11/2026, la BCE a renvoyé des 504 plus de 10 s
 
 
-def get(url, headers=None):
-    """Trois essais en cas de panne passagère (délai dépassé, coupure, erreur 5xx ou 429), aucun nouvel essai
-    après une autre erreur 4xx."""
-    req = urllib.request.Request(url, headers={**UA, **(headers or {})})
+class VerificationAntiRobot(urllib.error.URLError):
+    """Erreur 403 avec une page « Security Check » : la source bloque les robots (Statistique Canada, le 17/11/2026).
+    Traitée comme une panne passagère : rien à corriger de notre côté, la source peut lever le blocage."""
+
+    def __str__(self):
+        return str(self.reason)
+
+
+def ouvrir(req):
+    """Texte de la réponse ; une 403 qui renvoie une page de vérification devient VerificationAntiRobot."""
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            return r.read().decode("utf-8-sig")
+    except urllib.error.HTTPError as e:
+        if e.code == 403:
+            try:
+                page = e.read().decode("utf-8", "replace")
+            except Exception:  # noqa: BLE001
+                page = ""
+            if re.search(r"security check|v&#233;rification de s&#233;curit&#233;|captcha|challenge", page, re.I):
+                raise VerificationAntiRobot(f"403, vérification anti-robots de {urllib.parse.urlsplit(req.full_url).netloc}") from e
+        raise
+
+
+def get(url, headers=None, data=None):
+    """Trois essais en cas de panne passagère (délai dépassé, coupure, erreur 5xx ou 429, vérification anti-robots),
+    aucun nouvel essai après une autre erreur 4xx."""
+    req = urllib.request.Request(url, data=data, headers={**UA, **(headers or {})})
     for essai in range(len(PAUSES_RESEAU) + 1):
         try:
-            with urllib.request.urlopen(req, timeout=60) as r:
-                return r.read().decode("utf-8-sig")
+            return ouvrir(req)
         except (TimeoutError, urllib.error.URLError) as e:
             if essai == len(PAUSES_RESEAU) or not panne_reseau(e):
                 raise
@@ -460,9 +483,7 @@ def us10_jours(aujourd_hui=None):
 def statcan(vecteurs):
     """{vecteur: {« AAAA-MM »: valeur}} pour des séries mensuelles de Statistique Canada (tout l'historique)."""
     corps = json.dumps([{"vectorId": v, "latestN": 1000} for v in vecteurs]).encode()
-    req = urllib.request.Request(STATCAN, data=corps, headers={**UA, "Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        reponse = json.loads(r.read().decode("utf-8"))
+    reponse = json.loads(get(STATCAN, {"Content-Type": "application/json"}, corps))
     out = {}
     for x in reponse:
         if x.get("status") != "SUCCESS":
@@ -611,8 +632,8 @@ def write(dossier, nom, payload):
 
 
 def panne_reseau(e):
-    """Délai dépassé, coupure, erreur 5xx ou 429 (trop de requêtes, l'AFT le 17/11/2026) : la source peut répondre
-    au passage suivant. Une autre 4xx (clé refusée, adresse changée) demande une intervention."""
+    """Délai dépassé, coupure, erreur 5xx ou 429 (trop de requêtes, l'AFT le 17/11/2026), vérification anti-robots :
+    la source peut répondre au passage suivant. Une autre 4xx (clé refusée, adresse changée) demande une intervention."""
     if isinstance(e, urllib.error.HTTPError):
         return e.code >= 500 or e.code == 429
     return isinstance(e, (TimeoutError, urllib.error.URLError))
@@ -626,7 +647,7 @@ def collecter(dossier, series, saisies, limites, echec, aujourd_hui):
             payload = collecte()
             raison = controle_forme(nom, payload, ancien, aujourd_hui, limites)
         except ERREURS as e:
-            echec(nom, f"{type(e).__name__} : {e}", panne_reseau(e))
+            echec(nom, f"{type(e).__name__} : {e}", panne_reseau(e), encore_a_jour(ancien, nom, aujourd_hui, limites))
             continue
         if raison:
             echec(nom, raison)
@@ -646,15 +667,24 @@ def collecter(dossier, series, saisies, limites, echec, aujourd_hui):
             write(dossier, nom, nouveau)
 
 
+def encore_a_jour(ancien, nom, aujourd_hui, limites):
+    """Le fichier gardé est-il encore dans sa limite d'âge ? Faux s'il manque ou se lit mal."""
+    try:
+        return (aujourd_hui - fin_de_periode(ancien)).days <= limites[nom]
+    except (*ERREURS, TypeError, IndexError, AttributeError):
+        return False
+
+
 def registre_echecs(dossier, aujourd_hui):
     """Liste des échecs du passage et fonction pour en ajouter un. Une panne réseau est passagère si la série
-    n'était pas déjà en échec au passage précédent (meta.json avant réécriture)."""
+    n'était pas déjà en échec au passage précédent (meta.json avant réécriture), ou si le fichier gardé est encore
+    dans sa limite d'âge : le site montre alors des chiffres à jour, la panne ne devient bloquante qu'à leur péremption."""
     deja = {e["serie"] for e in (lire(dossier, "meta.json") or {}).get("echecs", [])}
     echecs = []
 
-    def echec(serie, erreur, reseau=False):
+    def echec(serie, erreur, reseau=False, a_jour=False):
         e = {"serie": serie, "date": aujourd_hui.isoformat(), "erreur": erreur}
-        if reseau and serie not in deja:
+        if reseau and (serie not in deja or a_jour):
             e["passager"] = True
         echecs.append(e)
 

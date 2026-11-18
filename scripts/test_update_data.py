@@ -1,5 +1,6 @@
 """Tests de la collecte : python3 -m unittest scripts/test_update_data.py"""
 
+import io
 import json
 import shutil
 import sys
@@ -160,16 +161,20 @@ class Collecte(unittest.TestCase):
         with mock.patch.dict(u.SERIES, self.series(**{"ciss.json": panne}), clear=True):
             return u.main(self.dossier, quand)
 
-    def test_504_isolee_passagere_puis_bloquante_au_passage_suivant(self):
+    def test_504_passagere_tant_que_le_fichier_garde_est_a_jour(self):
         """Le 10/11/2026 : une 504 de la BCE suffisait à mettre le passage en rouge."""
         def panne():
             raise urllib.error.HTTPError("https://bce.test", 504, "Gateway Time-out", {}, None)
         premier = self.collecte_avec(panne)
         self.assertEqual([(e["serie"], e.get("passager")) for e in premier], [("ciss.json", True)])
         self.assertEqual(u.bloquants(premier), [])
-        second = self.collecte_avec(panne)
-        self.assertEqual([e["serie"] for e in u.bloquants(second)], ["ciss.json"])
-        self.assertNotIn("passager", second[0])
+        # Deuxième panne de suite : le CISS gardé est encore dans sa limite de 10 jours, toujours passagère.
+        self.assertEqual(u.bloquants(self.collecte_avec(panne)), [])
+        # Panne qui dure : le CISS gardé a plus de 10 jours, elle devient bloquante.
+        tard = self.collecte_avec(panne, datetime(2027, 1, 20, 6, 30, tzinfo=timezone.utc))
+        ciss = [e for e in u.bloquants(tard) if e["serie"] == "ciss.json"]
+        self.assertEqual(len(ciss), 1)
+        self.assertIn("504", ciss[0]["erreur"])
 
     def test_passage_reussi_entre_deux_pannes(self):
         def panne():
@@ -353,6 +358,22 @@ class Reseau(unittest.TestCase):
         self.assertEqual(resultat, "ok")
         self.assertEqual((n, pause), (2, 1))
         self.assertTrue(u.panne_reseau(erreur))
+
+    def test_verification_anti_robots_passagere(self):
+        """Le 17/11/2026, Statistique Canada a mis une page « Security Check » (403) devant son API."""
+        page = io.BytesIO("<title>V&#233;rification de s&#233;curit&#233; / Security Check</title>".encode())
+        erreur = lambda: urllib.error.HTTPError("https://www150.statcan.gc.ca/t1/wds", 403, "Forbidden", {}, io.BytesIO(page.getvalue()))  # noqa: E731
+        resultat, n, pause = self.appels(erreur(), erreur(), erreur())
+        self.assertIsInstance(resultat, u.VerificationAntiRobot)
+        self.assertEqual((n, pause), (3, 2))
+        self.assertTrue(u.panne_reseau(resultat))
+
+    def test_403_sans_page_de_verification_bloquante(self):
+        erreur = urllib.error.HTTPError("https://exemple.test/serie", 403, "Forbidden", {}, io.BytesIO(b"cle refusee"))
+        resultat, n, pause = self.appels(erreur)
+        self.assertIs(resultat, erreur)
+        self.assertEqual((n, pause), (1, 0))
+        self.assertFalse(u.panne_reseau(erreur))
 
     def test_erreur_client_sans_nouvel_essai(self):
         erreur = urllib.error.HTTPError("https://exemple.test/serie", 404, "Not Found", {}, None)
