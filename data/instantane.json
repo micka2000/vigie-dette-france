@@ -1,6 +1,6 @@
 {
-  "jour": "2026-11-17",
-  "indice": 55,
+  "jour": "2026-11-19",
+  "indice": 54,
   "niveau": "tension",
   "niveauTexte": {
     "fr": "Tension",
@@ -16,9 +16,9 @@
         "cle": "spread",
         "niveau": "crise",
         "nom": "Spread OAT-Bund 10 ans",
-        "valeur": "152 pb",
-        "sous": "OAT 10 ans 4,91 %",
-        "taux": "OAT 10 ans 4,91 % · Bund 3,39 %"
+        "valeur": "146 pb",
+        "sous": "OAT 10 ans 4,88 %",
+        "taux": "OAT 10 ans 4,88 % · Bund 3,42 %"
       },
       {
         "cle": "adjudications",
@@ -50,9 +50,9 @@
         "cle": "spread",
         "niveau": "crise",
         "nom": "10-year OAT-Bund spread",
-        "valeur": "152 bp",
-        "sous": "10-year OAT 4.91%",
-        "taux": "10-year OAT 4.91% · Bund 3.39%"
+        "valeur": "146 bp",
+        "sous": "10-year OAT 4.88%",
+        "taux": "10-year OAT 4.88% · Bund 3.42%"
       },
       {
         "cle": "adjudications",
