@@ -1,14 +1,14 @@
 {
-  "jour": "2026-11-20",
-  "indice": 55,
+  "jour": "2026-11-23",
+  "indice": 54,
   "niveau": "tension",
   "niveauTexte": {
     "fr": "Tension",
     "en": "Stress"
   },
   "verdict": {
-    "fr": "La dette française est sous tension, surtout sur le fond. Le reste des marchés financiers reste calme.",
-    "en": "French debt is under stress, mostly in the fundamentals. The rest of the financial markets remain calm."
+    "fr": "La dette française est sous tension, surtout sur le fond. Le reste des marchés financiers reste en vigilance.",
+    "en": "French debt is under stress, mostly in the fundamentals. The rest of the financial markets remain on watch."
   },
   "tuiles": {
     "fr": [
@@ -16,9 +16,9 @@
         "cle": "spread",
         "niveau": "crise",
         "nom": "Spread OAT-Bund 10 ans",
-        "valeur": "150 pb",
-        "sous": "OAT 10 ans 4,87 %",
-        "taux": "OAT 10 ans 4,87 % · Bund 3,37 %"
+        "valeur": "148 pb",
+        "sous": "OAT 10 ans 4,83 %",
+        "taux": "OAT 10 ans 4,83 % · Bund 3,35 %"
       },
       {
         "cle": "adjudications",
@@ -50,9 +50,9 @@
         "cle": "spread",
         "niveau": "crise",
         "nom": "10-year OAT-Bund spread",
-        "valeur": "150 bp",
-        "sous": "10-year OAT 4.87%",
-        "taux": "10-year OAT 4.87% · Bund 3.37%"
+        "valeur": "148 bp",
+        "sous": "10-year OAT 4.83%",
+        "taux": "10-year OAT 4.83% · Bund 3.35%"
       },
       {
         "cle": "adjudications",
