@@ -1,5 +1,5 @@
 {
-  "jour": "2026-11-20",
+  "jour": "2026-11-23",
   "indice": 8,
   "niveau": "calme",
   "niveauTexte": {
@@ -16,9 +16,9 @@
         "cle": "spread",
         "niveau": "calme",
         "nom": "Écart Canada-États-Unis 10 ans",
-        "valeur": "-123 pb",
-        "sous": "Canada 10 ans 3,69 %",
-        "taux": "Canada 10 ans 3,69 % · États-Unis 4,92 %"
+        "valeur": "-124 pb",
+        "sous": "Canada 10 ans 3,68 %",
+        "taux": "Canada 10 ans 3,68 % · États-Unis 4,92 %"
       },
       {
         "cle": "adjudications",
@@ -44,9 +44,9 @@
         "cle": "spread",
         "niveau": "calme",
         "nom": "10-year Canada-US gap",
-        "valeur": "-123 bp",
-        "sous": "10-year Canada 3.69%",
-        "taux": "10-year Canada 3.69% · US 4.92%"
+        "valeur": "-124 bp",
+        "sous": "10-year Canada 3.68%",
+        "taux": "10-year Canada 3.68% · US 4.92%"
       },
       {
         "cle": "adjudications",
